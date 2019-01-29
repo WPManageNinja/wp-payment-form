@@ -20,16 +20,41 @@ class Submission
     public function __construct()
     {
         global $wpdb;
-        $this->model = $wpdb->prefix.'wpf_submissions';
+        $this->model = $wpdb->prefix . 'wpf_submissions';
         $this->db = $wpdb;
     }
 
     public function create($submission)
     {
-        $result = $this->db->insert($this->model,$submission);
-        if($result) {
+        $result = $this->db->insert($this->model, $submission);
+        if ($result) {
             return $this->db->insert_id;
         }
         return false;
+    }
+
+    public function getSubmissions($formId, $perPage, $skip)
+    {
+        $results = $this->db->get_results( "SELECT * FROM {$this->model} WHERE form_id = {$formId} LIMIT {$perPage} OFFSET {$skip}", OBJECT );
+        $formattedResults = array();
+        foreach ($results as $result) {
+            $result->form_data_raw = maybe_unserialize($result->form_data_raw);
+            $result->form_data_formatted = maybe_unserialize($result->form_data_formatted);
+            $formattedResults[] = $result;
+        }
+        return $formattedResults;
+    }
+
+    public function getSubmission($submissionId)
+    {
+        $result = $this->db->get_row( "SELECT * FROM {$this->model} WHERE id = {$submissionId} LIMIT 1", OBJECT );
+        $result->form_data_raw = maybe_unserialize($result->form_data_raw);
+        $result->form_data_formatted = maybe_unserialize($result->form_data_formatted);
+        return $result;
+    }
+
+    public function getTotalCount($formId)
+    {
+        return $this->db->get_var( "SELECT COUNT(*) FROM {$this->model} WHERE form_id = {$formId}" );
     }
 }
