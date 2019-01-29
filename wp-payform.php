@@ -67,6 +67,7 @@ class WPPayForm
 
         // Ajax Handler
         new \WPPayForm\Classes\AdminAjaxHandler();
+        new \WPPayForm\Classes\SubmissionView();
     }
 
     public function commonActions()

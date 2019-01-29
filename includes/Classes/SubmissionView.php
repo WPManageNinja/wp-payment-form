@@ -17,6 +17,11 @@ if (!defined('ABSPATH')) {
  */
 class SubmissionView
 {
+    public function __construct()
+    {
+        $this->registerAjaxEndpoints();
+    }
+
     public function registerAjaxEndpoints()
     {
         add_action('wp_ajax_wpf_get_submissions', array($this, 'getSubmissions'));

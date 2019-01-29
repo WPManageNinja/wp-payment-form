@@ -5,6 +5,7 @@ const EditFormView = require('./Components/Form/index');
 const EditSingleForm = require('./Components/Form/EditForm');
 const FormPaymentSettings = require('./Components/Form/PaymentSettings');
 const FormBuilder = require('./Components/Form/FormBuilder');
+import Entries from './Components/Entries/Entries';
 
 export const routes = [
     {
@@ -58,6 +59,11 @@ export const routes = [
                 path: 'email_settings',
                 name: 'email_settings',
                 component: EditSingleForm
+            },
+            {
+                path: 'entries',
+                name: 'entries',
+                component: Entries
             }
         ]
     }
