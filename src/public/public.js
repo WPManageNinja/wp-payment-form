@@ -21,6 +21,8 @@ var wpPayformApp = {};
             let formId = form.data('wpf_form_id');
             let formSettings = window['wp_payform_'+formId];
 
+            form.parent().find('.wpf_form_notices').hide();
+
             form.find('.wpf_payment_item, .wpf_item_qty').on('change', () => {
                 this.calculatePayments(form);
             });
@@ -35,7 +37,16 @@ var wpPayformApp = {};
                 })
                     .then(response => {
                         $('#wpf_form_id_'+formId)[0].reset();
-                        alert(response.data.message);
+                        form.parent().find('.wpf_form_success').html(response.data.message).show();
+                    })
+                    .fail(error => {
+                        let $errorDiv = form.parent().find('.wpf_form_errors');
+                        $errorDiv.html('<p class="wpf_form_error_heading">'+error.responseJSON.data.message+'</p>').show();
+                        $errorDiv.append('<ul class="wpf_error_items">');
+                        $.each(error.responseJSON.data.errors, (errorId, errorText) => {
+                            $errorDiv.append('<li class="error_item_'+errorId+'">'+errorText+'</li>');
+                        });
+                        $errorDiv.append('</ul>');
                     });
             });
         },
@@ -53,6 +64,8 @@ var wpPayformApp = {};
                 }
                 else if(elementType == 'hidden') {
                     itemTotalValue[elementName] = parseInt($(elem).data('price'));
+                } else if(elementType == 'number') {
+                    itemTotalValue[elementName] =  parseInt(parseFloat($(this).val()) * 100);
                 } else if(elementType == 'checkbox') {
                     let groupId = $(elem).data('group_id');
                     let groups = form.find('input[data-group_id="'+groupId+'"]:checked');
@@ -84,7 +97,12 @@ var wpPayformApp = {};
                     allTotalAmount += itemValue;
                 }
             });
-            form.find('.wpf_calc_payment_total').html(this.formatPrice(allTotalAmount, form));
+            if(allTotalAmount) {
+                form.find('.wpf_calc_payment_total').html(this.formatPrice(allTotalAmount, form));
+            } else {
+                form.find('.wpf_calc_payment_total').html(this.formatPrice(0, form));
+            }
+
             form.data('payment_total', allTotalAmount);
         },
         formatPrice(allTotalAmount, form) {

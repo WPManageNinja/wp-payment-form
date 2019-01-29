@@ -1,0 +1,19 @@
+.wpf_form_notices {
+  padding: 10px 20px;
+  margin-top: 20px;
+  p, ul {
+    padding: 0;
+    margin: 0;
+  }
+  &.wpf_form_errors {
+    color: rgb(114, 28, 36);
+    background-color: rgb(248, 215, 218);
+    border-color: rgb(245, 198, 203);
+  }
+
+  &.wpf_form_success {
+    color: rgb(21, 87, 36);
+    background-color: rgb(212, 237, 218);
+    border-color: rgb(195, 230, 203);
+  }
+}

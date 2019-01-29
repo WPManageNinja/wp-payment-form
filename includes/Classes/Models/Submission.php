@@ -45,11 +45,20 @@ class Submission
         return $formattedResults;
     }
 
-    public function getSubmission($submissionId)
+    public function getSubmission($submissionId, $with = array())
     {
         $result = $this->db->get_row( "SELECT * FROM {$this->model} WHERE id = {$submissionId} LIMIT 1", OBJECT );
         $result->form_data_raw = maybe_unserialize($result->form_data_raw);
         $result->form_data_formatted = maybe_unserialize($result->form_data_formatted);
+
+        if(in_array('transactions',$with)) {
+            $result->transactions = (new Transaction())->getTransactions($submissionId);
+        }
+
+        if(in_array('order_items',$with)) {
+            $result->order_items = (new OrderItem())->getOrderItems($submissionId);
+        }
+
         return $result;
     }
 
