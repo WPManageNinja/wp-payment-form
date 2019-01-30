@@ -37,4 +37,10 @@ class Transaction
     {
         return $this->db->get_results("SELECT * FROM {$this->model} WHERE submission_id = {$submissionId}");
     }
+
+    public function update($transactionId, $data)
+    {
+        $data['updated_at'] = date('Y-m-d H:i:s');
+        return $this->db->update($this->model, $data, array('id' => $transactionId));
+    }
 }

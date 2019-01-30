@@ -88,12 +88,12 @@ class AdminAjaxHandler
     protected function getPaymentSettings()
     {
         $formId = absint($_REQUEST['form_id']);
-        $generalSettings = new GeneralSettings();
+
         $paymentSettings = Forms::getPaymentSettings($formId);
         wp_send_json_success(array(
             'payment_settings' => $paymentSettings,
-            'currencies'       => $generalSettings->getCurrencies(),
-            'locales'          => $generalSettings->getLocales()
+            'currencies'       => GeneralSettings::getCurrencies(),
+            'locales'          => GeneralSettings::getLocales()
         ), 200);
     }
 
@@ -118,10 +118,9 @@ class AdminAjaxHandler
     {
         $formId = absint($_REQUEST['form_id']);
         $builderSettings = Forms::getBuilderSettings($formId);
-        $generalSettings = new GeneralSettings();
         wp_send_json_success(array(
             'builder_settings' => $builderSettings,
-            'components' => $generalSettings->getComponents()
+            'components' => GeneralSettings::getComponents()
         ), 200);
     }
 }

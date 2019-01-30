@@ -15,7 +15,7 @@ class GeneralSettings
     /**
      * https://support.stripe.com/questions/which-currencies-does-stripe-support
      */
-    public function getCurrencies() {
+    public static function getCurrencies() {
 
         return array(
             'AED' => __( 'United Arab Emirates Dirham', 'wppayform' ),
@@ -161,7 +161,7 @@ class GeneralSettings
      *
      * @return array
      */
-    public function getLocales() {
+    public static function getLocales() {
 
         return array(
             ''     => __( 'English (en) (default)', 'wppayform' ),
@@ -180,7 +180,7 @@ class GeneralSettings
         );
     }
 
-    public function getComponents()
+    public static function getComponents()
     {
         $components = array();
         return apply_filters('wp_payment_form_components', $components);;

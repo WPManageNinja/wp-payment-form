@@ -91,8 +91,7 @@ class Forms
         }
         $defaultSettings = array();
         $elements = wp_parse_args($builderSettings, $defaultSettings);
-        $generalSettings = new GeneralSettings();
-        $allElements = $generalSettings->getComponents();
+        $allElements = GeneralSettings::getComponents();
 
         $parsedElements = array();
 

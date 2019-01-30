@@ -6,6 +6,7 @@ use WPPayForm\Classes\Models\Forms;
 use WPPayForm\Classes\Models\OrderItem;
 use WPPayForm\Classes\Models\Submission;
 use WPPayForm\Classes\Models\Transaction;
+use WPPayForm\Classes\StripePayments\Charge;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -148,7 +149,7 @@ class SubmissionHandler
             'payment_method' => 'stripe',
             'charge_id' => '',
             'payment_total' => $paymentTotal,
-            'status' => 'draft',
+            'status' => 'pending',
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s')
         );
@@ -157,15 +158,55 @@ class SubmissionHandler
         $transactionId = $transactionModel->create($transaction);
 
         // Now We can charge the customer
-        // We will do this later
-        // @todo: Charge The Customer now and then update corresponding records
+       // We have Payment Total $paymentTotal
+        // Stripe Token Need Here
+        // We should make this independed so later we can add more payment methos
+        if(isset($form_data['stripeToken'])) {
+            $token = $form_data['stripeToken'];
+            $paymentArgs = array(
+                'currency' => 'USD',
+                'amount' => $paymentTotal,
+                'source' => $token,
+                'description' => $form->post_title,
+                'statement_descriptor' => $form->post_title
+            );
+            $metadata = array(
+                'form_id' => $formId,
+                'user_id' => $currentUserId,
+                'submission_id' => $submissionId,
+                'wppayform_tid' => $transactionId,
+                'wp_plugin_slug' => 'wppayform'
+            );
+            if($customerEmail) {
+                $paymentArgs['receipt_email'] = $customerEmail;
+                $metadata['customer_email'] = $customerEmail;
+            }
+            if($customerName) {
+                $metadata['customer_name'] = $customerName;
+            }
+            $paymentArgs['metadata'] = $metadata;
+
+            $chargeClass = new Charge();
+            $charge = $chargeClass->charge($paymentArgs);
+
+            if(is_wp_error($charge)) {
+                $errorCode = $charge->get_error_code();
+                wp_send_json_error(array(
+                    'message' => $charge->get_error_message($errorCode),
+                    'errors' => $charge->get_error_data($errorCode)
+                ), 423);
+            }
+            // We are good here. The charge is successfull and We are ready to go.
+            $transactionModel->update($transactionId, array(
+                'status' => 'paid'
+            ));
+        }
 
         wp_send_json_success(array(
             'message' => __('Your Payment is successfully recorded', 'wppayform'),
             'submission_id' =>  $submissionId,
             'submission' => (new Submission())->getSubmission($submissionId, array('transactions', 'order_items'))
         ), 200);
-
     }
 
 

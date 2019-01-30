@@ -1,5 +1,5 @@
 import formatMoney from 'accounting-js/lib/formatMoney.js'
-
+import StripeElementHandler from './StripeElementHandler';
 var wpPayformApp = {};
 (function( $ ) {
     wpPayformApp = {
@@ -18,37 +18,46 @@ var wpPayformApp = {};
         initForm(form) {
             let that = this;
             this.calculatePayments(form);
-            let formId = form.data('wpf_form_id');
-            let formSettings = window['wp_payform_'+formId];
-
-            form.parent().find('.wpf_form_notices').hide();
+            //let formSettings = window['wp_payform_'+formId];
 
             form.find('.wpf_payment_item, .wpf_item_qty').on('change', () => {
                 this.calculatePayments(form);
             });
-            // Handle Form Submit
-            form.on('submit', function (event) {
-                event.preventDefault();
-                $.post(that.general.ajax_url, {
-                    action: 'wpf_submit_form',
-                    form_id: formId,
-                    payment_total: form.data('payment_total'),
-                    form_data: $(this).serialize()
-                })
-                    .then(response => {
-                        $('#wpf_form_id_'+formId)[0].reset();
-                        form.parent().find('.wpf_form_success').html(response.data.message).show();
-                    })
-                    .fail(error => {
-                        let $errorDiv = form.parent().find('.wpf_form_errors');
-                        $errorDiv.html('<p class="wpf_form_error_heading">'+error.responseJSON.data.message+'</p>').show();
-                        $errorDiv.append('<ul class="wpf_error_items">');
-                        $.each(error.responseJSON.data.errors, (errorId, errorText) => {
-                            $errorDiv.append('<li class="error_item_'+errorId+'">'+errorText+'</li>');
-                        });
-                        $errorDiv.append('</ul>');
-                    });
+            let elementHandler = StripeElementHandler;
+            elementHandler.init({
+                form: form,
+                element_id: 'wpf_input_17_stripe_card_element',
+                style: false
+            }, function () {
+                that.submitForm(form);
             });
+        },
+        submitForm(form) {
+            form.parent().find('.wpf_form_notices').hide();
+            let formId = form.data('wpf_form_id');
+            $.post(this.general.ajax_url, {
+                action: 'wpf_submit_form',
+                form_id: formId,
+                payment_total: form.data('payment_total'),
+                form_data: $(form).serialize()
+            })
+                .then(response => {
+                    $('#wpf_form_id_'+formId)[0].reset();
+                    form.parent().find('.wpf_form_success').html(response.data.message).show();
+                    form.trigger('stripe_clear');
+                })
+                .fail(error => {
+                    let $errorDiv = form.parent().find('.wpf_form_errors');
+                    $errorDiv.html('<p class="wpf_form_error_heading">'+error.responseJSON.data.message+'</p>').show();
+                    $errorDiv.append('<ul class="wpf_error_items">');
+                    $.each(error.responseJSON.data.errors, (errorId, errorText) => {
+                        $errorDiv.append('<li class="error_item_'+errorId+'">'+errorText+'</li>');
+                    });
+                    $errorDiv.append('</ul>');
+                })
+                .always(() => {
+                    form.find('input[name=stripeToken]').remove();
+                })
         },
         calculatePayments(form) {
             let elements = form.find('.wpf_payment_item');
