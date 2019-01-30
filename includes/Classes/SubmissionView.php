@@ -50,7 +50,7 @@ class SubmissionView
         $totalSubmissions = $submissionModel->getTotalCount($formId);
         wp_send_json_success(array(
             'submissions' => $submissions,
-            'total' => $totalSubmissions
+            'total' => (int) $totalSubmissions
         ), 200);
     }
 

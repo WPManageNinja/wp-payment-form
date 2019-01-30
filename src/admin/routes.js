@@ -6,6 +6,7 @@ const EditSingleForm = require('./Components/Form/EditForm');
 const FormPaymentSettings = require('./Components/Form/PaymentSettings');
 const FormBuilder = require('./Components/Form/FormBuilder');
 import Entries from './Components/Entries/Entries';
+import Entry from './Components/Entries/Entry';
 
 export const routes = [
     {
@@ -39,6 +40,7 @@ export const routes = [
     {
         path: '/edit-form/:form_id/',
         component: EditFormView,
+        props: true,
         children: [
             {
                 path: 'payment_otions',
@@ -64,6 +66,12 @@ export const routes = [
                 path: 'entries',
                 name: 'entries',
                 component: Entries
+            },
+            {
+                path: 'entries/:entry_id',
+                name: 'entry',
+                props: true,
+                component: Entry
             }
         ]
     }
