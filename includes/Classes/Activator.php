@@ -59,6 +59,7 @@ class Activator
 				form_data_formatted longtext,
 				currency varchar(255),
 				payment_status varchar(255),
+				submission_hash varchar (255),
 				payment_total int(11),
 				status varchar(255),
 				created_at timestamp NULL,
@@ -103,6 +104,7 @@ class Activator
 				charge_id varchar(255),
 				payment_total int(11) DEFAULT 1,
 				status varchar(255),
+				payment_mode varchar(255),
 				created_at timestamp NULL,
 				updated_at timestamp NULL
 			) $charset_collate;";

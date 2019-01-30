@@ -56,6 +56,8 @@ class Render
         <button>Pay Money <span class="wpf_calc_payment_total"></span></button>
         <?php do_action('wpf_form_render_after_submit_button', $form); ?>
         </form>
+        <div style="display: none" class="wpf_form_notices wpf_form_errors"></div>
+        <div style="display: none" class="wpf_form_notices wpf_form_success"></div>
         <?php do_action('wpf_form_render_after', $form); ?>
         </div>
         <?php
@@ -64,6 +66,7 @@ class Render
     private function addAssets($form)
     {
         wp_enqueue_script('wppayform_public', WPPAYFORM_URL.'assets/js/payforms-public.js', array('jquery'), WPPAYFORM_VERSION, true);
+        wp_enqueue_style('wppayform_public', WPPAYFORM_URL.'assets/css/payforms-public.css', array(), WPPAYFORM_VERSION);
         wp_localize_script('wppayform_public', 'wp_payform_'.$form->ID, array(
             'form' => $form
         ));

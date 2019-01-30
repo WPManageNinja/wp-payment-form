@@ -110,6 +110,7 @@ class WPPayForm
         new \WPPayForm\Classes\FormComponents\PaymentItemComponent();
         new \WPPayForm\Classes\FormComponents\ItemQuantityComponent();
         new \WPPayForm\Classes\FormComponents\DateComponent();
+        new \WPPayForm\Classes\FormComponents\CustomAmountComponent();
     }
 
     public function loadDependecies()

@@ -88,7 +88,8 @@ class SubmissionHandler
         $paymentItems = array();
         foreach ($formattedElements['payment'] as $paymentId => $payment) {
             $quantity = $this->getItemQuantity($formattedElements['item_quantity'], $paymentId, $form_data);
-            $paymentItems[] = $this->getPaymentLine($payment, $paymentId, $quantity, $form_data);
+            $lineItems = $this->getPaymentLine($payment, $paymentId, $quantity, $form_data);
+            $paymentItems = array_merge($paymentItems, $lineItems);
         }
         $inputItems = array();
         foreach ($formattedElements['input'] as $inputId => $input) {
@@ -161,7 +162,8 @@ class SubmissionHandler
 
         wp_send_json_success(array(
             'message' => __('Your Payment is successfully recorded', 'wppayform'),
-            'submission_id' =>  $submissionId
+            'submission_id' =>  $submissionId,
+            'submission' => (new Submission())->getSubmission($submissionId, array('transactions', 'order_items'))
         ), 200);
 
     }
@@ -182,8 +184,6 @@ class SubmissionHandler
 
     private function getPaymentLine($payment, $paymentId, $quantity, $formData)
     {
-        $priceDetailes = ArrayHelper::get($payment, 'options.pricing_details');
-        $payType = ArrayHelper::get($priceDetailes, 'one_time_type');
         $label = ArrayHelper::get($payment, 'options.label');
         if(!$label) {
             $label = $paymentId;
@@ -195,17 +195,37 @@ class SubmissionHandler
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s'),
         );
-        if($payType == 'choose_single') {
-            $pricings = $priceDetailes['multiple_pricing'];
-            $price = $pricings[$formData[$paymentId]];
-            $payItem['item_name'] = $price['label'];
-            $payItem['item_price'] = absint($price['value'] * 100);
-            $payItem['line_total'] = $payItem['item_price'] * $quantity;
-        } else {
-            $payItem['item_price'] = absint(ArrayHelper::get($priceDetailes, 'payment_amount') * 100);
+
+        if($payment['type'] == 'payment_item') {
+            $priceDetailes = ArrayHelper::get($payment, 'options.pricing_details');
+            $payType = ArrayHelper::get($priceDetailes, 'one_time_type');
+            if($payType == 'choose_single') {
+                $pricings = $priceDetailes['multiple_pricing'];
+                $price = $pricings[$formData[$paymentId]];
+                $payItem['item_name'] = $price['label'];
+                $payItem['item_price'] = absint($price['value'] * 100);
+                $payItem['line_total'] = $payItem['item_price'] * $quantity;
+            } else if($payType == 'choose_multiple') {
+                $selctedItems = $formData[$paymentId];
+                $pricings = $priceDetailes['multiple_pricing'];
+                $payItems = array();
+                foreach ($selctedItems as $itemIndex => $selctedItem) {
+                    $itemClone = $payItem;
+                    $itemClone['item_name'] = $pricings[$itemIndex]['label'];
+                    $itemClone['item_price'] = absint($pricings[$itemIndex]['value'] * 100);
+                    $itemClone['line_total'] = $payItem['item_price'] * $quantity;
+                    $payItems[] = $itemClone;
+                }
+                return $payItems;
+            } else {
+                $payItem['item_price'] = absint(ArrayHelper::get($priceDetailes, 'payment_amount') * 100);
+                $payItem['line_total'] = absint($payItem['item_price']) * $quantity;
+            }
+        } else if($payment['type'] == 'custom_payment_input') {
+            $payItem['item_price'] = absint($formData[$paymentId]) * 100;
             $payItem['line_total'] = absint($payItem['item_price']) * $quantity;
         }
-        return $payItem;
+        return array($payItem);
     }
 
     private function getErrorLabel($element, $formId)

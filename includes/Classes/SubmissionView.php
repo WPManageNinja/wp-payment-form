@@ -34,7 +34,7 @@ class SubmissionView
         $submissionId = absint($_REQUEST['submission_id']);
         $submissionModel = new Submission();
         wp_send_json_success( array(
-            'submission' => $submissionModel->getSubmission($submissionId)
+            'submission' => $submissionModel->getSubmission($submissionId, array('transactions', 'order_items'))
         ), 200 );
     }
 

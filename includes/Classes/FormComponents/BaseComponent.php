@@ -224,9 +224,9 @@ abstract class BaseComponent
                         'type'  => 'checkbox',
                         'name'  => $element['id'] . '[]',
                         'id'    => $optionId,
-                        'value' => $option['value']
+                        'value' => ArrayHelper::get($option, 'value')
                     );
-                    if (in_array($option['value'], $defaultValues)) {
+                    if (in_array(ArrayHelper::get($option, 'value'), $defaultValues)) {
                         $attributes['checked'] = 'true';
                     }
                     ?>

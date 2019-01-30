@@ -20,16 +20,21 @@ class Transaction
     public function __construct()
     {
         global $wpdb;
-        $this->model = $wpdb->prefix.'wpf_order_transactions';
+        $this->model = $wpdb->prefix . 'wpf_order_transactions';
         $this->db = $wpdb;
     }
 
     public function create($item)
     {
-        $result = $this->db->insert($this->model,$item);
-        if($result) {
+        $result = $this->db->insert($this->model, $item);
+        if ($result) {
             return $this->db->insert_id;
         }
         return false;
+    }
+
+    public function getTransactions($submissionId)
+    {
+        return $this->db->get_results("SELECT * FROM {$this->model} WHERE submission_id = {$submissionId}");
     }
 }
