@@ -13,7 +13,6 @@
                     <p>User Id: {{userDetails.user_id}}</p>
                     <p>Customer Id:{{userDetails.customer_id}}</p>
                     <p>Payment Status:{{userDetails.payment_status}}</p>
-
                 </el-col>
                 <el-col :span="12">
                     <p>Total Payment: {{userDetails.payment_total}}</p>
@@ -21,7 +20,6 @@
                     <p>Created At: {{userDetails.created_at}}</p>
                     <p>Updated At: {{userDetails.updated_at}}</p>
                 </el-col>
-
             </el-row>
         </div>
     </div>
@@ -34,10 +32,8 @@
         props: ['form_id', 'entry_id'],
         data() {
             return {
-                userDetails: [],
-
+                userDetails: {},
             }
-
         },
         mounted() {
             const query = {
@@ -48,9 +44,8 @@
             this.$get(query)
                 .then(response => {
                     this.userDetails = response.data.submission
+                    console.log(this.userDetails)
                 })
-
-
         }
     }
 </script>

@@ -1,6 +1,10 @@
 <template>
-    <div>
-        <h3>Entries</h3>
+    <div class="all_payforms_wrapper payform_section">
+        <div class="payform_section_header">
+            <h3 class="payform_section_title">
+                {{ $t('Entries') }}
+            </h3>
+        </div>
         <el-table
                 :data="allEntry"
                 style="width: 100%">
@@ -14,7 +18,7 @@
                     fixed
             >
                 <template slot-scope="scope">
-                    <router-link  :to="{ name: 'entry', params: { entry_id: scope.row.id } }">
+                    <router-link :to="{ name: 'entry', params: { entry_id: scope.row.id } }">
                         {{ scope.row.customer_email }}
                     </router-link>
                 </template>
@@ -58,23 +62,23 @@
                 allEntry: [],
                 pagination: {
                     current_page: 1,
-                    per_page: 5,
+                    per_page: 3,
                     total: 0
                 },
-               query : {
+                query: {
                     action: 'wpf_get_submissions',
                     form_id: this.form_id,
                     page_number: 1,
-                    per_page: 1
+                    per_page: 4
                 }
 
-        }
+            }
         },
         computed: {
             page_sizes() {
-                let start = 1;
+                let start = 4;
                 let stop = this.pagination.total;
-                let step = 1;
+                let step = 4;
 
                 const remainder = stop % step;
 
@@ -92,7 +96,7 @@
             }
         },
         methods: {
-            getEntries(){
+            getEntries() {
                 this.$get(this.query)
                     .then(response => {
                         this.allEntry = response.data.submissions;
@@ -100,7 +104,7 @@
                     })
             },
             pageSizeChange(pageSize) {
-                this.query.per_page =  pageSize;
+                this.query.per_page = pageSize;
                 this.getEntries()
             },
             changePage(page) {
@@ -110,7 +114,7 @@
             }
         },
         mounted() {
-           this.getEntries()
+            this.getEntries()
         }
     }
 </script>

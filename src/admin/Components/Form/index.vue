@@ -73,6 +73,10 @@
                     {
                         route: 'email_settings',
                         title: 'Email Settings'
+                    },
+                    {
+                        route: 'entries',
+                        title: 'All Entries'
                     }
                 ],
                 editFoemModalShow: false,
