@@ -117,7 +117,6 @@ class WPPayForm
     public function loadDependecies()
     {
         require_once(WPPAYFORM_DIR . 'includes/autoload.php');
-        require_once( WPPAYFORM_DIR . 'vendor/autoload.php' );
     }
 }
 

@@ -122,7 +122,7 @@ class SubmissionHandler
             'form_data_raw' => maybe_serialize($form_data),
             'form_data_formatted' => maybe_serialize($inputItems),
             'currency' => $currency,
-            'payment_status' => 'draft',
+            'payment_status' => 'pending',
             'payment_total' => $paymentTotal,
             'status' => 'unread',
             'created_at' => date('Y-m-d H:i:s'),
@@ -185,20 +185,39 @@ class SubmissionHandler
                 $metadata['customer_name'] = $customerName;
             }
             $paymentArgs['metadata'] = $metadata;
+            $charge = Charge::charge($paymentArgs);
 
-            $chargeClass = new Charge();
-            $charge = $chargeClass->charge($paymentArgs);
+            $paymentStatus = true;
 
+            $message = 'Unknown error';
             if(is_wp_error($charge)) {
+                $paymentStatus = false;
                 $errorCode = $charge->get_error_code();
+                $message = $charge->get_error_message($errorCode);
+            } else if(!$charge) {
+                $paymentStatus = false;
+            }
+
+            if(!$paymentStatus) {
+                do_action('wpf_stripe_charge_failed', $submissionId, $charge, $paymentArgs);
+                $transactionModel->update($transactionId, array(
+                    'status' => 'failed'
+                ));
+                $submissionModel->update($submissionId, array(
+                    'payment_status' => 'failed'
+                ));
                 wp_send_json_error(array(
-                    'message' => $charge->get_error_message($errorCode),
-                    'errors' => $charge->get_error_data($errorCode)
+                    'message' => $message,
+                    'payment_error' => true
                 ), 423);
             }
+
             // We are good here. The charge is successfull and We are ready to go.
             $transactionModel->update($transactionId, array(
                 'status' => 'paid'
+            ));
+            $submissionModel->update($submissionId, array(
+                'payment_status' => 'paid'
             ));
         }
 
@@ -254,7 +273,7 @@ class SubmissionHandler
                     $itemClone = $payItem;
                     $itemClone['item_name'] = $pricings[$itemIndex]['label'];
                     $itemClone['item_price'] = absint($pricings[$itemIndex]['value'] * 100);
-                    $itemClone['line_total'] = $payItem['item_price'] * $quantity;
+                    $itemClone['line_total'] = $itemClone['item_price'] * $quantity;
                     $payItems[] = $itemClone;
                 }
                 return $payItems;

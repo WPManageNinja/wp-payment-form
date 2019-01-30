@@ -58,36 +58,30 @@
                 allEntry: [],
                 pagination: {
                     current_page: 1,
-                    per_page: 5,
+                    per_page: 20,
                     total: 0
                 },
                query : {
                     action: 'wpf_get_submissions',
                     form_id: this.form_id,
                     page_number: 1,
-                    per_page: 1
+                    per_page: 20
                 }
-
         }
         },
         computed: {
             page_sizes() {
-                let start = 1;
+                let start = 20;
                 let stop = this.pagination.total;
-                let step = 1;
-
+                let step = 20;
                 const remainder = stop % step;
-
                 if (remainder) {
                     stop = stop + step;
                 }
-
                 var result = [];
-
                 for (var i = start; step > 0 ? i <= stop : i >= stop; i += step) {
                     result.push(i);
                 }
-
                 return result;
             }
         },

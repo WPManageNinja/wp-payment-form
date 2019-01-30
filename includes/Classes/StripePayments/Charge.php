@@ -1,7 +1,6 @@
 <?php
 namespace WPPayForm\Classes\StripePayments;
 use WPPayForm\Classes\GeneralSettings;
-use Stripe\Error;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -13,11 +12,11 @@ if (!defined('ABSPATH')) {
  */
 class Charge
 {
-    public function charge($paymentArgs)
+    public static function charge($paymentArgs)
     {
-        $errors = $this->validate($paymentArgs);
+        $errors = self::validate($paymentArgs);
         if($errors) {
-            return $this->errorHandler('validation_failed', __('Payment data validation failed', 'wppayform'), $errors);
+            return self::errorHandler('validation_failed', __('Payment data validation failed', 'wppayform'), $errors);
         }
         if ( ! empty( $paymentArgs['statement_descriptor'] ) ) {
             $illegal = array( '<', '>', '"', "'" );
@@ -29,45 +28,24 @@ class Charge
             $descriptor = substr( $descriptor, 0, 22 );
             $paymentArgs['statement_descriptor'] = $descriptor;
         }
-
         try {
-            \Stripe\Stripe::setApiKey(wpfGetStripeSecretKey());
-            $charge = \Stripe\Charge::create($paymentArgs);
-            if ( false !== $charge ) {
-                do_action( 'wpf_stripe_charge_created', $charge, $paymentArgs );
-                return $charge;
+            ApiRequest::set_secret_key(wpfGetStripeSecretKey());
+            $response = ApiRequest::request($paymentArgs, 'charges');
+            if ( !empty($response->error) ) {
+                return self::errorHandler($response->error->type, $response->error->code. ': '. $response->error->message);
             }
-            return $this->errorHandler('general', __('Charge failed', 'wppayform'));
-        } catch ( Error\Card $e ) {
-            // Card declined
-            return $this->errorHandler( 'card_error', esc_html__( 'Card Error', 'wppayform' ) . ': ' . $e->getMessage() );
-        } catch ( Error\RateLimit $e ) {
-            // Too many requests made to the API too quickly
-            return $this->errorHandler( 'rate_limit', esc_html__( 'Rate Limit Error', 'wppayform' ) . ': ' . $e->getMessage() );
-
-        } catch ( Error\InvalidRequest $e ) {
-            // Invalid parameters were supplied to Stripe's API
-            return $this->errorHandler( 'invalid_request', esc_html__( 'Invalid Request Error', 'wppayform' ) . ': ' . $e->getMessage() );
-
-        } catch ( Error\Authentication $e ) {
-            // Authentication with Stripe's API failed
-            // (maybe you changed API keys recently)
-            return $this->errorHandler( 'authentication', esc_html__( 'Authentication Error', 'wppayform' ) . ': ' . $e->getMessage() );
-
-        } catch ( Error\ApiConnection $e ) {
-            // Network communication with Stripe failed
-            return $this->errorHandler( 'api_connection', esc_html__( 'Stripe API Connection Error', 'wppayform' ) . ': ' . $e->getMessage() );
-
-        } catch ( Error\Base $e ) {
-            // Display a very generic error to the user, and maybe send
-            return $this->errorHandler( 'generic', esc_html__( 'Stripe Error', 'wppayform' ) . ': ' . $e->getMessage() );
+            if ( false !== $response ) {
+                do_action( 'wpf_stripe_charge_created', $response, $paymentArgs );
+                return $response;
+            }
         } catch ( \Exception $e ) {
             // Something else happened, completely unrelated to Stripe
-            return $this->errorHandler( 'non_stripe', esc_html__( 'General Error', 'wppayform' ) . ': ' . $e->getMessage() );
+            return self::errorHandler( 'non_stripe', esc_html__( 'General Error', 'wppayform' ) . ': ' . $e->getMessage() );
         }
+        return false;
     }
 
-    private function validate($args)
+    private static function validate($args)
     {
         $errors = array();
         // check if the currency is right or not
@@ -92,7 +70,7 @@ class Charge
         return $errors;
     }
 
-    private function errorHandler($code, $message, $data = array()) {
+    private static function errorHandler($code, $message, $data = array()) {
         return new \WP_Error($code, $message, $data);
     }
 

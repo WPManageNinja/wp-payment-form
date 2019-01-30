@@ -66,4 +66,10 @@ class Submission
     {
         return $this->db->get_var( "SELECT COUNT(*) FROM {$this->model} WHERE form_id = {$formId}" );
     }
+
+    public function update($submissionId, $data)
+    {
+        $data['updated_at'] = date('Y-m-d H:i:s');
+        return $this->db->update($this->model, $data, array('id' => $submissionId));
+    }
 }
