@@ -42,7 +42,7 @@ class Render
         ?>
         <div class="wpf_form_wrapper wpf_form_wrapper_<?php echo $form->ID; ?>">
         <?php do_action('wpf_form_render_before', $form); ?>
-        <form data-wpf_form_id="<?php echo $form->ID; ?>" class="wpf_form wpf_form_id_<?php echo $form->ID; ?>" method="post" action="<?php site_url(); ?>" id="wpf_form_id_<?php echo $form->ID; ?>">
+        <form data-stripe_pub_key="<?php echo wpfGetStripePubKey(); ?>" data-wpf_form_id="<?php echo $form->ID; ?>" class="wpf_form wpf_strip_default_style wpf_form_id_<?php echo $form->ID; ?>" method="post" action="<?php site_url(); ?>" id="wpf_form_id_<?php echo $form->ID; ?>">
         <input type="hidden" name="__wpf_form_id" value="<?php echo $form->ID; ?>"/>
         <input type="hidden" name="__wpf_current_url" value="<?php echo $currentUrl; ?>">
         <?php do_action('wpf_form_render_start_form', $form); ?>
@@ -53,6 +53,7 @@ class Render
     {
         ?>
         <?php do_action('wpf_form_render_before_submit_button', $form); ?>
+        <br />
         <button>Pay Money <span class="wpf_calc_payment_total"></span></button>
         <?php do_action('wpf_form_render_after_submit_button', $form); ?>
         </form>
