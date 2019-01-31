@@ -1,8 +1,5 @@
 <?php
-
-namespace WPPayForm\Classes\StripePayments;
-
-
+namespace WPPayForm\Classes\PaymentMethods\Stripe;
 use WPPayForm\Classes\ArrayHelper;
 
 if (!defined('ABSPATH')) {

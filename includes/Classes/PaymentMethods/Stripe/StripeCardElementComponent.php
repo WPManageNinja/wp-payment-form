@@ -1,8 +1,9 @@
 <?php
 
-namespace WPPayForm\Classes\FormComponents;
+namespace WPPayForm\Classes\PaymentMethods\Stripe;
 
 use WPPayForm\Classes\ArrayHelper;
+use WPPayForm\Classes\FormComponents\BaseComponent;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -21,6 +22,7 @@ class StripeCardElementComponent extends BaseComponent
             'type'            => 'stripe_card_element',
             'editor_title'    => 'Card Elements (Stripe)',
             'group'           => 'card_element',
+            'single_only'     => true,
             'editor_elements' => array(
                 'label'      => array(
                     'label' => 'Field Label',
@@ -30,10 +32,19 @@ class StripeCardElementComponent extends BaseComponent
                     'label' => 'Verify Zip/Postal Code',
                     'type'  => 'switch'
                 ),
+                'checkout_display_style' => array(
+                    'label' => 'Checkout display style',
+                    'type' => 'checkout_display_options'
+                )
             ),
             'field_options'   => array(
                 'label'      => '',
-                'verify_zip' => 'no'
+                'verify_zip' => 'no',
+                'checkout_display_style' => array(
+                    'style' => 'stripe_checkout',
+                    'require_billing_info' => 'no',
+                    'require_shipping_info' => 'no'
+                )
             )
         );
     }
@@ -45,11 +56,27 @@ class StripeCardElementComponent extends BaseComponent
             return;
         }
 
-        wp_enqueue_script('stripe', 'https://js.stripe.com/v3/', array('jquery'), '3.0', true);
+        $checkOutStyle = ArrayHelper::get($fieldOptions, 'checkout_display_style.style', 'stripe_checkout');
+        if($checkOutStyle == 'stripe_checkout') {
+            wp_enqueue_script('stripe_checkout', 'https://checkout.stripe.com/checkout.js', array('jquery'), '3.0', true);
+            $atrributes = array(
+                'data-checkout_style' => $checkOutStyle,
+                'class' => 'wpf_stripe_card_element',
+                'data-verify_zip' => ArrayHelper::get($fieldOptions, 'verify_zip'),
+                'data-require_billing_info' => ArrayHelper::get($fieldOptions,'checkout_display_style.require_billing_info'),
+                'data-require_shipping_info' => ArrayHelper::get($fieldOptions,'checkout_display_style.require_shipping_info')
+            );
+            echo '<div style="display:none !important; visibility: hidden !important;" '.$this->builtAttributes($atrributes).' class="wpf_stripe_checkout"></div>';
+            return;
+        } else {
+            wp_enqueue_script('stripe_elements', 'https://js.stripe.com/v3/', array('jquery'), '3.0', true);
+        }
+
         $inputClass = $this->elementInputClass($element);
         $inputId = 'wpf_input_' . $formId . '_' . $this->elementName;
         $label = ArrayHelper::get($fieldOptions, 'label');
         $attributes = array(
+            'data-checkout_style' => $checkOutStyle,
             'name'       => $element['id'],
             'class'      => 'wpf_stripe_card_element ' . $inputClass,
             'data-verify_zip' => ArrayHelper::get($fieldOptions, 'verify_zip'),
@@ -63,7 +90,7 @@ class StripeCardElementComponent extends BaseComponent
                 </label>
             <?php endif; ?>
             <div <?php echo $this->builtAttributes($attributes); ?>></div>
-            <div id="card-errors" class="wpf_card-errors" role="alert"></div>
+            <div class="wpf_card-errors" role="alert"></div>
         </div>
         <?php
     }

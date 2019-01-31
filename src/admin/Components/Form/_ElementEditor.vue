@@ -62,6 +62,9 @@
                         </el-select>
                     </el-form-item>
                 </template>
+                <template v-else-if="item.type == 'checkout_display_options'">
+                    <checkout-display-option :item="item" :item_name="itemName" :checkout_settings="element.field_options[itemName]"></checkout-display-option>
+                </template>
                 <template v-else>
 
                 </template>
@@ -82,13 +85,15 @@
     import KeyPairOptions from './_key_pair_options';
     import PaymentOptionsSettings from './_PaymentOptions'
     import ItemSelector from './_ProductSelector';
+    import CheckoutDisplayOption from './_StripeCheckoutSettings';
 
     export default {
         name: 'elementEditor',
         components: {
             KeyPairOptions,
             PaymentOptionsSettings,
-            ItemSelector
+            ItemSelector,
+            CheckoutDisplayOption
         },
         props: ['element', 'all_elements'],
         comments: {

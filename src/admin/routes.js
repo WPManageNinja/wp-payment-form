@@ -20,6 +20,16 @@ export const routes = [
                 component: AllForms
             },
             {
+                path: 'entries',
+                name: 'entries',
+                component: Entries
+            },
+            {
+                path: 'entries/:entry_id/view',
+                name: 'entry',
+                component: Entry
+            },
+            {
                 path: '/stats',
                 name: 'stats',
                 component: DashBoardStats
@@ -61,17 +71,6 @@ export const routes = [
                 path: 'email_settings',
                 name: 'email_settings',
                 component: EditSingleForm
-            },
-            {
-                path: 'entries',
-                name: 'entries',
-                component: Entries
-            },
-            {
-                path: 'entries/:entry_id',
-                name: 'entry',
-                props: true,
-                component: Entry
             }
         ]
     }

@@ -35,7 +35,16 @@ class Transaction
 
     public function getTransactions($submissionId)
     {
-        return $this->db->get_results("SELECT * FROM {$this->model} WHERE submission_id = {$submissionId}");
+        $transactions = wpPayformDB()->table('wpf_order_transactions')
+                            ->where('submission_id', $submissionId)
+                            ->get();
+
+        return apply_filters('wpf_form_transactions', $transactions, $submissionId);
+    }
+
+    public function getTransaction($transactionId)
+    {
+        return wpPayformDB()->table('wpf_order_transactions')->where('id', $transactionId)->first();
     }
 
     public function update($transactionId, $data)

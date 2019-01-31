@@ -68,6 +68,7 @@ class WPPayForm
         // Ajax Handler
         new \WPPayForm\Classes\AdminAjaxHandler();
         new \WPPayForm\Classes\SubmissionView();
+
     }
 
     public function commonActions()
@@ -83,10 +84,13 @@ class WPPayForm
             $builder = new \WPPayForm\Classes\Builder\Render();
             return $builder->render($args['id']);
         });
-
         // Form Submission Handler
         $submissionHandler = new \WPPayForm\Classes\SubmissionHandler();
         $submissionHandler->registerActions();
+
+        // Stripe Paument Method Init Here
+        $stripe = new \WPPayForm\Classes\PaymentMethods\Stripe\Stripe();
+        $stripe->registerHooks();
 
         // Handle Extorior Pages
         add_action('init', function () {
@@ -111,7 +115,6 @@ class WPPayForm
         new \WPPayForm\Classes\FormComponents\ItemQuantityComponent();
         new \WPPayForm\Classes\FormComponents\DateComponent();
         new \WPPayForm\Classes\FormComponents\CustomAmountComponent();
-        new \WPPayForm\Classes\FormComponents\StripeCardElementComponent();
     }
 
     public function loadDependecies()

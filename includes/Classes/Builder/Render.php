@@ -54,7 +54,7 @@ class Render
         ?>
         <?php do_action('wpf_form_render_before_submit_button', $form); ?>
         <br />
-        <button>Pay Money <span class="wpf_calc_payment_total"></span></button>
+        <button id="stripe_form_submit_<?php echo $form->ID; ?>">Pay Money <span class="wpf_calc_payment_total"></span></button>
         <?php do_action('wpf_form_render_after_submit_button', $form); ?>
         </form>
         <div style="display: none" class="wpf_form_notices wpf_form_errors"></div>

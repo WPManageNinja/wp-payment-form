@@ -1,5 +1,7 @@
 import formatMoney from 'accounting-js/lib/formatMoney.js'
 import StripeElementHandler from './StripeElementHandler';
+import StripeCheckoutHandler from './StripeCheckoutHandler';
+
 var wpPayformApp = {};
 (function( $ ) {
     wpPayformApp = {
@@ -23,14 +25,37 @@ var wpPayformApp = {};
             form.find('.wpf_payment_item, .wpf_item_qty').on('change', () => {
                 this.calculatePayments(form);
             });
-            let elementHandler = StripeElementHandler;
-            elementHandler.init({
-                form: form,
-                element_id: 'wpf_input_17_stripe_card_element',
-                style: false
-            }, function () {
-                that.submitForm(form);
-            });
+
+            let $cardElementDiv = $('.wpf_stripe_card_element');
+            let cardEleementStyle = $cardElementDiv.data('checkout_style');
+
+            if(cardEleementStyle == 'embeded_form' || cardEleementStyle == 'overlay_form') {
+                let elementHandler = StripeElementHandler;
+                elementHandler.init({
+                    form: form,
+                    element_id: 'wpf_input_17_stripe_card_element',
+                    style: false
+                }, function () {
+                    that.submitForm(form);
+                });
+            } else if(cardEleementStyle == 'stripe_checkout') {
+                let checkoutSettings = {
+                    form: form,
+                    billing: $cardElementDiv.data('require_billing_info') == 'yes',
+                    shipping: $cardElementDiv.data('require_shipping_info') == 'yes',
+                    verify_zip: $cardElementDiv.data('verify_zip') == 'yes',
+                    allowRememberMe: $cardElementDiv.data('allow_remember_me') == 'yes'
+                }
+                StripeCheckoutHandler.init(checkoutSettings, function () {
+                    that.submitForm(form);
+                });
+            } else {
+                // No Card Found So, It's normal Form without payment processing
+                form.on('submit', function (e) {
+                    e.preventDefault();
+                    that.submitForm(form);
+                })
+            }
         },
         submitForm(form) {
             form.parent().find('.wpf_form_notices').hide();

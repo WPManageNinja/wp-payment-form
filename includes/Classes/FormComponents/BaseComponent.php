@@ -50,10 +50,17 @@ abstract class BaseComponent
             'placeholder' => ArrayHelper::get($fieldOptions, 'placeholder'),
             'value' => ArrayHelper::get($fieldOptions, 'default_value'),
             'type' => ArrayHelper::get($element, 'type', 'text'),
-            'min' => ArrayHelper::get($fieldOptions, 'min_value'),
-            'max' => ArrayHelper::get($fieldOptions, 'max_value'),
             'class' => $inputClass
         );
+
+        if(isset($fieldOptions['min_value'])) {
+            $attributes['min'] = $fieldOptions['min_value'];
+        }
+
+        if(isset($fieldOptions['min_value'])) {
+            $attributes['max'] = $fieldOptions['max_value'];
+        }
+
         if (ArrayHelper::get($fieldOptions, 'required') == 'yes') {
             $attributes['required'] = true;
         }
@@ -270,7 +277,11 @@ abstract class BaseComponent
 
     public function elementInputClass($element)
     {
-        return apply_filters('wppayfrom_element_input_class', 'wpf_form_control', $element);
+        $extraClasses = '';
+        if(isset($element['extra_input_class'])) {
+            $extraClasses = ' '.$element['extra_input_class'];
+        }
+        return apply_filters('wppayfrom_element_input_class', 'wpf_form_control'.$extraClasses, $element);
     }
 
     public function parseText($text, $formId)

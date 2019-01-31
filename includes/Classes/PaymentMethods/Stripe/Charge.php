@@ -1,5 +1,5 @@
 <?php
-namespace WPPayForm\Classes\StripePayments;
+namespace WPPayForm\Classes\PaymentMethods\Stripe;
 use WPPayForm\Classes\GeneralSettings;
 
 if (!defined('ABSPATH')) {

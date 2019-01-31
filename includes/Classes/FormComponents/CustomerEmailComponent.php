@@ -48,6 +48,7 @@ class CustomerEmailComponent extends BaseComponent
     public function render($element, $formId, $elements)
     {
         $element['type'] = 'email';
+        $element['extra_input_class'] = 'wpf_customer_email';
         $this->renderNormalInput($element, $formId);
     }
 }

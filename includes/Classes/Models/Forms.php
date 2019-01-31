@@ -46,6 +46,14 @@ class Forms
         );
     }
 
+    public static function getAllAvailableForms()
+    {
+        return wpPayformDB()->table('posts')
+            ->select(array('ID', 'post_title'))
+            ->where('post_type', 'wp_payform')
+            ->get();
+    }
+
     public static function create($data)
     {
         $data['post_type'] = 'wp_payform';
@@ -57,36 +65,59 @@ class Forms
     public static function getForm($formId)
     {
         $form = get_post($formId, 'OBJECT');
-        if(!$form && $form->post_type != 'wp_payform') {
+        if (!$form && $form->post_type != 'wp_payform') {
             return false;
         }
         $form->preview_url = site_url('?wp_paymentform_preview=' . $form->ID);
         return $form;
     }
 
-    public static function getPaymentSettings( $formId )
+    public static function getFormInputLabels($formId)
+    {
+        $elements = get_post_meta($formId, '_wp_paymentform_builder_settings', true);
+        if (!$elements) {
+            return (object) array();
+        }
+        $formLabels = array();
+        foreach ($elements as $element) {
+            if($element['group'] == 'input') {
+                $elementId = ArrayHelper::get($element, 'id');
+                if(!$label = ArrayHelper::get($element, 'field_options.admin_label')) {
+                    $label = ArrayHelper::get($element, 'field_options.label');
+                }
+                if(!$label) {
+                    $label = $elementId;
+                }
+                $formLabels[$elementId] = $label;
+            }
+        }
+        return (object) $formLabels;
+    }
+
+    public static function getPaymentSettings($formId)
     {
         $paymentSettings = get_post_meta($formId, '_wp_paymentform_payment_settings', true);
-        if(!$paymentSettings) {
+        if (!$paymentSettings) {
             $paymentSettings = array();
         }
         $defaultSettings = array(
-            'payment_type' => 'one_time',
-            'min_amount' => '',
-            'default_amount' => '',
-            'currency_setting' => 'global',
+            'payment_type'        => 'one_time',
+            'min_amount'          => '',
+            'default_amount'      => '',
+            'currency_setting'    => 'global',
             'custom_amount_label' => __('Choose Your Amount', 'wppayform'),
-            'payment_amount' => '10.00',
-            'currency' => 'USD',
-            'locale' => 'en'
+            'payment_amount'      => '10.00',
+            'currency'            => 'USD',
+            'locale'              => 'en'
         );
 
         return wp_parse_args($paymentSettings, $defaultSettings);
     }
 
-    public static function getBuilderSettings($formId) {
+    public static function getBuilderSettings($formId)
+    {
         $builderSettings = get_post_meta($formId, '_wp_paymentform_builder_settings', true);
-        if(!$builderSettings) {
+        if (!$builderSettings) {
             $builderSettings = array();
         }
         $defaultSettings = array();
@@ -96,7 +127,7 @@ class Forms
         $parsedElements = array();
 
         foreach ($elements as $elementIndex => $element) {
-            if( !empty($allElements[$element['type']]['editor_elements']) ) {
+            if (!empty($allElements[$element['type']]['editor_elements'])) {
                 $element['editor_elements'] = $allElements[$element['type']]['editor_elements'];
             }
             $parsedElements[$elementIndex] = $element;

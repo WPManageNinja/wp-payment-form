@@ -22,6 +22,10 @@
                         title: 'All Forms'
                     },
                     {
+                        route: 'entries',
+                        title: 'Entries & Payments'
+                    },
+                    {
                         route: 'stats',
                         title: 'Stats'
                     },

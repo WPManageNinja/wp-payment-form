@@ -33,16 +33,37 @@ class Submission
         return false;
     }
 
-    public function getSubmissions($formId, $perPage, $skip)
+    public function getSubmissions($formId = false, $wheres = array(), $perPage, $skip)
     {
-        $results = $this->db->get_results( "SELECT * FROM {$this->model} WHERE form_id = {$formId} LIMIT {$perPage} OFFSET {$skip}", OBJECT );
+        $resultQuery = wpPayformDB()->table('wpf_submissions')
+                    ->select(array('wpf_submissions.*', 'posts.post_title'))
+                    ->join('posts', 'posts.ID', '=', 'wpf_submissions.form_id')
+                    ->orderBy('wpf_submissions.id', 'DESC')
+                    ->limit($perPage)
+                    ->offset($skip);
+
+        if($formId) {
+            $resultQuery->where('wpf_submissions.form_id', $formId);
+        }
+
+        foreach ($wheres as $whereKey => $where) {
+            $resultQuery->where('wpf_submissions.'.$whereKey, $where);
+        }
+
+        $totalItems = $resultQuery->count();
+
+        $results = $resultQuery->get();
+
         $formattedResults = array();
         foreach ($results as $result) {
             $result->form_data_raw = maybe_unserialize($result->form_data_raw);
             $result->form_data_formatted = maybe_unserialize($result->form_data_formatted);
             $formattedResults[] = $result;
         }
-        return $formattedResults;
+        return (object) array(
+            'items' => $results,
+            'total' => $totalItems
+        );
     }
 
     public function getSubmission($submissionId, $with = array())
@@ -62,14 +83,59 @@ class Submission
         return $result;
     }
 
-    public function getTotalCount($formId)
+    public function getTotalCount($formId = false)
     {
-        return $this->db->get_var( "SELECT COUNT(*) FROM {$this->model} WHERE form_id = {$formId}" );
+        if($formId) {
+            return $this->db->get_var( "SELECT COUNT(*) FROM {$this->model} WHERE form_id = {$formId}" );
+        }
+
+        return $this->db->get_var( "SELECT COUNT(*) FROM {$this->model}" );
+
     }
 
     public function update($submissionId, $data)
     {
         $data['updated_at'] = date('Y-m-d H:i:s');
         return $this->db->update($this->model, $data, array('id' => $submissionId));
+    }
+
+    public function getParsedSubmission($submission)
+    {
+        $elements = get_post_meta($submission->form_id, '_wp_paymentform_builder_settings', true);
+        if (!$elements) {
+            return array();
+        }
+        $parsedSubmission = array();
+
+        $inputValues = $submission->form_data_formatted;
+
+        foreach ($elements as $element) {
+            if($element['group'] == 'input') {
+                $elementId = ArrayHelper::get($element, 'id');
+                $elementValue = apply_filters('wpf_rendering_value_'.$element['type'], ArrayHelper::get($inputValues, $elementId));
+                if(is_array($elementValue)) {
+                    $elementValue = implode(', ', $elementValue);
+                }
+                $parsedSubmission[$elementId] = array(
+                    'label' => $this->getLabel($element),
+                    'value' => $elementValue,
+                    'type' => $element['type']
+                );
+            }
+        }
+
+        return apply_filters('wpf_parse_submission', $parsedSubmission, $submission);
+    }
+
+    private function getLabel($element)
+    {
+        $elementId = ArrayHelper::get($element, 'id');
+        if(!$label = ArrayHelper::get($element, 'field_options.admin_label')) {
+            $label = ArrayHelper::get($element, 'field_options.label');
+        }
+        if(!$label) {
+            $label = $elementId;
+        }
+        return $label;
     }
 }

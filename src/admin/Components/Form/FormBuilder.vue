@@ -120,6 +120,16 @@
                     });
                     return;
                 }
+
+                // check if it's single only
+                if(component.single_only && this.alreadyExistElement(component.type)) {
+                    this.$message({
+                        message: 'Element already exists on your form. You can not add more of this item',
+                        type: 'error'
+                    });
+                    return;
+                }
+
                 let nonMutableElement = JSON.parse(JSON.stringify(component));
                 // Find an unique name for this elament
                 nonMutableElement.id = this.getComponentUID(componentName);
@@ -129,6 +139,16 @@
                 this.builder_elements.push(nonMutableElement);
                 this.current_editing = nonMutableElement.id;
                 this.adding_component = '';
+            },
+
+            alreadyExistElement(type) {
+                let status = false;
+                each(this.builder_elements, (element) => {
+                    if(element.type == type) {
+                        status = true;
+                    }
+                });
+                return status;
             },
             getComponentUID(componentName) {
                 let counter = 1;

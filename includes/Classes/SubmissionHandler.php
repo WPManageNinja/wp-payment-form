@@ -6,7 +6,6 @@ use WPPayForm\Classes\Models\Forms;
 use WPPayForm\Classes\Models\OrderItem;
 use WPPayForm\Classes\Models\Submission;
 use WPPayForm\Classes\Models\Transaction;
-use WPPayForm\Classes\StripePayments\Charge;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -76,7 +75,9 @@ class SubmissionHandler
                 }
             }
         }
+
         $errors = apply_filters('wpf_submission_form_validation', $errors, $formId, $formattedElements);
+
         if ($errors) {
             wp_send_json_error(array(
                 'message' => __('Form Validation failed', 'wppayform'),
@@ -101,7 +102,6 @@ class SubmissionHandler
         foreach ($paymentItems as $paymentItem) {
             $paymentTotal += $paymentItem['line_total'];
         }
-        $currency = 'usd';
 
         $currentUserId = get_current_user_id();
         if(!$customerName && $currentUserId) {
@@ -114,16 +114,25 @@ class SubmissionHandler
             $customerEmail = $currentUser->user_email;
         }
 
+        // We have to make these dynamic
+        $paymentMode = 'test';
+        $paymentMethod = 'stripe';
+        $currency = 'usd';
+        
+        $inputItems = apply_filters('wpf_form_data_formatted_input', $inputItems, $form_data, $formId);
+
         $submission = array(
             'form_id' => $formId,
             'user_id' => $currentUserId,
             'customer_name' => $customerName,
             'customer_email' => $customerEmail,
             'form_data_raw' => maybe_serialize($form_data),
-            'form_data_formatted' => maybe_serialize($inputItems),
+            'form_data_formatted' => maybe_serialize(wp_unslash($inputItems)),
             'currency' => $currency,
             'payment_status' => 'pending',
             'payment_total' => $paymentTotal,
+            'payment_method' => $paymentMethod,
+            'payment_mode' => $paymentMode,
             'status' => 'unread',
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s')
@@ -133,92 +142,32 @@ class SubmissionHandler
         $submissionModel = new Submission();
         $submissionId = $submissionModel->create($submission);
 
-        // Insert Payment Items
-        $itemModel = new OrderItem();
-        foreach ($paymentItems as $payItem) {
-            $payItem['submission_id'] = $submissionId;
-            $payItem['form_id'] = $formId;
-            $itemModel->create($payItem);
-        }
-
-        // Insert Transaction Item Now
-        $transaction = array(
-            'form_id' => $formId,
-            'user_id' => $currentUserId,
-            'submission_id' => $submissionId,
-            'payment_method' => 'stripe',
-            'charge_id' => '',
-            'payment_total' => $paymentTotal,
-            'status' => 'pending',
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s')
-        );
-
-        $transactionModel = new Transaction();
-        $transactionId = $transactionModel->create($transaction);
-
-        // Now We can charge the customer
-       // We have Payment Total $paymentTotal
-        // Stripe Token Need Here
-        // We should make this independed so later we can add more payment methos
-        if(isset($form_data['stripeToken'])) {
-            $token = $form_data['stripeToken'];
-            $paymentArgs = array(
-                'currency' => 'USD',
-                'amount' => $paymentTotal,
-                'source' => $token,
-                'description' => $form->post_title,
-                'statement_descriptor' => $form->post_title
-            );
-            $metadata = array(
+        if($paymentItems) {
+            // Insert Payment Items
+            $itemModel = new OrderItem();
+            foreach ($paymentItems as $payItem) {
+                $payItem['submission_id'] = $submissionId;
+                $payItem['form_id'] = $formId;
+                $itemModel->create($payItem);
+            }
+            // Insert Transaction Item Now
+            $transaction = array(
                 'form_id' => $formId,
                 'user_id' => $currentUserId,
                 'submission_id' => $submissionId,
-                'wppayform_tid' => $transactionId,
-                'wp_plugin_slug' => 'wppayform'
+                'payment_method' => $paymentMethod,
+                'payment_mode' => $paymentMode,
+                'charge_id' => '',
+                'payment_total' => $paymentTotal,
+                'currency' => $currency,
+                'status' => 'pending',
+                'created_at' => date('Y-m-d H:i:s'),
+                'updated_at' => date('Y-m-d H:i:s')
             );
-            if($customerEmail) {
-                $paymentArgs['receipt_email'] = $customerEmail;
-                $metadata['customer_email'] = $customerEmail;
-            }
-            if($customerName) {
-                $metadata['customer_name'] = $customerName;
-            }
-            $paymentArgs['metadata'] = $metadata;
-            $charge = Charge::charge($paymentArgs);
 
-            $paymentStatus = true;
-
-            $message = 'Unknown error';
-            if(is_wp_error($charge)) {
-                $paymentStatus = false;
-                $errorCode = $charge->get_error_code();
-                $message = $charge->get_error_message($errorCode);
-            } else if(!$charge) {
-                $paymentStatus = false;
-            }
-
-            if(!$paymentStatus) {
-                do_action('wpf_stripe_charge_failed', $submissionId, $charge, $paymentArgs);
-                $transactionModel->update($transactionId, array(
-                    'status' => 'failed'
-                ));
-                $submissionModel->update($submissionId, array(
-                    'payment_status' => 'failed'
-                ));
-                wp_send_json_error(array(
-                    'message' => $message,
-                    'payment_error' => true
-                ), 423);
-            }
-
-            // We are good here. The charge is successfull and We are ready to go.
-            $transactionModel->update($transactionId, array(
-                'status' => 'paid'
-            ));
-            $submissionModel->update($submissionId, array(
-                'payment_status' => 'paid'
-            ));
+            $transactionModel = new Transaction();
+            $transactionId = $transactionModel->create($transaction);
+            do_action('wpf_form_submission_make_payment_'.$paymentMethod, $transactionId, $submissionId, $form_data, $form);
         }
 
         wp_send_json_success(array(
@@ -227,7 +176,6 @@ class SubmissionHandler
             'submission' => (new Submission())->getSubmission($submissionId, array('transactions', 'order_items'))
         ), 200);
     }
-
 
     private function getItemQuantity($quantityElements, $tragetItemId, $formData)
     {
@@ -244,6 +192,9 @@ class SubmissionHandler
 
     private function getPaymentLine($payment, $paymentId, $quantity, $formData)
     {
+        if(!isset($formData[$paymentId])) {
+            return array();
+        }
         $label = ArrayHelper::get($payment, 'options.label');
         if(!$label) {
             $label = $paymentId;

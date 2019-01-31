@@ -52,11 +52,14 @@ let cardElementHandler = {
         this.card = card;
         this.form.on('submit', function (event) {
             event.preventDefault();
+            if(!that.form.data('payment_total')) {
+                that.callback();
+                return;
+            }
             stripe.createToken(card).then(function (result) {
                 if (result.error) {
                     // Inform the user if there was an error.
-                    var errorElement = document.getElementById('card-errors');
-                    errorElement.textContent = result.error.message;
+                    that.form.find('.wpf_card-errors').html(result.error.message);
                 } else {
                     // Send the token to your server.
                     that.stripeTokenHandler(result.token);
@@ -76,6 +79,5 @@ let cardElementHandler = {
         this.callback();
     }
 }
-
-
 export default cardElementHandler;
+

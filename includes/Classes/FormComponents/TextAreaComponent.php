@@ -2,6 +2,8 @@
 
 namespace WPPayForm\Classes\FormComponents;
 
+use WPPayForm\Classes\ArrayHelper;
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -43,8 +45,36 @@ class TextAreaComponent extends BaseComponent
 
     public function render($element, $formId, $elements)
     {
-        echo "<pre>Called";
-        print_r($element);
+        $fieldOptions = ArrayHelper::get($element, 'field_options', false);
+        if (!$fieldOptions) {
+            return;
+        }
+        $controlClass = $this->elementControlClass($element);
+        $inputClass = $this->elementInputClass($element);
+        $inputId = 'wpf_input_' . $formId . '_' . $this->elementName;
+        $label = ArrayHelper::get($fieldOptions, 'label');
+
+        $attributes = array(
+            'data-required' => ArrayHelper::get($fieldOptions, 'required'),
+            'name' => $element['id'],
+            'placeholder' => ArrayHelper::get($fieldOptions, 'placeholder'),
+            'class' => $inputClass
+        );
+
+        if (ArrayHelper::get($fieldOptions, 'required') == 'yes') {
+            $attributes['required'] = true;
+        }
+
+        ?>
+        <div id="wpf_<?php echo $this->elementName; ?>" data-element_type="<?php echo $this->elementName; ?>"
+             class="<?php echo $controlClass; ?>">
+            <?php if ($label): ?>
+                <label for="<?php echo $inputId; ?>"><?php echo $label; ?></label>
+            <?php endif; ?>
+
+            <textarea <?php echo $this->builtAttributes($attributes); ?>><?php echo ArrayHelper::get($fieldOptions, 'default_value') ?></textarea>
+        </div>
+        <?php
     }
 
 }

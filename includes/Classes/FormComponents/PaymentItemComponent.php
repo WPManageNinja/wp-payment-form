@@ -195,16 +195,7 @@ class PaymentItemComponent extends BaseComponent
         $label = ArrayHelper::get($fieldOptions, 'label');
         $defaultValue = ArrayHelper::get($fieldOptions, 'default_value');
         $defaultValues = explode(',', $defaultValue);
-        $options = ArrayHelper::get($fieldOptions, 'options', array());
-        $inputAttributes = array(
-            'data-required' => ArrayHelper::get($fieldOptions, 'required'),
-            'name'          => $element['id'],
-            'class'         => $inputClass,
-            'id'            => $inputId
-        );
-        if (ArrayHelper::get($fieldOptions, 'required') == 'yes') {
-            $inputAttributes['required'] = 'true';
-        }
+
         $controlAttributes = array(
             'id'                => 'wpf_' . $this->elementName,
             'data-element_type' => $this->elementName,
@@ -215,7 +206,17 @@ class PaymentItemComponent extends BaseComponent
             <?php if ($label): ?>
                 <label for="<?php echo $inputId; ?>"><?php echo $label; ?></label>
             <?php endif; ?>
-            <div class="wpf_multi_form_controls">
+
+            <?php
+                $itemParentAtrributes = array(
+                    'class' => 'wpf_multi_form_controls',
+                    'data-item_required' => ArrayHelper::get($fieldOptions, 'required'),
+                    'data-item_selector' => 'checkbox',
+                    'data-has_multiple_input' => 'yes'
+                );
+            ?>
+
+            <div <?php echo $this->builtAttributes($itemParentAtrributes); ?>>
                 <?php foreach ($prices as $index => $option): ?>
                     <?php
                     $optionId = $element['id'] . '_' . $index . '_' . $formId;

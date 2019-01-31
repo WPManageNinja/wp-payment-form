@@ -44,3 +44,10 @@ if (!function_exists('ninja_table_admin_role')) {
         return false;
     }
 }
+
+function wpPayformDB() {
+    if (! function_exists('wpFluent')) {
+        include WPPAYFORM_DIR.'includes/libs/wp-fluent/wp-fluent.php';
+    }
+    return wpFluent();
+}

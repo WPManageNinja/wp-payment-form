@@ -61,6 +61,8 @@ class Activator
 				payment_status varchar(255),
 				submission_hash varchar (255),
 				payment_total int(11),
+				payment_mode varchar(255),
+				payment_method varchar(255),
 				status varchar(255),
 				created_at timestamp NULL,
 				updated_at timestamp NULL
@@ -79,6 +81,7 @@ class Activator
 				form_id int(11) NOT NULL,
 				submission_id int(11) NOT NULL,
 				type varchar(255) DEFAULT 'single',
+				billing_interval varchar(255),
 				item_name varchar(255),
 				quantity int(11) DEFAULT 1,
 				item_price int(11),
@@ -100,11 +103,16 @@ class Activator
 				form_id int(11) NOT NULL,
 				user_id int(11) DEFAULT NULL,
 				submission_id int(11) NOT NULL,
+				transaction_type varchar(255) DEFAULT 'one_time',
 				payment_method varchar(255) DEFAULT 'stripe',
+				card_last_4 int(4),
+				card_brand varchar(255),
 				charge_id varchar(255),
 				payment_total int(11) DEFAULT 1,
 				status varchar(255),
+				currency varchar(255),
 				payment_mode varchar(255),
+				payment_note longtext,
 				created_at timestamp NULL,
 				updated_at timestamp NULL
 			) $charset_collate;";
