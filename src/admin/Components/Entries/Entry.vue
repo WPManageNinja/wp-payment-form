@@ -1,6 +1,5 @@
 <template>
     <div class="wpf_payment_view">
-
         <div class="payment_header">
             <div v-if="parseInt(submission.order_items.length)" class="payment_head_top">
                 <div class="payment_header_left">
