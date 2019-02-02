@@ -29,6 +29,8 @@ class Stripe
 
     public function makeFormPayment($transactionId, $submissionId, $form_data, $form)
     {
+        // @todo: We have to make it dynamic
+        $paymentMode = 'test';
         $transactionModel = new Transaction();
         $transaction = $transactionModel->getTransaction($transactionId);
         $token = $form_data['stripeToken'];
@@ -72,14 +74,19 @@ class Stripe
             $paymentStatus = false;
         }
 
+
         if (!$paymentStatus) {
             do_action('wpf_stripe_charge_failed', $transactionId, $charge, $paymentArgs);
             do_action('wpf_form_payment_failed', $transactionId, $charge, $paymentArgs);
             $transactionModel->update($transactionId, array(
-                'status' => 'failed'
+                'status' => 'failed',
+                'payment_method' => 'stripe',
+                'payment_mode' => $paymentMode,
             ));
             $submissionModel->update($submissionId, array(
-                'payment_status' => 'failed'
+                'payment_status' => 'failed',
+                'payment_method' => 'stripe',
+                'payment_mode' => $paymentMode,
             ));
             wp_send_json_error(array(
                 'message'       => $message,
@@ -91,10 +98,14 @@ class Stripe
             'status'      => 'paid',
             'charge_id'   => $charge->id,
             'card_last_4' => $charge->source->last4,
-            'card_brand'  => $charge->source->brand
+            'card_brand'  => $charge->source->brand,
+            'payment_method' => 'stripe',
+            'payment_mode' => $paymentMode,
         ));
         $submissionModel->update($submissionId, array(
-            'payment_status' => 'paid'
+            'payment_status' => 'paid',
+            'payment_method' => 'stripe',
+            'payment_mode' => $paymentMode,
         ));
     }
 

@@ -29,16 +29,24 @@
     -webkit-transition: box-shadow 150ms ease;
     transition: box-shadow 150ms ease;
   }
-
   .StripeElement--focus {
     box-shadow: 0 1px 3px 0 #cfd7df;
   }
-
   .StripeElement--invalid {
     border-color: #fa755a;
   }
-
   .StripeElement--webkit-autofill {
     background-color: #fefde5 !important;
+  }
+}
+
+.wpf_form_wrapper form {
+  &.wpf_submitting_form {
+    span.wpf_txt_normal {
+      display: none !important;
+    }
+    span.wpf_txt_loading {
+      display: block !important;
+    }
   }
 }

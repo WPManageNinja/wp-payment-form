@@ -62,6 +62,22 @@ class Forms
         return $id;
     }
 
+    public static function getButtonSettings($formId)
+    {
+        $settings = get_post_meta($formId, '_wpf_submit_button_settings', true);
+        if (!$settings) {
+            $settings = array();
+        }
+        $buttonDefault = array(
+            'button_text'     => __('Submit and Pay', 'wppayform'),
+            'processing_text' => __('Please Wait…', 'wppayform'),
+            'button_style'    => 'wpf_default_btn',
+            'css_class'       => ''
+        );
+
+        return wp_parse_args($settings, $buttonDefault);
+    }
+
     public static function getForm($formId)
     {
         $form = get_post($formId, 'OBJECT');
@@ -76,42 +92,121 @@ class Forms
     {
         $elements = get_post_meta($formId, '_wp_paymentform_builder_settings', true);
         if (!$elements) {
-            return (object) array();
+            return (object)array();
         }
         $formLabels = array();
         foreach ($elements as $element) {
-            if($element['group'] == 'input') {
+            if ($element['group'] == 'input') {
                 $elementId = ArrayHelper::get($element, 'id');
-                if(!$label = ArrayHelper::get($element, 'field_options.admin_label')) {
+                if (!$label = ArrayHelper::get($element, 'field_options.admin_label')) {
                     $label = ArrayHelper::get($element, 'field_options.label');
                 }
-                if(!$label) {
+                if (!$label) {
                     $label = $elementId;
                 }
                 $formLabels[$elementId] = $label;
             }
         }
-        return (object) $formLabels;
+        return (object)$formLabels;
     }
 
-    public static function getPaymentSettings($formId)
+    public static function getConfirmationSettings($formId)
     {
-        $paymentSettings = get_post_meta($formId, '_wp_paymentform_payment_settings', true);
-        if (!$paymentSettings) {
-            $paymentSettings = array();
+        $confirmationSettings = get_post_meta($formId, '_wp_paymentform_confirmation_settings', true);
+        if (!$confirmationSettings) {
+            $confirmationSettings = array();
         }
         $defaultSettings = array(
-            'payment_type'        => 'one_time',
-            'min_amount'          => '',
-            'default_amount'      => '',
-            'currency_setting'    => 'global',
-            'custom_amount_label' => __('Choose Your Amount', 'wppayform'),
-            'payment_amount'      => '10.00',
-            'currency'            => 'USD',
-            'locale'              => 'en'
+            'confirmation_type'    => 'custom',
+            'redirectTo'           => 'samePage',
+            'messageToShow'        => __('Form successfully submitted', 'wppayform'),
+            'samePageFormBehavior' => 'hide_form',
+        );
+        return wp_parse_args($confirmationSettings, $defaultSettings);
+    }
+
+    public static function getCurrencySettings($formId)
+    {
+        $currencySettings = get_post_meta($formId, '_wp_paymentform_currency_settings', true);
+        if (!$currencySettings) {
+            $currencySettings = array();
+        }
+        $defaultSettings = array(
+            'settings_type'   => 'global',
+            'currency' => 'USD',
+            'locale'   => 'auto'
+        );
+        return wp_parse_args($currencySettings, $defaultSettings);
+    }
+
+    public static function getCurrencyAndLocale($formId)
+    {
+        $settings = self::getCurrencySettings($formId);
+        $globalSettings = GeneralSettings::getGlobalCurrencySettings($formId);
+        if($settings['settings_type'] == 'global') {
+            $settings = $globalSettings;
+        } else {
+            if(empty($settings['locale'])) {
+                $settings['locale'] = 'auto';
+            }
+            if(empty($settings['currency'])) {
+                $settings['currency'] = 'USD';
+            }
+            $settings['currency_sign_position'] = $globalSettings['currency_sign_position'];
+            $settings['currency_separator'] = $globalSettings['currency_separator'];
+            $settings['decimal_points'] = $globalSettings['decimal_points'];
+        }
+
+
+        $settings['currency_sign'] = GeneralSettings::getCurrencySymbol($settings['currency']);
+        return $settings;
+    }
+
+    public static function getEditorShortCodes($formId)
+    {
+        $builderSettings = get_post_meta($formId, '_wp_paymentform_builder_settings', true);
+        if (!$builderSettings) {
+            return array();
+        }
+        $formattedShortcodes = array(
+            'input'   => array(
+                'title'      => 'Custom Input Items',
+                'shortcodes' => array()
+            ),
+            'payment' => array(
+                'title'      => 'Payment Items',
+                'shortcodes' => array()
+            )
         );
 
-        return wp_parse_args($paymentSettings, $defaultSettings);
+        $hasPayment = false;
+
+        foreach ($builderSettings as $element) {
+            $elementId = ArrayHelper::get($element, 'id');
+            if ($element['group'] == 'input') {
+                $formattedShortcodes['input']['shortcodes']['{input.' . $elementId . '}'] = self::getLabel($element);
+            } elseif ($element['group'] == 'payment') {
+                $formattedShortcodes['payment']['shortcodes']['{payment_item.' . $elementId . '}'] = self::getLabel($element);
+                $hasPayment = true;
+            }
+        }
+
+        $items = array($formattedShortcodes['input'], $formattedShortcodes['payment']);
+
+        $submissionItem = array(
+            'title'      => 'Submission Fields',
+            'shortcodes' => array(
+                '{submission.id}'              => __('Submission ID', 'wppayform'),
+                '{submission.submission_hash}' => __('Submission Hash ID', 'wppayform'),
+                '{submission.customer_name}'   => __('Customer Name', 'wppayform'),
+                '{submission.customer_name}'   => __('Customer Email', 'wppayform'),
+            )
+        );
+        if ($hasPayment) {
+            $submissionItem['shortcodes']['{submission.payment_total}'] = __('Payment Total', 'wppayform');
+        }
+        $items[] = $submissionItem;
+        return $items;
     }
 
     public static function getBuilderSettings($formId)
@@ -134,5 +229,35 @@ class Forms
         }
 
         return $parsedElements;
+    }
+
+    public static function deleteForm($formID)
+    {
+        wp_delete_post($formID, true);
+        wpPayformDB()->table('wpf_submissions')
+            ->where('form_id', $formID)
+            ->delete();
+
+        wpPayformDB()->table('wpf_order_items')
+            ->where('form_id', $formID)
+            ->delete();
+
+        wpPayformDB()->table('wpf_order_transactions')
+            ->where('form_id', $formID)
+            ->delete();
+
+        return true;
+    }
+
+    private static function getLabel($element)
+    {
+        $elementId = ArrayHelper::get($element, 'id');
+        if (!$label = ArrayHelper::get($element, 'field_options.admin_label')) {
+            $label = ArrayHelper::get($element, 'field_options.label');
+        }
+        if (!$label) {
+            $label = $elementId;
+        }
+        return $label;
     }
 }

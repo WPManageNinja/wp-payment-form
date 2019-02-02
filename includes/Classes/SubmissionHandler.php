@@ -114,10 +114,12 @@ class SubmissionHandler
             $customerEmail = $currentUser->user_email;
         }
 
+        $currencySetting = Forms::getCurrencySettings($formId);
+
         // We have to make these dynamic
         $paymentMode = 'test';
         $paymentMethod = 'stripe';
-        $currency = 'usd';
+        $currency = $currencySetting['currency'];
         
         $inputItems = apply_filters('wpf_form_data_formatted_input', $inputItems, $form_data, $formId);
 
@@ -131,8 +133,6 @@ class SubmissionHandler
             'currency' => $currency,
             'payment_status' => 'pending',
             'payment_total' => $paymentTotal,
-            'payment_method' => $paymentMethod,
-            'payment_mode' => $paymentMode,
             'status' => 'unread',
             'created_at' => date('Y-m-d H:i:s'),
             'updated_at' => date('Y-m-d H:i:s')
@@ -155,8 +155,6 @@ class SubmissionHandler
                 'form_id' => $formId,
                 'user_id' => $currentUserId,
                 'submission_id' => $submissionId,
-                'payment_method' => $paymentMethod,
-                'payment_mode' => $paymentMode,
                 'charge_id' => '',
                 'payment_total' => $paymentTotal,
                 'currency' => $currency,
@@ -167,7 +165,10 @@ class SubmissionHandler
 
             $transactionModel = new Transaction();
             $transactionId = $transactionModel->create($transaction);
-            do_action('wpf_form_submission_make_payment_'.$paymentMethod, $transactionId, $submissionId, $form_data, $form);
+
+            if( $paymentMethod ) {
+                do_action('wpf_form_submission_make_payment_'.$paymentMethod, $transactionId, $submissionId, $form_data, $form);
+            }
         }
 
         wp_send_json_success(array(

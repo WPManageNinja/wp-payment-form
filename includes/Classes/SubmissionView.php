@@ -27,6 +27,7 @@ class SubmissionView
         add_action('wp_ajax_wpf_get_submissions', array($this, 'getSubmissions'));
         add_action('wp_ajax_wpf_get_submission', array($this, 'getSubmission'));
         add_action('wp_ajax_wpf_get_available_forms', array($this, 'getAvailableForms'));
+        add_action('wp_ajax_wpf_get_next_prev_submission', array($this, 'getNextPrevSubmission'));
     }
 
     public function getSubmissions()
@@ -48,18 +49,74 @@ class SubmissionView
 
         $submissionModel = new Submission();
         $submissions = $submissionModel->getSubmissions($formId, $wheres, $perPage, $skip);
+
+        $currencySettings = GeneralSettings::getGlobalCurrencySettings($formId);
+
+        foreach ($submissions->items as $submission) {
+            $currencySettings['currency_sign'] = GeneralSettings::getCurrencySymbol($submission->currency);
+            $submission->currencySettings = $currencySettings;
+        }
+
         wp_send_json_success(array(
             'submissions' => $submissions->items,
             'total'       => (int)$submissions->total
         ), 200);
     }
 
-    public function getSubmission()
+    public function getSubmission($submissionId = false)
     {
         $formId = absint($_REQUEST['form_id']);
         $submissionId = absint($_REQUEST['submission_id']);
+
         $submissionModel = new Submission();
         $submission = $submissionModel->getSubmission($submissionId, array('transactions', 'order_items'));
+
+        $currencySetting = GeneralSettings::getGlobalCurrencySettings($formId);
+        $currencySetting['currency_sign'] = GeneralSettings::getCurrencySymbol($submission->currency);
+        $submission->currencySetting = $currencySetting;
+
+        wp_send_json_success(array(
+            'submission'    => $submission,
+            'entry'         => (object) $submissionModel->getParsedSubmission($submission)
+        ), 200);
+    }
+
+    public function getNextPrevSubmission()
+    {
+        $formId = false;
+        if(isset($_REQUEST['form_id'])) {
+            $formId = absint($_REQUEST['form_id']);
+        }
+
+        $currentSubmissionId = absint($_REQUEST['current_submission_id']);
+        $queryType = sanitize_text_field($_REQUEST['type']);
+
+        $whereOperator = '<';
+        $orderBy = 'DESC';
+        // find the next / previous form id
+        if($queryType == 'prev') {
+            $whereOperator = '>';
+            $orderBy = 'ASC';
+        }
+
+        $submissionQuery = wpPayformDB()->table('wpf_submissions')
+                        ->orderBy('id', $orderBy)
+                        ->where('id', $whereOperator, $currentSubmissionId);
+
+        if($formId) {
+            $submissionQuery->where('form_id', $formId);
+        }
+
+        $submission = $submissionQuery->first();
+
+        if(!$submission) {
+            wp_send_json_error(array(
+                'message' => __('Sorry, No Submission found', 'wppayform')
+            ), 423);
+        }
+
+        $submissionModel = new Submission();
+        $submission = $submissionModel->getSubmission($submission->id, array('transactions', 'order_items'));
         wp_send_json_success(array(
             'submission'    => $submission,
             'entry'         => (object) $submissionModel->getParsedSubmission($submission)

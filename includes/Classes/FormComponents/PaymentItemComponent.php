@@ -3,6 +3,7 @@
 namespace WPPayForm\Classes\FormComponents;
 
 use WPPayForm\Classes\ArrayHelper;
+use WPPayForm\Classes\Models\Forms;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -48,6 +49,7 @@ class PaymentItemComponent extends BaseComponent
             'is_system_field' => true,
             'is_payment_field' => true,
             'field_options'   => array(
+                'required' => 'yes',
                 'pricing_details' => array(
                     'one_time_type'       => 'single',
                     'payment_amount'      => '',
@@ -103,6 +105,9 @@ class PaymentItemComponent extends BaseComponent
             return;
         }
 
+        $currenySettings = Forms::getCurrencyAndLocale($formId);
+
+
         $controlAttributes = array(
             'id'                => 'wpf_' . $this->elementName,
             'data-element_type' => $this->elementName,
@@ -143,7 +148,7 @@ class PaymentItemComponent extends BaseComponent
                             }
                             ?>
                             <option <?php echo $this->builtAttributes($optionAttributes); ?>><?php echo esc_attr($price['label']); ?>
-                                (<?php echo esc_html(wpfFomatPrice($price['value'])); ?>)
+                                (<?php echo esc_html(wpfFormattedMoney( floatval( $price['value'] ) * 100, $currenySettings)); ?>)
                             </option>
                         <?php endforeach; ?>
                     </select>
@@ -171,8 +176,7 @@ class PaymentItemComponent extends BaseComponent
                             <label class="form-check-label" for="<?php echo $optionId; ?>">
                                 <span class="wpf_price_option_name" itemprop="description"><?php echo $price['label']; ?></span>
                                 <span class="wpf_price_option_sep">&nbsp;–&nbsp;</span>
-                                <span
-                                    class="wpf_price_option_price"><?php echo wpfFomatPrice($price['value']); ?></span>
+                                <span class="wpf_price_option_price"><?php echo wpfFormattedMoney( floatval($price['value']) * 100, $currenySettings ); ?></span>
                                 <meta itemprop="price" content="<?php echo $price['value']; ?>">
                             </label>
                         </div>
@@ -189,6 +193,7 @@ class PaymentItemComponent extends BaseComponent
         if (!$fieldOptions) {
             return;
         }
+        $currenySettings = Forms::getCurrencyAndLocale($formId);
         $controlClass = $this->elementControlClass($element);
         $inputClass = $this->elementInputClass($element);
         $inputId = 'wpf_input_' . $formId . '_' . $this->elementName;
@@ -238,7 +243,7 @@ class PaymentItemComponent extends BaseComponent
                         <label class="form-check-label" for="<?php echo $optionId; ?>">
                             <span class="wpf_price_option_name" itemprop="description"><?php echo $option['label']; ?></span>
                             <span class="wpf_price_option_sep">&nbsp;–&nbsp;</span>
-                            <span class="wpf_price_option_price"><?php echo wpfFomatPrice($option['value']); ?></span>
+                            <span class="wpf_price_option_price"><?php echo wpfFormattedMoney( floatval( $option['value'] * 100 ), $currenySettings); ?></span>
                             <meta itemprop="price" content="<?php echo $option['value']; ?>" />
                         </label>
                     </div>

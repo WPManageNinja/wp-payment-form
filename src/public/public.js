@@ -1,6 +1,6 @@
-import formatMoney from 'accounting-js/lib/formatMoney.js'
 import StripeElementHandler from './StripeElementHandler';
 import StripeCheckoutHandler from './StripeCheckoutHandler';
+import formatPrice from '../common/formatPrice';
 
 var wpPayformApp = {};
 (function( $ ) {
@@ -15,12 +15,11 @@ var wpPayformApp = {};
                 var form = $( this );
                 wpPayformApp.initForm( form );
                 body.trigger( 'wpPayFormProcessFormElements', [ form ] );
-            } );
+            });
         },
         initForm(form) {
             let that = this;
             this.calculatePayments(form);
-            //let formSettings = window['wp_payform_'+formId];
 
             form.find('.wpf_payment_item, .wpf_item_qty').on('change', () => {
                 this.calculatePayments(form);
@@ -33,7 +32,7 @@ var wpPayformApp = {};
                 let elementHandler = StripeElementHandler;
                 elementHandler.init({
                     form: form,
-                    element_id: 'wpf_input_17_stripe_card_element',
+                    element_id: $cardElementDiv.attr('id'),
                     style: false
                 }, function () {
                     that.submitForm(form);
@@ -53,11 +52,13 @@ var wpPayformApp = {};
                 // No Card Found So, It's normal Form without payment processing
                 form.on('submit', function (e) {
                     e.preventDefault();
+                    form.find('button.wpf_submit_button').attr('disabled', true);
                     that.submitForm(form);
                 })
             }
         },
         submitForm(form) {
+            form.addClass('wpf_submitting_form');
             form.parent().find('.wpf_form_notices').hide();
             let formId = form.data('wpf_form_id');
             $.post(this.general.ajax_url, {
@@ -81,6 +82,8 @@ var wpPayformApp = {};
                     $errorDiv.append('</ul>');
                 })
                 .always(() => {
+                    form.removeClass('wpf_submitting_form');
+                    form.find('button.wpf_submit_button').removeAttr('disabled');
                     form.find('input[name=stripeToken]').remove();
                 })
         },
@@ -116,7 +119,7 @@ var wpPayformApp = {};
                     }
                 }
             });
-
+            let formSettings = window['wp_payform_'+form.data('wpf_form_id')];
             let allTotalAmount = 0;
             // Get The Total Now
             jQuery.each(itemTotalValue, (itemName, itemValue) => {
@@ -132,16 +135,12 @@ var wpPayformApp = {};
                 }
             });
             if(allTotalAmount) {
-                form.find('.wpf_calc_payment_total').html(this.formatPrice(allTotalAmount, form));
+                form.find('.wpf_calc_payment_total').html(formatPrice(allTotalAmount, formSettings.currency_settings));
             } else {
-                form.find('.wpf_calc_payment_total').html(this.formatPrice(0, form));
+                form.find('.wpf_calc_payment_total').html(formatPrice(0, formSettings.currency_settings));
             }
 
             form.data('payment_total', allTotalAmount);
-        },
-        formatPrice(allTotalAmount, form) {
-            let amount =  allTotalAmount / 100;
-            return formatMoney(amount, { symbol: "$", precision: 2, thousand: ",", decimal: "." });
         }
     };
 

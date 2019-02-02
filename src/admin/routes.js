@@ -58,8 +58,8 @@ export const routes = [
                 component: FormPaymentSettings
             },
             {
-                path: 'custom_fields',
-                name: 'custom_fields',
+                path: 'form-builder',
+                name: 'edit_form',
                 component: FormBuilder
             },
             {

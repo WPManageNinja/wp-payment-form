@@ -46,7 +46,6 @@ let StripeCheckoutHandler = {
         });
     },
     stripeTokenHandler(token) {
-
         if(this.config.billing || this.config.shipping) {
             var inputStripeBilling = document.createElement('input');
             inputStripeBilling.setAttribute('type', 'hidden');

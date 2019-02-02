@@ -28,7 +28,7 @@
 
                     <el-table-column :label="$t('ID')" width="70">
                         <template slot-scope="scope">
-                            <router-link :to="{ name: 'data_items', params: { table_id: scope.row.ID } }">
+                            <router-link :to="{ name: 'edit_form', params: { form_id: scope.row.ID } }">
                                 {{ scope.row.ID }}
                             </router-link>
                         </template>
@@ -40,12 +40,11 @@
                                 {{ scope.row.post_title }}
                             </strong>
                             <div class="row-actions">
-                                <router-link :to="{ name: 'payment_options', params: { form_id: scope.row.ID } }">
+                                <router-link :to="{ name: 'edit_form', params: { form_id: scope.row.ID } }">
                                     {{ $t('Edit') }}
                                 </router-link> |
                                 <a :href="scope.row.preview_url" target="_blank">{{ $t('Preview') }}</a> |
-                                <a href="#" @click.prevent="duplicate(scope.row.ID)">{{ $t('Duplicate') }}</a> |
-                                <a @click.prevent="confirmDeleteTable(scope.row.ID)" href="#">{{ $t('Delete') }}</a>
+                                <a @click.prevent="confirmDeleteForm(scope.row)" href="#">{{ $t('Delete') }}</a>
                             </div>
                         </template>
                     </el-table-column>
@@ -68,6 +67,23 @@
         </div>
         <!-- Load Modals-->
         <create-form v-if="createFormModal" :modalVisible.sync="createFormModal"/>
+
+        <!--Delete form Confimation Modal-->
+        <el-dialog
+            title="Are You Sure, You want to delete this form?"
+            :visible.sync="deleteDialogVisible"
+            :before-close="handleDeleteClose"
+            width="60%">
+            <div class="modal_body">
+                <p>All the data assoscilate with this form will be deleted, including payment information and other associate information</p>
+                <p>You are deleting form id: <b>{{ deleteingForm.ID }}</b>. <br />Form Title: <b>{{ deleteingForm.post_title }}</b></p>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="deleteDialogVisible = false">Cancel</el-button>
+                <el-button type="primary" @click="deleteFormNow()">Confirm</el-button>
+            </span>
+        </el-dialog>
+
     </div>
 </template>
 
@@ -90,7 +106,9 @@
                 page_number: 1,
                 search_string: '',
                 total: 0,
-                loading: false
+                loading: false,
+                deleteDialogVisible: false,
+                deleteingForm: {}
             }
         },
         methods: {
@@ -114,6 +132,35 @@
                     .always(() => {
                         this.loading = false;
                     });
+            },
+            confirmDeleteForm(form) {
+                this.deleteingForm = form;
+                this.deleteDialogVisible = true;
+            },
+            deleteFormNow() {
+                this.$adminPost({
+                    action: 'wp_payment_forms_admin_ajax',
+                    route: 'delete_form',
+                    form_id: this.deleteingForm.ID
+                })
+                    .then(response => {
+                        this.$message.success({
+                            message: response.data.message
+                        });
+                        this.fetchForms();
+                    })
+                    .fail(error => {
+                        this.$message.error({
+                            message: error.responseJSON.data.message
+                        });
+                    })
+                    .always(() => {
+                        this.deleteDialogVisible = false;
+                        this.this.deleteingForm = {};
+                    });
+            },
+            handleDeleteClose() {
+                this.this.deleteingForm = {};
             }
         },
         mounted() {

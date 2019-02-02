@@ -1,11 +1,23 @@
 <template>
-    <div class="wpf_payment_view">
+    <div v-loading="loading" class="wpf_payment_view">
+        <div class="payment_head_info">
+            <router-link class="payhead_nav_item payhead_back_icon" :to="{ name: 'entries', query: { form_id: form_id } }"><span class="dashicons dashicons-admin-home"></span></router-link>
+            <div class="payhead_title">
+                {{ submission.post_title }}
+            </div>
+            <div class="payhead_next_prev">
+                <i @click="handleNavClick('prev')" class="el-icon-d-arrow-left"></i>
+                <span>Entry #{{ submission.id }}</span>
+                <i @click="handleNavClick('next')" class="el-icon-d-arrow-right"></i>
+            </div>
+        </div>
+
         <div class="payment_header">
             <div v-if="parseInt(submission.order_items.length)" class="payment_head_top">
                 <div class="payment_header_left">
                     <p class="head_small_title">Payment</p>
                     <div class="head_payment_amount">
-                        <span class="pay_amount">{{ getFormattedMoney(submission.payment_total) }} </span>
+                        <span class="pay_amount" v-html="getFormattedMoney(submission.payment_total)"></span>
                         <span class="payment_currency">{{submission.currency}}</span>
                         <span :class="'wpf_paystatus_badge wpf_pay_status_'+submission.payment_status">
                             <i :class="getPaymentStatusIcon(submission.payment_status)"></i> {{submission.payment_status}}
@@ -32,7 +44,14 @@
                 <div class="info_block">
                     <div class="info_header">Name</div>
                     <div class="info_value">
-                        <span v-if="submission.customer_name">{{submission.customer_name}}</span>
+                        <span v-if="submission.customer_name">
+                            <a :href="submission.user_profile_url" target="_blank" v-if="submission.user_profile_url">
+                                {{submission.customer_name}}
+                            </a>
+                            <span v-else>
+                                {{submission.customer_name}}
+                            </span>
+                        </span>
                         <span v-else>n/a</span>
                     </div>
                 </div>
@@ -82,14 +101,14 @@
                         <tr v-for="item in submission.order_items">
                             <td>{{item.item_name}}</td>
                             <td>{{item.quantity}}</td>
-                            <td>{{getFormattedMoney(item.item_price)}}</td>
-                            <td>{{getFormattedMoney(item.line_total)}}</td>
+                            <td v-html="getFormattedMoney(item.item_price)"></td>
+                            <td v-html="getFormattedMoney(item.line_total)"></td>
                         </tr>
                         </tbody>
                         <tfoot>
                         <tr>
                             <th style="text-align: right" colspan="3">Total:</th>
-                            <th>{{ getFormattedMoney(orderTotal) }}</th>
+                            <th v-html="getFormattedMoney(orderTotal)"></th>
                         </tr>
                         </tfoot>
                     </table>
@@ -127,7 +146,7 @@
                             </li>
                             <li>
                                 <div class="wpf_list_header">Payment Total</div>
-                                <div class="wpf_list_value">{{ getFormattedMoney(transaction.payment_total) }}</div>
+                                <div class="wpf_list_value" v-html="getFormattedMoney(transaction.payment_total)"></div>
                             </li>
                             <li>
                                 <div class="wpf_list_header">Payment Status</div>
@@ -142,18 +161,13 @@
                 </div>
             </div>
         </div>
-
-        <pre>
-            {{submission}}
-        </pre>
     </div>
 
 </template>
 
 <script type="text/babel">
     import each from 'lodash/each';
-    import formatMoney from 'accounting-js/lib/formatMoney.js'
-
+    import fromatPrice from '../../../common/formatPrice';
     export default {
         name: "Entry",
         data() {
@@ -163,6 +177,7 @@
                 entry_items: {},
                 form_id: 0,
                 fething: false,
+                loading: false,
                 show_empty: false
             }
         },
@@ -191,8 +206,8 @@
                 this.fething = true;
                 const query = {
                     action: 'wpf_get_submission',
-                    form_id: this.form_id,
-                    submission_id: this.entry_id
+                    form_id: parseInt(this.form_id),
+                    submission_id: parseInt(this.entry_id)
                 }
                 this.$get(query)
                     .then(response => {
@@ -207,8 +222,7 @@
                 if (!amount) {
                     return 'n/a';
                 }
-                amount = amount / 100;
-                return formatMoney(amount);
+                return fromatPrice(amount, this.submission.currencySetting);
             },
             getPaymentStatusIcon(status) {
                 if (status == 'pending') {
@@ -220,10 +234,38 @@
                 }
                 return '';
             },
+            handleNavClick(type) {
+                this.loading = true;
+                const query = {
+                    action: 'wpf_get_next_prev_submission',
+                    form_id: parseInt(this.form_id),
+                    type: type,
+                    current_submission_id: parseInt(this.entry_id)
+                }
+                this.$get(query)
+                    .then(response => {
+                        this.submission = response.data.submission;
+                        this.entry_items = response.data.entry;
+                        this.entry_id = response.data.submission.id;
+                        this.$router.push({
+                            name: 'entry',
+                            params: { entry_id: response.data.submission.id },
+                            query: { form_id: this.form_id }
+                        })
+                    })
+                    .fail(error => {
+                        this.$message.error({
+                            message: error.responseJSON.data.message
+                        });
+                    })
+                    .always(() => {
+                        this.loading = false;
+                    });
+            }
         },
         mounted() {
             if (this.$route.query.form_id) {
-                this.form_id = parseInt(this.$route.query.form_id);
+                this.form_id = this.$route.query.form_id;
             }
             this.getEntry();
             this.show_empty = this.getFromStore('show_empty_entry_field', false);

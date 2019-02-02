@@ -68,9 +68,20 @@ class Submission
 
     public function getSubmission($submissionId, $with = array())
     {
-        $result = $this->db->get_row( "SELECT * FROM {$this->model} WHERE id = {$submissionId} LIMIT 1", OBJECT );
+
+        $result = wpPayformDB()->table('wpf_submissions')
+            ->select(array('wpf_submissions.*', 'posts.post_title'))
+            ->join('posts', 'posts.ID', '=', 'wpf_submissions.form_id')
+            ->where('wpf_submissions.id', $submissionId)
+            ->first();
+
         $result->form_data_raw = maybe_unserialize($result->form_data_raw);
         $result->form_data_formatted = maybe_unserialize($result->form_data_formatted);
+        if($result->user_id) {
+            $result->user_profile_url = get_edit_user_link($result->user_id);
+        }
+
+
 
         if(in_array('transactions',$with)) {
             $result->transactions = (new Transaction())->getTransactions($submissionId);

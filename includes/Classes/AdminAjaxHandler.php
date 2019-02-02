@@ -23,12 +23,14 @@ class AdminAjaxHandler
     {
         $route = sanitize_text_field($_REQUEST['route']);
         $validRoutes = array(
-            'get_forms'                => 'getForms',
-            'create_form'              => 'createForm',
-            'get_form'                 => 'getForm',
-            'get_payment_settings'     => 'getPaymentSettings',
-            'save_form_settings'       => 'saveFormSettings',
-            'get_custom_form_settings' => 'getFormBuilderSettings'
+            'get_forms'                  => 'getForms',
+            'create_form'                => 'createForm',
+            'get_form'                   => 'getForm',
+            'save_form_settings'         => 'saveFormSettings',
+            'save_form_builder_settings' => 'saveFormBuilderSettings',
+            'get_custom_form_settings'   => 'getFormBuilderSettings',
+            'delete_form'                => 'deleteForm',
+            'get_form_settings'         => 'getFormSettings'
         );
 
         if (isset($validRoutes[$route])) {
@@ -85,13 +87,13 @@ class AdminAjaxHandler
         ), 200);
     }
 
-    protected function getPaymentSettings()
+    protected function getFormSettings()
     {
         $formId = absint($_REQUEST['form_id']);
-
-        $paymentSettings = Forms::getPaymentSettings($formId);
         wp_send_json_success(array(
-            'payment_settings' => $paymentSettings,
+            'confirmation_settings' => Forms::getConfirmationSettings($formId),
+            'currency_settings' => Forms::getCurrencySettings($formId),
+            'editor_shortcodes' => Forms::getEditorShortCodes($formId),
             'currencies'       => GeneralSettings::getCurrencies(),
             'locales'          => GeneralSettings::getLocales()
         ), 200);
@@ -100,15 +102,29 @@ class AdminAjaxHandler
     protected function saveFormSettings()
     {
         $formId = absint($_REQUEST['form_id']);
-        $settingsKey = sanitize_text_field($_REQUEST['settings_key']);
-        $settings = wp_unslash($_REQUEST['settings']);
-        if (!$formId || !$settings || !$settingsKey) {
+        $confirmationSettings = wp_unslash($_REQUEST['confirmation_settings']);
+        $currency_settings = wp_unslash($_REQUEST['currency_settings']);
+        update_post_meta($formId, '_wp_paymentform_confirmation_settings', $confirmationSettings);
+        update_post_meta($formId, '_wp_paymentform_currency_settings', $currency_settings);
+        wp_send_json_success(array(
+            'message' => __('Settings successfully updated', 'wppayform')
+        ), 200);
+    }
+
+    protected function saveFormBuilderSettings()
+    {
+        $formId = absint($_REQUEST['form_id']);
+        $builderSettings = wp_unslash($_REQUEST['builder_settings']);
+        if (!$formId || !$builderSettings ) {
             wp_send_json_error(array(
                 'message' => __('Validation Error, Please try again', 'wppayform')
             ), 423);
         }
+        $submit_button_settings = wp_unslash($_REQUEST['submit_button_settings']);
 
-        update_post_meta($formId, $settingsKey, $settings);
+        update_post_meta($formId, '_wp_paymentform_builder_settings', $builderSettings);
+        update_post_meta($formId, '_wpf_submit_button_settings', $submit_button_settings);
+
         wp_send_json_success(array(
             'message' => __('Settings successfully updated', 'wppayform')
         ), 200);
@@ -118,9 +134,22 @@ class AdminAjaxHandler
     {
         $formId = absint($_REQUEST['form_id']);
         $builderSettings = Forms::getBuilderSettings($formId);
+
         wp_send_json_success(array(
-            'builder_settings' => $builderSettings,
-            'components' => GeneralSettings::getComponents()
+            'builder_settings'     => $builderSettings,
+            'components'           => GeneralSettings::getComponents(),
+            'form_button_settings' => Forms::getButtonSettings($formId)
+        ), 200);
+    }
+
+    protected function deleteForm()
+    {
+        $formId = intval($_REQUEST['form_id']);
+        do_action('wpf_before_form_delete', $formId);
+        Forms::deleteForm($formId);
+
+        wp_send_json_success(array(
+            'message' => __('Selected form successfully deleted', 'wppayform')
         ), 200);
     }
 }

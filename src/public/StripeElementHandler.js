@@ -42,11 +42,10 @@ let cardElementHandler = {
         card.mount(elementId);
         // Handle real-time validation errors from the card Element.
         card.addEventListener('change', function (event) {
-            var displayError = document.getElementById('card-errors');
             if (event.error) {
-                displayError.textContent = event.error.message;
+                that.form.find('.wpf_card-errors').html(event.error.message);
             } else {
-                displayError.textContent = '';
+                that.form.find('.wpf_card-errors').html('');
             }
         });
         this.card = card;

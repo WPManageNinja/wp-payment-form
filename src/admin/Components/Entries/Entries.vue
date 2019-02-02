@@ -5,7 +5,7 @@
                 <label>
                     <span class="item_title">Filter By Form</span>
                     <el-select @change="changeForm()" size="small" v-model="form_id" placeholder="All Forms">
-                        <el-option label="All Forms" :value="0"></el-option>
+                        <el-option label="All Forms" value="0"></el-option>
                         <el-option
                             v-for="form in available_forms"
                             :key="form.ID"
@@ -41,7 +41,7 @@
                     fixed
                     width="60">
                     <template slot-scope="scope">
-                        <router-link :to="{ name: 'entry', params: { entry_id: scope.row.id } }">
+                        <router-link :to="{ name: 'entry', params: { entry_id: scope.row.id }, query: { form_id: form_id } }">
                             {{scope.row.id}}
                         </router-link>
                     </template>
@@ -77,11 +77,11 @@
                 <el-table-column
                     label="Payment Total">
                     <template slot-scope="scope">
-                        {{ getFormattedMoney(scope.row) }}
+                        <span v-html="getFormattedMoney(scope.row)"></span>
                     </template>
                 </el-table-column>
                 <el-table-column
-                    label="Created At"
+                    label="Submitted At"
                     prop="created_at">
                 </el-table-column>
             </el-table>
@@ -101,7 +101,7 @@
 </template>
 
 <script>
-    import formatMoney from 'accounting-js/lib/formatMoney.js'
+    import fromatPrice from '../../../common/formatPrice';
 
     export default {
         name: "Entries",
@@ -114,7 +114,7 @@
                     per_page: 20,
                     total: 0
                 },
-                form_id: 0,
+                form_id: '0',
                 available_forms: [],
                 selected_payment_status: '',
                 available_statuses: {
@@ -145,7 +145,7 @@
                 this.fetching = true;
                 let query = {
                     action: 'wpf_get_submissions',
-                    form_id: this.form_id,
+                    form_id: parseInt(this.form_id),
                     payment_status:  this.selected_payment_status,
                     page_number: this.pagination.current_page,
                     per_page: this.pagination.per_page
@@ -184,8 +184,7 @@
                 if (!amount) {
                     return 'n/a';
                 }
-                amount = amount / 100;
-                return formatMoney(amount);
+                return fromatPrice(amount, row.currencySettings);
             },
             getPaymentStatusIcon(status) {
                 if(status == 'pending') {
@@ -212,7 +211,7 @@
         },
         mounted() {
             if(this.$route.query.form_id) {
-                this.form_id = parseInt(this.$route.query.form_id);
+                this.form_id = this.$route.query.form_id;
             }
             if(this.$route.query.payment_status) {
                 this.selected_payment_status = this.$route.query.payment_status;

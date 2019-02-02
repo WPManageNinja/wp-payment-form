@@ -148,6 +148,12 @@
       text-align: right;
     }
   }
+
+  .payform_builder_notices {
+    margin-top: 50px;
+    padding: 5px 20px;
+    background: rgb(255, 239, 189);
+  }
 }
 
 .wppayform_nav {
@@ -326,7 +332,7 @@ table.el-table__header thead tr th {
   .payment_header {
     box-shadow: 0 7px 14px 0 rgba(60, 66, 87, 0.1), 0 3px 6px 0 rgba(0, 0, 0, .07);
     background: rgb(255, 255, 255);
-    padding: 10px 20px 0px;
+    padding: 0px 20px 0px;
     margin-top: 20px;
     margin-bottom: 20px;
     display: block;
@@ -336,6 +342,8 @@ table.el-table__header thead tr th {
       width: 100%;
       overflow: hidden;
       display: block;
+      padding-top: 10px;
+      padding-bottom: 15px;
 
       p {
         padding: 0;
@@ -371,7 +379,7 @@ table.el-table__header thead tr th {
     }
 
     .payment_head_bottom {
-      margin: 10px -20px 0px;
+      margin: 2px -20px 0px;
       padding: 10px 20px 20px;
       box-shadow: 0px -2px #e3e8ee;
       background-color: rgb(247, 250, 252);
@@ -498,18 +506,22 @@ table.el-table__header thead tr th {
     color: rgb(61, 78, 172);
     font-weight: 500;
     text-transform: capitalize;
+
     &.wpf_pay_status_pending {
       background-color: rgb(255, 193, 7);
       color: rgb(255, 255, 255);
     }
+
     &.wpf_pay_status_failed {
       background: rgb(244, 67, 54);
       color: rgb(255, 255, 255);
     }
   }
+
   span.payment_currency {
     text-transform: uppercase;
   }
+
   span.wpf_card_badge {
     background: rgb(105, 114, 134);
     color: rgb(255, 255, 255);
@@ -520,4 +532,45 @@ table.el-table__header thead tr th {
 
 a.el-button {
   text-decoration: none;
+}
+
+.payment_head_info {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  margin: 15px 0px;
+
+  .payhead_title {
+    display: inline-block;
+    font-size: 20px;
+    color: rgb(68, 68, 68);
+    margin-left: 5px;
+  }
+
+  .payhead_nav_item {
+    display: inline-block;
+  }
+
+  .payhead_back_icon {
+    font-size: 25px;
+    text-decoration: none;
+    color: rgb(90, 102, 180);
+  }
+
+  .payhead_next_prev {
+    display: inline-block;
+    float: right;
+    font-size: 16px;
+    span {
+      font-size: 14px;
+      line-height: 20px;
+    }
+    i {
+      cursor: pointer;
+      font-weight: bold;
+      :hover {
+        color: black;
+      }
+    }
+  }
 }

@@ -25,7 +25,6 @@
                         </el-button>
                     </label>
                 </div>
-
                 <div class="payform_builder_items">
                     <draggable
                         :options="{handle:'.handler'}"
@@ -58,6 +57,38 @@
                             </div>
                         </div>
                     </draggable>
+
+                    <div v-if="builder_elements.length" class="payform_submit_button_settings payform_builder_item">
+                        <div class="payform_builder_header">
+                            <div class="payform_head_left">
+                                <div class="payform_inline_item">
+                                    <span class="el-icon-setting"></span>
+                                </div>
+                                <div class="element_title payform_inline_item">
+                                    Submit Button Settings
+                                </div>
+                            </div>
+                            <div @click="toggleEditing('_submit_button')" class="payform_head_right">
+                                <div class="element_type payform_inline_item">
+                                    button
+                                </div>
+                                <div class="element_control payform_inline_item">
+                                    <span class="dashicons dashicons-arrow-down-alt2"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div v-if="current_editing == '_submit_button'" class="payform_builder_item_settings">
+                            <submit-button-settings @updateSettings="saveSettings" :submit_button="submit_button_settings" />
+                        </div>
+                    </div>
+                </div>
+
+
+                <div v-if="form_tips" class="payform_builder_notices">
+                    <p>
+                        <i class="el-icon-info"></i>
+                        <span class="payform_builder_error" v-html="form_tips"></span>
+                    </p>
                 </div>
             </div>
         </div>
@@ -69,10 +100,15 @@
     import findIndex from 'lodash/findIndex'
     import ElementEditor from './_ElementEditor';
     import draggable from 'vuedraggable'
+    import SubmitButtonSettings from './_SubmitButtonSettings';
 
     export default {
         name: 'payment_settings',
-        components: {ElementEditor, draggable},
+        components: {
+            ElementEditor,
+            draggable,
+            SubmitButtonSettings
+        },
         props: ['form_id'],
         data() {
             return {
@@ -80,7 +116,8 @@
                 builder_elements: [],
                 fetching: false,
                 components: {},
-                adding_component: ''
+                adding_component: '',
+                submit_button_settings: {}
             }
         },
         computed: {
@@ -90,6 +127,29 @@
                     elements.push(element.id);
                 });
                 return elements;
+            },
+            form_tips() {
+                let hasPaymentField = false;
+                let hasItemField = false;
+
+                each(this.builder_elements, (element) => {
+                    if(element.group == 'payment') {
+                        hasPaymentField = true;
+                    }
+                    if(element.group == 'payment_method_element') {
+                        hasItemField = true;
+                    }
+                });
+
+                if(!hasPaymentField && hasItemField) {
+                    return 'You have added payment field, Now please add <b>Payment Item</b> field to accept payments';
+                }
+                if(hasPaymentField && !hasItemField) {
+                    return 'You have added order item field, Now please add <b>Card Elements</b> field to accept payments';
+                }
+                if(this.builder_elements.length && !hasPaymentField && !hasItemField) {
+                    return 'Add <b>Payment Item</b> and <b>Card Elements</b> field to accept payment';
+                }
             }
         },
         methods: {
@@ -102,6 +162,7 @@
                     .then(response => {
                         this.builder_elements = response.data.builder_settings;
                         this.components = response.data.components;
+                        this.submit_button_settings = response.data.form_button_settings;
                     })
                     .fail(error => {
 
@@ -162,11 +223,11 @@
             saveSettings() {
                 this.saving = true;
                 this.$adminPost({
-                    action: 'save_form_settings',
+                    action: 'wp_payment_forms_admin_ajax',
                     form_id: this.form_id,
-                    settings: this.builder_elements,
-                    settings_key: '_wp_paymentform_builder_settings',
-                    route: 'save_form_settings'
+                    builder_settings: this.builder_elements,
+                    submit_button_settings: this.submit_button_settings,
+                    route: 'save_form_builder_settings'
                 })
                     .then(response => {
                         this.$message({

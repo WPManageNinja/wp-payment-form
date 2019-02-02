@@ -48,7 +48,8 @@
                     post_title: this.payForm.postTitle
                 })
                     .then(response => {
-                        console.log(response);
+                        this.$message.success(response.data.message);
+                        this.$router.push({ name: 'edit_form', params: { form_id: response.data.form_id } })
                     })
                     .fail(error => {
                         this.$message({

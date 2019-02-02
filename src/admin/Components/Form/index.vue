@@ -39,6 +39,13 @@
                             <i class="dashicons dashicons-editor-table"></i>
                             <span>{{  formMenu.title }}</span>
                         </el-menu-item>
+                        <el-menu-item
+                            :route="{ name: 'entries', params: { form_id: form_id }, query: { form_id: form_id.toString() } }"
+                            index="entries"
+                        >
+                            <i class="dashicons dashicons-editor-table"></i>
+                            <span>{{  $t('Form Entries') }}</span>
+                        </el-menu-item>
                     </el-menu>
                 </el-aside>
                 <el-main>
@@ -59,12 +66,12 @@
                 current_route: this.$route.name,
                 form_menus: [
                     {
-                        route: 'payment_options',
-                        title: 'Payment Options'
+                        route: 'edit_form',
+                        title: 'Form Builder'
                     },
                     {
-                        route: 'custom_fields',
-                        title: 'Custom Form Fields'
+                        route: 'payment_options',
+                        title: 'Form Settings'
                     },
                     {
                         route: 'design_options',
@@ -73,10 +80,6 @@
                     {
                         route: 'email_settings',
                         title: 'Email Settings'
-                    },
-                    {
-                        route: 'entries',
-                        title: 'All Entries'
                     }
                 ],
                 editFoemModalShow: false,

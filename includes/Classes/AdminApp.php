@@ -20,6 +20,9 @@ class AdminApp
 
     public function enqueueAssets()
     {
+        if (function_exists('wp_enqueue_editor')) {
+            wp_enqueue_editor();
+        }
         wp_enqueue_script('wppayform_boot', WPPAYFORM_URL.'assets/js/payforms-boot.js', array('jquery'), WPPAYFORM_VERSION, true);
         wp_enqueue_script('wppayform_admin_app', WPPAYFORM_URL.'assets/js/payforms-admin.js', array('wppayform_boot'), WPPAYFORM_VERSION, true);
         wp_enqueue_style('wppayform_admin_app', WPPAYFORM_URL.'assets/css/payforms-admin.css', array(), WPPAYFORM_VERSION);

@@ -45,9 +45,40 @@ if (!function_exists('ninja_table_admin_role')) {
     }
 }
 
-function wpPayformDB() {
-    if (! function_exists('wpFluent')) {
-        include WPPAYFORM_DIR.'includes/libs/wp-fluent/wp-fluent.php';
+function wpPayformDB()
+{
+    if (!function_exists('wpFluent')) {
+        include WPPAYFORM_DIR . 'includes/libs/wp-fluent/wp-fluent.php';
     }
     return wpFluent();
+}
+
+
+function wpfFormattedMoney($amountInCents, $currencySettings)
+{
+    $symbol = $currencySettings['currency_sign'];
+    $position = $currencySettings['currency_sign_position'];
+    $decmalSeparator = '.';
+    $thousandSeparator = ',';
+    if($currencySettings['currency_separator'] != 'dot_comma') {
+        $decmalSeparator = ',';
+        $thousandSeparator = '.';
+    }
+    $decimalPoints = 2;
+    if($amountInCents % 100 == 0 && $currencySettings['decimal_points'] == 0) {
+        $decimalPoints = 0;
+    }
+
+    $amount = number_format(  $amountInCents / 100, $decimalPoints, $decmalSeparator, $thousandSeparator );
+
+    if ('left' === $position) {
+        return $symbol . $amount;
+    } elseif ('left_space' === $position) {
+        return $symbol . ' ' . $amount;
+    } elseif ('right' === $position) {
+        return $amount . $symbol;
+    } elseif ('right_space' === $position) {
+        return $amount . ' ' . $symbol;
+    }
+    return $amount;
 }
