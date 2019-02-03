@@ -3,6 +3,7 @@
 namespace WPPayForm\Classes;
 
 use WPPayForm\Classes\Models\Forms;
+use WPPayForm\Classes\Models\SubmissionActivity;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -30,7 +31,8 @@ class AdminAjaxHandler
             'save_form_builder_settings' => 'saveFormBuilderSettings',
             'get_custom_form_settings'   => 'getFormBuilderSettings',
             'delete_form'                => 'deleteForm',
-            'get_form_settings'         => 'getFormSettings'
+            'get_form_settings'          => 'getFormSettings',
+            'add_submission_note'        => 'addSubmissionNote'
         );
 
         if (isset($validRoutes[$route])) {
@@ -92,10 +94,10 @@ class AdminAjaxHandler
         $formId = absint($_REQUEST['form_id']);
         wp_send_json_success(array(
             'confirmation_settings' => Forms::getConfirmationSettings($formId),
-            'currency_settings' => Forms::getCurrencySettings($formId),
-            'editor_shortcodes' => Forms::getEditorShortCodes($formId),
-            'currencies'       => GeneralSettings::getCurrencies(),
-            'locales'          => GeneralSettings::getLocales()
+            'currency_settings'     => Forms::getCurrencySettings($formId),
+            'editor_shortcodes'     => Forms::getEditorShortCodes($formId),
+            'currencies'            => GeneralSettings::getCurrencies(),
+            'locales'               => GeneralSettings::getLocales()
         ), 200);
     }
 
@@ -115,7 +117,7 @@ class AdminAjaxHandler
     {
         $formId = absint($_REQUEST['form_id']);
         $builderSettings = wp_unslash($_REQUEST['builder_settings']);
-        if (!$formId || !$builderSettings ) {
+        if (!$formId || !$builderSettings) {
             wp_send_json_error(array(
                 'message' => __('Validation Error, Please try again', 'wppayform')
             ), 423);
@@ -150,6 +152,29 @@ class AdminAjaxHandler
 
         wp_send_json_success(array(
             'message' => __('Selected form successfully deleted', 'wppayform')
+        ), 200);
+    }
+
+    protected function addSubmissionNote()
+    {
+        $formId = intval($_REQUEST['form_id']);
+        $submissionId = intval($_REQUEST['submission_id']);
+        $content = esc_html($_REQUEST['note']);
+        $userId = get_current_user_id();
+        $user = get_user_by('ID', $userId);
+
+        SubmissionActivity::createActivity(array(
+            'form_id'            => $formId,
+            'submission_id'      => $submissionId,
+            'type'               => 'custom_note',
+            'content'            => $content,
+            'created_by'         => $user->display_name,
+            'created_by_user_id' => $userId
+        ));
+
+        wp_send_json_success(array(
+            'message'    => __('Note successfully added', 'wppayform'),
+            'activities' => SubmissionActivity::getSubmissionActivity($submissionId)
         ), 200);
     }
 }

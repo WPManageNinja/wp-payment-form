@@ -66,10 +66,11 @@ class SubmissionView
     public function getSubmission($submissionId = false)
     {
         $formId = absint($_REQUEST['form_id']);
-        $submissionId = absint($_REQUEST['submission_id']);
-
+        if(!$submissionId) {
+            $submissionId = absint($_REQUEST['submission_id']);
+        }
         $submissionModel = new Submission();
-        $submission = $submissionModel->getSubmission($submissionId, array('transactions', 'order_items'));
+        $submission = $submissionModel->getSubmission($submissionId, array('transactions', 'order_items', 'activities'));
 
         $currencySetting = GeneralSettings::getGlobalCurrencySettings($formId);
         $currencySetting['currency_sign'] = GeneralSettings::getCurrencySymbol($submission->currency);
@@ -107,6 +108,7 @@ class SubmissionView
             $submissionQuery->where('form_id', $formId);
         }
 
+
         $submission = $submissionQuery->first();
 
         if(!$submission) {
@@ -115,12 +117,7 @@ class SubmissionView
             ), 423);
         }
 
-        $submissionModel = new Submission();
-        $submission = $submissionModel->getSubmission($submission->id, array('transactions', 'order_items'));
-        wp_send_json_success(array(
-            'submission'    => $submission,
-            'entry'         => (object) $submissionModel->getParsedSubmission($submission)
-        ), 200);
+        $this->getSubmission($submission->id);
     }
 
     public function getAvailableForms()

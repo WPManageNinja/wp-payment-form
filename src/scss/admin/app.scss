@@ -574,3 +574,20 @@ a.el-button {
     }
   }
 }
+
+.wpf_add_note_box {
+  padding: 20px;
+  margin: 0px -20px;
+  background: rgb(247, 250, 252);
+  overflow: hidden;
+  button {
+    float: right;
+    margin-top: 15px;
+  }
+}
+.wpf_capitalize {
+  text-transform: capitalize;
+}
+.text-center {
+  text-align: center;
+}

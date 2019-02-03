@@ -1,14 +1,16 @@
 <template>
-    <div v-loading="loading" class="wpf_payment_view">
+    <div v-if="submission.id" v-loading="loading" class="wpf_payment_view">
         <div class="payment_head_info">
-            <router-link class="payhead_nav_item payhead_back_icon" :to="{ name: 'entries', query: { form_id: form_id } }"><span class="dashicons dashicons-admin-home"></span></router-link>
+            <router-link class="payhead_nav_item payhead_back_icon"
+                         :to="{ name: 'entries', query: { form_id: form_id } }"><span
+                class="dashicons dashicons-admin-home"></span></router-link>
             <div class="payhead_title">
                 {{ submission.post_title }}
             </div>
             <div class="payhead_next_prev">
-                <i @click="handleNavClick('prev')" class="el-icon-d-arrow-left"></i>
+                <i @click="handleNavClick('next')" class="el-icon-d-arrow-left"></i>
                 <span>Entry #{{ submission.id }}</span>
-                <i @click="handleNavClick('next')" class="el-icon-d-arrow-right"></i>
+                <i @click="handleNavClick('prev')" class="el-icon-d-arrow-right"></i>
             </div>
         </div>
 
@@ -26,7 +28,9 @@
                 </div>
                 <div class="payment_header_right">
                     <p class="head_small_title">{{ firstTransaction.charge_id }}</p>
-                    <a v-if="firstTransaction.transaction_url" target="_blank" :href="firstTransaction.transaction_url" class="el-button el-button--default el-button--mini">View on {{ firstTransaction.payment_method }} dashboard</a>
+                    <a v-if="firstTransaction.transaction_url" target="_blank" :href="firstTransaction.transaction_url"
+                       class="el-button el-button--default el-button--mini">View on {{ firstTransaction.payment_method
+                        }} dashboard</a>
                 </div>
             </div>
             <div class="payment_head_bottom">
@@ -37,14 +41,15 @@
                 <div class="info_block">
                     <div class="info_header">Email</div>
                     <div class="info_value">
-                        <span v-if="submission.customer_email"><a target="_blank" :href="'mailto:'+submission.customer_email">{{submission.customer_email}}</a></span>
+                        <span v-if="submission.customer_email"><a target="_blank"
+                                                                  :href="'mailto:'+submission.customer_email">{{submission.customer_email}}</a></span>
                         <span v-else>n/a</span>
                     </div>
                 </div>
                 <div class="info_block">
                     <div class="info_header">Name</div>
                     <div class="info_value">
-                        <span v-if="submission.customer_name">
+                        <span class="wpf_capitalize" v-if="submission.customer_name">
                             <a :href="submission.user_profile_url" target="_blank" v-if="submission.user_profile_url">
                                 {{submission.customer_name}}
                             </a>
@@ -57,7 +62,11 @@
                 </div>
                 <div v-if="submission.payment_method" class="info_block">
                     <div class="info_header">Payment Method</div>
-                    <div class="info_value">{{submission.payment_method}}</div>
+                    <div class="info_value wpf_capitalize">{{submission.payment_method}}</div>
+                </div>
+                <div v-if="submission.payment_mode" class="info_block">
+                    <div class="info_header">Payment Mode</div>
+                    <div class="info_value wpf_capitalize">{{submission.payment_mode}}</div>
                 </div>
             </div>
         </div>
@@ -161,6 +170,42 @@
                 </div>
             </div>
         </div>
+
+
+        <div class="entry_info_box">
+            <div class="entry_info_header">
+                <div class="info_box_header">Submission Activity Events</div>
+                <div class="info_box_header_actions">
+                    <el-button @click="add_note_box = !add_note_box" size="mini" type="info">Add Note</el-button>
+                </div>
+            </div>
+            <div class="entry_info_body">
+                <div class="wpf_entry_details">
+                    <div v-if="add_note_box" class="wpf_add_note_box">
+                        <el-input
+                            type="textarea"
+                            :autosize="{ minRows: 3}"
+                            placeholder="Please Provide Note Content"
+                            v-model="new_note_content">
+                        </el-input>
+                        <el-button @click="submitNote()" size="small" type="success">Submit Note</el-button>
+                    </div>
+                    <template v-if="submission.activities && submission.activities.length">
+                        <div v-for="activity in submission.activities" :key="activity.id" class="wpf_each_entry">
+                            <div class="wpf_entry_label">
+                                {{activity.created_by}} - {{ activity.created_at }}
+                            </div>
+                            <div class="wpf_entry_value" v-html="activity.content"></div>
+                        </div>
+                    </template>
+
+                    <div class="wpf_each_entry text-center" v-else>
+                        <p>No Activity found</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
     </div>
 
 </template>
@@ -168,6 +213,7 @@
 <script type="text/babel">
     import each from 'lodash/each';
     import fromatPrice from '../../../common/formatPrice';
+
     export default {
         name: "Entry",
         data() {
@@ -178,7 +224,10 @@
                 form_id: 0,
                 fething: false,
                 loading: false,
-                show_empty: false
+                show_empty: false,
+                add_note_box: false,
+                new_note_content: '',
+                adding_note: false
             }
         },
         watch: {
@@ -195,7 +244,7 @@
                 return total;
             },
             firstTransaction() {
-                if(this.submission.transactions && this.submission.transactions.length) {
+                if (this.submission.transactions && this.submission.transactions.length) {
                     return this.submission.transactions[0];
                 }
                 return false;
@@ -249,8 +298,8 @@
                         this.entry_id = response.data.submission.id;
                         this.$router.push({
                             name: 'entry',
-                            params: { entry_id: response.data.submission.id },
-                            query: { form_id: this.form_id }
+                            params: {entry_id: response.data.submission.id},
+                            query: {form_id: this.form_id}
                         })
                     })
                     .fail(error => {
@@ -260,6 +309,39 @@
                     })
                     .always(() => {
                         this.loading = false;
+                    });
+            },
+            submitNote() {
+                if(!this.new_note_content) {
+                    this.$message({
+                        message: 'Please provide note',
+                        type: 'error'
+                    });
+                    return;
+                }
+                this.adding_note = true;
+                this.$adminPost({
+                    route: 'add_submission_note',
+                    form_id: this.submission.form_id,
+                    submission_id: this.submission.id,
+                    note: this.new_note_content
+                })
+                    .then(response => {
+                        this.submission.activities = response.data.activities;
+                        this.$message({
+                            message: response.data.message,
+                            type: 'success'
+                        });
+                    })
+                    .fail(error => {
+                        this.$message({
+                            message: error.responseJSON.data.message,
+                            type: 'error'
+                        });
+                    })
+                    .always(() => {
+                        this.new_note_content = '';
+                        this.adding_note = false;
                     });
             }
         },

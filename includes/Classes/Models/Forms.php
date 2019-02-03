@@ -246,6 +246,10 @@ class Forms
             ->where('form_id', $formID)
             ->delete();
 
+        wpPayformDB()->table('wpf_submission_activities')
+            ->where('form_id', $formID)
+            ->delete();
+
         return true;
     }
 

@@ -5,6 +5,7 @@ namespace WPPayForm\Classes;
 use WPPayForm\Classes\Models\Forms;
 use WPPayForm\Classes\Models\OrderItem;
 use WPPayForm\Classes\Models\Submission;
+use WPPayForm\Classes\Models\SubmissionActivity;
 use WPPayForm\Classes\Models\Transaction;
 
 if (!defined('ABSPATH')) {
@@ -162,9 +163,16 @@ class SubmissionHandler
                 'created_at' => date('Y-m-d H:i:s'),
                 'updated_at' => date('Y-m-d H:i:s')
             );
-
             $transactionModel = new Transaction();
             $transactionId = $transactionModel->create($transaction);
+
+            SubmissionActivity::createActivity( array(
+                'form_id'       => $form->ID,
+                'submission_id' => $submissionId,
+                'type'          => 'activity',
+                'created_by'    => 'PayForm BOT',
+                'content'       => 'After payment actions processed.'
+            ) );
 
             if( $paymentMethod ) {
                 do_action('wpf_form_submission_make_payment_'.$paymentMethod, $transactionId, $submissionId, $form_data, $form);

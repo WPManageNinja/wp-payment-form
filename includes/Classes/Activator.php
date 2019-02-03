@@ -41,6 +41,7 @@ class Activator
         $this->createSubmissionsTable();
         $this->createOrderItemsTable();
         $this->createTransactionsTable();
+        $this->createSubmissionActivitiesTable();
     }
 
     public function createSubmissionsTable()
@@ -113,6 +114,27 @@ class Activator
 				currency varchar(255),
 				payment_mode varchar(255),
 				payment_note longtext,
+				created_at timestamp NULL,
+				updated_at timestamp NULL
+			) $charset_collate;";
+        $this->runSQL($sql, $table_name);
+    }
+
+    public function createSubmissionActivitiesTable()
+
+    {
+        global $wpdb;
+        $charset_collate = $wpdb->get_charset_collate();
+        $table_name = $wpdb->prefix . 'wpf_submission_activities';
+
+        $sql = "CREATE TABLE $table_name (
+				id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+				form_id int(11) NOT NULL,
+				submission_id int(11) NOT NULL,
+				type varchar(255),
+				created_by varchar(255),
+				created_by_user_id int(11),
+				content text,
 				created_at timestamp NULL,
 				updated_at timestamp NULL
 			) $charset_collate;";

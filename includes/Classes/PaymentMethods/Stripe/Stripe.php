@@ -3,6 +3,7 @@
 namespace WPPayForm\Classes\PaymentMethods\Stripe;
 
 use WPPayForm\Classes\Models\Submission;
+use WPPayForm\Classes\Models\SubmissionActivity;
 use WPPayForm\Classes\Models\Transaction;
 
 if (!defined('ABSPATH')) {
@@ -79,15 +80,24 @@ class Stripe
             do_action('wpf_stripe_charge_failed', $transactionId, $charge, $paymentArgs);
             do_action('wpf_form_payment_failed', $transactionId, $charge, $paymentArgs);
             $transactionModel->update($transactionId, array(
-                'status' => 'failed',
+                'status'         => 'failed',
                 'payment_method' => 'stripe',
-                'payment_mode' => $paymentMode,
+                'payment_mode'   => $paymentMode,
             ));
             $submissionModel->update($submissionId, array(
                 'payment_status' => 'failed',
                 'payment_method' => 'stripe',
-                'payment_mode' => $paymentMode,
+                'payment_mode'   => $paymentMode,
             ));
+
+            SubmissionActivity::createActivity( array(
+                'form_id'       => $form->ID,
+                'submission_id' => $submissionId,
+                'type'          => 'activity',
+                'created_by'    => 'PayForm BOT',
+                'content'       => 'Payment Failed via stripe. Status changed from Pending to Failed.'
+            ) );
+
             wp_send_json_error(array(
                 'message'       => $message,
                 'payment_error' => true
@@ -95,18 +105,27 @@ class Stripe
         }
         // We are good here. The charge is successfull and We are ready to go.
         $transactionModel->update($transactionId, array(
-            'status'      => 'paid',
-            'charge_id'   => $charge->id,
-            'card_last_4' => $charge->source->last4,
-            'card_brand'  => $charge->source->brand,
+            'status'         => 'paid',
+            'charge_id'      => $charge->id,
+            'card_last_4'    => $charge->source->last4,
+            'card_brand'     => $charge->source->brand,
             'payment_method' => 'stripe',
-            'payment_mode' => $paymentMode,
+            'payment_mode'   => $paymentMode,
         ));
         $submissionModel->update($submissionId, array(
             'payment_status' => 'paid',
             'payment_method' => 'stripe',
-            'payment_mode' => $paymentMode,
+            'payment_mode'   => $paymentMode,
         ));
+
+        SubmissionActivity::createActivity( array(
+            'form_id'       => $form->ID,
+            'submission_id' => $submissionId,
+            'type'          => 'activity',
+            'created_by'    => 'PayForm BOT',
+            'content'       => 'Payment status changed from pending to success'
+        ) );
+
     }
 
     public function addTransactionUrl($transactions, $formId)

@@ -197,7 +197,6 @@
                 return '';
             },
             tableRowClassName({row, rowIndex}) {
-                console.log(row);
                 return 'wpf_row_'+row.payment_status;
             },
             getFormTitles() {

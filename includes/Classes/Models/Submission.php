@@ -81,8 +81,6 @@ class Submission
             $result->user_profile_url = get_edit_user_link($result->user_id);
         }
 
-
-
         if(in_array('transactions',$with)) {
             $result->transactions = (new Transaction())->getTransactions($submissionId);
         }
@@ -91,6 +89,9 @@ class Submission
             $result->order_items = (new OrderItem())->getOrderItems($submissionId);
         }
 
+        if(in_array('activities', $with)) {
+            $result->activities = SubmissionActivity::getSubmissionActivity($submissionId);
+        }
         return $result;
     }
 
