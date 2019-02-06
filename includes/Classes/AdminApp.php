@@ -2,6 +2,8 @@
 
 namespace WPPayForm\Classes;
 
+use WPPayForm\Classes\Models\Forms;
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -29,7 +31,16 @@ class AdminApp
         wp_localize_script('wppayform_boot', 'wpPayFormsAdmin', array(
             'i18n' => array(
                 'All Payment Forms' => __('All Payment Forms', 'wppayform')
-            )
+            ),
+            'paymentStatuses' => apply_filters('wpf_available_payment_statuses', array(
+                'pending' => 'Pending',
+                'paid' => 'Paid',
+                'failed' => 'Failed',
+                'refunded' => 'Refunded'
+            )),
+            'image_upload_url' => admin_url('admin-ajax.php?action=wpf_upload_image'),
+            'forms_count' => Forms::getTotalCount(),
+            'assets_url' => WPPAYFORM_URL.'assets/'
         ));
 
     }

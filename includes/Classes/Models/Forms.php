@@ -35,8 +35,7 @@ class Forms
 
         $forms = apply_filters('wppayment_forms_get_all_forms', $forms);
 
-        $total = wp_count_posts('wp_payform');
-        $total = intval($total->publish);
+        $total = self::getTotalCount();
         $lastPage = ceil($total / $args['posts_per_page']);
 
         return array(
@@ -44,6 +43,13 @@ class Forms
             'total'     => $total,
             'last_page' => $lastPage
         );
+    }
+
+    public static function getTotalCount()
+    {
+        return wpPayformDB()->table('posts')
+            ->where('post_type', 'wp_payform')
+            ->count();
     }
 
     public static function getAllAvailableForms()
@@ -62,6 +68,14 @@ class Forms
         return $id;
     }
 
+    public static function update($formId, $data)
+    {
+        $data['ID'] = $formId;
+        $data['post_type'] = 'wp_payform';
+        $data['post_status'] = 'publish';
+        return wp_update_post($data);
+    }
+
     public static function getButtonSettings($formId)
     {
         $settings = get_post_meta($formId, '_wpf_submit_button_settings', true);
@@ -69,7 +83,7 @@ class Forms
             $settings = array();
         }
         $buttonDefault = array(
-            'button_text'     => __('Submit and Pay', 'wppayform'),
+            'button_text'     => __('Submit', 'wppayform'),
             'processing_text' => __('Please Wait…', 'wppayform'),
             'button_style'    => 'wpf_default_btn',
             'css_class'       => ''
@@ -84,6 +98,7 @@ class Forms
         if (!$form && $form->post_type != 'wp_payform') {
             return false;
         }
+        $form->show_title_description = get_post_meta($formId, '_show_title_description', true);
         $form->preview_url = site_url('?wp_paymentform_preview=' . $form->ID);
         return $form;
     }
@@ -132,9 +147,9 @@ class Forms
             $currencySettings = array();
         }
         $defaultSettings = array(
-            'settings_type'   => 'global',
-            'currency' => 'USD',
-            'locale'   => 'auto'
+            'settings_type' => 'global',
+            'currency'      => 'USD',
+            'locale'        => 'auto'
         );
         return wp_parse_args($currencySettings, $defaultSettings);
     }
@@ -143,13 +158,13 @@ class Forms
     {
         $settings = self::getCurrencySettings($formId);
         $globalSettings = GeneralSettings::getGlobalCurrencySettings($formId);
-        if($settings['settings_type'] == 'global') {
+        if ($settings['settings_type'] == 'global') {
             $settings = $globalSettings;
         } else {
-            if(empty($settings['locale'])) {
+            if (empty($settings['locale'])) {
                 $settings['locale'] = 'auto';
             }
-            if(empty($settings['currency'])) {
+            if (empty($settings['currency'])) {
                 $settings['currency'] = 'USD';
             }
             $settings['currency_sign_position'] = $globalSettings['currency_sign_position'];
@@ -188,6 +203,8 @@ class Forms
             } elseif ($element['group'] == 'payment') {
                 $formattedShortcodes['payment']['shortcodes']['{payment_item.' . $elementId . '}'] = self::getLabel($element);
                 $hasPayment = true;
+            } else if($element['group'] == 'item_quantity') {
+                $formattedShortcodes['input']['shortcodes']['{quantity.' . $elementId . '}'] = self::getLabel($element);
             }
         }
 
@@ -199,7 +216,7 @@ class Forms
                 '{submission.id}'              => __('Submission ID', 'wppayform'),
                 '{submission.submission_hash}' => __('Submission Hash ID', 'wppayform'),
                 '{submission.customer_name}'   => __('Customer Name', 'wppayform'),
-                '{submission.customer_name}'   => __('Customer Email', 'wppayform'),
+                '{submission.customer_email}'   => __('Customer Email', 'wppayform'),
             )
         );
         if ($hasPayment) {

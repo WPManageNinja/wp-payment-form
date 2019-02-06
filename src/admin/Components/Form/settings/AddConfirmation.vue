@@ -7,12 +7,10 @@
                 <el-tooltip class="item" placement="bottom-start" effect="light">
                     <div slot="content">
                         <h3>Confirmation Type</h3>
-
                         <p>
                             After submit, where the page will redirect to.
                         </p>
                     </div>
-
                     <i class="el-icon-info el-text-info" />
                 </el-tooltip>
             </template>
@@ -113,7 +111,6 @@
                 <el-tooltip class="item" placement="bottom-start" effect="light">
                     <div slot="content">
                         <h3>Redirect Form to URL</h3>
-
                         <p>
                             Enter the URL of the webpage you would <br>
                             like the user to be redirected to after <br>
@@ -154,7 +151,6 @@
             return {
                 redirectToOptions: {
                     samePage: 'Same Page',
-                    customPage: 'To a Page',
                     customUrl: 'To a Custom URL'
                 }
             }

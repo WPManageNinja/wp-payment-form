@@ -24,6 +24,8 @@
 @import '~element-ui/lib/theme-chalk/radio.css';
 @import '~element-ui/lib/theme-chalk/switch.css';
 @import '~element-ui/lib/theme-chalk/radio-button.css';
+@import '~element-ui/lib/theme-chalk/button.css';
+@import '~element-ui/lib/theme-chalk/button-group.css';
 @import '~element-ui/lib/theme-chalk/tabs.css';
 @import '~element-ui/lib/theme-chalk/tab-pane.css';
 @import '~element-ui/lib/theme-chalk/steps.css';
@@ -38,6 +40,10 @@
 @import '~element-ui/lib/theme-chalk/transfer.css';
 @import '~element-ui/lib/theme-chalk/date-picker.css';
 @import '~element-ui/lib/theme-chalk/popover.css';
+@import '~element-ui/lib/theme-chalk/dropdown.css';
+@import '~element-ui/lib/theme-chalk/dropdown-menu.css';
+@import '~element-ui/lib/theme-chalk/dropdown-item.css';
+@import '~element-ui/lib/theme-chalk/upload.css';
 @import "./_element_icons.css";
 
 .wppayform_main_nav {
@@ -483,9 +489,11 @@ table.el-table__header thead tr th {
       display: block;
       list-style: none;
       padding: 0;
-      margin-bottom: 10px;
+      padding: 7px 0px;
       overflow: hidden;
-
+      &:hover {
+        background: rgb(247, 250, 252);
+      }
       .wpf_list_header {
         width: 180px;
         float: left;
@@ -590,4 +598,51 @@ a.el-button {
 }
 .text-center {
   text-align: center;
+}
+
+.wpf_header_actions {
+  float: right;
+  text-align: right;
+  display: inline-block;
+}
+
+.wpf_components {
+  button {
+    background: rgb(128, 128, 128);
+    color: rgb(255, 255, 255);
+    margin-right: 5px;
+    border-radius: 0;
+    margin-bottom: 5px;
+    margin-left: 0 !important;
+    &.wpf_item_input, &.wpf_item_html {
+      background: #9E9E9E;
+      border-color:#9E9E9E;
+    }
+    &.wpf_item_payment_method_element {
+      background: rgb(33, 150, 243);
+      border-color:rgb(33, 150, 243);
+    }
+    &.wpf_item_payment, &.wpf_item_item_quantity {
+      background: rgb(255, 193, 7);
+      border-color:rgb(255, 193, 7);
+    }
+    &.el-button {
+      &:hover {
+        background: white;
+        color: rgb(33, 150, 243);
+      }
+    }
+  }
+}
+label.wpf_components_label {
+  font-weight: 500;
+  margin-bottom: 5px;
+  overflow: hidden;
+  display: block;
+}
+
+.wpf_settings_section {
+  padding: 10px;
+  background: rgb(247, 250, 252);
+  margin-bottom: 20px;
 }

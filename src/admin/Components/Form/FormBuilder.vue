@@ -13,49 +13,54 @@
             </div>
             <div class="payform_section_body">
                 <div class="payform_element_control">
-                    <label>
-                        Add Form Field
-                        <select v-model="adding_component">
-                            <option value="">-- Select --</option>
-                            <option v-for="(component,component_name) in components" :key="component_name"
-                                    :value="component_name">{{ component.editor_title }}
-                            </option>
-                        </select>
-                        <el-button @click="addComponent()" type="info" size="mini" v-if="adding_component">Add To Form
+                    <label class="wpf_components_label">Click on the fields to add on the form</label>
+                    <div class="wpf_components">
+                        <el-button
+                            v-for="(component,component_name) in components"
+                            :key="component_name"
+                            size="mini"
+                            type="plain"
+                            class="wpf_element_items"
+                            :class="'wpf_item_'+component.group"
+                            @click="addComponent(component_name)"
+                        >
+                            {{ component.editor_title }}
                         </el-button>
-                    </label>
+                    </div>
                 </div>
-                <div class="payform_builder_items">
+                <div v-if="builder_elements.length" class="payform_builder_items">
                     <draggable
-                        :options="{handle:'.handler'}"
+                        :options="{handle:'.handler', animation: 0, ghostClass: 'ghost'}"
                         :list="builder_elements"
                         :element="'div'"
                     >
-                        <div v-for="element in builder_elements" class="payform_builder_item">
-                            <div class="payform_builder_header">
-                                <div class="payform_head_left">
-                                    <div class="handler payform_inline_item">
-                                        <span class="dashicons dashicons-menu"></span>
+                        <transition-group type="transition">
+                            <div v-for="element in builder_elements" :key="element.id" class="payform_builder_item">
+                                <div class="payform_builder_header">
+                                    <div class="payform_head_left">
+                                        <div class="handler payform_inline_item">
+                                            <span class="dashicons dashicons-menu"></span>
+                                        </div>
+                                        <div class="element_title payform_inline_item">
+                                            {{ (element.field_options && element.field_options.label) ?
+                                            element.field_options.label : element.editor_title }}
+                                        </div>
                                     </div>
-                                    <div class="element_title payform_inline_item">
-                                        {{ (element.field_options && element.field_options.label) ?
-                                        element.field_options.label : element.editor_title }}
+                                    <div @click="toggleEditing(element.id)" class="payform_head_right">
+                                        <div class="element_type payform_inline_item">
+                                            {{ element.editor_title }}
+                                        </div>
+                                        <div class="element_control payform_inline_item">
+                                            <span class="dashicons dashicons-arrow-down-alt2"></span>
+                                        </div>
                                     </div>
                                 </div>
-                                <div @click="toggleEditing(element.id)" class="payform_head_right">
-                                    <div class="element_type payform_inline_item">
-                                        {{ element.editor_title }}
-                                    </div>
-                                    <div class="element_control payform_inline_item">
-                                        <span class="dashicons dashicons-arrow-down-alt2"></span>
-                                    </div>
+                                <div v-if="current_editing == element.id" class="payform_builder_item_settings">
+                                    <element-editor @deleteItem="deleteItem(element)" @updateItem="saveSettings"
+                                                    :element="element" :all_elements="builder_elements"/>
                                 </div>
                             </div>
-                            <div v-if="current_editing == element.id" class="payform_builder_item_settings">
-                                <element-editor @deleteItem="deleteItem(element)" @updateItem="saveSettings"
-                                                :element="element" :all_elements="builder_elements"/>
-                            </div>
-                        </div>
+                        </transition-group>
                     </draggable>
 
                     <div v-if="builder_elements.length" class="payform_submit_button_settings payform_builder_item">
@@ -78,11 +83,15 @@
                             </div>
                         </div>
                         <div v-if="current_editing == '_submit_button'" class="payform_builder_item_settings">
-                            <submit-button-settings @updateSettings="saveSettings" :submit_button="submit_button_settings" />
+                            <submit-button-settings @updateSettings="saveSettings"
+                                                    :submit_button="submit_button_settings"/>
                         </div>
                     </div>
                 </div>
 
+                <div v-else class="empty_builder_items">
+                    <img style="max-width: 100%; max-height: 300px;" :src="empty_form_image" />
+                </div>
 
                 <div v-if="form_tips" class="payform_builder_notices">
                     <p>
@@ -117,7 +126,8 @@
                 fetching: false,
                 components: {},
                 adding_component: '',
-                submit_button_settings: {}
+                submit_button_settings: {},
+                empty_form_image: window.wpPayFormsAdmin.assets_url+'images/form_instruction.png'
             }
         },
         computed: {
@@ -133,21 +143,21 @@
                 let hasItemField = false;
 
                 each(this.builder_elements, (element) => {
-                    if(element.group == 'payment') {
+                    if (element.group == 'payment') {
                         hasPaymentField = true;
                     }
-                    if(element.group == 'payment_method_element') {
+                    if (element.group == 'payment_method_element') {
                         hasItemField = true;
                     }
                 });
 
-                if(!hasPaymentField && hasItemField) {
+                if (!hasPaymentField && hasItemField) {
                     return 'You have added payment field, Now please add <b>Payment Item</b> field to accept payments';
                 }
-                if(hasPaymentField && !hasItemField) {
+                if (hasPaymentField && !hasItemField) {
                     return 'You have added order item field, Now please add <b>Card Elements</b> field to accept payments';
                 }
-                if(this.builder_elements.length && !hasPaymentField && !hasItemField) {
+                if (this.builder_elements.length && !hasPaymentField && !hasItemField) {
                     return 'Add <b>Payment Item</b> and <b>Card Elements</b> field to accept payment';
                 }
             }
@@ -171,8 +181,7 @@
                         this.fetching = false;
                     })
             },
-            addComponent() {
-                let componentName = this.adding_component;
+            addComponent(componentName) {
                 let component = this.components[componentName];
                 if (!componentName) {
                     this.$message({
@@ -183,7 +192,7 @@
                 }
 
                 // check if it's single only
-                if(component.single_only && this.alreadyExistElement(component.type)) {
+                if (component.single_only && this.alreadyExistElement(component.type)) {
                     this.$message({
                         message: 'Element already exists on your form. You can not add more of this item',
                         type: 'error'
@@ -194,7 +203,7 @@
                 let nonMutableElement = JSON.parse(JSON.stringify(component));
                 // Find an unique name for this elament
                 nonMutableElement.id = this.getComponentUID(componentName);
-                if(!nonMutableElement.field_options) {
+                if (!nonMutableElement.field_options) {
                     nonMutableElement.field_options = {};
                 }
                 this.builder_elements.push(nonMutableElement);
@@ -205,7 +214,7 @@
             alreadyExistElement(type) {
                 let status = false;
                 each(this.builder_elements, (element) => {
-                    if(element.type == type) {
+                    if (element.type == type) {
                         status = true;
                     }
                 });
@@ -261,3 +270,16 @@
         }
     }
 </script>
+
+<style lang="scss">
+    .flip-list-move {
+        transition: transform 0.5s;
+    }
+    .no-move {
+        transition: transform 0s;
+    }
+    .ghost {
+        opacity: 0.1;
+        background: gray;
+    }
+</style>

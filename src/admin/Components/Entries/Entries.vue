@@ -18,7 +18,8 @@
             <div class="wpf_entry_action">
                 <label>
                     <span class="item_title">Filter By Payment Status</span>
-                    <el-select @change="changePaymentStatus()" size="small" v-model="selected_payment_status" placeholder="All Forms">
+                    <el-select @change="changePaymentStatus()" size="small" v-model="selected_payment_status"
+                               placeholder="All Forms">
                         <el-option label="All" value=""></el-option>
                         <el-option
                             v-for="(status, status_key) in available_statuses"
@@ -38,10 +39,10 @@
             >
                 <el-table-column
                     label="ID"
-                    fixed
                     width="60">
                     <template slot-scope="scope">
-                        <router-link :to="{ name: 'entry', params: { entry_id: scope.row.id }, query: { form_id: form_id } }">
+                        <router-link
+                            :to="{ name: 'entry', params: { entry_id: scope.row.id }, query: { form_id: form_id } }">
                             {{scope.row.id}}
                         </router-link>
                     </template>
@@ -84,6 +85,17 @@
                     label="Submitted At"
                     prop="created_at">
                 </el-table-column>
+                <el-table-column
+                    label="Actions"
+                    width="130"
+                    fixed="right">
+                    <template slot-scope="scope">
+                        <el-button-group>
+                            <el-button @click="goToViewRoute(scope.row)" type="primary" icon="el-icon-view" size="mini"></el-button>
+                            <el-button @click="showDeleteConformation(scope.row)" type="danger" size="mini" icon="el-icon-delete"></el-button>
+                        </el-button-group>
+                    </template>
+                </el-table-column>
             </el-table>
         </div>
         <div class="wpf_entry_pagination">
@@ -97,6 +109,24 @@
                 :total="pagination.total">
             </el-pagination>
         </div>
+
+
+        <!--Delete Entry Confimation Modal-->
+        <el-dialog
+            title="Are You Sure, You want to delete this Entry?"
+            :visible.sync="delete_pop_up"
+            :before-close="handleDeleteClose"
+            width="60%">
+            <div v-if="deleting_row" class="modal_body">
+                <p>All the data assoscilate with this entry will be deleted, including payment information and other associate information</p>
+                <p>You are deleting entry id: <b>{{ deleting_row.id }}</b>. <br />Form Title: <b>{{ deleting_row.post_title }}</b></p>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="delete_pop_up = false">Cancel</el-button>
+                <el-button type="primary" @click="deleteEntryNow()">Confirm Delete</el-button>
+            </span>
+        </el-dialog>
+
     </div>
 </template>
 
@@ -117,11 +147,10 @@
                 form_id: '0',
                 available_forms: [],
                 selected_payment_status: '',
-                available_statuses: {
-                    'pending': 'Pending',
-                    'paid' : 'Paid',
-                    'failed' : 'Failed',
-                }
+                available_statuses: window.wpPayFormsAdmin.paymentStatuses,
+                delete_pop_up: false,
+                deleting_row: null,
+                deletetingItem: false
             }
         },
         computed: {
@@ -146,7 +175,7 @@
                 let query = {
                     action: 'wpf_get_submissions',
                     form_id: parseInt(this.form_id),
-                    payment_status:  this.selected_payment_status,
+                    payment_status: this.selected_payment_status,
                     page_number: this.pagination.current_page,
                     per_page: this.pagination.per_page
                 }
@@ -161,13 +190,13 @@
                     });
             },
             changeForm() {
-                this.$router.push( {query: {form_id: this.form_id}});
+                this.$router.push({query: {form_id: this.form_id}});
                 this.pagination.current_page = 1;
                 this.getEntries();
             },
             changePaymentStatus() {
                 this.pagination.current_page = 1;
-                this.$router.push( {query: {payment_status: this.selected_payment_status}});
+                this.$router.push({query: {payment_status: this.selected_payment_status}});
                 this.getEntries();
             },
             pageSizeChange(pageSize) {
@@ -187,17 +216,19 @@
                 return fromatPrice(amount, row.currencySettings);
             },
             getPaymentStatusIcon(status) {
-                if(status == 'pending') {
+                if (status == 'pending') {
                     return 'el-icon-time';
-                } else if(status == 'paid') {
+                } else if (status == 'paid') {
                     return 'el-icon-check';
-                } else if(status == 'failed') {
+                } else if (status == 'failed') {
                     return 'el-icon-error';
+                } else if (status == 'refunded') {
+                    return 'el-icon-warning';
                 }
                 return '';
             },
             tableRowClassName({row, rowIndex}) {
-                return 'wpf_row_'+row.payment_status;
+                return 'wpf_row_' + row.payment_status;
             },
             getFormTitles() {
                 this.$get({
@@ -206,13 +237,47 @@
                     .then(response => {
                         this.available_forms = response.data.available_forms;
                     });
+            },
+            goToViewRoute(row) {
+                this.$router.push({
+                    name: 'entry',
+                    params: { entry_id: row.id },
+                    query: { form_id: this.form_id }
+                });
+            },
+            showDeleteConformation(row) {
+                this.deleting_row = row;
+                this.delete_pop_up = true;
+            },
+            handleDeleteClose() {
+                this.deleting_row = null;
+                this.delete_pop_up = false;
+            },
+            deleteEntryNow() {
+                this.deletetingItem = true;
+                this.$adminPost({
+                    route: 'delete_submission',
+                    submission_id: this.deleting_row.id,
+                    form_id: this.deleting_row.form_id
+                })
+                    .then(response => {
+                        this.$message.success(response.data.message);
+                        this.getEntries();
+                    })
+                    .fail(error => {
+                        this.$message.error(error.responseJSON.data.message);
+                    })
+                    .always(() => {
+                        this.deletetingItem = false;
+                        this.handleDeleteClose();
+                    });
             }
         },
         mounted() {
-            if(this.$route.query.form_id) {
+            if (this.$route.query.form_id) {
                 this.form_id = this.$route.query.form_id;
             }
-            if(this.$route.query.payment_status) {
+            if (this.$route.query.payment_status) {
                 this.selected_payment_status = this.$route.query.payment_status;
             }
             this.getEntries();

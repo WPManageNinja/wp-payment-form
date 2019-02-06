@@ -1,13 +1,12 @@
 <template>
     <div v-loading="loading" class="wppayforms">
-        <welcome v-if="!hasForms" @create="createFormModal = true"/>
+        <welcome v-if="!forms_count && !hasForms" @create="createFormModal = true"/>
         <!--We Have forms Now-->
         <div class="all_payforms_wrapper payform_section" v-else>
             <div class="payform_section_header">
                 <h1 class="payform_section_title">
                     {{ $t('All Payment Forms') }}
                 </h1>
-
                 <div class="payform_section_actions">
                     <div class="payform_action search_action">
                         <el-input size="small" placeholder="Search" v-model="search_string" class="input-with-select">
@@ -42,7 +41,12 @@
                             <div class="row-actions">
                                 <router-link :to="{ name: 'edit_form', params: { form_id: scope.row.ID } }">
                                     {{ $t('Edit') }}
-                                </router-link> |
+                                </router-link>
+                                |
+                                <router-link :to="{ name: 'entries', query: { form_id: scope.row.ID.toString() } }">
+                                    {{ $t('Entries') }}
+                                </router-link>
+                                |
                                 <a :href="scope.row.preview_url" target="_blank">{{ $t('Preview') }}</a> |
                                 <a @click.prevent="confirmDeleteForm(scope.row)" href="#">{{ $t('Delete') }}</a>
                             </div>
@@ -75,8 +79,10 @@
             :before-close="handleDeleteClose"
             width="60%">
             <div class="modal_body">
-                <p>All the data assoscilate with this form will be deleted, including payment information and other associate information</p>
-                <p>You are deleting form id: <b>{{ deleteingForm.ID }}</b>. <br />Form Title: <b>{{ deleteingForm.post_title }}</b></p>
+                <p>All the data assoscilate with this form will be deleted, including payment information and other
+                    associate information</p>
+                <p>You are deleting form id: <b>{{ deleteingForm.ID }}</b>. <br/>Form Title: <b>{{
+                    deleteingForm.post_title }}</b></p>
             </div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="deleteDialogVisible = false">Cancel</el-button>
@@ -108,7 +114,8 @@
                 total: 0,
                 loading: false,
                 deleteDialogVisible: false,
-                deleteingForm: {}
+                deleteingForm: {},
+                forms_count: parseInt(window.wpPayFormsAdmin.forms_count)
             }
         },
         methods: {

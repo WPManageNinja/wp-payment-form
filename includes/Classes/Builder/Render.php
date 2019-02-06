@@ -2,6 +2,7 @@
 
 namespace WPPayForm\Classes\Builder;
 
+use WPPayForm\Classes\GeneralSettings;
 use WPPayForm\Classes\Models\Forms;
 
 if (!defined('ABSPATH')) {
@@ -40,6 +41,12 @@ class Render
         $currentUrl = home_url($wp->request);
         ?>
         <div class="wpf_form_wrapper wpf_form_wrapper_<?php echo $form->ID; ?>">
+        <?php if ($form->show_title_description == 'yes'): ?>
+        <h3 class="wp_form_title"><?php echo $form->post_title; ?></h3>
+        <div class="wpf_form_description">
+            <?php echo do_shortcode($form->post_content); ?>
+        </div>
+    <?php endif; ?>
         <?php do_action('wpf_form_render_before', $form); ?>
         <form data-stripe_pub_key="<?php echo wpfGetStripePubKey(); ?>" data-wpf_form_id="<?php echo $form->ID; ?>" class="wpf_form wpf_strip_default_style wpf_form_id_<?php echo $form->ID; ?>" method="POST" action="<?php site_url(); ?>" id="wpf_form_id_<?php echo $form->ID; ?>">
         <input type="hidden" name="__wpf_form_id" value="<?php echo $form->ID; ?>"/>
@@ -52,20 +59,22 @@ class Render
     {
         $submitButton = Forms::getButtonSettings($form->ID);
         $processingText = $submitButton['processing_text'];
-        if(!$processingText) {
-            $processingText  = __('Please Wait…', 'wpfluentform');
+        if (!$processingText) {
+            $processingText = __('Please Wait…', 'wpfluentform');
         }
         $button_text = $submitButton['button_text'];
-        if(!$button_text) {
+        if (!$button_text) {
             $button_text = __('Submit', 'wpfluentform');
         }
         ?>
         <?php do_action('wpf_form_render_before_submit_button', $form); ?>
         <br/>
-        <button class="wpf_submit_button <?php echo $submitButton['css_class']; ?> <?php echo $submitButton['button_style']; ?>"
-                id="stripe_form_submit_<?php echo $form->ID; ?>">
+        <button
+            class="wpf_submit_button <?php echo $submitButton['css_class']; ?> <?php echo $submitButton['button_style']; ?>"
+            id="stripe_form_submit_<?php echo $form->ID; ?>">
             <span class="wpf_txt_normal"><?php echo $this->parseText($button_text, $form->ID); ?></span>
-            <span style="display: none;" class="wpf_txt_loading"><?php echo $this->parseText($submitButton['processing_text'], $form->ID); ?></span>
+            <span style="display: none;"
+                  class="wpf_txt_loading"><?php echo $this->parseText($submitButton['processing_text'], $form->ID); ?></span>
         </button>
         <?php do_action('wpf_form_render_after_submit_button', $form); ?>
         </form>
@@ -78,13 +87,17 @@ class Render
 
     private function addAssets($form)
     {
-        $currencySettings = Forms::getCurrencyAndLocale( $form->ID );
+        $currencySettings = Forms::getCurrencyAndLocale($form->ID);
+        $paymentSettings = wpfGetStripePaymentSettings();
         wp_enqueue_script('wppayform_public', WPPAYFORM_URL . 'assets/js/payforms-public.js', array('jquery'), WPPAYFORM_VERSION, true);
         wp_enqueue_style('wppayform_public', WPPAYFORM_URL . 'assets/css/payforms-public.css', array(), WPPAYFORM_VERSION);
-        wp_localize_script('wppayform_public', 'wp_payform_' . $form->ID, array(
-            'form_id' => $form->ID,
-            'currency_settings' => $currencySettings
-        ));
+        wp_localize_script('wppayform_public', 'wp_payform_' . $form->ID, apply_filters('wpf_checkout_vars', array(
+            'form_id'              => $form->ID,
+            'checkout_title'       => $paymentSettings['company_name'],
+            'checkout_description' => $form->post_title,
+            'currency_settings'    => $currencySettings,
+            'checkout_logo'        => $paymentSettings['checkout_logo']
+        ), $form));
         wp_localize_script('wppayform_public', 'wp_payform_general', array(
             'ajax_url' => admin_url('admin-ajax.php')
         ));

@@ -14,7 +14,7 @@
                     inactive-value="no">
                 </el-switch>
             </el-form-item>
-            <el-form-item label="Require Shipping info">
+            <el-form-item v-if="checkout_settings.require_billing_info == 'yes'" label="Require Shipping info">
                 <el-switch
                     v-model="checkout_settings.require_shipping_info"
                     active-value="yes"
@@ -33,8 +33,7 @@
             return {
                 checkputStyles: {
                     'stripe_checkout': 'Stripe Checkout Overlay (Recommended)',
-                    'embeded_form': 'Embedded Checkout Field',
-                    'overlay_form': 'Overlay Form Display'
+                    'embeded_form': 'Embedded Checkout Field'
                 }
             }
         }

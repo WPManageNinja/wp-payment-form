@@ -6,7 +6,6 @@
                 {{ menuItem.title }}
             </router-link>
         </div>
-
         <router-view></router-view>
     </div>
 </template>
@@ -26,11 +25,7 @@
                         title: 'Entries & Payments'
                     },
                     {
-                        route: 'stats',
-                        title: 'Stats'
-                    },
-                    {
-                        route: 'settings',
+                        route: 'stripe_settings',
                         title: 'Settings'
                     },
                     {

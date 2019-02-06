@@ -5,20 +5,36 @@ function wpfFomatPrice($price, $formId = false)
     return '$' . $price;
 }
 
+function wpfGetStripePaymentMode()
+{
+    $paymentSettings = wpfGetStripePaymentSettings();
+    return ($paymentSettings['payment_mode'] == 'live') ? 'live' : 'test';
+}
+
 function wpfGetStripePubKey()
 {
-    if (defined('WP_PAY_FORM_STRIPE_PUB_KEY') && WP_PAY_FORM_STRIPE_PUB_KEY) {
-        return WP_PAY_FORM_STRIPE_PUB_KEY;
+    $paymentSettings = wpfGetStripePaymentSettings();
+    if($paymentSettings['payment_mode'] == 'live') {
+        if (wpfIsStripeKeysDefined()) {
+            return WP_PAY_FORM_STRIPE_PUB_KEY;
+        } else {
+            return $paymentSettings['live_pub_key'];
+        }
     }
-    return '';
+    return $paymentSettings['test_pub_key'];
 }
 
 function wpfGetStripeSecretKey()
 {
-    if (defined('WP_PAY_FORM_STRIPE_SECRET_KEY') && WP_PAY_FORM_STRIPE_SECRET_KEY) {
-        return WP_PAY_FORM_STRIPE_SECRET_KEY;
+    $paymentSettings = wpfGetStripePaymentSettings();
+    if($paymentSettings['payment_mode'] == 'live') {
+        if (wpfIsStripeKeysDefined()) {
+            return WP_PAY_FORM_STRIPE_SECRET_KEY;
+        } else {
+            return $paymentSettings['live_secret_key'];
+        }
     }
-    return '';
+    return $paymentSettings['test_secret_key'];
 }
 
 function wpfIsStripeKeysDefined()
@@ -26,23 +42,18 @@ function wpfIsStripeKeysDefined()
     return defined('WP_PAY_FORM_STRIPE_SECRET_KEY') && defined('WP_PAY_FORM_STRIPE_PUB_KEY');
 }
 
-if (!function_exists('ninja_table_admin_role')) {
-    function ninja_table_admin_role()
-    {
-        if (current_user_can('administrator')) {
-            return 'administrator';
-        }
-        $roles = apply_filters('ninja_table_admin_role', array('administrator'));
-        if (is_string($roles)) {
-            $roles = array($roles);
-        }
-        foreach ($roles as $role) {
-            if (current_user_can($role)) {
-                return $role;
-            }
-        }
-        return false;
-    }
+function wpfGetStripePaymentSettings() {
+    $settings = get_option('wpf_stripe_payment_settings', array());
+    $defaults = array(
+        'payment_mode' => 'test',
+        'live_pub_key' =>  '',
+        'live_secret_key' => '',
+        'test_pub_key' =>  '',
+        'test_secret_key' => '',
+        'company_name' =>  get_bloginfo('name'),
+        'checkout_logo' =>  ''
+    );
+    return wp_parse_args($settings, $defaults);
 }
 
 function wpPayformDB()
@@ -52,7 +63,6 @@ function wpPayformDB()
     }
     return wpFluent();
 }
-
 
 function wpfFormattedMoney($amountInCents, $currencySettings)
 {

@@ -22,27 +22,28 @@ class StripeCardElementComponent extends BaseComponent
             'type'            => 'stripe_card_element',
             'editor_title'    => 'Card Elements (Stripe)',
             'group'           => 'payment_method_element',
+            'method_handler'  => 'stripe',
             'single_only'     => true,
             'editor_elements' => array(
-                'label'      => array(
+                'label'                  => array(
                     'label' => 'Field Label',
                     'type'  => 'text'
                 ),
-                'verify_zip' => array(
+                'checkout_display_style' => array(
+                    'label' => 'Checkout display style',
+                    'type'  => 'checkout_display_options'
+                ),
+                'verify_zip'             => array(
                     'label' => 'Verify Zip/Postal Code',
                     'type'  => 'switch'
                 ),
-                'checkout_display_style' => array(
-                    'label' => 'Checkout display style',
-                    'type' => 'checkout_display_options'
-                )
             ),
             'field_options'   => array(
-                'label'      => '',
-                'verify_zip' => 'no',
+                'label'                  => '',
+                'verify_zip'             => 'no',
                 'checkout_display_style' => array(
-                    'style' => 'stripe_checkout',
-                    'require_billing_info' => 'no',
+                    'style'                 => 'stripe_checkout',
+                    'require_billing_info'  => 'no',
                     'require_shipping_info' => 'no'
                 )
             )
@@ -57,16 +58,16 @@ class StripeCardElementComponent extends BaseComponent
         }
 
         $checkOutStyle = ArrayHelper::get($fieldOptions, 'checkout_display_style.style', 'stripe_checkout');
-        if($checkOutStyle == 'stripe_checkout') {
+        if ($checkOutStyle == 'stripe_checkout') {
             wp_enqueue_script('stripe_checkout', 'https://checkout.stripe.com/checkout.js', array('jquery'), '3.0', true);
             $atrributes = array(
-                'data-checkout_style' => $checkOutStyle,
-                'class' => 'wpf_stripe_card_element',
-                'data-verify_zip' => ArrayHelper::get($fieldOptions, 'verify_zip'),
-                'data-require_billing_info' => ArrayHelper::get($fieldOptions,'checkout_display_style.require_billing_info'),
-                'data-require_shipping_info' => ArrayHelper::get($fieldOptions,'checkout_display_style.require_shipping_info')
+                'data-checkout_style'        => $checkOutStyle,
+                'class'                      => 'wpf_stripe_card_element',
+                'data-verify_zip'            => ArrayHelper::get($fieldOptions, 'verify_zip'),
+                'data-require_billing_info'  => ArrayHelper::get($fieldOptions, 'checkout_display_style.require_billing_info'),
+                'data-require_shipping_info' => ArrayHelper::get($fieldOptions, 'checkout_display_style.require_shipping_info')
             );
-            echo '<div style="display:none !important; visibility: hidden !important;" '.$this->builtAttributes($atrributes).' class="wpf_stripe_checkout"></div>';
+            echo '<div style="display:none !important; visibility: hidden !important;" ' . $this->builtAttributes($atrributes) . ' class="wpf_stripe_checkout"></div>';
             return;
         } else {
             wp_enqueue_script('stripe_elements', 'https://js.stripe.com/v3/', array('jquery'), '3.0', true);
@@ -77,10 +78,10 @@ class StripeCardElementComponent extends BaseComponent
         $label = ArrayHelper::get($fieldOptions, 'label');
         $attributes = array(
             'data-checkout_style' => $checkOutStyle,
-            'name'       => $element['id'],
-            'class'      => 'wpf_stripe_card_element ' . $inputClass,
-            'data-verify_zip' => ArrayHelper::get($fieldOptions, 'verify_zip'),
-            'id'         => $inputId
+            'name'                => $element['id'],
+            'class'               => 'wpf_stripe_card_element ' . $inputClass,
+            'data-verify_zip'     => ArrayHelper::get($fieldOptions, 'verify_zip'),
+            'id'                  => $inputId
         );
         ?>
         <div class="wpf_form_group wpf_item_<?php echo $element['id']; ?>>">

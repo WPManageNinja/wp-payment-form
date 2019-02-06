@@ -5,12 +5,27 @@
                          :to="{ name: 'entries', query: { form_id: form_id } }"><span
                 class="dashicons dashicons-admin-home"></span></router-link>
             <div class="payhead_title">
-                {{ submission.post_title }}
+                {{ submission.post_title }} #{{submission.id}}
             </div>
-            <div class="payhead_next_prev">
-                <i @click="handleNavClick('next')" class="el-icon-d-arrow-left"></i>
-                <span>Entry #{{ submission.id }}</span>
-                <i @click="handleNavClick('prev')" class="el-icon-d-arrow-right"></i>
+            <div class="wpf_header_actions">
+                <el-button-group>
+                    <el-button size="mini" @click="handleNavClick('next')" type="info" icon="el-icon-d-arrow-left">
+                        Prev
+                    </el-button>
+                    <el-button readonly size="mini" disabled type="plain">{{submission.id}}</el-button>
+                    <el-button size="mini" @click="handleNavClick('prev')" type="info">Next <i
+                        class="el-icon-d-arrow-right el-icon-right"></i></el-button>
+                    <el-dropdown @command="handleActionCommand">
+                        <el-button size="mini" type="primary">
+                            Actions <i class="el-icon-arrow-down el-icon--right"></i>
+                        </el-button>
+                        <el-dropdown-menu slot="dropdown">
+                            <el-dropdown-item command="payment_status" v-if="parseInt(submission.order_items.length)">
+                                Change Payment Status
+                            </el-dropdown-item>
+                        </el-dropdown-menu>
+                    </el-dropdown>
+                </el-button-group>
             </div>
         </div>
 
@@ -62,7 +77,9 @@
                 </div>
                 <div v-if="submission.payment_method" class="info_block">
                     <div class="info_header">Payment Method</div>
-                    <div class="info_value wpf_capitalize">{{submission.payment_method}}</div>
+                    <div class="info_value wpf_capitalize">
+                        <span>{{submission.payment_method}}</span>
+                    </div>
                 </div>
                 <div v-if="submission.payment_mode" class="info_block">
                     <div class="info_header">Payment Mode</div>
@@ -140,11 +157,19 @@
                             </li>
                             <li>
                                 <div class="wpf_list_header">Payment Method</div>
-                                <div class="wpf_list_value">{{ transaction.payment_method }}</div>
+                                <div class="wpf_list_value">
+                                    <span v-if="transaction.payment_method">{{ transaction.payment_method }}</span>
+                                    <span v-else>n/a</span>
+                                </div>
                             </li>
                             <li v-if="transaction.charge_id">
-                                <div class="wpf_list_header">Charge ID</div>
-                                <div class="wpf_list_value">{{ transaction.charge_id }}</div>
+                                <div class="wpf_list_header">Transaction ID</div>
+                                <div class="wpf_list_value">
+
+                                    <a v-if="transaction.transaction_url" target="_blank" :href="transaction.transaction_url">{{ transaction.charge_id }}</a>
+                                    <span v-else>{{ transaction.charge_id }}</span>
+
+                                </div>
                             </li>
                             <li v-show="transaction.card_last_4">
                                 <div class="wpf_list_header">Card Last 4</div>
@@ -170,7 +195,6 @@
                 </div>
             </div>
         </div>
-
 
         <div class="entry_info_box">
             <div class="entry_info_header">
@@ -206,6 +230,34 @@
             </div>
         </div>
 
+        <!--Edit Payment Status Modal-->
+        <el-dialog
+            title="Edit Payment Status"
+            :visible.sync="editPaymentStatusModal"
+            width="50%">
+            <div class="modal_body">
+                <p>Current Payment Status: <b>{{ submission.payment_status }}</b></p>
+                <el-form ref="payment_status_form" :model="payment_status_edit_model" label-width="160px">
+                    <el-form-item label="New Payment Status">
+                        <el-radio-group v-model="payment_status_edit_model.status">
+                            <el-radio v-for="(status, status_key) in available_payment_statuses" :key="status"
+                                      :label="status_key">{{status}}
+                            </el-radio>
+                        </el-radio-group>
+                    </el-form-item>
+                    <el-form-item label="Note">
+                        <el-input type="textarea" placeholder="You may add a note for this status change (optional)"
+                                  size="mini"
+                                  v-model="payment_status_edit_model.note"></el-input>
+                    </el-form-item>
+                </el-form>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="editPaymentStatusModal = false">Cancel</el-button>
+                <el-button type="primary" @click="changePaymentStatus()">Confirm</el-button>
+            </span>
+        </el-dialog>
+
     </div>
 
 </template>
@@ -227,7 +279,13 @@
                 show_empty: false,
                 add_note_box: false,
                 new_note_content: '',
-                adding_note: false
+                adding_note: false,
+                editPaymentStatusModal: false,
+                payment_status_edit_model: {
+                    status: '',
+                    note: ''
+                },
+                available_payment_statuses: window.wpPayFormsAdmin.paymentStatuses
             }
         },
         watch: {
@@ -280,6 +338,8 @@
                     return 'el-icon-check';
                 } else if (status == 'failed') {
                     return 'el-icon-error';
+                } else if (status == 'refunded') {
+                    return 'el-icon-warning';
                 }
                 return '';
             },
@@ -312,7 +372,7 @@
                     });
             },
             submitNote() {
-                if(!this.new_note_content) {
+                if (!this.new_note_content) {
                     this.$message({
                         message: 'Please provide note',
                         type: 'error'
@@ -342,6 +402,35 @@
                     .always(() => {
                         this.new_note_content = '';
                         this.adding_note = false;
+                    });
+            },
+            handleActionCommand(command) {
+                if (command == 'payment_status') {
+                    this.editPaymentStatusModal = true;
+                }
+            },
+            changePaymentStatus() {
+                this.$adminPost({
+                    route: 'change_payment_status',
+                    form_id: this.submission.form_id,
+                    submission_id: this.submission.id,
+                    new_payment_status: this.payment_status_edit_model.status,
+                    status_change_note: this.payment_status_edit_model.note
+                })
+                    .then(response => {
+                        this.editPaymentStatusModal = false;
+                        this.$message.success(response.data.message);
+                        this.payment_status_edit_model = {
+                            status: '',
+                            note: ''
+                        };
+                        this.getEntry();
+                    })
+                    .fail(error => {
+                        this.$message.error(error.responseJSON.data.message);
+                    })
+                    .always(() => {
+
                     });
             }
         },

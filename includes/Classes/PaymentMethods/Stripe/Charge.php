@@ -32,7 +32,15 @@ class Charge
             ApiRequest::set_secret_key(wpfGetStripeSecretKey());
             $response = ApiRequest::request($paymentArgs, 'charges');
             if ( !empty($response->error) ) {
-                return self::errorHandler($response->error->type, $response->error->code. ': '. $response->error->message);
+                $errotType = 'general';
+                if(!empty($response->error->type)) {
+                    $errotType = $response->error->type;
+                }
+                $errorCode = '';
+                if(!empty($response->error->code)) {
+                    $errorCode = $response->error->code.' : ';
+                }
+                return self::errorHandler($errotType, $errorCode. $response->error->message);
             }
             if ( false !== $response ) {
                 do_action( 'wpf_stripe_charge_created', $response, $paymentArgs );

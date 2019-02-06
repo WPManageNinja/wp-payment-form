@@ -31,7 +31,12 @@
                     return '';
                 }
             },
-            editorShortcodes: Array,
+            editorShortcodes: {
+                type: Array,
+                default() {
+                    return []
+                }
+            },
             height: Number
         },
         data() {

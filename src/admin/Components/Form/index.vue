@@ -54,12 +54,39 @@
             </el-container>
         </div>
 
+        <!--Edit Form Modal-->
+        <el-dialog
+            title="Edit Form Title and Description"
+            :visible.sync="editFormModalShow"
+            width="50%">
+            <div class="modal_body">
+                <el-form ref="edit_form" :model="form" label-width="160px">
+                    <el-form-item label="New Payment Status">
+                        <el-input v-model="form.post_title" size="mini" type="text" placeholder="Form Title"/>
+                    </el-form-item>
+                    <el-form-item label="Form Description">
+                        <wp-editor v-model="form.post_content"/>
+                    </el-form-item>
+                    <el-checkbox true-label="yes" false-label="no" v-model="form.show_title_description">Show Form Title
+                        and Description at frontend
+                    </el-checkbox>
+                </el-form>
+            </div>
+            <span slot="footer" class="dialog-footer">
+                <el-button @click="editFormModalShow = false">Cancel</el-button>
+                <el-button type="primary" @click="editForm()">Update</el-button>
+            </span>
+        </el-dialog>
+
     </div>
 </template>
 
 <script type="text/babel">
+    import WpEditor from '../Common/_wp_editor';
+
     export default {
         name: 'global_wrapper',
+        components: {WpEditor},
         data() {
             return {
                 form_id: this.$route.params.form_id,
@@ -82,9 +109,10 @@
                         title: 'Email Settings'
                     }
                 ],
-                editFoemModalShow: false,
+                editFormModalShow: false,
                 form: {},
-                fetching: false
+                fetching: false,
+                saving: false,
             }
         },
         methods: {
@@ -103,6 +131,31 @@
                     .always(() => {
                         this.fetching = false;
                     })
+            },
+            editForm() {
+                // validate first
+                if (!this.form.post_title) {
+                    this.$message.error('Please provide form title');
+                    return;
+                }
+                this.saving = true;
+                this.$adminPost({
+                    route: 'update_form',
+                    form_id: this.form.ID,
+                    post_title: this.form.post_title,
+                    post_content: this.form.post_content,
+                    show_title_description: this.form.show_title_description
+                })
+                    .then(response => {
+                        this.$message.success(response.data.message);
+                        this.editFormModalShow = false;
+                    })
+                    .fail(error => {
+                        this.$message.error(error.responseJSON.data.message);
+                    })
+                    .always(() => {
+                        this.saving = false;
+                    });
             }
         },
         mounted() {

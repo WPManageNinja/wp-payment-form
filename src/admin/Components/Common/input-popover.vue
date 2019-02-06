@@ -20,7 +20,7 @@
             </ul>
     </el-popover>
 
-    <el-input v-if="fieldType != 'textarea'" v-model="model" :type="fieldType">
+    <el-input size="small" v-if="fieldType != 'textarea'" v-model="model" :type="fieldType">
         <el-button slot="append" icon="el-icon-more" v-popover:input-popover></el-button>
     </el-input>
 

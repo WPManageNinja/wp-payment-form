@@ -26,14 +26,36 @@ class Stripe
         add_filter('wpf_form_data_formatted_input', array($this, 'pushAddressToInput'), 10, 3);
         add_action('wpf_form_submission_make_payment_stripe', array($this, 'makeFormPayment'), 10, 4);
         add_filter('wpf_form_transactions', array($this, 'addTransactionUrl'), 10, 2);
+        add_action('wp_ajax_wpf_save_stripe_settings', array($this, 'savePaymentSettings'));
+        add_action('wp_ajax_wpf_get_stripe_settings', array($this, 'getPaymentSettings'));
+        add_filter('wpf_payment_method_for_submission', array($this, 'choosePaymentMethod'), 10, 4);
+    }
+
+    public function choosePaymentMethod($paymentMethod, $elements, $formId, $form_data)
+    {
+        if($paymentMethod) {
+            // Already someone choose that it's their payment method
+            return $paymentMethod;
+        }
+        // Now We have to analyze the elements and return our payment method
+        foreach ($elements as $element) {
+            if(isset($element['type']) && $element['type'] == 'stripe_card_element') {
+                return 'stripe';
+            }
+        }
+        return $paymentMethod;
     }
 
     public function makeFormPayment($transactionId, $submissionId, $form_data, $form)
     {
-        // @todo: We have to make it dynamic
-        $paymentMode = 'test';
+        $paymentMode = wpfGetStripePaymentMode();
         $transactionModel = new Transaction();
         $transaction = $transactionModel->getTransaction($transactionId);
+
+        if(!$transaction->payment_total) {
+            return;
+        }
+
         $token = $form_data['stripeToken'];
         $currentUserId = get_current_user_id();
 
@@ -41,12 +63,13 @@ class Stripe
         $submission = $submissionModel->getSubmission($submissionId);
 
         $paymentArgs = array(
-            'currency'             => 'USD',
+            'currency'             => $transaction->currency,
             'amount'               => $transaction->payment_total,
             'source'               => $token,
             'description'          => $form->post_title,
             'statement_descriptor' => $form->post_title
         );
+
         $metadata = array(
             'form_id'        => $form->ID,
             'user_id'        => $currentUserId,
@@ -77,8 +100,8 @@ class Stripe
 
 
         if (!$paymentStatus) {
-            do_action('wpf_stripe_charge_failed', $transactionId, $charge, $paymentArgs);
-            do_action('wpf_form_payment_failed', $transactionId, $charge, $paymentArgs);
+            do_action('wpf_stripe_charge_failed', $transactionId, $charge, $form, $paymentArgs);
+            do_action('wpf_form_payment_failed', $transactionId, $charge, $form, $paymentArgs);
             $transactionModel->update($transactionId, array(
                 'status'         => 'failed',
                 'payment_method' => 'stripe',
@@ -126,6 +149,8 @@ class Stripe
             'content'       => 'Payment status changed from pending to success'
         ) );
 
+        do_action('wpf_stripe_charge_success', $transactionId, $charge, $form, $paymentArgs);
+        do_action('wpf_form_payment_success', $transactionId, $charge, $form, $paymentArgs);
     }
 
     public function addTransactionUrl($transactions, $formId)
@@ -141,25 +166,40 @@ class Stripe
 
     public function pushAddressToInput($inputItems, $formData, $formId)
     {
-        if (isset($formData['__stripe_address_json'])) {
-            $addressDetails = $formData['__stripe_address_json'];
-            $inputItems['__stripe_checkout_address_details'] = json_decode($addressDetails, true);
+        if (isset($formData['__stripe_billing_address_json'])) {
+            $billingAddressDetails = $formData['__stripe_billing_address_json'];
+            $inputItems['__stripe_checkout_billing_address_details'] = json_decode($billingAddressDetails, true);
         }
+
+        if (isset($formData['__stripe_shipping_address_json'])) {
+            $shippingAddressDetails = $formData['__stripe_shipping_address_json'];
+            $inputItems['__stripe_checkout_shipping_address_details'] = json_decode($shippingAddressDetails, true);
+        }
+
         return $inputItems;
     }
 
     public function addAddressToView($parsed, $submission)
     {
         $fomattedData = $submission->form_data_formatted;
-        if (isset($fomattedData['__stripe_checkout_address_details'])) {
-            $address = $fomattedData['__stripe_checkout_address_details'];
-
-            $parsed['__stripe_checkout_address_details'] = array(
-                'label' => 'Billing / Shipping Address',
+        if (isset($fomattedData['__stripe_checkout_billing_address_details'])) {
+            $address = $fomattedData['__stripe_checkout_billing_address_details'];
+            $parsed['__stripe_checkout_billing_address_details'] = array(
+                'label' => 'Billing Address',
                 'value' => $this->formatAddress($address),
                 'type'  => '__stripe_checkout_address_details'
             );
         }
+
+        if (isset($fomattedData['__stripe_checkout_shipping_address_details'])) {
+            $address = $fomattedData['__stripe_checkout_shipping_address_details'];
+            $parsed['__stripe_checkout_shipping_address_details'] = array(
+                'label' => 'Shipping Address',
+                'value' => $this->formatAddress($address),
+                'type'  => '__stripe_checkout_shipping_address_details'
+            );
+        }
+
         return $parsed;
     }
 
@@ -172,5 +212,52 @@ class Stripe
             }
         }
         return implode(', ', $validValues);
+    }
+
+    public function savePaymentSettings()
+    {
+        $settings = $_REQUEST['settings'];
+        // Validate the data first
+        $mode = $settings['payment_mode'];
+        if($mode == 'test') {
+            // We require test keys
+            if(empty($settings['test_pub_key']) || empty($settings['test_secret_key'])) {
+                wp_send_json_error(array(
+                    'message' => __('Please provide Test Publishable key and Test Secret Key', 'wppayform')
+                ), 423);
+            }
+        }
+
+        if($mode == 'live' && !wpfIsStripeKeysDefined()) {
+            if(empty($settings['live_pub_key']) || empty($settings['live_secret_key'])) {
+                wp_send_json_error(array(
+                    'message' => __('Please provide Live Publishable key and Live Secret Key', 'wppayform')
+                ), 423);
+            }
+        }
+
+        // Validation Passed now let's make the data
+        $data = array(
+            'payment_mode' => sanitize_text_field($mode),
+            'live_pub_key' =>  sanitize_text_field($settings['live_pub_key']),
+            'live_secret_key' => sanitize_text_field($settings['live_secret_key']),
+            'test_pub_key' =>  sanitize_text_field($settings['test_pub_key']),
+            'test_secret_key' => sanitize_text_field($settings['test_secret_key']),
+            'company_name' =>  sanitize_text_field($settings['company_name']),
+            'checkout_logo' =>  sanitize_text_field($settings['checkout_logo'])
+        );
+        update_option('wpf_stripe_payment_settings', $data, false);
+
+        wp_send_json_success(array(
+            'message' => __('Settings successfully updated', 'wppayform')
+        ), 200);
+    }
+
+    public function getPaymentSettings()
+    {
+        wp_send_json_success(array(
+            'settings' => wpfGetStripePaymentSettings(),
+            'is_key_defined' => wpfIsStripeKeysDefined()
+        ), 200);
     }
 }

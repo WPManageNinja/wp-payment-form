@@ -13,11 +13,23 @@ function formatPrice(allTotalAmount, currency_settings)
         thousandSeparator = '.';
         decimalSeparator = ',';
     }
+
+    let format =  "%s%v";
+
+    if(currency_settings.currency_sign_position == 'right') {
+        format =  "%v%s";
+    } else if(currency_settings.currency_sign_position == 'left_space') {
+        format =  "%s %v";
+    } else if(currency_settings.currency_sign_position == 'right_space') {
+        format =  "%v %s";
+    }
+
     return formatMoney( amount, {
         symbol: currency_settings.currency_sign,
         precision: precision,
         thousand: thousandSeparator,
-        decimal: decimalSeparator
+        decimal: decimalSeparator,
+        format: format
     } );
 }
 

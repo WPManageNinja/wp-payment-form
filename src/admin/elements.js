@@ -2,6 +2,7 @@ import Vue from 'vue';
 
 import {
     Button,
+    ButtonGroup,
     Table,
     TableColumn,
     Dialog,
@@ -42,10 +43,19 @@ import {
     Col,
     Transfer,
     DatePicker,
-    InputNumber
+    InputNumber,
+    Dropdown,
+    DropdownItem,
+    DropdownMenu,
+    Upload
 } from 'element-ui';
 
 Vue.use(Button);
+Vue.use(Dropdown);
+Vue.use(Upload);
+Vue.use(DropdownItem);
+Vue.use(DropdownMenu);
+Vue.use(ButtonGroup);
 Vue.use(InputNumber);
 Vue.use(DatePicker);
 Vue.use(Table);

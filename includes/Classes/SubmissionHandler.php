@@ -42,7 +42,8 @@ class SubmissionHandler
         foreach ($elements as $element) {
             $formattedElements[$element['group']][$element['id']] = array(
                 'options' => $element['field_options'],
-                'type'    => $element['type']
+                'type'    => $element['type'],
+                'id'      => $element['id']
             );
         }
         $errors = array();
@@ -55,9 +56,9 @@ class SubmissionHandler
             if (ArrayHelper::get($element, 'options.required') == 'yes' && empty($form_data[$elementId])) {
                 $errors[$elementId] = $this->getErrorLabel($element, $formId);
             }
-            if($element['type'] == 'customer_name' && !$customerName && isset($form_data[$elementId])) {
+            if ($element['type'] == 'customer_name' && !$customerName && isset($form_data[$elementId])) {
                 $customerName = $form_data[$elementId];
-            } else if($element['type'] == 'customer_email' && !$customerEmail && isset($form_data[$elementId])) {
+            } else if ($element['type'] == 'customer_email' && !$customerEmail && isset($form_data[$elementId])) {
                 $customerEmail = $form_data[$elementId];
             }
         }
@@ -105,45 +106,59 @@ class SubmissionHandler
         }
 
         $currentUserId = get_current_user_id();
-        if(!$customerName && $currentUserId) {
+        if (!$customerName && $currentUserId) {
             $currentUser = get_user_by('ID', $currentUserId);
             $customerName = $currentUser->display_name;
         }
 
-        if(!$customerEmail && $currentUserId) {
+        if (!$customerEmail && $currentUserId) {
             $currentUser = get_user_by('ID', $currentUserId);
             $customerEmail = $currentUser->user_email;
         }
 
         $currencySetting = Forms::getCurrencySettings($formId);
 
-        // We have to make these dynamic
-        $paymentMode = 'test';
-        $paymentMethod = 'stripe';
+        $paymentMethod = '';
+        $paymentMethod = apply_filters('wpf_payment_method_for_submission', $paymentMethod, $elements, $formId, $form_data);
+
         $currency = $currencySetting['currency'];
-        
         $inputItems = apply_filters('wpf_form_data_formatted_input', $inputItems, $form_data, $formId);
 
+        if (isset($form_data['__stripe_billing_address_json'])) {
+            $address = json_decode($form_data['__stripe_billing_address_json'], true);
+            if (!$customerName && isset($address['name'])) {
+                $customerName = $address['name'];
+            }
+        }
+
+        if (!$customerEmail && isset($form_data['__stripe_user_email'])) {
+            $customerEmail = $address['__stripe_user_email'];
+        }
+
         $submission = array(
-            'form_id' => $formId,
-            'user_id' => $currentUserId,
-            'customer_name' => $customerName,
-            'customer_email' => $customerEmail,
-            'form_data_raw' => maybe_serialize($form_data),
+            'form_id'             => $formId,
+            'user_id'             => $currentUserId,
+            'customer_name'       => $customerName,
+            'customer_email'      => $customerEmail,
+            'form_data_raw'       => maybe_serialize($form_data),
             'form_data_formatted' => maybe_serialize(wp_unslash($inputItems)),
-            'currency' => $currency,
-            'payment_status' => 'pending',
-            'payment_total' => $paymentTotal,
-            'status' => 'unread',
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s')
+            'currency'            => $currency,
+            'payment_method'      => $paymentMethod,
+            'payment_status'      => 'pending',
+            'submission_hash'     => $this->getHash(),
+            'payment_total'       => $paymentTotal,
+            'status'              => 'new',
+            'created_at'          => date('Y-m-d H:i:s'),
+            'updated_at'          => date('Y-m-d H:i:s')
         );
+
+        $submission = apply_filters('wpf_create_submission_data', $submission, $formId, $form_data);
 
         // Insert Submission
         $submissionModel = new Submission();
         $submissionId = $submissionModel->create($submission);
 
-        if($paymentItems) {
+        if ($paymentItems) {
             // Insert Payment Items
             $itemModel = new OrderItem();
             foreach ($paymentItems as $payItem) {
@@ -153,79 +168,89 @@ class SubmissionHandler
             }
             // Insert Transaction Item Now
             $transaction = array(
-                'form_id' => $formId,
-                'user_id' => $currentUserId,
+                'form_id'       => $formId,
+                'user_id'       => $currentUserId,
                 'submission_id' => $submissionId,
-                'charge_id' => '',
+                'charge_id'     => '',
                 'payment_total' => $paymentTotal,
-                'currency' => $currency,
-                'status' => 'pending',
-                'created_at' => date('Y-m-d H:i:s'),
-                'updated_at' => date('Y-m-d H:i:s')
+                'currency'      => $currency,
+                'status'        => 'pending',
+                'created_at'    => date('Y-m-d H:i:s'),
+                'updated_at'    => date('Y-m-d H:i:s')
             );
+
+            $transaction = apply_filters('wpf_create_transaction_data', $transaction, $formId, $form_data);
+
             $transactionModel = new Transaction();
             $transactionId = $transactionModel->create($transaction);
 
-            SubmissionActivity::createActivity( array(
+            SubmissionActivity::createActivity(array(
                 'form_id'       => $form->ID,
                 'submission_id' => $submissionId,
                 'type'          => 'activity',
                 'created_by'    => 'PayForm BOT',
                 'content'       => 'After payment actions processed.'
-            ) );
+            ));
 
-            if( $paymentMethod ) {
-                do_action('wpf_form_submission_make_payment_'.$paymentMethod, $transactionId, $submissionId, $form_data, $form);
+            if ($paymentMethod) {
+                do_action('wpf_form_submission_make_payment_' . $paymentMethod, $transactionId, $submissionId, $form_data, $form);
             }
         }
 
+        $submission = $submissionModel->getSubmission($submissionId);
+        do_action('wpf_after_form_submission', $submission, $formId);
+        $confirmation = Forms::getConfirmationSettings($formId);
+        $confirmation = $this->parseConfirmation($confirmation, $submission);
+
         wp_send_json_success(array(
-            'message' => __('Your Payment is successfully recorded', 'wppayform'),
-            'submission_id' =>  $submissionId,
-            'submission' => (new Submission())->getSubmission($submissionId, array('transactions', 'order_items'))
+            'message'       => __('Form is successfully submitted', 'wppayform'),
+            'submission_id' => $submissionId,
+            'submission'    => $submission,
+            'confirmation'  => $confirmation
         ), 200);
     }
 
     private function getItemQuantity($quantityElements, $tragetItemId, $formData)
     {
-          if(!$quantityElements) {
-              return 1;
-          }
-          foreach ($quantityElements as $key => $element) {
-              if(ArrayHelper::get($element, 'options.target_product') == $tragetItemId) {
-                  return absint($formData[$key]);
-              }
-          }
-          return 1;
+        if (!$quantityElements) {
+            return 1;
+        }
+        foreach ($quantityElements as $key => $element) {
+            if (ArrayHelper::get($element, 'options.target_product') == $tragetItemId) {
+                return absint($formData[$key]);
+            }
+        }
+        return 1;
     }
 
     private function getPaymentLine($payment, $paymentId, $quantity, $formData)
     {
-        if(!isset($formData[$paymentId])) {
+        if (!isset($formData[$paymentId])) {
             return array();
         }
         $label = ArrayHelper::get($payment, 'options.label');
-        if(!$label) {
+        if (!$label) {
             $label = $paymentId;
         }
         $payItem = array(
-            'type' => 'single',
-            'item_name' => $label,
-            'quantity' => $quantity,
-            'created_at' => date('Y-m-d H:i:s'),
-            'updated_at' => date('Y-m-d H:i:s'),
+            'type'          => 'single',
+            'parent_holder' => $paymentId,
+            'item_name'     => $label,
+            'quantity'      => $quantity,
+            'created_at'    => date('Y-m-d H:i:s'),
+            'updated_at'    => date('Y-m-d H:i:s'),
         );
 
-        if($payment['type'] == 'payment_item') {
+        if ($payment['type'] == 'payment_item') {
             $priceDetailes = ArrayHelper::get($payment, 'options.pricing_details');
             $payType = ArrayHelper::get($priceDetailes, 'one_time_type');
-            if($payType == 'choose_single') {
+            if ($payType == 'choose_single') {
                 $pricings = $priceDetailes['multiple_pricing'];
                 $price = $pricings[$formData[$paymentId]];
                 $payItem['item_name'] = $price['label'];
                 $payItem['item_price'] = absint($price['value'] * 100);
                 $payItem['line_total'] = $payItem['item_price'] * $quantity;
-            } else if($payType == 'choose_multiple') {
+            } else if ($payType == 'choose_multiple') {
                 $selctedItems = $formData[$paymentId];
                 $pricings = $priceDetailes['multiple_pricing'];
                 $payItems = array();
@@ -241,7 +266,7 @@ class SubmissionHandler
                 $payItem['item_price'] = absint(ArrayHelper::get($priceDetailes, 'payment_amount') * 100);
                 $payItem['line_total'] = absint($payItem['item_price']) * $quantity;
             }
-        } else if($payment['type'] == 'custom_payment_input') {
+        } else if ($payment['type'] == 'custom_payment_input') {
             $payItem['item_price'] = absint($formData[$paymentId]) * 100;
             $payItem['line_total'] = absint($payItem['item_price']) * $quantity;
         }
@@ -261,4 +286,27 @@ class SubmissionHandler
         return apply_filters('wpf_error_label_text', $label, $element, $formId);
     }
 
+    private function parseConfirmation($confirmation, $submission)
+    {
+        // add payment hash to the url
+        if ($confirmation['redirectTo'] == 'customUrl') {
+            $url = $confirmation['customUrl'];
+            $url = add_query_arg('wpf_submission', $submission->id, $url);
+            $confirmation['customUrl'] = PlaceholderParser::parse($url, $submission);
+        } else if ($confirmation['redirectTo'] == 'samePage') {
+            $confirmation['messageToShow'] = PlaceholderParser::parse($confirmation['messageToShow'], $submission);
+        }
+        $confirmation = apply_filters('wpf_form_submission_confirmation', $confirmation, $submission);
+        return $confirmation;
+    }
+
+    private function getHash()
+    {
+        $prefix = 'wpf_'.time();
+        $uid = uniqid($prefix);
+        // now let's make a unique number from 1 to 999
+        $uid .= rand(1, 999);
+        $uid = str_replace(array("'", '/', '?', '#', "\\"), '', $uid);
+        return $uid;
+    }
 }

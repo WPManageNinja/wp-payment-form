@@ -43,7 +43,8 @@ var wpPayformApp = {};
                     billing: $cardElementDiv.data('require_billing_info') == 'yes',
                     shipping: $cardElementDiv.data('require_shipping_info') == 'yes',
                     verify_zip: $cardElementDiv.data('verify_zip') == 'yes',
-                    allowRememberMe: $cardElementDiv.data('allow_remember_me') == 'yes'
+                    allowRememberMe: $cardElementDiv.data('allow_remember_me') == 'yes',
+                    form_settings: window['wp_payform_'+ form.data('wpf_form_id')]
                 }
                 StripeCheckoutHandler.init(checkoutSettings, function () {
                     that.submitForm(form);
@@ -61,6 +62,7 @@ var wpPayformApp = {};
             form.addClass('wpf_submitting_form');
             form.parent().find('.wpf_form_notices').hide();
             let formId = form.data('wpf_form_id');
+            form.trigger('wpf_form_submitting', formId);
             $.post(this.general.ajax_url, {
                 action: 'wpf_submit_form',
                 form_id: formId,
@@ -68,9 +70,20 @@ var wpPayformApp = {};
                 form_data: $(form).serialize()
             })
                 .then(response => {
-                    $('#wpf_form_id_'+formId)[0].reset();
-                    form.parent().find('.wpf_form_success').html(response.data.message).show();
-                    form.trigger('stripe_clear');
+                    let confirmation = response.data.confirmation;
+                    form.parent().addClass('wpf_form_submitted');
+                    form.trigger('wpf_form_submitted', response.data);
+                    if(confirmation.redirectTo == 'samePage') {
+                        form.parent().find('.wpf_form_success').html(confirmation.messageToShow).show();
+                        if(confirmation.samePageFormBehavior == 'hide_form') {
+                            form.hide();
+                        }
+                        $('#wpf_form_id_'+formId)[0].reset();
+                        form.trigger('stripe_clear');
+                    } else if(confirmation.redirectTo == 'customUrl') {
+                        window.location.href = confirmation.customUrl;
+                        return false;
+                    }
                 })
                 .fail(error => {
                     let $errorDiv = form.parent().find('.wpf_form_errors');
@@ -80,8 +93,11 @@ var wpPayformApp = {};
                         $errorDiv.append('<li class="error_item_'+errorId+'">'+errorText+'</li>');
                     });
                     $errorDiv.append('</ul>');
+                    form.parent().addClass('wpf_form_has_errors');
+                    form.trigger('wpf_form_fail_submission', error.responseJSON.data);
                 })
                 .always(() => {
+                    form.parent().removeClass('wpf_form_has_errors');
                     form.removeClass('wpf_submitting_form');
                     form.find('button.wpf_submit_button').removeAttr('disabled');
                     form.find('input[name=stripeToken]').remove();
@@ -139,7 +155,6 @@ var wpPayformApp = {};
             } else {
                 form.find('.wpf_calc_payment_total').html(formatPrice(0, formSettings.currency_settings));
             }
-
             form.data('payment_total', allTotalAmount);
         }
     };

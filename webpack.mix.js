@@ -7,7 +7,8 @@ mix
     .js('src/admin/main.js', 'assets/js/payforms-admin.js')
     .js('src/public/public.js', 'assets/js/payforms-public.js')
     .sass('src/scss/admin/app.scss', 'assets/css/payforms-admin.css')
-    .sass('src/scss/public/public.scss', 'assets/css/payforms-public.css');
+    .sass('src/scss/public/public.scss', 'assets/css/payforms-public.css')
+    .copy('src/images', 'assets/images');
 
 // Full API
 // mix.js(src, output);
