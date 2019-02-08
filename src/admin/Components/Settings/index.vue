@@ -41,8 +41,8 @@
                         icon: 'dashicons dashicons-cart'
                     },
                     {
-                        route: 'currency_settings',
-                        title: 'Currency Settings',
+                        route: 'general_settings',
+                        title: 'General Settings',
                         icon: 'dashicons dashicons-translation'
                     }
                 ],

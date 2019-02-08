@@ -10,7 +10,7 @@
                 <div class="payform_section_actions">
                     <div class="payform_action search_action">
                         <el-input size="small" placeholder="Search" v-model="search_string" class="input-with-select">
-                            <el-button slot="append" icon="el-icon-search"></el-button>
+                            <el-button @click="fetchForms()" slot="append" icon="el-icon-search"></el-button>
                         </el-input>
                     </div>
                     <el-button class="payform_action" @click="createFormModal = true" size="small" type="primary">

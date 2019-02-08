@@ -2,6 +2,7 @@
 
 namespace WPPayForm\Classes\Builder;
 
+use WPPayForm\Classes\ArrayHelper;
 use WPPayForm\Classes\GeneralSettings;
 use WPPayForm\Classes\Models\Forms;
 
@@ -41,12 +42,14 @@ class Render
         global $wp;
         $currentUrl = home_url($wp->request);
         $labelPlacement = $form->designSettings['labelPlacement'];
+        $btnPosition = ArrayHelper::get($form->designSettings, 'submit_button_position');
         $css_classes = array(
             'wpf_form',
             'wpf_strip_default_style',
             'wpf_form_id_' . $form->ID,
             'wpf_label_' . $labelPlacement,
-            'wpf_asterisk_' . $form->asteriskPosition
+            'wpf_asterisk_' . $form->asteriskPosition,
+            'wpf_submit_button_pos_'.$btnPosition
         );
         if($labelPlacement != 'top') {
             $css_classes[] = 'wpf_inline_labels';

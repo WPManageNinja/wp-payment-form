@@ -290,7 +290,8 @@ class Forms
         }
         $defaults = array(
             'labelPlacement' => 'top',
-            'asteriskPlacement' => 'none'
+            'asteriskPlacement' => 'none',
+            'submit_button_position' => 'right'
         );
         return wp_parse_args($settings, $defaults);
     }

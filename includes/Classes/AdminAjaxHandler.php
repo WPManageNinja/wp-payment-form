@@ -54,10 +54,14 @@ class AdminAjaxHandler
     {
         $perPage = absint($_REQUEST['per_page']);
         $pageNumber = absint($_REQUEST['page_number']);
+        $searchString = sanitize_text_field($_REQUEST['search_string']);
         $args = array(
             'posts_per_page' => $perPage,
             'offset'         => $perPage * ($pageNumber - 1)
         );
+        if($searchString) {
+            $args['s'] = $searchString;
+        }
         wp_send_json_success(Forms::getForms($args));
     }
 
@@ -269,7 +273,8 @@ class AdminAjaxHandler
         wp_send_json_success(array(
             'currency_settings' => GeneralSettings::getGlobalCurrencySettings(),
             'currencies'        => GeneralSettings::getCurrencies(),
-            'locales'           => GeneralSettings::getLocales()
+            'locales'           => GeneralSettings::getLocales(),
+            'ip_logging_status' => GeneralSettings::ipLoggingStatus()
         ), 200);
     }
 
@@ -291,7 +296,7 @@ class AdminAjaxHandler
             'decimal_points'         => intval($settings['decimal_points']),
         );
         update_option('_wppayform_global_currency_settings', $data);
-
+        update_option('_wpf_ip_logging_status', sanitize_text_field($_REQUEST['ip_logging_status']), false);
         wp_send_json_success(array(
             'message' => __('Settings successfully updated', 'wppayform')
         ), 200);

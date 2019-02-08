@@ -9,7 +9,7 @@ import Entries from './Components/Entries/Entries';
 import Entry from './Components/Entries/Entry';
 import SettingView from './Components/Settings/index'
 import StripeSettings from './Components/Settings/StripeSettings'
-import CurrencySettings from './Components/Settings/CurrencySettings'
+import GeneralSettings from './Components/Settings/GeneralSettings'
 import FormDesignSettings from './Components/Form/settings/FormDesignSettings'
 
 export const routes = [
@@ -43,9 +43,9 @@ export const routes = [
                         component: StripeSettings
                     },
                     {
-                        name:'currency_settings',
-                        path: 'currency-settings',
-                        component: CurrencySettings
+                        name:'general_settings',
+                        path: 'general-settings',
+                        component: GeneralSettings
                     }
                 ]
             },

@@ -70,6 +70,29 @@
                                                   :key="optionName" border>{{ option }}
                                         </el-radio>
                                     </el-form-item>
+
+                                    <!--Submit Button Position -->
+                                    <el-form-item>
+                                        <template slot="label">
+                                            Submit Button Position
+
+                                            <el-tooltip class="item" placement="bottom-start" effect="light">
+                                                <div slot="content">
+                                                    <h3>Submit Button Position</h3>
+                                                    <p>
+                                                        Choose where you want to show your submit button
+                                                    </p>
+                                                </div>
+                                                <i class="el-icon-info el-text-info"></i>
+                                            </el-tooltip>
+                                        </template>
+                                        <el-radio-group v-model="layout_settings.submit_button_position">
+                                            <el-radio label="left" border>Left</el-radio>
+                                            <el-radio label="center" border>Center</el-radio>
+                                            <el-radio label="right" border>Right</el-radio>
+                                        </el-radio-group>
+                                    </el-form-item>
+
                                 </div>
                             </div>
                         </el-form>

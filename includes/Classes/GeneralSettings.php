@@ -385,4 +385,16 @@ class GeneralSettings
         $settings = apply_filters('wpf_global_currency_setting', $settings, $formId);
         return $settings;
     }
+
+    public static function ipLoggingStatus($bool = false)
+    {
+        $status = get_option('_wpf_ip_logging_status');
+        if(!$status) {
+            $status = 'yes';
+        }
+        if($bool) {
+            return $status == 'yes';
+        }
+        return $status;
+    }
 }

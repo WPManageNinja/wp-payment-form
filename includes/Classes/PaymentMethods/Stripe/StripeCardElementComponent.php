@@ -41,7 +41,7 @@ class StripeCardElementComponent extends BaseComponent
                 ),
             ),
             'field_options'   => array(
-                'label'                  => '',
+                'label'                  => __('Your Card info (Powered By Stripe)', 'wppayform'),
                 'verify_zip'             => 'no',
                 'checkout_display_style' => array(
                     'style'                 => 'stripe_checkout',
@@ -58,7 +58,6 @@ class StripeCardElementComponent extends BaseComponent
         if (!$fieldOptions) {
             return;
         }
-
         $checkOutStyle = ArrayHelper::get($fieldOptions, 'checkout_display_style.style', 'stripe_checkout');
         if ($checkOutStyle == 'stripe_checkout') {
             wp_enqueue_script('stripe_checkout', 'https://checkout.stripe.com/checkout.js', array('jquery'), '3.0', true);
@@ -86,6 +85,9 @@ class StripeCardElementComponent extends BaseComponent
             'id'                  => $inputId
         );
         ?>
+        <?php if(!wpfGetStripePubKey()) { ?>
+        <p style="color: red">You did not configure stripe payment gateway. Please configure stripe payment gateway</p>
+        <?php return; }  ?>
         <div class="wpf_form_group wpf_item_<?php echo $element['id']; ?>>">
             <?php if ($label): ?>
                 <label for="<?php echo $inputId; ?>">
@@ -94,6 +96,9 @@ class StripeCardElementComponent extends BaseComponent
             <?php endif; ?>
             <div <?php echo $this->builtAttributes($attributes); ?>></div>
             <div class="wpf_card-errors" role="alert"></div>
+            <?php  if(wpfGetStripePaymentMode() == 'test') { ?>
+                <p class="wpf_test_mode_message" style="margin: 0;padding: 0;font-style: italic;">Stripe test mode activated</p>
+            <?php } ?>
         </div>
         <?php
     }

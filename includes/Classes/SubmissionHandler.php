@@ -99,8 +99,6 @@ class SubmissionHandler
         foreach ($formattedElements['input'] as $inputId => $input) {
             $inputItems[$inputId] = ArrayHelper::get($form_data, $inputId);
         }
-
-        $paymentTotal = 0;
         foreach ($paymentItems as $paymentItem) {
             $paymentTotal += $paymentItem['line_total'];
         }
@@ -154,7 +152,8 @@ class SubmissionHandler
             'updated_at'          => date('Y-m-d H:i:s')
         );
 
-        if (apply_filters('wpf_record_client_info', true, $form)) {
+        $ipLoggingStatus = GeneralSettings::ipLoggingStatus(true);
+        if (apply_filters('wpf_record_client_info', $ipLoggingStatus, $form)) {
             $browser = new Browser();
             $submission['ip_address'] = $browser->getIp();
             $submission['browser'] = $browser->getBrowser();

@@ -116,6 +116,7 @@
             border-radius: 0;
           }
         }
+
         input {
           position: relative;
           -webkit-box-flex: 1;
@@ -127,74 +128,118 @@
       }
     }
   }
+
   .wpf_loading_svg {
     display: none;
   }
+
   form.wpf_submitting_form {
     .wpf_loading_svg {
       display: inline-block;
     }
   }
-  .wpf_inline_labels {
-    &.wpf_label_left {
-      .wpf_form_group {
-        .wpf_input_label > label {
-          text-align: left;
-          display: block;
-        }
-      }
+
+
+  .wpf_form_group {
+    display: block;
+    margin-bottom: 20px;
+    * {
+      box-sizing: border-box;
     }
-    &.wpf_label_right {
-      .wpf_form_group {
-        .wpf_input_label > label {
-          text-align: right;
-          display: block;
+  }
+
+  @media (min-width: 768px) {
+    .wpf_inline_labels {
+      &.wpf_label_left {
+        .wpf_form_group {
+          .wpf_input_label > label {
+            text-align: left;
+            display: block;
+          }
         }
-      }
-    }
-    .wpf_form_group {
-      display: block;
-      margin-bottom: 20px;
-      * {
-        box-sizing: border-box;
-      }
-      .wpf_input_label {
-        float: left;
-        width: 200px;
-        padding-right: 10px;
       }
 
-      .wpf_input_content {
-        margin-left: 200px;
-        display: block;
-        .wpf_form_control {
-          width: 100%;
+      &.wpf_label_right {
+        .wpf_form_group {
+          .wpf_input_label > label {
+            text-align: right;
+            display: block;
+          }
+        }
+      }
+
+      .wpf_form_group {
+        .wpf_input_label {
+          float: left;
+          width: 200px;
+          padding-right: 10px;
+        }
+
+        .wpf_input_content {
+          margin-left: 200px;
+          display: block;
+
+          .wpf_form_control {
+            width: 100%;
+          }
         }
       }
     }
   }
 
-  .wpf_default_btn, .wpf_full_block_btn {
-    display: block;
-    border-radius: 4px;
-    background-color: rgb(62, 168, 229);
-    background-image: linear-gradient(-180deg,rgb(68, 177, 232),rgb(48, 152, 222));
-    box-shadow: 0 1px 0 0 rgba(46,86,153,.15), inset 0 1px 0 0 rgba(46,86,153,.1), inset 0 -1px 0 0 rgba(46,86,153,.4);
-    font-size: 17px;
-    line-height: 17px;
-    height: 40px;
-    font-weight: 700;
-    text-shadow: 0 -1px 0 rgba(0,0,0,.12);
-    color: rgb(255, 255, 255);
-    cursor: pointer;
-    transition: all .2s ease-in-out;
-    padding: 10px 20px;
-    &.wpf_full_block_btn {
+  @media (max-width: 767px) {
+    .wpf_form_group {
+      .wpf_form_control, .wpf_form_item_group {
+        width: 100%;
+        max-width: 100% !important;
+      }
+    }
+  }
+  .wpf_submit_button_pos_center {
+    .wpf_form_submissions {
+      display: block;
+      text-align: center;
+    }
+  }
+  .wpf_submit_button_pos_left {
+    .wpf_form_submissions {
+      display: block;
+      text-align: left;
+    }
+  }
+  .wpf_submit_button_pos_right {
+    .wpf_form_submissions {
+      display: block;
+      text-align: right;
+    }
+  }
+
+  form.wpf_form {
+    .wpf_default_btn, .wpf_full_block_btn {
+      border-radius: 4px;
+      display: inline-block;
+      background-color: rgb(62, 168, 229);
+      background-image: linear-gradient(-180deg, rgb(68, 177, 232), rgb(48, 152, 222));
+      box-shadow: 0 1px 0 0 rgba(46, 86, 153, .15), inset 0 1px 0 0 rgba(46, 86, 153, .1), inset 0 -1px 0 0 rgba(46, 86, 153, .4);
+      font-size: 17px;
+      line-height: 17px;
+      height: 40px;
+      font-weight: 700;
+      text-shadow: 0 -1px 0 rgba(0, 0, 0, .12);
+      color: rgb(255, 255, 255);
+      cursor: pointer;
+      transition: all .2s ease-in-out;
+      padding: 10px 20px;
+      &:hover {
+        background-image: linear-gradient(rgb(125, 197, 238), rgb(0, 140, 221) 85%, rgb(48, 162, 228));
+      }
+    }
+
+    .wpf_full_block_btn {
+      display: block !important;
       width: 100%;
     }
-    &:hover {
-      background-image: linear-gradient(rgb(125, 197, 238),rgb(0, 140, 221) 85%,rgb(48, 162, 228));
-    }
-  }
 
+
+  }
 }
