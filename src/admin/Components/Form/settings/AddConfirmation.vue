@@ -48,7 +48,6 @@
             <el-form-item>
                 <template slot="label">
                     After Form Submission
-
                     <el-tooltip class="item" placement="bottom-start" effect="light">
                         <div slot="content">
                             <h3>After Form Submission Behavior</h3>
@@ -127,6 +126,7 @@
                            v-model="confirmation.customUrl"
                            :data="inputsFirstShortcodes"
             ></input-popover>
+            <p>Add the following shortcode to the page to show payment receipt: <code>[wp_payment_form_reciept]</code></p>
         </el-form-item>
     </div>
 </template>

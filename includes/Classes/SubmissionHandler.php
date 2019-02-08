@@ -302,7 +302,7 @@ class SubmissionHandler
         // add payment hash to the url
         if ($confirmation['redirectTo'] == 'customUrl') {
             $url = $confirmation['customUrl'];
-            $url = add_query_arg('wpf_submission', $submission->id, $url);
+            $url = add_query_arg('wpf_submission', $submission->submission_hash, $url);
             $confirmation['customUrl'] = PlaceholderParser::parse($url, $submission);
         } else if ($confirmation['redirectTo'] == 'samePage') {
             $confirmation['messageToShow'] = PlaceholderParser::parse($confirmation['messageToShow'], $submission);

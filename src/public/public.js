@@ -54,13 +54,12 @@ var wpPayformApp = {};
                 // No Card Found So, It's normal Form without payment processing
                 form.on('submit', function (e) {
                     e.preventDefault();
-                    form.find('button.wpf_submit_button').attr('disabled', true);
                     that.submitForm(form);
                 })
             }
         },
         submitForm(form) {
-
+            form.find('button.wpf_submit_button').attr('disabled', true);
             form.addClass('wpf_submitting_form');
             form.parent().find('.wpf_form_notices').hide();
             let formId = form.data('wpf_form_id');

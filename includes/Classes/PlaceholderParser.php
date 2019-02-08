@@ -64,6 +64,7 @@ class PlaceholderParser
                     'payment_status' => $submission->payment_status,
                     'payment_total' => $submission->payment_total,
                     'payment_mode' => $submission->payment_mode,
+                    'submission_hash' => $submission->submission_hash,
                     'payment_method' => $submission->payment_method,
                     'status' => $submission->status,
                     'ip_address' => $submission->ip_address,

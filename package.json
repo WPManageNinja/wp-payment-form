@@ -25,6 +25,7 @@
   "dependencies": {
     "@wordpress/hooks": "^2.0.5",
     "accounting-js": "^1.1.1",
+    "clipboard": "^2.0.4",
     "element-ui": "^2.4.11",
     "lodash": "^4.17.11",
     "pikaday": "^1.8.0",

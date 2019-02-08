@@ -69,6 +69,7 @@ class SubmissionView
         if(!$submissionId) {
             $submissionId = absint($_REQUEST['submission_id']);
         }
+
         $submissionModel = new Submission();
         $submission = $submissionModel->getSubmission($submissionId, array('transactions', 'order_items', 'activities'));
 

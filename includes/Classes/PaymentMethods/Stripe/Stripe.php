@@ -179,12 +179,12 @@ class Stripe
     {
         if (isset($formData['__stripe_billing_address_json'])) {
             $billingAddressDetails = $formData['__stripe_billing_address_json'];
-            $inputItems['__stripe_checkout_billing_address_details'] = json_decode($billingAddressDetails, true);
+            $inputItems['__checkout_billing_address_details'] = json_decode($billingAddressDetails, true);
         }
 
         if (isset($formData['__stripe_shipping_address_json'])) {
             $shippingAddressDetails = $formData['__stripe_shipping_address_json'];
-            $inputItems['__stripe_checkout_shipping_address_details'] = json_decode($shippingAddressDetails, true);
+            $inputItems['__checkout_shipping_address_details'] = json_decode($shippingAddressDetails, true);
         }
 
         return $inputItems;
@@ -193,21 +193,21 @@ class Stripe
     public function addAddressToView($parsed, $submission)
     {
         $fomattedData = $submission->form_data_formatted;
-        if (isset($fomattedData['__stripe_checkout_billing_address_details'])) {
-            $address = $fomattedData['__stripe_checkout_billing_address_details'];
-            $parsed['__stripe_checkout_billing_address_details'] = array(
+        if (isset($fomattedData['__checkout_billing_address_details'])) {
+            $address = $fomattedData['__checkout_billing_address_details'];
+            $parsed['__checkout_billing_address_details'] = array(
                 'label' => 'Billing Address',
                 'value' => $this->formatAddress($address),
-                'type'  => '__stripe_checkout_address_details'
+                'type'  => '__checkout_address_details'
             );
         }
 
-        if (isset($fomattedData['__stripe_checkout_shipping_address_details'])) {
-            $address = $fomattedData['__stripe_checkout_shipping_address_details'];
-            $parsed['__stripe_checkout_shipping_address_details'] = array(
+        if (isset($fomattedData['__checkout_shipping_address_details'])) {
+            $address = $fomattedData['__checkout_shipping_address_details'];
+            $parsed['__checkout_shipping_address_details'] = array(
                 'label' => 'Shipping Address',
                 'value' => $this->formatAddress($address),
-                'type'  => '__stripe_checkout_shipping_address_details'
+                'type'  => '__checkout_shipping_address_details'
             );
         }
 

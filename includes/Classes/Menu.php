@@ -79,6 +79,7 @@ class Menu
                 ),
                 'paymentStatuses' => apply_filters('wpf_available_payment_statuses', array(
                     'pending' => 'Pending',
+                    'processing' => 'Processing',
                     'paid' => 'Paid',
                     'failed' => 'Failed',
                     'refunded' => 'Refunded'

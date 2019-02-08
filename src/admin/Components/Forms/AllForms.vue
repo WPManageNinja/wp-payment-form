@@ -96,6 +96,7 @@
 <script type="text/babel">
     import Welcome from '../Common/Welcome';
     import CreateForm from './CreateForm';
+    import Clipboard from 'clipboard';
 
     export default {
         name: 'AllForms',
@@ -172,6 +173,14 @@
         },
         mounted() {
             this.fetchForms();
+
+            var clipboard = new Clipboard('.copy');
+            clipboard.on('success', (e) => {
+                this.$message({
+                    message: 'Copied to Clipboard!',
+                    type: 'success'
+                });
+            });
         }
     }
 </script>

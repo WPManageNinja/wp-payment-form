@@ -71,12 +71,12 @@
                 <el-button type="primary" @click="editForm()">Update</el-button>
             </span>
         </el-dialog>
-
     </div>
 </template>
 
 <script type="text/babel">
     import WpEditor from '../Common/_wp_editor';
+    import Clipboard from 'clipboard';
 
     export default {
         name: 'global_wrapper',
@@ -153,6 +153,13 @@
         },
         mounted() {
             this.getForm();
+            var clipboard = new Clipboard('.copy');
+            clipboard.on('success', (e) => {
+                this.$message({
+                    message: 'Copied to Clipboard!',
+                    type: 'success'
+                });
+            });
         }
     }
 </script>

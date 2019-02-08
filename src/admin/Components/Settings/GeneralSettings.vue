@@ -14,7 +14,7 @@
             </div>
             <div class="payform_section_body">
                 <el-form rel="currency_settings" :model="settings" label-width="220px">
-                    <div class="wpf_sub_section">
+                    <div class="wpf_settings_section">
                         <div class="sub_section_header">
                             <h3>{{ $t('Currency Settings') }}</h3>
                         </div>
@@ -58,7 +58,7 @@
                             </el-form-item>
                         </div>
                     </div>
-                    <div class="wpf_sub_section">
+                    <div class="wpf_settings_section">
                         <div class="sub_section_header">
                             <h3>{{ $t('Other Settings') }}</h3>
                         </div>
