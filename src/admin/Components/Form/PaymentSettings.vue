@@ -19,7 +19,7 @@
                                 <div class="sub_section_header">
                                     <h3>Confirmation Settings</h3>
                                 </div>
-                                <div class="sub_section_body">
+                                <div  class="sub_section_body">
                                     <confirmation-settings
                                         :pages="pages"
                                         :editorShortcodes="editorShortcodes"
@@ -90,7 +90,8 @@
                 pages: [],
                 editorShortcodes: [],
                 confirmation_settings: {},
-                currency_settings: {}
+                currency_settings: {},
+                app_ready: false
             }
         },
         methods: {
@@ -112,6 +113,7 @@
                     })
                     .always(() => {
                         this.fetching = false;
+                        this.app_ready = true;
                     })
             },
             saveSettings() {

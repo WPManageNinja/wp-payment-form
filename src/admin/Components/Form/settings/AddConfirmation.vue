@@ -41,7 +41,7 @@
                     </el-tooltip>
                 </template>
 
-                <wp-editor :editor-shortcodes="editorShortcodes" v-model="confirmation.messageToShow" />
+                <wp-editor editor_id="wp_confirmation_editor_1" :height="250" :editor-shortcodes="editorShortcodes" v-model="confirmation.messageToShow" />
             </el-form-item>
 
             <!--After form submisssion behavior-->

@@ -53,6 +53,9 @@
         },
         methods: {
             initEditor() {
+                if(!window.tinymce) {
+                    return;
+                }
                 wp.editor.remove(this.editor_id);
                 const that = this;
                 wp.editor.initialize(this.editor_id, {

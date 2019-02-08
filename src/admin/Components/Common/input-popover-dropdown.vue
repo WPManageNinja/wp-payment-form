@@ -22,7 +22,7 @@
         <el-button class="editor-add-shortcode"
                    size="mini"
                    v-popover:input-popover1
-                   type="primary">
+                   type="success">
             Add Shortcodes
             <i class="el-icon-arrow-down el-icon--right"></i>
         </el-button>
