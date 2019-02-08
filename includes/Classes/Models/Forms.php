@@ -203,7 +203,7 @@ class Forms
             } elseif ($element['group'] == 'payment') {
                 $formattedShortcodes['payment']['shortcodes']['{payment_item.' . $elementId . '}'] = self::getLabel($element);
                 $hasPayment = true;
-            } else if($element['group'] == 'item_quantity') {
+            } else if ($element['group'] == 'item_quantity') {
                 $formattedShortcodes['input']['shortcodes']['{quantity.' . $elementId . '}'] = self::getLabel($element);
             }
         }
@@ -216,7 +216,7 @@ class Forms
                 '{submission.id}'              => __('Submission ID', 'wppayform'),
                 '{submission.submission_hash}' => __('Submission Hash ID', 'wppayform'),
                 '{submission.customer_name}'   => __('Customer Name', 'wppayform'),
-                '{submission.customer_email}'   => __('Customer Email', 'wppayform'),
+                '{submission.customer_email}'  => __('Customer Email', 'wppayform'),
             )
         );
         if ($hasPayment) {
@@ -280,5 +280,18 @@ class Forms
             $label = $elementId;
         }
         return $label;
+    }
+
+    public static function getDesignSettings($formId)
+    {
+        $settings = get_post_meta($formId, '_form_design_settings', true);
+        if(!$settings) {
+            $settings = array();
+        }
+        $defaults = array(
+            'labelPlacement' => 'top',
+            'asteriskPlacement' => 'none'
+        );
+        return wp_parse_args($settings, $defaults);
     }
 }

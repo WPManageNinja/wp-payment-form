@@ -17,18 +17,19 @@ class Render
 {
     public function render($formId)
     {
-        $elements = Forms::getBuilderSettings($formId);
         $form = Forms::getForm($formId);
         if (!$form) {
             return;
         }
+        $elements = Forms::getBuilderSettings($formId);
+        $form->designSettings = Forms::getDesignSettings($formId);
+        $form->asteriskPosition = $form->designSettings['asteriskPlacement'];
         $this->addAssets($form);
-
         ob_start();
         $this->renderFormHeader($form);
         if ($elements):
             foreach ($elements as $element) {
-                do_action('wppayform_render_' . $element['type'], $element, $formId, $elements);
+                do_action('wppayform_render_' . $element['type'], $element, $form, $elements);
             }
         endif;
         $this->renderFormFooter($form);
@@ -39,6 +40,26 @@ class Render
     {
         global $wp;
         $currentUrl = home_url($wp->request);
+        $labelPlacement = $form->designSettings['labelPlacement'];
+        $css_classes = array(
+            'wpf_form',
+            'wpf_strip_default_style',
+            'wpf_form_id_' . $form->ID,
+            'wpf_label_' . $labelPlacement,
+            'wpf_asterisk_' . $form->asteriskPosition
+        );
+        if($labelPlacement != 'top') {
+            $css_classes[] = 'wpf_inline_labels';
+        }
+        $formAttributes = array(
+            'data-stripe_pub_key' => wpfGetStripePubKey(),
+            'data-wpf_form_id'    => $form->ID,
+            'class'               => implode(' ', $css_classes),
+            'method'              => 'POST',
+            'action'              => site_url(),
+            'id'                  => "wpf_form_id_" . $form->ID
+        );
+        $formAttributes = apply_filters('wpf_form_attributes', $formAttributes, $form);
         ?>
         <div class="wpf_form_wrapper wpf_form_wrapper_<?php echo $form->ID; ?>">
         <?php if ($form->show_title_description == 'yes'): ?>
@@ -48,7 +69,7 @@ class Render
         </div>
     <?php endif; ?>
         <?php do_action('wpf_form_render_before', $form); ?>
-        <form data-stripe_pub_key="<?php echo wpfGetStripePubKey(); ?>" data-wpf_form_id="<?php echo $form->ID; ?>" class="wpf_form wpf_strip_default_style wpf_form_id_<?php echo $form->ID; ?>" method="POST" action="<?php site_url(); ?>" id="wpf_form_id_<?php echo $form->ID; ?>">
+        <form <?php echo $this->builtAttributes($formAttributes); ?>>
         <input type="hidden" name="__wpf_form_id" value="<?php echo $form->ID; ?>"/>
         <input type="hidden" name="__wpf_current_url" value="<?php echo $currentUrl; ?>">
         <?php do_action('wpf_form_render_start_form', $form); ?>
@@ -66,16 +87,28 @@ class Render
         if (!$button_text) {
             $button_text = __('Submit', 'wpfluentform');
         }
+        $buttonClasses = array(
+            'wpf_submit_button',
+            $submitButton['css_class'],
+            $submitButton['button_style']
+        );
+        $buttonAttributes = apply_filters('wpf_submit_button_attributes', array(
+            'id'    => 'stripe_form_submit_' . $form->ID,
+            'class' => implode(' ', array_unique($buttonClasses))
+        ), $form);
         ?>
         <?php do_action('wpf_form_render_before_submit_button', $form); ?>
-        <br/>
-        <button
-            class="wpf_submit_button <?php echo $submitButton['css_class']; ?> <?php echo $submitButton['button_style']; ?>"
-            id="stripe_form_submit_<?php echo $form->ID; ?>">
-            <span class="wpf_txt_normal"><?php echo $this->parseText($button_text, $form->ID); ?></span>
-            <span style="display: none;"
-                  class="wpf_txt_loading"><?php echo $this->parseText($submitButton['processing_text'], $form->ID); ?></span>
-        </button>
+        <div class="wpf_form_group wpf_form_submissions">
+            <button <?php echo $this->builtAttributes($buttonAttributes); ?>>
+                <span class="wpf_txt_normal"><?php echo $this->parseText($button_text, $form->ID); ?></span>
+                <span style="display: none;" class="wpf_txt_loading">
+                    <?php echo $this->parseText($processingText, $form->ID); ?>
+                </span>
+            </button>
+            <div class="wpf_loading_svg">
+                <svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="30px" height="30px" viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve"><path opacity="0.2" fill="#000" d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946 s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634 c0-6.425,5.209-11.634,11.634-11.634c6.425,0,11.633,5.209,11.633,11.634C31.834,26.541,26.626,31.749,20.201,31.749z"/><path fill="#000"  d="M26.013,10.047l1.654-2.866c-2.198-1.272-4.743-2.012-7.466-2.012h0v3.312h0 C22.32,8.481,24.301,9.057,26.013,10.047z"><animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 20 20" to="360 20 20" dur="0.5s" repeatCount="indefinite"/></path></svg>
+            </div>
+        </div>
         <?php do_action('wpf_form_render_after_submit_button', $form); ?>
         </form>
         <div style="display: none" class="wpf_form_notices wpf_form_errors"></div>
@@ -89,6 +122,8 @@ class Render
     {
         $currencySettings = Forms::getCurrencyAndLocale($form->ID);
         $paymentSettings = wpfGetStripePaymentSettings();
+        wp_register_script('moment', WPPAYFORM_URL . 'assets/libs/datepicker/js/moment.min.js', array(), WPPAYFORM_VERSION, true);
+        wp_register_script('pikaday', WPPAYFORM_URL . 'assets/libs/datepicker/js/pikaday.min.js', array('jquery', 'moment'), WPPAYFORM_VERSION, true);
         wp_enqueue_script('wppayform_public', WPPAYFORM_URL . 'assets/js/payforms-public.js', array('jquery'), WPPAYFORM_VERSION, true);
         wp_enqueue_style('wppayform_public', WPPAYFORM_URL . 'assets/css/payforms-public.css', array(), WPPAYFORM_VERSION);
         wp_localize_script('wppayform_public', 'wp_payform_' . $form->ID, apply_filters('wpf_checkout_vars', array(
@@ -98,8 +133,44 @@ class Render
             'currency_settings'    => $currencySettings,
             'checkout_logo'        => $paymentSettings['checkout_logo']
         ), $form));
+
         wp_localize_script('wppayform_public', 'wp_payform_general', array(
-            'ajax_url' => admin_url('admin-ajax.php')
+            'ajax_url'  => admin_url('admin-ajax.php'),
+            'date_i18n' => array(
+                'previousMonth' => __('Previous Month', 'wppayform'),
+                'nextMonth'     => __('Next Month', 'wppayform'),
+                'months'        => array(
+                    __('January', 'wppayform'),
+                    __('February', 'wppayform'),
+                    __('March', 'wppayform'),
+                    __('April', 'wppayform'),
+                    __('May', 'wppayform'),
+                    __('June', 'wppayform'),
+                    __('July', 'wppayform'),
+                    __('August', 'wppayform'),
+                    __('September', 'wppayform'),
+                    __('October', 'wppayform'),
+                    __('November', 'wppayform'),
+                    __('December', 'wppayform')),
+                'weekdays'      => array(
+                    __('Sunday', 'wppayform'),
+                    __('Monday', 'wppayform'),
+                    __('Tuesday', 'wppayform'),
+                    __('Wednesday', 'wppayform'),
+                    __('Thursday', 'wppayform'),
+                    __('Friday', 'wppayform'),
+                    __('Saturday', 'wppayform')
+                ),
+                'weekdaysShort' => array(
+                    __('Sun', 'wppayform'),
+                    __('Mon', 'wppayform'),
+                    __('Tue', 'wppayform'),
+                    __('Wed', 'wppayform'),
+                    __('Thu', 'wppayform'),
+                    __('Fri', 'wppayform'),
+                    __('Sat', 'wppayform')
+                )
+            )
         ));
     }
 
@@ -118,5 +189,14 @@ class Render
             ),
             $text
         );
+    }
+
+    private function builtAttributes($attributes)
+    {
+        $atts = ' ';
+        foreach ($attributes as $attributeKey => $attribute) {
+            $atts .= $attributeKey . "='" . $attribute . "' ";
+        }
+        return $atts;
     }
 }

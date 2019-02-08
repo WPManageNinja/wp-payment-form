@@ -19,21 +19,22 @@ class PaymentItemComponent extends BaseComponent
     public function component()
     {
         return array(
-            'type'            => 'payment_item',
-            'editor_title'    => 'Payment Item',
-            'group'           => 'payment',
-            'editor_elements' => array(
-                'label'         => array(
+            'type'             => 'payment_item',
+            'editor_title'     => 'Payment Item',
+            'group'            => 'payment',
+            'postion_group'    => 'payment',
+            'editor_elements'  => array(
+                'label'           => array(
                     'label' => 'Field Label',
                     'type'  => 'text'
                 ),
-                'required'      => array(
+                'required'        => array(
                     'label' => 'Required',
                     'type'  => 'switch'
                 ),
                 'payment_options' => array(
-                    'type' => 'payment_options',
-                    'label' => 'Configure Payment Item',
+                    'type'                   => 'payment_options',
+                    'label'                  => 'Configure Payment Item',
                     'selection_type'         => 'Payment Type',
                     'selection_type_options' => array(
                         'one_time'        => 'One Time Payment',
@@ -46,10 +47,10 @@ class PaymentItemComponent extends BaseComponent
                     )
                 )
             ),
-            'is_system_field' => true,
+            'is_system_field'  => true,
             'is_payment_field' => true,
-            'field_options'   => array(
-                'required' => 'yes',
+            'field_options'    => array(
+                'required'        => 'yes',
                 'pricing_details' => array(
                     'one_time_type'       => 'single',
                     'payment_amount'      => '',
@@ -65,7 +66,7 @@ class PaymentItemComponent extends BaseComponent
         );
     }
 
-    public function render($element, $formId, $elements)
+    public function render($element, $form, $elements)
     {
         $pricingDetails = ArrayHelper::get($element, 'field_options.pricing_details', array());
         if (!$pricingDetails) {
@@ -81,13 +82,13 @@ class PaymentItemComponent extends BaseComponent
                 $displayType,
                 ArrayHelper::get($pricingDetails, 'multiple_pricing', array()),
                 $element,
-                $formId
+                $form
             );
-        } else if($paymentType == 'choose_multiple') {
+        } else if ($paymentType == 'choose_multiple') {
             $this->chooseMultipleChoice(
                 ArrayHelper::get($pricingDetails, 'multiple_pricing', array()),
                 $element,
-                $formId
+                $form
             );
         }
     }
@@ -95,44 +96,40 @@ class PaymentItemComponent extends BaseComponent
     public function renderSingleAmount($element, $amount = false)
     {
         if ($amount) {
-            echo '<input name='.$element['id'].' type="hidden" class="wpf_payment_item" data-price="' . $amount * 100 . '" value="' . $amount . '" />';
+            echo '<input name=' . $element['id'] . ' type="hidden" class="wpf_payment_item" data-price="' . $amount * 100 . '" value="' . $amount . '" />';
         }
     }
 
-    public function renderSingleChoice($type, $prices = array(), $element, $formId)
+    public function renderSingleChoice($type, $prices = array(), $element, $form)
     {
         if (!$type || !$prices) {
             return;
         }
 
-        $currenySettings = Forms::getCurrencyAndLocale($formId);
-
-
+        $currenySettings = Forms::getCurrencyAndLocale($form->ID);
+        $elementId = 'wpf_' . $element['id'];
         $controlAttributes = array(
-            'id'                => 'wpf_' . $this->elementName,
+            'id'                => $elementId,
             'data-element_type' => $this->elementName,
             'class'             => $this->elementControlClass($element)
         );
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
-        $label = ArrayHelper::get($fieldOptions, 'label');
         $defaultValue = ArrayHelper::get($fieldOptions, 'default_value');
         ?>
         <div <?php echo $this->builtAttributes($controlAttributes); ?>>
-            <?php if ($label): ?>
-                <label><?php echo $label; ?></label>
-            <?php endif; ?>
+            <?php $this->buildLabel($fieldOptions, $form, array('for' => $elementId)); ?>
             <?php if ($type == 'select') : ?>
                 <?php
                 $placeholder = '--Select--';
-                $inputId = 'wpf_input_' . $formId . '_' . $this->elementName;
+                $inputId = 'wpf_input_' . $form->ID . '_' . $this->elementName;
                 $inputAttributes = array(
                     'data-required' => ArrayHelper::get($fieldOptions, 'required'),
                     'name'          => $element['id'],
-                    'class'         => $this->elementInputClass($element).' wpf_payment_item',
+                    'class'         => $this->elementInputClass($element) . ' wpf_payment_item',
                     'id'            => $inputId
                 );
                 ?>
-                <div class="wpf_multi_form_controls wpf_multi_form_controls_select">
+                <div class="wpf_multi_form_controls wpf_input_content wpf_multi_form_controls_select">
                     <select <?php echo $this->builtAttributes($inputAttributes); ?>>
                         <?php if ($placeholder): ?>
                             <option data-type="placeholder" value=""><?php echo $placeholder; ?></option>
@@ -148,16 +145,17 @@ class PaymentItemComponent extends BaseComponent
                             }
                             ?>
                             <option <?php echo $this->builtAttributes($optionAttributes); ?>><?php echo esc_attr($price['label']); ?>
-                                (<?php echo esc_html(wpfFormattedMoney( floatval( $price['value'] ) * 100, $currenySettings)); ?>)
+                                (<?php echo esc_html(wpfFormattedMoney(floatval($price['value']) * 100, $currenySettings)); ?>
+                                )
                             </option>
                         <?php endforeach; ?>
                     </select>
                 </div>
             <?php else: ?>
-                <div class="wpf_multi_form_controls wpf_multi_form_controls_radio">
+                <div class="wpf_multi_form_controls wpf_input_content wpf_multi_form_controls_radio">
                     <?php foreach ($prices as $index => $price): ?>
                         <?php
-                        $optionId = $element['id'] . '_' . $index . '_' . $formId;
+                        $optionId = $element['id'] . '_' . $index . '_' . $form->ID;
                         $attributes = array(
                             'class'      => 'form-check-input wpf_payment_item',
                             'type'       => 'radio',
@@ -174,9 +172,11 @@ class PaymentItemComponent extends BaseComponent
                         <div class="form-check">
                             <input <?php echo $this->builtAttributes($attributes); ?>>
                             <label class="form-check-label" for="<?php echo $optionId; ?>">
-                                <span class="wpf_price_option_name" itemprop="description"><?php echo $price['label']; ?></span>
+                                <span class="wpf_price_option_name"
+                                      itemprop="description"><?php echo $price['label']; ?></span>
                                 <span class="wpf_price_option_sep">&nbsp;–&nbsp;</span>
-                                <span class="wpf_price_option_price"><?php echo wpfFormattedMoney( floatval($price['value']) * 100, $currenySettings ); ?></span>
+                                <span
+                                    class="wpf_price_option_price"><?php echo wpfFormattedMoney(floatval($price['value']) * 100, $currenySettings); ?></span>
                                 <meta itemprop="price" content="<?php echo $price['value']; ?>">
                             </label>
                         </div>
@@ -187,17 +187,15 @@ class PaymentItemComponent extends BaseComponent
         <?php
     }
 
-    public function chooseMultipleChoice($prices = array(), $element, $formId)
+    public function chooseMultipleChoice($prices = array(), $element, $form)
     {
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
         if (!$fieldOptions) {
             return;
         }
-        $currenySettings = Forms::getCurrencyAndLocale($formId);
+        $currenySettings = Forms::getCurrencyAndLocale($form->ID);
         $controlClass = $this->elementControlClass($element);
-        $inputClass = $this->elementInputClass($element);
-        $inputId = 'wpf_input_' . $formId . '_' . $this->elementName;
-        $label = ArrayHelper::get($fieldOptions, 'label');
+        $inputId = 'wpf_input_' . $form->ID . '_' . $this->elementName;
         $defaultValue = ArrayHelper::get($fieldOptions, 'default_value');
         $defaultValues = explode(',', $defaultValue);
 
@@ -208,31 +206,29 @@ class PaymentItemComponent extends BaseComponent
         );
         ?>
         <div <?php echo $this->builtAttributes($controlAttributes); ?>>
-            <?php if ($label): ?>
-                <label for="<?php echo $inputId; ?>"><?php echo $label; ?></label>
-            <?php endif; ?>
+            <?php $this->buildLabel($fieldOptions, $form, array('for' => $inputId)); ?>
 
             <?php
-                $itemParentAtrributes = array(
-                    'class' => 'wpf_multi_form_controls',
-                    'data-item_required' => ArrayHelper::get($fieldOptions, 'required'),
-                    'data-item_selector' => 'checkbox',
-                    'data-has_multiple_input' => 'yes'
-                );
+            $itemParentAtrributes = array(
+                'class'                   => 'wpf_multi_form_controls wpf_input_content',
+                'data-item_required'      => ArrayHelper::get($fieldOptions, 'required'),
+                'data-item_selector'      => 'checkbox',
+                'data-has_multiple_input' => 'yes'
+            );
             ?>
 
             <div <?php echo $this->builtAttributes($itemParentAtrributes); ?>>
                 <?php foreach ($prices as $index => $option): ?>
                     <?php
-                    $optionId = $element['id'] . '_' . $index . '_' . $formId;
+                    $optionId = $element['id'] . '_' . $index . '_' . $form->ID;
                     $attributes = array(
-                        'class' => 'form-check-input wpf_payment_item',
-                        'type'  => 'checkbox',
-                        'data-price' => $option['value'] * 100,
-                        'name'  => $element['id'] . '['.$index.']',
-                        'id'    => $optionId,
+                        'class'         => 'form-check-input wpf_payment_item',
+                        'type'          => 'checkbox',
+                        'data-price'    => $option['value'] * 100,
+                        'name'          => $element['id'] . '[' . $index . ']',
+                        'id'            => $optionId,
                         'data-group_id' => $element['id'],
-                        'value' => $option['label']
+                        'value'         => $option['label']
                     );
                     if (in_array($option['value'], $defaultValues)) {
                         $attributes['checked'] = 'true';
@@ -241,10 +237,12 @@ class PaymentItemComponent extends BaseComponent
                     <div class="form-check">
                         <input <?php echo $this->builtAttributes($attributes); ?>>
                         <label class="form-check-label" for="<?php echo $optionId; ?>">
-                            <span class="wpf_price_option_name" itemprop="description"><?php echo $option['label']; ?></span>
+                            <span class="wpf_price_option_name"
+                                  itemprop="description"><?php echo $option['label']; ?></span>
                             <span class="wpf_price_option_sep">&nbsp;–&nbsp;</span>
-                            <span class="wpf_price_option_price"><?php echo wpfFormattedMoney( floatval( $option['value'] * 100 ), $currenySettings); ?></span>
-                            <meta itemprop="price" content="<?php echo $option['value']; ?>" />
+                            <span
+                                class="wpf_price_option_price"><?php echo wpfFormattedMoney(floatval($option['value'] * 100), $currenySettings); ?></span>
+                            <meta itemprop="price" content="<?php echo $option['value']; ?>"/>
                         </label>
                     </div>
                 <?php endforeach; ?>

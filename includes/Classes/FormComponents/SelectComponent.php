@@ -19,6 +19,7 @@ class SelectComponent extends BaseComponent
             'type'            => 'select',
             'editor_title'    => 'Select Field',
             'group'           => 'input',
+            'postion_group'   => 'general',
             'editor_elements' => array(
                 'label'         => array(
                     'label' => 'Field Label',
@@ -51,8 +52,8 @@ class SelectComponent extends BaseComponent
         );
     }
 
-    public function render($element, $formId, $elements)
+    public function render($element, $form, $elements)
     {
-        $this->renderSelectInput($element, $formId);
+        $this->renderSelectInput($element, $form);
     }
 }

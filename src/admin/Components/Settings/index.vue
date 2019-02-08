@@ -15,7 +15,7 @@
                             :key="formMenu.route"
                             :route="{ name: formMenu.route }"
                             :index="formMenu.route">
-                            <i class="dashicons dashicons-editor-table"></i>
+                            <i :class="formMenu.icon"></i>
                             <span>{{  formMenu.title }}</span>
                         </el-menu-item>
                     </el-menu>
@@ -37,11 +37,13 @@
                 form_menus: [
                     {
                         route: 'stripe_settings',
-                        title: 'Stripe Settings'
+                        title: 'Stripe Settings',
+                        icon: 'dashicons dashicons-cart'
                     },
                     {
                         route: 'currency_settings',
-                        title: 'Currency Settings'
+                        title: 'Currency Settings',
+                        icon: 'dashicons dashicons-translation'
                     }
                 ],
                 editFormModalShow: false,

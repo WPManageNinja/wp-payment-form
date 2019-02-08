@@ -1,10 +1,14 @@
+@import '../../../node_modules/pikaday/css/pikaday.css';
+
 .wpf_form_notices {
   padding: 10px 20px;
   margin-top: 20px;
+
   p, ul {
     padding: 0;
     margin: 0;
   }
+
   &.wpf_form_errors {
     color: rgb(114, 28, 36);
     background-color: rgb(248, 215, 218);
@@ -29,24 +33,168 @@
     -webkit-transition: box-shadow 150ms ease;
     transition: box-shadow 150ms ease;
   }
+
   .StripeElement--focus {
     box-shadow: 0 1px 3px 0 #cfd7df;
   }
+
   .StripeElement--invalid {
     border-color: #fa755a;
   }
+
   .StripeElement--webkit-autofill {
     background-color: #fefde5 !important;
   }
 }
 
-.wpf_form_wrapper form {
-  &.wpf_submitting_form {
+.wpf_form_wrapper {
+  form.wpf_submitting_form {
     span.wpf_txt_normal {
       display: none !important;
     }
+
     span.wpf_txt_loading {
       display: block !important;
     }
   }
+
+  form.wpf_label_top {
+    .wpf_form_group {
+      display: block;
+      width: 100%;
+      margin-bottom: 15px;
+
+      > label {
+        display: block;
+      }
+
+      .wpf_form_control {
+        display: block;
+        width: 100%;
+      }
+    }
+  }
+
+
+  form.wpf_form {
+    .wpf_form_group {
+      .wpf_form_item_group {
+        position: relative;
+        display: -webkit-box;
+        display: -ms-flexbox;
+        display: flex;
+        -ms-flex-wrap: wrap;
+        flex-wrap: wrap;
+        -webkit-box-align: stretch;
+        -ms-flex-align: stretch;
+        align-items: stretch;
+        width: 100%;
+        max-width: 250px;
+
+        .wpf_input-group-prepend {
+          display: -webkit-box;
+          display: -ms-flexbox;
+          display: flex;
+
+          .wpf_input-group-text {
+            display: -webkit-box;
+            display: -ms-flexbox;
+            display: flex;
+            -webkit-box-align: center;
+            -ms-flex-align: center;
+            align-items: center;
+            padding: 0 15px;
+            margin-bottom: 0;
+            font-size: 1rem;
+            font-weight: 400;
+            line-height: 1.5;
+            color: rgb(73, 80, 87);
+            text-align: center;
+            white-space: nowrap;
+            background-color: rgb(233, 236, 239);
+            border: 1px solid rgb(206, 212, 218);
+            border-radius: 0;
+          }
+        }
+        input {
+          position: relative;
+          -webkit-box-flex: 1;
+          -ms-flex: 1 1 auto;
+          flex: 1 1 auto;
+          width: 1% !important;
+          margin-bottom: 0;
+        }
+      }
+    }
+  }
+  .wpf_loading_svg {
+    display: none;
+  }
+  form.wpf_submitting_form {
+    .wpf_loading_svg {
+      display: inline-block;
+    }
+  }
+  .wpf_inline_labels {
+    &.wpf_label_left {
+      .wpf_form_group {
+        .wpf_input_label > label {
+          text-align: left;
+          display: block;
+        }
+      }
+    }
+    &.wpf_label_right {
+      .wpf_form_group {
+        .wpf_input_label > label {
+          text-align: right;
+          display: block;
+        }
+      }
+    }
+    .wpf_form_group {
+      display: block;
+      margin-bottom: 20px;
+      * {
+        box-sizing: border-box;
+      }
+      .wpf_input_label {
+        float: left;
+        width: 200px;
+        padding-right: 10px;
+      }
+
+      .wpf_input_content {
+        margin-left: 200px;
+        display: block;
+        .wpf_form_control {
+          width: 100%;
+        }
+      }
+    }
+  }
+
+  .wpf_default_btn, .wpf_full_block_btn {
+    display: block;
+    border-radius: 4px;
+    background-color: rgb(62, 168, 229);
+    background-image: linear-gradient(-180deg,rgb(68, 177, 232),rgb(48, 152, 222));
+    box-shadow: 0 1px 0 0 rgba(46,86,153,.15), inset 0 1px 0 0 rgba(46,86,153,.1), inset 0 -1px 0 0 rgba(46,86,153,.4);
+    font-size: 17px;
+    line-height: 17px;
+    height: 40px;
+    font-weight: 700;
+    text-shadow: 0 -1px 0 rgba(0,0,0,.12);
+    color: rgb(255, 255, 255);
+    cursor: pointer;
+    transition: all .2s ease-in-out;
+    padding: 10px 20px;
+    &.wpf_full_block_btn {
+      width: 100%;
+    }
+    &:hover {
+      background-image: linear-gradient(rgb(125, 197, 238),rgb(0, 140, 221) 85%,rgb(48, 162, 228));
+    }
+  }
+
 }

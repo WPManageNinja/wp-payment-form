@@ -19,6 +19,7 @@ class CustomerEmailComponent extends BaseComponent
             'type'            => 'customer_email',
             'editor_title'    => 'Customer Email',
             'group'           => 'input',
+            'postion_group'   => 'general',
             'editor_elements' => array(
                 'label'         => array(
                     'label' => 'Field Label',
@@ -45,10 +46,10 @@ class CustomerEmailComponent extends BaseComponent
         );
     }
 
-    public function render($element, $formId, $elements)
+    public function render($element, $form, $elements)
     {
         $element['type'] = 'email';
         $element['extra_input_class'] = 'wpf_customer_email';
-        $this->renderNormalInput($element, $formId);
+        $this->renderNormalInput($element, $form);
     }
 }

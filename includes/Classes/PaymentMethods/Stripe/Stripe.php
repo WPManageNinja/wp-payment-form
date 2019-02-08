@@ -29,6 +29,17 @@ class Stripe
         add_action('wp_ajax_wpf_save_stripe_settings', array($this, 'savePaymentSettings'));
         add_action('wp_ajax_wpf_get_stripe_settings', array($this, 'getPaymentSettings'));
         add_filter('wpf_payment_method_for_submission', array($this, 'choosePaymentMethod'), 10, 4);
+        add_action('wpf_before_form_submission_stripe', array($this, 'validateStripeToken'), 10, 2);
+    }
+
+    public function validateStripeToken($submission, $form_data)
+    {
+        if($submission['payment_total'] && empty($form_data['stripeToken'])) {
+            wp_send_json_error(array(
+                'message' => __('Stripe payment token is missing. Please input your card details', 'wppayform'),
+                'errors'  => array()
+            ), 423);
+        }
     }
 
     public function choosePaymentMethod($paymentMethod, $elements, $formId, $form_data)

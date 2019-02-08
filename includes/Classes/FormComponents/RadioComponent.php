@@ -19,6 +19,7 @@ class RadioComponent extends BaseComponent
             'type'            => 'radio',
             'editor_title'    => 'Radio Field',
             'group'           => 'input',
+            'postion_group'   => 'general',
             'editor_elements' => array(
                 'label'         => array(
                     'label' => 'Field Label',
@@ -51,8 +52,8 @@ class RadioComponent extends BaseComponent
         );
     }
 
-    public function render($element, $formId, $elements)
+    public function render($element, $form, $elements)
     {
-        $this->renderRadioInput($element, $formId);
+        $this->renderRadioInput($element, $form);
     }
 }

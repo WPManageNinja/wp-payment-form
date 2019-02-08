@@ -3,7 +3,7 @@
         <welcome v-if="!forms_count && !hasForms" @create="createFormModal = true"/>
         <!--We Have forms Now-->
         <div class="all_payforms_wrapper payform_section" v-else>
-            <div class="payform_section_header">
+            <div class="payform_section_header all_payment_form_wrapper">
                 <h1 class="payform_section_title">
                     {{ $t('All Payment Forms') }}
                 </h1>

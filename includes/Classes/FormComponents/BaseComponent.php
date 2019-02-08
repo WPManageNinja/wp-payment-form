@@ -33,7 +33,7 @@ abstract class BaseComponent
         return $components;
     }
 
-    public function renderNormalInput($element, $formId)
+    public function renderNormalInput($element, $form)
     {
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
         if (!$fieldOptions) {
@@ -41,23 +41,24 @@ abstract class BaseComponent
         }
         $controlClass = $this->elementControlClass($element);
         $inputClass = $this->elementInputClass($element);
-        $inputId = 'wpf_input_' . $formId . '_' . $this->elementName;
-        $label = ArrayHelper::get($fieldOptions, 'label');
+        $inputId = 'wpf_input_' . $form->ID . '_' . $element['id'];
+
 
         $attributes = array(
             'data-required' => ArrayHelper::get($fieldOptions, 'required'),
-            'name' => $element['id'],
-            'placeholder' => ArrayHelper::get($fieldOptions, 'placeholder'),
-            'value' => ArrayHelper::get($fieldOptions, 'default_value'),
-            'type' => ArrayHelper::get($element, 'type', 'text'),
-            'class' => $inputClass
+            'name'          => $element['id'],
+            'placeholder'   => ArrayHelper::get($fieldOptions, 'placeholder'),
+            'value'         => ArrayHelper::get($fieldOptions, 'default_value'),
+            'type'          => ArrayHelper::get($element, 'type', 'text'),
+            'class'         => $inputClass,
+            'id'            => $inputId
         );
 
-        if(isset($fieldOptions['min_value'])) {
+        if (isset($fieldOptions['min_value'])) {
             $attributes['min'] = $fieldOptions['min_value'];
         }
 
-        if(isset($fieldOptions['min_value'])) {
+        if (isset($fieldOptions['min_value'])) {
             $attributes['max'] = $fieldOptions['max_value'];
         }
 
@@ -68,15 +69,15 @@ abstract class BaseComponent
         ?>
         <div id="wpf_<?php echo $this->elementName; ?>" data-element_type="<?php echo $this->elementName; ?>"
              class="<?php echo $controlClass; ?>">
-            <?php if ($label): ?>
-                <label for="<?php echo $inputId; ?>"><?php echo $label; ?></label>
-            <?php endif; ?>
-            <input <?php echo $this->builtAttributes($attributes); ?> />
+            <?php $this->buildLabel($fieldOptions, $form, array('for' => $inputId)); ?>
+            <div class="wpf_input_content">
+                <input <?php echo $this->builtAttributes($attributes); ?> />
+            </div>
         </div>
         <?php
     }
 
-    public function renderSelectInput($element, $formId)
+    public function renderSelectInput($element, $form)
     {
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
         if (!$fieldOptions) {
@@ -84,8 +85,7 @@ abstract class BaseComponent
         }
         $controlClass = $this->elementControlClass($element);
         $inputClass = $this->elementInputClass($element);
-        $inputId = 'wpf_input_' . $formId . '_' . $this->elementName;
-        $label = ArrayHelper::get($fieldOptions, 'label');
+        $inputId = 'wpf_input_' . $form->ID . '_' . $element['id'];
         $defaultValue = ArrayHelper::get($fieldOptions, 'default_value');
 
         $options = ArrayHelper::get($fieldOptions, 'options', array());
@@ -106,30 +106,30 @@ abstract class BaseComponent
         );
         ?>
         <div <?php echo $this->builtAttributes($controlAttributes); ?>>
-            <?php if ($label): ?>
-                <label for="<?php echo $inputId; ?>"><?php echo $label; ?></label>
-            <?php endif; ?>
-            <select <?php echo $this->builtAttributes($inputAttributes); ?>>
-                <?php if ($placeholder): ?>
-                    <option data-type="placeholder" value=""><?php echo $placeholder; ?></option>
-                <?php endif; ?>
-                <?php foreach ($options as $option): ?>
-                    <?php
-                    $optionAttributes = array(
-                        'value' => $option['value']
-                    );
-                    if ($defaultValue == $option['value']) {
-                        $optionAttributes['selected'] = 'true';
-                    }
-                    ?>
-                    <option <?php echo $this->builtAttributes($optionAttributes); ?>><?php echo $option['label']; ?></option>
-                <?php endforeach; ?>
-            </select>
+            <?php $this->buildLabel($fieldOptions, $form, array('for' => $inputId)); ?>
+            <div class="wpf_input_content">
+                <select <?php echo $this->builtAttributes($inputAttributes); ?>>
+                    <?php if ($placeholder): ?>
+                        <option data-type="placeholder" value=""><?php echo $placeholder; ?></option>
+                    <?php endif; ?>
+                    <?php foreach ($options as $option): ?>
+                        <?php
+                        $optionAttributes = array(
+                            'value' => $option['value']
+                        );
+                        if ($defaultValue == $option['value']) {
+                            $optionAttributes['selected'] = 'true';
+                        }
+                        ?>
+                        <option <?php echo $this->builtAttributes($optionAttributes); ?>><?php echo $option['label']; ?></option>
+                    <?php endforeach; ?>
+                </select>
+            </div>
         </div>
         <?php
     }
 
-    public function renderRadioInput($element, $formId)
+    public function renderRadioInput($element, $form)
     {
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
         if (!$fieldOptions) {
@@ -138,8 +138,7 @@ abstract class BaseComponent
 
         $controlClass = $this->elementControlClass($element);
         $inputClass = $this->elementInputClass($element);
-        $inputId = 'wpf_input_' . $formId . '_' . $this->elementName;
-        $label = ArrayHelper::get($fieldOptions, 'label');
+        $inputId = 'wpf_input_' . $form->ID . '_' . $element['id'];
         $defaultValue = ArrayHelper::get($fieldOptions, 'default_value');
 
         $options = ArrayHelper::get($fieldOptions, 'options', array());
@@ -159,13 +158,11 @@ abstract class BaseComponent
         );
         ?>
         <div <?php echo $this->builtAttributes($controlAttributes); ?>>
-            <?php if ($label): ?>
-                <label for="<?php echo $inputId; ?>"><?php echo $label; ?></label>
-            <?php endif; ?>
-            <div class="wpf_multi_form_controls">
+            <?php $this->buildLabel($fieldOptions, $form, array('for' => $inputId)); ?>
+            <div class="wpf_multi_form_controls wpf_input_content">
                 <?php foreach ($options as $index => $option): ?>
                     <?php
-                    $optionId = $element['id'] . '_' . $index . '_' . $formId;
+                    $optionId = $element['id'] . '_' . $index . '_' . $form->ID;
                     $attributes = array(
                         'class' => 'form-check-input',
                         'type'  => 'radio',
@@ -190,7 +187,7 @@ abstract class BaseComponent
         <?php
     }
 
-    public function renderCheckBoxInput($element, $formId)
+    public function renderCheckBoxInput($element, $form)
     {
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
         if (!$fieldOptions) {
@@ -198,8 +195,7 @@ abstract class BaseComponent
         }
         $controlClass = $this->elementControlClass($element);
         $inputClass = $this->elementInputClass($element);
-        $inputId = 'wpf_input_' . $formId . '_' . $this->elementName;
-        $label = ArrayHelper::get($fieldOptions, 'label');
+        $inputId = 'wpf_input_' . $form->ID . '_' . $element['id'];
         $defaultValue = ArrayHelper::get($fieldOptions, 'default_value');
         $defaultValues = explode(',', $defaultValue);
         $options = ArrayHelper::get($fieldOptions, 'options', array());
@@ -219,13 +215,11 @@ abstract class BaseComponent
         );
         ?>
         <div <?php echo $this->builtAttributes($controlAttributes); ?>>
-            <?php if ($label): ?>
-                <label for="<?php echo $inputId; ?>"><?php echo $label; ?></label>
-            <?php endif; ?>
-            <div class="wpf_multi_form_controls">
+            <?php $this->buildLabel($fieldOptions, $form, array('for' => $inputId)); ?>
+            <div class="wpf_multi_form_controls wpf_input_content">
                 <?php foreach ($options as $index => $option): ?>
                     <?php
-                    $optionId = $element['id'] . '_' . $index . '_' . $formId;
+                    $optionId = $element['id'] . '_' . $index . '_' . $form->ID;
                     $attributes = array(
                         'class' => 'form-check-input',
                         'type'  => 'checkbox',
@@ -249,15 +243,15 @@ abstract class BaseComponent
         <?php
     }
 
-    public function renderHtmlContent($element, $formId)
+    public function renderHtmlContent($element, $form)
     {
         ?>
-            <div class="wpf_html_content_wrapper">
-                <?php
-                    $text = ArrayHelper::get($element, 'field_options.'.$element['id']);
-                    echo $this->parseText($text, $formId);
-                ?>
-            </div>
+        <div class="wpf_html_content_wrapper">
+            <?php
+            $text = ArrayHelper::get($element, 'field_options.' . $element['id']);
+            echo $this->parseText($text, $form->ID);
+            ?>
+        </div>
         <?php
     }
 
@@ -278,10 +272,10 @@ abstract class BaseComponent
     public function elementInputClass($element)
     {
         $extraClasses = '';
-        if(isset($element['extra_input_class'])) {
-            $extraClasses = ' '.$element['extra_input_class'];
+        if (isset($element['extra_input_class'])) {
+            $extraClasses = ' ' . $element['extra_input_class'];
         }
-        return apply_filters('wppayfrom_element_input_class', 'wpf_form_control'.$extraClasses, $element);
+        return apply_filters('wppayfrom_element_input_class', 'wpf_form_control' . $extraClasses, $element);
     }
 
     public function parseText($text, $formId)
@@ -301,8 +295,26 @@ abstract class BaseComponent
         );
     }
 
+    public function buildLabel($fieldOptions, $form, $attributes = array())
+    {
+        $label = ArrayHelper::get($fieldOptions, 'label');
+        $xtra_left = '';
+        $xtra_right = '';
+        $astPosition = $form->asteriskPosition;
+        if ($astPosition == 'left') {
+            $xtra_left = '<span class="wpf_required_sign wpf_required_sign_left">*</span> ';
+        } else if ($astPosition == 'right') {
+            $xtra_right = ' <span class="wpf_required_sign wpf_required_sign_left">*</span>';
+        }
+        if ($label): ?>
+            <div class="wpf_input_label">
+                <label <?php echo $this->builtAttributes($attributes); ?>><?php echo $xtra_left . $label . $xtra_right; ?></label>
+            </div>
+        <?php endif;
+    }
+
     abstract function component();
 
-    abstract function render($element, $formId, $elements);
+    abstract function render($element, $form, $elements);
 
 }

@@ -103,10 +103,11 @@
   .payform_section_header {
     display: block;
     width: 100%;
-    border-bottom: 1px solid rgb(221, 221, 221);
+    border-bottom: 1px solid rgb(227, 232, 238);
     clear: both;
     overflow: hidden;
-    padding: 10px 0px;
+    margin: -10px -15px 10px;
+    padding: 10px 15px;
 
     .payform_section_title {
       float: left;
@@ -140,8 +141,7 @@
 .wppaymform_editor {
   .settings_header {
     margin: -10px -20px 0px;
-    background: rgb(255, 255, 255);
-    padding: 15px 20px;
+    padding: 8px 20px;
     width: 100%;
     overflow: hidden;
 
@@ -155,6 +155,10 @@
     }
   }
 
+  .el-menu--horizontal>.el-menu-item {
+    height: 50px;
+    line-height: 50px;
+  }
   .payform_builder_notices {
     margin-top: 50px;
     padding: 5px 20px;
@@ -194,6 +198,7 @@
     background-color: rgb(255, 255, 255);
     color: rgb(0, 0, 0);
     padding: 15px;
+    box-shadow: 0 7px 14px 0 rgba(60, 66, 87, 0.1), 0 3px 6px 0 rgba(0, 0, 0, 0.07);
   }
 
   .payform_element_control {
@@ -204,16 +209,11 @@
 
 .payform_builder_item {
   padding: 10px;
-  margin: 10px 0px;
+  margin: 20px 0px 10px;
   border-bottom: 1px solid rgb(221, 221, 221);
-
-  &:first-child {
-    border-top: 1px solid rgb(221, 221, 221);
-  }
 
   .payform_builder_header {
     overflow: hidden;
-
     .payform_head_left {
       width: 48%;
       float: left;
@@ -606,43 +606,62 @@ a.el-button {
   display: inline-block;
 }
 
-.wpf_components {
-  button {
-    background: rgb(128, 128, 128);
-    color: rgb(255, 255, 255);
-    margin-right: 5px;
-    border-radius: 0;
-    margin-bottom: 5px;
-    margin-left: 0 !important;
-    &.wpf_item_input, &.wpf_item_html {
-      background: #9E9E9E;
-      border-color:#9E9E9E;
+
+.wpf_field_group {
+  display: block;
+  padding: 10px 10px 0px 10px;
+  background: rgb(255, 255, 255);
+  margin-bottom: 10px;
+  margin-left: 10px;
+  box-shadow: 0 2px 7px 0 rgba(60, 66, 87, 0.1), 0 3px 1px 0 rgba(0, 0, 0, 0.07);
+  .field_group_header {
+    margin: -10px -10px 10px;
+    overflow: hidden;
+    display: block;
+    padding: 7px 10px;
+    box-shadow: 0px 2px #e3e8ee;
+    background-color: rgb(247, 250, 252);
+    font-weight: bold;
+    color: rgb(105, 115, 134);
+    i {
+      font-size: 16px;
+      vertical-align: sub;
     }
-    &.wpf_item_payment_method_element {
-      background: rgb(33, 150, 243);
-      border-color:rgb(33, 150, 243);
-    }
-    &.wpf_item_payment, &.wpf_item_item_quantity {
-      background: rgb(255, 193, 7);
-      border-color:rgb(255, 193, 7);
-    }
-    &.el-button {
-      &:hover {
-        background: white;
-        color: rgb(33, 150, 243);
-      }
+  }
+  .field_group_body {
+    display: block;
+    overflow: hidden;
+    button {
+      display: block;
+      width: 100%;
+      margin-right: 0 !important;
+      margin-left: 0 !important;
+      margin-bottom: 10px !important;
+      text-align: left;
     }
   }
 }
-label.wpf_components_label {
-  font-weight: 500;
-  margin-bottom: 5px;
-  overflow: hidden;
-  display: block;
-}
+
 
 .wpf_settings_section {
   padding: 10px;
   background: rgb(247, 250, 252);
   margin-bottom: 20px;
+}
+
+.el-tooltip__popper {
+  h3 {
+    margin: 0;
+    font-size: 14px;
+  }
+  p {
+    text-align: left;
+    margin: 0;
+  }
+}
+
+.payform_section_header.all_payment_form_wrapper {
+  border-bottom: 0;
+  margin: 0px;
+  padding: 10px 0;
 }

@@ -10,6 +10,7 @@ import Entry from './Components/Entries/Entry';
 import SettingView from './Components/Settings/index'
 import StripeSettings from './Components/Settings/StripeSettings'
 import CurrencySettings from './Components/Settings/CurrencySettings'
+import FormDesignSettings from './Components/Form/settings/FormDesignSettings'
 
 export const routes = [
     {
@@ -32,12 +33,6 @@ export const routes = [
                 name: 'entry',
                 component: Entry
             },
-            {
-                path: '/stats',
-                name: 'stats',
-                component: DashBoardStats
-            },
-
             {
                 path: '/settings/',
                 component: SettingView,
@@ -79,7 +74,7 @@ export const routes = [
             {
                 path: 'design_options',
                 name: 'design_options',
-                component: EditSingleForm
+                component: FormDesignSettings
             },
             {
                 path: 'email_settings',

@@ -21,6 +21,7 @@ class TextAreaComponent extends BaseComponent
             'type'            => 'textarea',
             'editor_title'    => 'Textarea Field',
             'group'           => 'input',
+            'postion_group'   => 'general',
             'editor_elements' => array(
                 'label'         => array(
                     'label' => 'Field Label',
@@ -43,7 +44,7 @@ class TextAreaComponent extends BaseComponent
         );
     }
 
-    public function render($element, $formId, $elements)
+    public function render($element, $form, $elements)
     {
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
         if (!$fieldOptions) {
@@ -51,7 +52,7 @@ class TextAreaComponent extends BaseComponent
         }
         $controlClass = $this->elementControlClass($element);
         $inputClass = $this->elementInputClass($element);
-        $inputId = 'wpf_input_' . $formId . '_' . $this->elementName;
+        $inputId = 'wpf_input_' . $form->ID . '_' . $this->elementName;
         $label = ArrayHelper::get($fieldOptions, 'label');
 
         $attributes = array(
@@ -68,11 +69,10 @@ class TextAreaComponent extends BaseComponent
         ?>
         <div id="wpf_<?php echo $this->elementName; ?>" data-element_type="<?php echo $this->elementName; ?>"
              class="<?php echo $controlClass; ?>">
-            <?php if ($label): ?>
-                <label for="<?php echo $inputId; ?>"><?php echo $label; ?></label>
-            <?php endif; ?>
-
-            <textarea <?php echo $this->builtAttributes($attributes); ?>><?php echo ArrayHelper::get($fieldOptions, 'default_value') ?></textarea>
+            <?php $this->buildLabel($fieldOptions, $form, array('for' => $inputId)); ?>
+            <div class="wpf_input_content">
+                <textarea <?php echo $this->builtAttributes($attributes); ?>><?php echo ArrayHelper::get($fieldOptions, 'default_value') ?></textarea>
+            </div>
         </div>
         <?php
     }

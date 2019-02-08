@@ -20,6 +20,7 @@ class NumberComponent extends BaseComponent
             'editor_title'    => 'Number Field',
             'group'           => 'input',
             'is_markup'       => 'no',
+            'postion_group'   => 'general',
             'editor_elements' => array(
                 'label'         => array(
                     'label' => 'Field Label',
@@ -50,9 +51,9 @@ class NumberComponent extends BaseComponent
         );
     }
 
-    public function render($element, $formId, $elements)
+    public function render($element, $form, $elements)
     {
         $element['type'] = 'number';
-        $this->renderNormalInput($element, $formId);
+        $this->renderNormalInput($element, $form->ID);
     }
 }

@@ -41,8 +41,6 @@
                             v-model="element.field_options[itemName]"></el-input>
                         <div class="html_placeholder_instruction">
                             You can use the following dynamic placeholder on your HTML
-                            <span>{sub_total}</span>
-                            <span>{tax_total}</span>
                             <span>{payment_total}</span>
                         </div>
                     </el-form-item>

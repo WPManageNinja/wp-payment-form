@@ -31,12 +31,13 @@ class DateComponent extends BaseComponent
             'type'            => 'date',
             'editor_title'    => 'Date Field',
             'group'           => 'input',
+            'postion_group'   => 'general',
             'editor_elements' => array(
                 'label'         => array(
                     'label' => 'Field Label',
                     'type'  => 'text'
                 ),
-                'placeholder'         => array(
+                'placeholder'   => array(
                     'label' => 'Placeholder',
                     'type'  => 'text'
                 ),
@@ -62,35 +63,38 @@ class DateComponent extends BaseComponent
         );
     }
 
-    public function render($element, $formId, $elements)
+    public function render($element, $form, $elements)
     {
+        wp_enqueue_script('pikaday');
+        wp_enqueue_script('moment');
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
         if (!$fieldOptions) {
             return;
         }
         $controlClass = $this->elementControlClass($element);
         $inputClass = $this->elementInputClass($element);
-        $inputId = 'wpf_input_' . $formId . '_' . $this->elementName;
-        $label = ArrayHelper::get($fieldOptions, 'label');
+        $inputId = 'wpf_input_' . $form->ID . '_' . $element['id'];
         $attributes = array(
-            'data-required' => ArrayHelper::get($fieldOptions, 'required'),
-            'name' => $element['id'],
-            'placeholder' => ArrayHelper::get($fieldOptions, 'placeholder'),
-            'value' => ArrayHelper::get($fieldOptions, 'default_value'),
-            'type' => 'text',
-            'class' => $inputClass.' wpf_date_field',
-            'data-date_format' =>  ArrayHelper::get($fieldOptions, 'date_format'),
+            'data-required'    => ArrayHelper::get($fieldOptions, 'required'),
+            'name'             => $element['id'],
+            'placeholder'      => ArrayHelper::get($fieldOptions, 'placeholder'),
+            'value'            => ArrayHelper::get($fieldOptions, 'default_value'),
+            'type'             => 'text',
+            'id'               => $inputId,
+            'class'            => $inputClass . ' wpf_date_field',
+            'data-date_format' => ArrayHelper::get($fieldOptions, 'date_format'),
         );
+
         if (ArrayHelper::get($fieldOptions, 'required') == 'yes') {
             $attributes['required'] = true;
         }
         ?>
         <div id="wpf_<?php echo $this->elementName; ?>" data-element_type="<?php echo $this->elementName; ?>"
              class="<?php echo $controlClass; ?>">
-            <?php if ($label): ?>
-                <label for="<?php echo $inputId; ?>"><?php echo $label; ?></label>
-            <?php endif; ?>
-            <input <?php echo $this->builtAttributes($attributes); ?> />
+            <?php $this->buildLabel($fieldOptions, $form, array('for' => $inputId)); ?>
+            <div class="wpf_input_content">
+                <input <?php echo $this->builtAttributes($attributes); ?> />
+            </div>
         </div>
         <?php
     }

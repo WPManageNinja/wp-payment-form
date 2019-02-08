@@ -41,6 +41,8 @@ class AdminAjaxHandler
             'change_payment_status'           => 'changePaymentStatus',
             'get_global_currency_settings'    => 'getGlobalCurrencySettings',
             'update_global_currency_settings' => 'updateGlobalCurrencySettings',
+            'get_design_settings'             => 'getDesignSettings',
+            'update_design_settings'          => 'updateDesignSettings'
         );
 
         if (isset($validRoutes[$route])) {
@@ -320,5 +322,23 @@ class AdminAjaxHandler
         } else {
             wp_send_json(__('Something is wrong when uploading the file', 'wppayform'), 423);
         }
+    }
+
+    public function getDesignSettings()
+    {
+        $formId = intval($_REQUEST['form_id']);
+        wp_send_json_success(array(
+            'layout_settings' => Forms::getDesignSettings($formId)
+        ), 200);
+    }
+
+    public function updateDesignSettings()
+    {
+        $formId = intval($_REQUEST['form_id']);
+        $layoutSettings = wp_unslash($_REQUEST['layout_settings']);
+        update_post_meta($formId, '_form_design_settings', $layoutSettings);
+        wp_send_json_success(array(
+            'message' => __('Settings successfully updated', 'wppayform')
+        ), 200);
     }
 }

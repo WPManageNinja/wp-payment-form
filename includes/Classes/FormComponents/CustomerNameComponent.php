@@ -19,6 +19,7 @@ class CustomerNameComponent extends BaseComponent
             'type'            => 'customer_name',
             'editor_title'    => 'Customer Name',
             'group'           => 'input',
+            'postion_group'   => 'general',
             'editor_elements' => array(
                 'label'         => array(
                     'label' => 'Field Label',
@@ -45,9 +46,9 @@ class CustomerNameComponent extends BaseComponent
         );
     }
 
-    public function render($element, $formId, $elements)
+    public function render($element, $form, $elements)
     {
         $element['type'] = 'text';
-        $this->renderNormalInput($element, $formId);
+        $this->renderNormalInput($element, $form);
     }
 }

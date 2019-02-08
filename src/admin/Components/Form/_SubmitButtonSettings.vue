@@ -2,7 +2,8 @@
     <div class="submit_btn_settings">
         <el-form ref="submit_button_element_form" :model="submit_button" label-width="220px">
             <el-form-item label="Button Text">
-                <el-input placeholder="eg: Pay {total_amount}" size="mini" v-model="submit_button.button_text"></el-input>
+                <el-input placeholder="eg: Pay {payment_total}" size="mini" v-model="submit_button.button_text"></el-input>
+                <p>Use Shortcode <code>{payment_total}</code> to show payment total amount</p>
             </el-form-item>
             <el-form-item label="Processing State Button Text">
                 <el-input placeholder="eg: Processing, please wait" size="mini" v-model="submit_button.processing_text"></el-input>
@@ -10,7 +11,6 @@
             <el-form-item label="Button Style">
                 <el-select class="item_full_width" size="small" v-model="submit_button.button_style">
                     <el-option label="Default Style" value="wpf_default_btn"></el-option>
-                    <el-option label="Rounded Border Button" value="wpf_rounded_btn"></el-option>
                     <el-option label="Full Width Block Button" value="wpf_full_block_btn"></el-option>
                     <el-option label="No Style (Theme Default)" value=""></el-option>
                 </el-select>

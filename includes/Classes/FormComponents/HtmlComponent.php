@@ -19,6 +19,7 @@ class HtmlComponent extends BaseComponent
             'type'            => 'custom_html',
             'editor_title'    => 'Custom HTML',
             'group'           => 'html',
+            'postion_group'   => 'general',
             'editor_elements' => array(
                 'custom_html' => array(
                     'label' => 'Custom HTML',
@@ -28,8 +29,8 @@ class HtmlComponent extends BaseComponent
         );
     }
 
-    public function render($element, $formId, $elements)
+    public function render($element, $form, $elements)
     {
-        $this->renderHtmlContent($element, $formId);
+        $this->renderHtmlContent($element, $form);
     }
 }

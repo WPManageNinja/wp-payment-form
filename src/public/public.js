@@ -16,6 +16,7 @@ var wpPayformApp = {};
                 wpPayformApp.initForm( form );
                 body.trigger( 'wpPayFormProcessFormElements', [ form ] );
             });
+            this.initDatePiker();
         },
         initForm(form) {
             let that = this;
@@ -59,6 +60,7 @@ var wpPayformApp = {};
             }
         },
         submitForm(form) {
+
             form.addClass('wpf_submitting_form');
             form.parent().find('.wpf_form_notices').hide();
             let formId = form.data('wpf_form_id');
@@ -77,6 +79,9 @@ var wpPayformApp = {};
                         form.parent().find('.wpf_form_success').html(confirmation.messageToShow).show();
                         if(confirmation.samePageFormBehavior == 'hide_form') {
                             form.hide();
+                            $([document.documentElement, document.body]).animate({
+                                scrollTop: form.parent().find('.wpf_form_success').offset().top - 100
+                            }, 200);
                         }
                         $('#wpf_form_id_'+formId)[0].reset();
                         form.trigger('stripe_clear');
@@ -116,15 +121,24 @@ var wpPayformApp = {};
                     }
                 }
                 else if(elementType == 'hidden') {
-                    itemTotalValue[elementName] = parseInt($(elem).data('price'));
+                    let itemValue = $(elem).data('price');
+                    if(itemValue) {
+                        itemTotalValue[elementName] = parseInt(itemValue);
+                    }
                 } else if(elementType == 'number') {
-                    itemTotalValue[elementName] =  parseInt(parseFloat($(this).val()) * 100);
+                    let itemValue = $(this).val();
+                    if(itemValue) {
+                        itemTotalValue[elementName] =  parseInt(parseFloat(itemValue) * 100);
+                    }
                 } else if(elementType == 'checkbox') {
                     let groupId = $(elem).data('group_id');
                     let groups = form.find('input[data-group_id="'+groupId+'"]:checked');
                     let groupTotal = 0;
                     groups.each((index, group) => {
-                        groupTotal += parseInt($(group).data('price'));
+                        let itemPrice = $(group).data('price');
+                        if(itemPrice) {
+                            groupTotal += parseInt();
+                        }
                     });
                     itemTotalValue[groupId] = groupTotal;
                 }
@@ -139,15 +153,17 @@ var wpPayformApp = {};
             let allTotalAmount = 0;
             // Get The Total Now
             jQuery.each(itemTotalValue, (itemName, itemValue) => {
-                // check if there has a quantity
-                let targetQuantity = form.find('.wpf_item_qty[data-target_product='+itemName+']');
-                if(targetQuantity.length) {
-                    let qty = $(targetQuantity).val();
-                    if(parseInt(qty)) {
-                        allTotalAmount +=  Math.abs(parseInt(qty)) * itemValue;
+                if(itemValue) {
+                    // check if there has a quantity
+                    let targetQuantity = form.find('.wpf_item_qty[data-target_product='+itemName+']');
+                    if(targetQuantity.length) {
+                        let qty = $(targetQuantity).val();
+                        if(parseInt(qty)) {
+                            allTotalAmount +=  Math.abs(parseInt(qty)) * itemValue;
+                        }
+                    } else {
+                        allTotalAmount += itemValue;
                     }
-                } else {
-                    allTotalAmount += itemValue;
                 }
             });
             if(allTotalAmount) {
@@ -156,6 +172,19 @@ var wpPayformApp = {};
                 form.find('.wpf_calc_payment_total').html(formatPrice(0, formSettings.currency_settings));
             }
             form.data('payment_total', allTotalAmount);
+        },
+        initDatePiker() {
+            let dateFields = $('.wpf_form input.wpf_date_field');
+            if(dateFields.length) {
+                dateFields.each(function (index, dateField) {
+                    new Pikaday({
+                        field: dateField,
+                        format: $(this).data('date_format'),
+                        i18n: window.wp_payform_general.date_i18n
+                    });
+                });
+
+            }
         }
     };
 

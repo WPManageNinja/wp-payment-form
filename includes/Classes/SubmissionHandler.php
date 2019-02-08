@@ -121,6 +121,8 @@ class SubmissionHandler
         $paymentMethod = '';
         $paymentMethod = apply_filters('wpf_payment_method_for_submission', $paymentMethod, $elements, $formId, $form_data);
 
+
+
         $currency = $currencySetting['currency'];
         $inputItems = apply_filters('wpf_form_data_formatted_input', $inputItems, $form_data, $formId);
 
@@ -152,7 +154,17 @@ class SubmissionHandler
             'updated_at'          => date('Y-m-d H:i:s')
         );
 
+        if (apply_filters('wpf_record_client_info', true, $form)) {
+            $browser = new Browser();
+            $submission['ip_address'] = $browser->getIp();
+            $submission['browser'] = $browser->getBrowser();
+            $submission['device'] = $browser->getPlatform();
+        }
+
         $submission = apply_filters('wpf_create_submission_data', $submission, $formId, $form_data);
+
+        do_action('wpf_before_form_submission_'.$paymentMethod, $submission, $form_data);
+        do_action('wpf_before_form_submission', $submission, $form_data);
 
         // Insert Submission
         $submissionModel = new Submission();
@@ -302,7 +314,7 @@ class SubmissionHandler
 
     private function getHash()
     {
-        $prefix = 'wpf_'.time();
+        $prefix = 'wpf_' . time();
         $uid = uniqid($prefix);
         // now let's make a unique number from 1 to 999
         $uid .= rand(1, 999);

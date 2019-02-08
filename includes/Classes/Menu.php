@@ -21,6 +21,10 @@ class Menu
     public function addMenus()
     {
         $capability = 'manage_options';
+        if (!$capability) {
+            return;
+        }
+        global $submenu;
         add_menu_page(
             __( 'Payment Forms', 'wppayform' ),
             __( 'Payment Forms', 'wppayform' ),
@@ -29,6 +33,26 @@ class Menu
             array($this, 'render'),
             '',
             6
+        );
+        $submenu['wppayform.php']['all_forms'] = array(
+            __('All Forms', 'wppayform'),
+            $capability,
+            'admin.php?page=wppayform.php#/',
+        );
+        $submenu['wppayform.php']['entries'] = array(
+            __('Entries', 'wppayform'),
+            $capability,
+            'admin.php?page=wppayform.php#/entries',
+        );
+        $submenu['wppayform.php']['settings'] = array(
+            __('Settings', 'wppayform'),
+            $capability,
+            'admin.php?page=wppayform.php#/settings/stripe-settings',
+        );
+        $submenu['wppayform.php']['support'] = array(
+            __('Support', 'wppayform'),
+            $capability,
+            'admin.php?page=wppayform.php#/support',
         );
     }
 

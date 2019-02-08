@@ -65,6 +65,11 @@ class Activator
 				payment_mode varchar(255),
 				payment_method varchar(255),
 				status varchar(255),
+				ip_address varchar (45),
+				browser varchar(45),
+				device varchar(45),
+				city varchar(45),
+				country varchar(45),
 				created_at timestamp NULL,
 				updated_at timestamp NULL
 			) $charset_collate;";

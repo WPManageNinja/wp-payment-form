@@ -19,6 +19,7 @@ class CheckBoxComponent extends BaseComponent
             'type'            => 'checkbox',
             'editor_title'    => 'Checkbox Field',
             'group'           => 'input',
+            'postion_group'   => 'general',
             'editor_elements' => array(
                 'label'         => array(
                     'label' => 'Field Label',
@@ -43,9 +44,9 @@ class CheckBoxComponent extends BaseComponent
         );
     }
 
-    public function render($element, $formId, $elements)
+    public function render($element, $form, $elements)
     {
-        $this->renderCheckBoxInput($element, $formId);
+        $this->renderCheckBoxInput($element, $form);
     }
 
 }

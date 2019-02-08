@@ -18,6 +18,7 @@ class TextComponent extends BaseComponent
             'type'            => 'text',
             'editor_title'    => 'Single Line Text',
             'group'           => 'input',
+            'postion_group'   => 'general',
             'editor_elements' => array(
                 'label'         => array(
                     'label' => 'Field Label',
@@ -40,9 +41,9 @@ class TextComponent extends BaseComponent
         );
     }
 
-    public function render($element, $formId, $elements)
+    public function render($element, $form, $elements)
     {
         $element['type'] = 'text';
-        $this->renderNormalInput($element, $formId);
+        $this->renderNormalInput($element, $form);
     }
 }

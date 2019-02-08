@@ -22,36 +22,30 @@
                 </a>
             </div>
         </div>
+
+        <el-menu mode="horizontal"
+                 :router="true"
+                 :default-active="current_route"
+        >
+            <el-menu-item
+                v-for="formMenu in form_menus"
+                :key="formMenu.route"
+                :route="{ name: formMenu.route, params: { form_id: form_id } }"
+                :index="formMenu.route">
+                <i :class="formMenu.icon"></i>
+                <span>{{  formMenu.title }}</span>
+            </el-menu-item>
+            <el-menu-item
+                :route="{ name: 'entries', params: { form_id: form_id }, query: { form_id: form_id.toString() } }"
+                index="entries"
+            >
+                <i class="dashicons dashicons-text"></i>
+                <span>{{  $t('Form Entries') }}</span>
+            </el-menu-item>
+        </el-menu>
+
         <div class="payform_editor_wrapper">
-            <el-container>
-                <el-aside width="200px">
-                    <el-menu background-color="#545c64"
-                             text-color="#fff"
-                             :router="true"
-                             :default-active="current_route"
-                             active-text-color="#ffd04b"
-                    >
-                        <el-menu-item
-                            v-for="formMenu in form_menus"
-                            :key="formMenu.route"
-                            :route="{ name: formMenu.route, params: { form_id: form_id } }"
-                            :index="formMenu.route">
-                            <i class="dashicons dashicons-editor-table"></i>
-                            <span>{{  formMenu.title }}</span>
-                        </el-menu-item>
-                        <el-menu-item
-                            :route="{ name: 'entries', params: { form_id: form_id }, query: { form_id: form_id.toString() } }"
-                            index="entries"
-                        >
-                            <i class="dashicons dashicons-editor-table"></i>
-                            <span>{{  $t('Form Entries') }}</span>
-                        </el-menu-item>
-                    </el-menu>
-                </el-aside>
-                <el-main>
-                    <router-view :form_id="form_id"></router-view>
-                </el-main>
-            </el-container>
+            <router-view :form_id="form_id"></router-view>
         </div>
 
         <!--Edit Form Modal-->
@@ -94,19 +88,18 @@
                 form_menus: [
                     {
                         route: 'edit_form',
-                        title: 'Form Builder'
+                        title: 'Form Builder',
+                        icon: 'dashicons dashicons-lightbulb'
                     },
                     {
                         route: 'payment_options',
-                        title: 'Form Settings'
+                        title: 'Form Settings',
+                        icon: 'dashicons dashicons-admin-settings'
                     },
                     {
                         route: 'design_options',
-                        title: 'Design Settings'
-                    },
-                    {
-                        route: 'email_settings',
-                        title: 'Email Settings'
+                        title: 'Form Design',
+                        icon: 'dashicons dashicons-art'
                     }
                 ],
                 editFormModalShow: false,
