@@ -24,6 +24,10 @@ class TextComponent extends BaseComponent
                     'label' => 'Field Label',
                     'type'  => 'text'
                 ),
+                'placeholder'    => array(
+                    'label' => 'Placeholder',
+                    'type'  => 'text'
+                ),
                 'required'      => array(
                     'label' => 'Required',
                     'type'  => 'switch'

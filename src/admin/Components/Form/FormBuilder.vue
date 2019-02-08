@@ -222,11 +222,11 @@
                 }
 
                 // check if it's single only
-                if (component.single_only && this.alreadyExistElement(component.type)) {
-                    this.$message({
-                        message: 'Element already exists on your form. You can not add more of this item',
+                if (component.single_only && this.alreadyExistElement(component.group)) {
+                    this.$message( {
+                        message: 'Element already exists on your form. You can not add more of this type',
                         type: 'error'
-                    });
+                    } );
                     return;
                 }
 
@@ -244,7 +244,7 @@
             alreadyExistElement(type) {
                 let status = false;
                 each(this.builder_elements, (element) => {
-                    if (element.type == type) {
+                    if (element.group == type) {
                         status = true;
                     }
                 });

@@ -53,7 +53,7 @@ class PaymentItemComponent extends BaseComponent
                 'required'        => 'yes',
                 'pricing_details' => array(
                     'one_time_type'       => 'single',
-                    'payment_amount'      => '',
+                    'payment_amount'      => '10.00',
                     'multiple_pricing'    => array(
                         array(
                             'label' => '',

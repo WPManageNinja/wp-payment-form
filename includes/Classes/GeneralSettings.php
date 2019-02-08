@@ -18,7 +18,7 @@ class GeneralSettings
     public static function getCurrencies()
     {
 
-        return array(
+        return apply_filters('wpf_accepted_stripe_currencies', array(
             'AED' => __('United Arab Emirates Dirham', 'wppayform'),
             'AFN' => __('Afghan Afghani', 'wppayform'),
             'ALL' => __('Albanian Lek', 'wppayform'),
@@ -154,7 +154,7 @@ class GeneralSettings
             'YER' => __('Yemeni Rial', 'wppayform'),
             'ZAR' => __('South African Rand', 'wppayform'),
             'ZMW' => __('Zambian Kwacha', 'wppayform'),
-        );
+        ));
     }
 
     /**
