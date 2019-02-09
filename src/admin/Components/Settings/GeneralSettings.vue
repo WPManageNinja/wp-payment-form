@@ -135,6 +135,7 @@
         },
         mounted() {
             this.getSettings();
+            window.WPPayFormsBus.$emit('site_title', 'General Settings');
         }
     }
 </script>

@@ -47,12 +47,17 @@ window.WPPayForms.Vue.mixin({
 import {routes} from './routes'
 
 const router = new window.WPPayForms.Router({
-    routes: routes,
+    routes: window.WPPayForms.applyFilters('wpf_global_vue_routes', routes),
     linkActiveClass: 'active'
 });
 
 new window.WPPayForms.Vue({
     el: '#wppayformsapp',
     render: h => h(require('./App')),
-    router: router
+    router: router,
+    mounted() {
+        window.WPPayFormsBus.$on('site_title', (title) => {
+            jQuery(document).attr("title", title + ' :: WPPayFrom');
+        });
+    }
 });

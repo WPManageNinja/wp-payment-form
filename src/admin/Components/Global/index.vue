@@ -15,7 +15,12 @@
         name: 'global_wrapper',
         data() {
             return {
-                topMenus: [
+                topMenus: []
+            }
+        },
+        methods: {
+            setTopmenu() {
+                this.topMenus = this.applyFilters('wpf_top_level_menu', [
                     {
                         route: 'forms',
                         title: 'All Forms'
@@ -32,8 +37,11 @@
                         route: 'support',
                         title: 'Support'
                     }
-                ]
+                ])
             }
+        },
+        mounted() {
+            this.setTopmenu();
         }
     }
 </script>

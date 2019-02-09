@@ -181,6 +181,8 @@
                     type: 'success'
                 });
             });
+
+            window.WPPayFormsBus.$emit('site_title', 'All Forms');
         }
     }
 </script>

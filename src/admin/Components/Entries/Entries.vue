@@ -285,6 +285,7 @@
             }
             this.getEntries();
             this.getFormTitles();
+            window.WPPayFormsBus.$emit('site_title', 'Form Entries');
         }
     }
 </script>

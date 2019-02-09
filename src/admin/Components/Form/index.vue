@@ -83,23 +83,7 @@
             return {
                 form_id: this.$route.params.form_id,
                 current_route: this.$route.name,
-                form_menus: [
-                    {
-                        route: 'edit_form',
-                        title: 'Form Builder',
-                        icon: 'dashicons dashicons-lightbulb'
-                    },
-                    {
-                        route: 'payment_options',
-                        title: 'Form Settings',
-                        icon: 'dashicons dashicons-admin-settings'
-                    },
-                    {
-                        route: 'design_options',
-                        title: 'Form Design',
-                        icon: 'dashicons dashicons-art'
-                    }
-                ],
+                form_menus: [],
                 editFormModalShow: false,
                 form: {},
                 fetching: false,
@@ -147,9 +131,29 @@
                     .always(() => {
                         this.saving = false;
                     });
+            },
+            setFormMenu() {
+                this.form_menus = this.applyFilters('wpf_set_form_menus', [
+                    {
+                        route: 'edit_form',
+                        title: 'Form Builder',
+                        icon: 'dashicons dashicons-lightbulb'
+                    },
+                    {
+                        route: 'payment_options',
+                        title: 'Form Settings',
+                        icon: 'dashicons dashicons-admin-settings'
+                    },
+                    {
+                        route: 'design_options',
+                        title: 'Form Design',
+                        icon: 'dashicons dashicons-art'
+                    }
+                ], this.form_id);
             }
         },
         mounted() {
+            this.setFormMenu();
             this.getForm();
             var clipboard = new Clipboard('.copy');
             clipboard.on('success', (e) => {

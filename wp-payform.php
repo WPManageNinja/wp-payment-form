@@ -3,7 +3,7 @@
  * Plugin Name: WPPayForm
  * Plugin URI:  https://wpmanageninja.com
  * Description: Create and Accept Payments in minutes with Stripe
- * Author: WPManageNinja
+ * Author: WPManageNinja LLC
  * Author URI:  https://wpmanageninja.com
  * Version: 1.0.0
  * Text Domain: wppayform

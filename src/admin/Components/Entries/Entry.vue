@@ -321,6 +321,7 @@
                     .then(response => {
                         this.submission = response.data.submission;
                         this.entry_items = response.data.entry;
+                        window.WPPayFormsBus.$emit('site_title', 'Entry#' + response.data.submission.id);
                     })
                     .always(() => {
                         this.fething = false;
@@ -358,6 +359,7 @@
                         this.submission = response.data.submission;
                         this.entry_items = response.data.entry;
                         this.entry_id = response.data.submission.id;
+                        window.WPPayFormsBus.$emit('site_title', 'Entry#' + response.data.submission.id);
                         this.$router.push({
                             name: 'entry',
                             params: {entry_id: response.data.submission.id},

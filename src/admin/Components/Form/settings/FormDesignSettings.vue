@@ -161,6 +161,7 @@
         },
         mounted() {
             this.getSettings();
+            window.WPPayFormsBus.$emit('site_title', 'Design Settings');
         }
     }
 </script>

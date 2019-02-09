@@ -120,6 +120,7 @@
         },
         mounted() {
             this.getSettings();
+            window.WPPayFormsBus.$emit('site_title', 'Stripe Settings');
         }
     }
 </script>
