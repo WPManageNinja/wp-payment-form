@@ -370,7 +370,7 @@ class GeneralSettings
         return apply_filters('wpf_currency_symbol', $currency_symbol, $currency);
     }
 
-    public static function getGlobalCurrencySettings($formId = false)
+    public static function getGlobalCurrencySettings()
     {
         $settings = get_option('_wppayform_global_currency_settings', array());
         $defaults = array(
@@ -382,7 +382,7 @@ class GeneralSettings
         );
 
         $settings = wp_parse_args($settings, $defaults);
-        $settings = apply_filters('wpf_global_currency_setting', $settings, $formId);
+        $settings = apply_filters('wpf_global_currency_setting', $settings);
         return $settings;
     }
 

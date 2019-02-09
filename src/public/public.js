@@ -136,7 +136,7 @@ var wpPayformApp = {};
                     groups.each((index, group) => {
                         let itemPrice = $(group).data('price');
                         if(itemPrice) {
-                            groupTotal += parseInt();
+                            groupTotal += parseInt(itemPrice);
                         }
                     });
                     itemTotalValue[groupId] = groupTotal;

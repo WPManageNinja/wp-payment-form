@@ -146,11 +146,7 @@ class Forms
         if (!$currencySettings) {
             $currencySettings = array();
         }
-        $defaultSettings = array(
-            'settings_type' => 'global',
-            'currency'      => 'USD',
-            'locale'        => 'auto'
-        );
+        $defaultSettings = GeneralSettings::getGlobalCurrencySettings();
         return wp_parse_args($currencySettings, $defaultSettings);
     }
 

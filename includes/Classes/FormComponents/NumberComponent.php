@@ -54,6 +54,6 @@ class NumberComponent extends BaseComponent
     public function render($element, $form, $elements)
     {
         $element['type'] = 'number';
-        $this->renderNormalInput($element, $form->ID);
+        $this->renderNormalInput($element, $form);
     }
 }
