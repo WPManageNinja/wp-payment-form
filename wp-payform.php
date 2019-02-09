@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: WP Payment Form
- * Plugin URI:  https://wpmanageninja.com
+ * Plugin URI:  https://github.com/WPManageNinja/wp-payform
  * Description: Create and Accept Payments in minutes with Stripe
  * Author: WPManageNinja LLC
  * Author URI:  https://wpmanageninja.com
