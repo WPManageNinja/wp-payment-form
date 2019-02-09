@@ -20,7 +20,7 @@ class SubmissionActivity
             ->get();
         foreach ($activities as $activitiy) {
             if($activitiy->created_by_user_id) {
-                $activitiy->user_profile_url = get_edit_user_link($activitiy->user_id);
+                $activitiy->user_profile_url = get_edit_user_link($activitiy->created_by_user_id);
             }
         }
 
