@@ -40,7 +40,7 @@ class TinyMceBlock
                 "label" => __('Select a Form to insert', 'wppayform'),
                 "title" => __('Insert Form Shortcode', 'wppayform'),
                 "select_error" => __('Please select a Form', 'wppayform'),
-                "insert_text" => __('&#32;&#32;Insert Shortcode&#32;&#32;', 'wppayform'),
+                "insert_text" => __('Insert Shortcode', 'wppayform'),
                 "forms" => $this->getAllFormsForMce(),
         ));
 

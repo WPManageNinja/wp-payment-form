@@ -1,0 +1,385 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: WPPayForm\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2019-02-09 08:33+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: \n"
+"Language: \n"
+"Plural-Forms: nplurals=INTEGER; plural=EXPRESSION;\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Loco https://localise.biz/\n"
+"X-Loco-Version: 2.2.0; wp-5.0.3"
+
+#: wp-payform.php:110 wp-payform.php:113
+msgid "Sorry, no submission receipt found, Please check your receipt URL"
+msgstr ""
+
+#: includes/Classes/AccessControl.php:50
+msgid "Sorry, You do not have permission to do this action: "
+msgstr ""
+
+#: includes/Classes/AdminAjaxHandler.php:82
+msgid "Something is wrong when createding the form. Please try again"
+msgstr ""
+
+#: includes/Classes/AdminAjaxHandler.php:87
+msgid "Form successfully created"
+msgstr ""
+
+#: includes/Classes/AdminAjaxHandler.php:99
+msgid "Please provide form title"
+msgstr ""
+
+#: includes/Classes/AdminAjaxHandler.php:110
+msgid "Form successfully updated"
+msgstr ""
+
+#: includes/Classes/AdminAjaxHandler.php:144
+#: includes/Classes/AdminAjaxHandler.php:163
+#: includes/Classes/AdminAjaxHandler.php:204
+#: includes/Classes/GlobalSettingsHandler.php:66
+#: includes/Classes/PaymentMethods/Stripe/Stripe.php:267
+msgid "Settings successfully updated"
+msgstr ""
+
+#: includes/Classes/AdminAjaxHandler.php:154
+msgid "Validation Error, Please try again"
+msgstr ""
+
+#: includes/Classes/AdminAjaxHandler.php:186
+msgid "Selected form successfully deleted"
+msgstr ""
+
+#: includes/Classes/GlobalSettingsHandler.php:52
+msgid "Please select a currency"
+msgstr ""
+
+#: includes/Classes/GlobalSettingsHandler.php:83
+msgid "Please upload only jpg/png format files"
+msgstr ""
+
+#: includes/Classes/GlobalSettingsHandler.php:93
+msgid "Something is wrong when uploading the file"
+msgstr ""
+
+#: includes/Classes/Menu.php:31 includes/Classes/Menu.php:32
+msgid "Payment Forms"
+msgstr ""
+
+#: includes/Classes/Menu.php:40
+msgid "All Forms"
+msgstr ""
+
+#: includes/Classes/Menu.php:45
+msgid "Entries"
+msgstr ""
+
+#: includes/Classes/Menu.php:50
+msgid "Settings"
+msgstr ""
+
+#: includes/Classes/Menu.php:55
+msgid "Support"
+msgstr ""
+
+#: includes/Classes/Menu.php:77
+msgid "All Payment Forms"
+msgstr ""
+
+#: includes/Classes/Menu.php:80
+msgid "Pending"
+msgstr ""
+
+#: includes/Classes/Menu.php:81
+msgid "Processing"
+msgstr ""
+
+#: includes/Classes/Menu.php:82
+msgid "Paid"
+msgstr ""
+
+#: includes/Classes/Menu.php:83
+msgid "Failed"
+msgstr ""
+
+#: includes/Classes/Menu.php:84
+msgid "Refunded"
+msgstr ""
+
+#: includes/Classes/SubmissionHandler.php:85
+msgid "Form Validation failed"
+msgstr ""
+
+#: includes/Classes/SubmissionHandler.php:217
+msgid "Form is successfully submitted"
+msgstr ""
+
+#: includes/Classes/SubmissionHandler.php:296
+msgid " is required"
+msgstr ""
+
+#: includes/Classes/SubmissionView.php:128
+msgid "Sorry, No Submission found"
+msgstr ""
+
+#: includes/Classes/SubmissionView.php:160
+msgid "Note successfully added"
+msgstr ""
+
+#: includes/Classes/SubmissionView.php:173
+msgid "The submission have the same status"
+msgstr ""
+
+#: includes/Classes/SubmissionView.php:201
+msgid "Payment status successfully changed"
+msgstr ""
+
+#: includes/Classes/SubmissionView.php:215
+msgid "Selected submission successfully deleted"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:143
+msgid "Previous Month"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:144
+msgid "Next Month"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:146
+msgid "January"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:147
+msgid "February"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:148
+msgid "March"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:149
+msgid "April"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:150
+msgid "May"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:151
+msgid "June"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:152
+msgid "July"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:153
+msgid "August"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:154
+msgid "September"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:155
+msgid "October"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:156
+msgid "November"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:157
+msgid "December"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:159
+msgid "Sunday"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:160
+msgid "Monday"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:161
+msgid "Tuesday"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:162
+msgid "Wednesday"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:163
+msgid "Thursday"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:164
+msgid "Friday"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:165
+msgid "Saturday"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:168
+msgid "Sun"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:169
+msgid "Mon"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:170
+msgid "Tue"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:171
+msgid "Wed"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:172
+msgid "Thu"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:173
+msgid "Fri"
+msgstr ""
+
+#: includes/Classes/Builder/Render.php:174
+msgid "Sat"
+msgstr ""
+
+#: includes/Classes/Integrations/TinyMceBlock.php:40
+msgid "Select a Form to insert"
+msgstr ""
+
+#: includes/Classes/Integrations/TinyMceBlock.php:41
+msgid "Insert Form Shortcode"
+msgstr ""
+
+#: includes/Classes/Integrations/TinyMceBlock.php:42
+msgid "Please select a Form"
+msgstr ""
+
+#: includes/Classes/Integrations/TinyMceBlock.php:43
+msgid "Insert Shortcode"
+msgstr ""
+
+#: includes/Classes/Models/Forms.php:86
+msgid "Submit"
+msgstr ""
+
+#: includes/Classes/Models/Forms.php:87
+msgid "Please Wait…"
+msgstr ""
+
+#: includes/Classes/Models/Forms.php:137
+msgid "Form successfully submitted"
+msgstr ""
+
+#: includes/Classes/Models/Forms.php:216
+msgid "Submission ID"
+msgstr ""
+
+#: includes/Classes/Models/Forms.php:217
+msgid "Submission Hash ID"
+msgstr ""
+
+#: includes/Classes/Models/Forms.php:218
+msgid "Customer Name"
+msgstr ""
+
+#: includes/Classes/Models/Forms.php:219
+msgid "Customer Email"
+msgstr ""
+
+#: includes/Classes/Models/Forms.php:223
+msgid "Payment Total"
+msgstr ""
+
+#: includes/views/receipt/customer_details.php:2
+msgid "Submitter Details"
+msgstr ""
+
+#: includes/views/receipt/header.php:4
+msgid "Thanks for your payment. Your payment has been received."
+msgstr ""
+
+#: includes/views/receipt/header.php:8
+msgid "Thanks for your submission. Here are the details of your submission:"
+msgstr ""
+
+#: includes/views/receipt/item_table.php:13
+msgid "Item"
+msgstr ""
+
+#: includes/views/receipt/item_table.php:14
+msgid "Quantity"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/ApiRequest.php:122
+#: includes/Classes/PaymentMethods/Stripe/ApiRequest.php:145
+msgid "There was a problem connecting to the Stripe API endpoint."
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Charge.php:19
+msgid "Payment data validation failed"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Charge.php:51
+msgid "General Error"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Charge.php:63
+msgid "Invalid currency"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Charge.php:66
+msgid "Currency is required"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Charge.php:70
+msgid "Stripe Token is required"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Charge.php:75
+msgid "Payment Amount can not be 0"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Stripe.php:42
+msgid "Stripe payment token is missing. Please input your card details"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Stripe.php:241
+msgid "Please provide Test Publishable key and Test Secret Key"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Stripe.php:249
+msgid "Please provide Live Publishable key and Live Secret Key"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/StripeCardElementComponent.php:44
+msgid "Your Card info (Powered By Stripe)"
+msgstr ""
+
+#. Name of the plugin
+msgid "WPPayForm"
+msgstr ""
+
+#. Description of the plugin
+msgid "Create and Accept Payments in minutes with Stripe"
+msgstr ""
+
+#. Author URI of the plugin
+msgid "https://wpmanageninja.com"
+msgstr ""
+
+#. Author of the plugin
+msgid "WPManageNinja"
+msgstr ""

@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: WP Pay Form - Simply Accept Payment using Stripe
+ * Plugin Name: WPPayForm
  * Plugin URI:  https://wpmanageninja.com
  * Description: Create and Accept Payments in minutes with Stripe
  * Author: WPManageNinja
@@ -98,19 +98,19 @@ class WPPayForm
         });
 
         add_shortcode('wppayform_reciept', function () {
-            if(isset($_REQUEST['wpf_submission']) && $_REQUEST['wpf_submission']) {
+            if (isset($_REQUEST['wpf_submission']) && $_REQUEST['wpf_submission']) {
                 $submissionHash = sanitize_text_field($_REQUEST['wpf_submission']);
                 $submission = wpPayformDB()->table('wpf_submissions')
                     ->where('submission_hash', '=', $submissionHash)
                     ->first();
-                if($submission) {
+                if ($submission) {
                     $receiptHandler = new \WPPayForm\Classes\Builder\PaymentReceipt();
                     return $receiptHandler->render($submission->id);
                 } else {
-                    return '<p class="wpf_no_recipt_found">'.__('Sorry, no submission receipt found, Please check your receipt URL', 'wppayform').'</p>';
+                    return '<p class="wpf_no_recipt_found">' . __('Sorry, no submission receipt found, Please check your receipt URL', 'wppayform') . '</p>';
                 }
             } else {
-                return '<p class="wpf_no_recipt_found">'.__('Sorry, no submission receipt found, Please check your receipt URL', 'wppayform').'</p>';
+                return '<p class="wpf_no_recipt_found">' . __('Sorry, no submission receipt found, Please check your receipt URL', 'wppayform') . '</p>';
             }
         });
     }
@@ -150,6 +150,11 @@ class WPPayForm
         new \WPPayForm\Classes\FormComponents\CustomAmountComponent();
     }
 
+    public function textDomain()
+    {
+        load_plugin_textdomain( 'wppayform', false, basename( dirname( __FILE__ ) ) . '/languages' );
+    }
+
     public function loadDependecies()
     {
         require_once(WPPAYFORM_DIR . 'includes/autoload.php');
@@ -167,16 +172,16 @@ register_activation_hook(__FILE__, function ($newWorkWide) {
 });
 
 
-
 add_action('shutdown', 'sql_logger');
-function sql_logger() {
+function sql_logger()
+{
     return;
     global $wpdb;
-    $log_file = fopen(ABSPATH.'/sql_log.txt', 'a');
-    fwrite($log_file, "//////////////////////////////////////////\n\n" . date("F j, Y, g:i:s a")."\n");
-    foreach($wpdb->queries as $q) {
-        if(strpos( $q[0], 'wp_wpf_') != false || strpos( $q[0], 'pay') != false) {
-            fwrite($log_file, $q[0] . " - ($q[1] s)". " [Stack]: $q[2]" . "\n\n");
+    $log_file = fopen(ABSPATH . '/sql_log.txt', 'a');
+    fwrite($log_file, "//////////////////////////////////////////\n\n" . date("F j, Y, g:i:s a") . "\n");
+    foreach ($wpdb->queries as $q) {
+        if (strpos($q[0], 'wp_wpf_') != false || strpos($q[0], 'pay') != false) {
+            fwrite($log_file, $q[0] . " - ($q[1] s)" . " [Stack]: $q[2]" . "\n\n");
         }
     }
     fclose($log_file);
