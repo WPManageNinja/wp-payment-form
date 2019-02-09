@@ -52,7 +52,7 @@ class StripeCardElementComponent extends BaseComponent
         );
     }
 
-    public function render($element, $formId, $elements)
+    public function render($element, $form, $elements)
     {
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
         if (!$fieldOptions) {
@@ -75,7 +75,7 @@ class StripeCardElementComponent extends BaseComponent
         }
 
         $inputClass = $this->elementInputClass($element);
-        $inputId = 'wpf_input_' . $formId . '_' . $this->elementName;
+        $inputId = 'wpf_input_' . $form->ID . '_' . $this->elementName;
         $label = ArrayHelper::get($fieldOptions, 'label');
         $attributes = array(
             'data-checkout_style' => $checkOutStyle,
