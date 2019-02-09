@@ -9,7 +9,7 @@
     </div>
     <?php if($submission->payment_total): ?>
     <?php
-        $currencySetting = \WPPayForm\Classes\GeneralSettings::getGlobalCurrencySettings($formId);
+        $currencySetting = \WPPayForm\Classes\GeneralSettings::getGlobalCurrencySettings($submission->form_id);
         $currencySetting['currency_sign'] = \WPPayForm\Classes\GeneralSettings::getCurrencySymbol($submission->currency);
     ?>
     <div class="wpf_payment_info_item wpf_payment_info_item_total">

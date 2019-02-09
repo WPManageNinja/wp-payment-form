@@ -60,8 +60,8 @@
                                         title="Click to copy shortcode"
                                         placement="top">
                                 <code class="copy"
-                                      :data-clipboard-text='`[wp_payment_form id="${scope.row.ID}"]`'>
-                                    <i class="el-icon-document"></i> [wp_payment_form id="{{ scope.row.ID }}"]
+                                      :data-clipboard-text='`[wppayform id="${scope.row.ID}"]`'>
+                                    <i class="el-icon-document"></i> [wppayform id="{{ scope.row.ID }}"]
                                 </code>
                             </el-tooltip>
                         </template>

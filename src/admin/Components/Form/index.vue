@@ -11,8 +11,8 @@
                             title="Click to copy shortcode"
                             placement="top">
                     <code class="copy"
-                          :data-clipboard-text='`[wp_payment_form id="${form.ID}"]`'>
-                        <i class="el-icon-document"></i> [wp_payment_form id="{{ form.ID }}"]
+                          :data-clipboard-text='`[wppayform id="${form.ID}"]`'>
+                        <i class="el-icon-document"></i> [wppayform id="{{ form.ID }}"]
                     </code>
                 </el-tooltip>
             </div>
@@ -43,11 +43,9 @@
                 <span>{{  $t('Form Entries') }}</span>
             </el-menu-item>
         </el-menu>
-
         <div class="payform_editor_wrapper">
             <router-view :form_id="form_id"></router-view>
         </div>
-
         <!--Edit Form Modal-->
         <el-dialog
             title="Edit Form Title and Description"

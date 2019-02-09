@@ -20,41 +20,40 @@ class Menu
         add_action('admin_enqueue_scripts', array($this, 'enqueueAssets'));
     }
 
-
     public function addMenus()
     {
-        $capability = 'manage_options';
-        if (!$capability) {
+        $menuPermission = AccessControl::hasTopLevelMenuPermission();
+        if (!$menuPermission) {
             return;
         }
         global $submenu;
         add_menu_page(
             __( 'Payment Forms', 'wppayform' ),
             __( 'Payment Forms', 'wppayform' ),
-            $capability,
+            $menuPermission,
             'wppayform.php',
             array($this, 'render'),
             '',
-            6
+            25
         );
         $submenu['wppayform.php']['all_forms'] = array(
             __('All Forms', 'wppayform'),
-            $capability,
+            $menuPermission,
             'admin.php?page=wppayform.php#/',
         );
         $submenu['wppayform.php']['entries'] = array(
             __('Entries', 'wppayform'),
-            $capability,
+            $menuPermission,
             'admin.php?page=wppayform.php#/entries',
         );
         $submenu['wppayform.php']['settings'] = array(
             __('Settings', 'wppayform'),
-            $capability,
+            $menuPermission,
             'admin.php?page=wppayform.php#/settings/stripe-settings',
         );
         $submenu['wppayform.php']['support'] = array(
             __('Support', 'wppayform'),
-            $capability,
+            $menuPermission,
             'admin.php?page=wppayform.php#/support',
         );
     }
@@ -78,13 +77,13 @@ class Menu
                     'All Payment Forms' => __('All Payment Forms', 'wppayform')
                 ),
                 'paymentStatuses' => apply_filters('wpf_available_payment_statuses', array(
-                    'pending' => 'Pending',
-                    'processing' => 'Processing',
-                    'paid' => 'Paid',
-                    'failed' => 'Failed',
-                    'refunded' => 'Refunded'
+                    'pending' => __('Pending', 'wppayform'),
+                    'processing' => __('Processing', 'wppayform'),
+                    'paid' => __('Paid', 'wppayform'),
+                    'failed' => __('Failed', 'wppayform'),
+                    'refunded' => __('Refunded', 'wppayform')
                 )),
-                'image_upload_url' => admin_url('admin-ajax.php?action=wpf_upload_image'),
+                'image_upload_url' => admin_url('admin-ajax.php?action=wpf_global_settings_handler&route=wpf_upload_image'),
                 'forms_count' => Forms::getTotalCount(),
                 'assets_url' => WPPAYFORM_URL.'assets/'
             ));

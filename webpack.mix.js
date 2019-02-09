@@ -6,9 +6,11 @@ mix
     .js('src/admin/Boot.js', 'assets/js/payforms-boot.js')
     .js('src/admin/main.js', 'assets/js/payforms-admin.js')
     .js('src/public/public.js', 'assets/js/payforms-public.js')
+    .js('src/integrations/tinymce.js', 'assets/js/tinymce.js')
     .sass('src/scss/admin/app.scss', 'assets/css/payforms-admin.css')
     .sass('src/scss/public/public.scss', 'assets/css/payforms-public.css')
     .copy('src/images', 'assets/images')
+    .copy('src/integrations/tinymce_icon.png', 'assets/js/tinymce_icon.png')
     .copy('src/libs', 'assets/libs');
 
 // Full API

@@ -77,7 +77,7 @@
 </template>
 <script type="text/babel">
     export default {
-        name: 'stripe_currency_settings',
+        name: 'global_currency_settings',
         data() {
             return {
                 settings: {},
@@ -97,7 +97,8 @@
         methods: {
             getSettings() {
                 this.fetching = true;
-                this.$adminGet({
+                this.$get({
+                    action: 'wpf_global_settings_handler',
                     route: 'get_global_currency_settings'
                 })
                     .then(response => {
@@ -115,7 +116,8 @@
             },
             saveSettings() {
                 this.saving = true;
-                this.$adminPost({
+                this.$post({
+                    action: 'wpf_global_settings_handler',
                     route: 'update_global_currency_settings',
                     settings: this.settings,
                     ip_logging_status: this.ip_logging_status

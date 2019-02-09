@@ -173,7 +173,8 @@
             getEntries() {
                 this.fetching = true;
                 let query = {
-                    action: 'wpf_get_submissions',
+                    action: 'wpf_submission_endpoints',
+                    route: 'get_submissions',
                     form_id: parseInt(this.form_id),
                     payment_status: this.selected_payment_status,
                     page_number: this.pagination.current_page,
@@ -232,7 +233,8 @@
             },
             getFormTitles() {
                 this.$get({
-                    action: 'wpf_get_available_forms'
+                    action: 'wpf_submission_endpoints',
+                    route: 'get_available_forms'
                 })
                     .then(response => {
                         this.available_forms = response.data.available_forms;
@@ -255,7 +257,8 @@
             },
             deleteEntryNow() {
                 this.deletetingItem = true;
-                this.$adminPost({
+                this.$post({
+                    action: 'wpf_submission_endpoints',
                     route: 'delete_submission',
                     submission_id: this.deleting_row.id,
                     form_id: this.deleting_row.form_id

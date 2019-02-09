@@ -43,11 +43,11 @@ class WPPayForm
     public function boot()
     {
         $this->loadDependecies();
-
         if (is_admin()) {
             $this->adminHooks();
         }
         $this->commonActions();
+        $this->registerShortcodes();
         $this->loadComponents();
     }
 
@@ -65,16 +65,28 @@ class WPPayForm
             $adminApp->bootView();
         });
 
-        // Ajax Handler
-        new \WPPayForm\Classes\AdminAjaxHandler();
-        new \WPPayForm\Classes\SubmissionView();
+        // Top Level Ajax Handlers
+        $ajaxHandler = new \WPPayForm\Classes\AdminAjaxHandler();
+        $ajaxHandler->registerEndpoints();
+
+        // Submission Ajax Handler
+        $submissionHandler = new \WPPayForm\Classes\SubmissionView();
+        $submissionHandler->registerEndpoints();
+
+        // General Settings Handler
+        $globalSettingHandler = new \WPPayForm\Classes\GlobalSettingsHandler();
+        $globalSettingHandler->registerHooks();
+
+        // init tinymce
+        $tinyMCE = new \WPPayForm\Classes\Integrations\TinyMceBlock();
+        $tinyMCE->register();
 
     }
 
-    public function commonActions()
+    public function registerShortcodes()
     {
         // Register the shortcode
-        add_shortcode('wp_payment_form', function ($args) {
+        add_shortcode('wppayform', function ($args) {
             $args = shortcode_atts(array(
                 'id' => ''
             ), $args);
@@ -85,7 +97,7 @@ class WPPayForm
             return $builder->render($args['id']);
         });
 
-        add_shortcode('wp_payment_form_reciept', function () {
+        add_shortcode('wppayform_reciept', function () {
             if(isset($_REQUEST['wpf_submission']) && $_REQUEST['wpf_submission']) {
                 $submissionHash = sanitize_text_field($_REQUEST['wpf_submission']);
                 $submission = wpPayformDB()->table('wpf_submissions')
@@ -101,6 +113,10 @@ class WPPayForm
                 return '<p class="wpf_no_recipt_found">'.__('Sorry, no submission receipt found, Please check your receipt URL', 'wppayform').'</p>';
             }
         });
+    }
+
+    public function commonActions()
+    {
         // Form Submission Handler
         $submissionHandler = new \WPPayForm\Classes\SubmissionHandler();
         $submissionHandler->registerActions();
@@ -149,3 +165,19 @@ register_activation_hook(__FILE__, function ($newWorkWide) {
     $activator = new \WPPayForm\Classes\Activator();
     $activator->migrateDatabases($newWorkWide);
 });
+
+
+
+add_action('shutdown', 'sql_logger');
+function sql_logger() {
+    return;
+    global $wpdb;
+    $log_file = fopen(ABSPATH.'/sql_log.txt', 'a');
+    fwrite($log_file, "//////////////////////////////////////////\n\n" . date("F j, Y, g:i:s a")."\n");
+    foreach($wpdb->queries as $q) {
+        if(strpos( $q[0], 'wp_wpf_') != false || strpos( $q[0], 'pay') != false) {
+            fwrite($log_file, $q[0] . " - ($q[1] s)". " [Stack]: $q[2]" . "\n\n");
+        }
+    }
+    fclose($log_file);
+}

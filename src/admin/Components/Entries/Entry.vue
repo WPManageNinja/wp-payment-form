@@ -312,7 +312,8 @@
             getEntry() {
                 this.fething = true;
                 const query = {
-                    action: 'wpf_get_submission',
+                    action: 'wpf_submission_endpoints',
+                    route: 'get_submission',
                     form_id: parseInt(this.form_id),
                     submission_id: parseInt(this.entry_id)
                 }
@@ -346,7 +347,8 @@
             handleNavClick(type) {
                 this.loading = true;
                 const query = {
-                    action: 'wpf_get_next_prev_submission',
+                    action: 'wpf_submission_endpoints',
+                    route: 'get_next_prev_submission',
                     form_id: parseInt(this.form_id),
                     type: type,
                     current_submission_id: parseInt(this.entry_id)
@@ -380,7 +382,8 @@
                     return;
                 }
                 this.adding_note = true;
-                this.$adminPost({
+                this.$post({
+                    action: 'wpf_submission_endpoints',
                     route: 'add_submission_note',
                     form_id: this.submission.form_id,
                     submission_id: this.submission.id,
@@ -410,7 +413,8 @@
                 }
             },
             changePaymentStatus() {
-                this.$adminPost({
+                this.$post({
+                    action: 'wpf_submission_endpoints',
                     route: 'change_payment_status',
                     form_id: this.submission.form_id,
                     submission_id: this.submission.id,

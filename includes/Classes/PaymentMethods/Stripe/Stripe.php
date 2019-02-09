@@ -2,6 +2,7 @@
 
 namespace WPPayForm\Classes\PaymentMethods\Stripe;
 
+use WPPayForm\Classes\AccessControl;
 use WPPayForm\Classes\Models\Submission;
 use WPPayForm\Classes\Models\SubmissionActivity;
 use WPPayForm\Classes\Models\Transaction;
@@ -26,10 +27,12 @@ class Stripe
         add_filter('wpf_form_data_formatted_input', array($this, 'pushAddressToInput'), 10, 3);
         add_action('wpf_form_submission_make_payment_stripe', array($this, 'makeFormPayment'), 10, 4);
         add_filter('wpf_form_transactions', array($this, 'addTransactionUrl'), 10, 2);
-        add_action('wp_ajax_wpf_save_stripe_settings', array($this, 'savePaymentSettings'));
-        add_action('wp_ajax_wpf_get_stripe_settings', array($this, 'getPaymentSettings'));
         add_filter('wpf_payment_method_for_submission', array($this, 'choosePaymentMethod'), 10, 4);
         add_action('wpf_before_form_submission_stripe', array($this, 'validateStripeToken'), 10, 2);
+
+        // ajax endpoints
+        add_action('wp_ajax_wpf_save_stripe_settings', array($this, 'savePaymentSettings'));
+        add_action('wp_ajax_wpf_get_stripe_settings', array($this, 'getPaymentSettings'));
     }
 
     public function validateStripeToken($submission, $form_data)
@@ -227,6 +230,7 @@ class Stripe
 
     public function savePaymentSettings()
     {
+        AccessControl::checkAndPresponseError('set_payment_settings', 'global');
         $settings = $_REQUEST['settings'];
         // Validate the data first
         $mode = $settings['payment_mode'];
@@ -266,6 +270,7 @@ class Stripe
 
     public function getPaymentSettings()
     {
+        AccessControl::checkAndPresponseError('get_payment_settings', 'global');
         wp_send_json_success(array(
             'settings' => wpfGetStripePaymentSettings(),
             'is_key_defined' => wpfIsStripeKeysDefined()

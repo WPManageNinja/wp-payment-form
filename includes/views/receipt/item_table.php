@@ -1,10 +1,8 @@
 <?php
-
 if(!$submission->order_items) {
     return '';
 }
-
-$currencySetting = \WPPayForm\Classes\GeneralSettings::getGlobalCurrencySettings($formId);
+$currencySetting = \WPPayForm\Classes\GeneralSettings::getGlobalCurrencySettings($submission->form_id);
 $currencySetting['currency_sign'] = \WPPayForm\Classes\GeneralSettings::getCurrencySymbol($submission->currency);
 ?>
 <div class="wpf_itemized_data">

@@ -34,7 +34,7 @@ class ProcessDemoPage
             add_filter('the_content', function ($content) use ($form) {
                 if (in_the_loop()) {
                     $content = '<div style="text-align: center" class="demo"><h4>WP PayForm Demo Preview ( From ID: ' . $form->ID . ' )</h4></div><hr />';
-                    $content .= '[wp_payment_form id=' . $form->ID . ']';
+                    $content .= '[wppayform id=' . $form->ID . ']';
                 }
                 return $content;
             });
