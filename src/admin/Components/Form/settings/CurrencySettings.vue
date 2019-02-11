@@ -1,36 +1,21 @@
 <template>
     <el-container>
-        <el-main>
+        <el-main class="no_shadow">
             <div class="edit_form_warpper">
                 <div class="all_payforms_wrapper payform_section">
                     <div class="payform_section_header">
                         <h3 class="payform_section_title">
-                            {{ $t('Form Settings') }}
+                            {{ $t('Currency and Language Settings') }}
                         </h3>
                         <div class="payform_section_actions">
                             <el-button @click="saveSettings()" class="payform_action" size="small" type="primary">
-                                {{ $t( 'Save Form Settings' ) }}
+                                {{ $t( 'Save Currency Settings' ) }}
                             </el-button>
                         </div>
                     </div>
                     <div class="payform_section_body">
-                        <el-form ref="payment_settings" :model="payment_settings" label-width="220px">
+                        <el-form ref="payment_settings" :model="currency_settings" label-width="220px">
                             <div class="wpf_sub_section">
-                                <div class="sub_section_header">
-                                    <h3>Confirmation Settings</h3>
-                                </div>
-                                <div  class="sub_section_body">
-                                    <confirmation-settings
-                                        :pages="pages"
-                                        :editorShortcodes="editorShortcodes"
-                                        :confirmation="confirmation_settings">
-                                    </confirmation-settings>
-                                </div>
-                            </div>
-                            <div class="wpf_sub_section">
-                                <div class="sub_section_header">
-                                    <h3>Currency and Language Settings</h3>
-                                </div>
                                 <div class="sub_section_body">
                                     <el-form-item label="Currency & Locale Setting">
                                         <el-radio-group v-model="currency_settings.settings_type">
@@ -74,24 +59,20 @@
 </template>
 
 <script type="text/babel">
-    import ConfirmationSettings from './settings/AddConfirmation';
+    import ConfirmationSettings from './_AddConfirmation';
     export default {
-        name: 'payment_settings',
+        name: 'currency_settings',
         props: ['form_id'],
         components: {
             ConfirmationSettings
         },
         data() {
             return {
-                payment_settings: {},
                 fetching: false,
-                currencies: {},
-                locales: {},
-                pages: [],
-                editorShortcodes: [],
-                confirmation_settings: {},
                 currency_settings: {},
-                app_ready: false
+                app_ready: false,
+                currencies: {},
+                locales: {}
             }
         },
         methods: {
@@ -102,10 +83,8 @@
                     form_id: this.form_id
                 })
                     .then(response => {
-                        this.confirmation_settings = response.data.confirmation_settings;
                         this.currency_settings = response.data.currency_settings;
                         this.currencies = response.data.currencies;
-                        this.editorShortcodes = response.data.editor_shortcodes;
                         this.locales = response.data.locales;
                     })
                     .fail(error => {
@@ -120,7 +99,6 @@
                 this.saving = true;
                 this.$adminPost({
                     form_id: this.form_id,
-                    confirmation_settings: this.confirmation_settings,
                     currency_settings: this.currency_settings,
                     route: 'save_form_settings'
                 })
@@ -143,7 +121,7 @@
         },
         mounted() {
             this.getSettings();
-            window.WPPayFormsBus.$emit('site_title', 'Form Settings');
+            window.WPPayFormsBus.$emit('site_title', 'Form Currency Settings');
         }
     }
 </script>

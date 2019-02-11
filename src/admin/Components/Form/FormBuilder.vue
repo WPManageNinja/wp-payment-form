@@ -113,9 +113,9 @@
 <script type="text/babel">
     import each from 'lodash/each'
     import findIndex from 'lodash/findIndex'
-    import ElementEditor from './_ElementEditor';
+    import ElementEditor from './editor/_ElementEditor';
     import draggable from 'vuedraggable'
-    import SubmitButtonSettings from './_SubmitButtonSettings';
+    import SubmitButtonSettings from './editor/_SubmitButtonSettings';
     export default {
         name: 'payment_settings',
         components: {

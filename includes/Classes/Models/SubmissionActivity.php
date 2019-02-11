@@ -23,7 +23,7 @@ class SubmissionActivity
                 $activitiy->user_profile_url = get_edit_user_link($activitiy->created_by_user_id);
             }
         }
-
+        
         return apply_filters('wpf_submission_activities', $activities, $submissionId);
     }
 

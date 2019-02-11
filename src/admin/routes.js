@@ -2,9 +2,14 @@ const DashBoardStats = require('./Components/Dashboard');
 const GlobalView = require('./Components/Global/index');
 const AllForms = require('./Components/Forms/AllForms');
 const EditFormView = require('./Components/Form/index');
-const EditSingleForm = require('./Components/Form/EditForm');
-const FormPaymentSettings = require('./Components/Form/PaymentSettings');
+const EditSingleForm = require('./Components/Dashboard');
+
+const FormSettingsIndex = require('./Components/Form/settings/index');
 const FormBuilder = require('./Components/Form/FormBuilder');
+const FormPaymentSettings = require('./Components/Form/settings/ConfirmationSettings');
+const FormCurrencySettings = require('./Components/Form/settings/CurrencySettings');
+
+
 import Entries from './Components/Entries/Entries';
 import Entry from './Components/Entries/Entry';
 import SettingView from './Components/Settings/index'
@@ -62,24 +67,35 @@ export const routes = [
         props: true,
         children: [
             {
-                path: 'payment_otions',
-                name: 'payment_options',
-                component: FormPaymentSettings
-            },
-            {
                 path: 'form-builder',
                 name: 'edit_form',
                 component: FormBuilder
             },
             {
-                path: 'design_options',
-                name: 'design_options',
-                component: FormDesignSettings
-            },
-            {
-                path: 'email_settings',
-                name: 'email_settings',
-                component: EditSingleForm
+                path: 'settings/',
+                component: FormSettingsIndex,
+                children: [
+                    {
+                        path: 'confirmation_settings',
+                        name: 'confirmation_settings',
+                        component: FormPaymentSettings
+                    },
+                    {
+                        path: 'currency_settings',
+                        name: 'form_currency_settings',
+                        component: FormCurrencySettings
+                    },
+                    {
+                        path: 'design_options',
+                        name: 'design_options',
+                        component: FormDesignSettings
+                    },
+                    {
+                        path: 'email_settings',
+                        name: 'email_settings',
+                        component: EditSingleForm
+                    }
+                ]
             }
         ]
     }

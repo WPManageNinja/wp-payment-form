@@ -136,10 +136,15 @@ class AdminAjaxHandler
     protected function saveFormSettings()
     {
         $formId = absint($_REQUEST['form_id']);
-        $confirmationSettings = wp_unslash($_REQUEST['confirmation_settings']);
-        $currency_settings = wp_unslash($_REQUEST['currency_settings']);
-        update_post_meta($formId, '_wp_paymentform_confirmation_settings', $confirmationSettings);
-        update_post_meta($formId, '_wp_paymentform_currency_settings', $currency_settings);
+        if(isset($_REQUEST['confirmation_settings'])) {
+            $confirmationSettings = wp_unslash($_REQUEST['confirmation_settings']);
+            update_post_meta($formId, '_wp_paymentform_confirmation_settings', $confirmationSettings);
+        }
+        if(isset($_REQUEST['currency_settings'])) {
+            $currency_settings = wp_unslash($_REQUEST['currency_settings']);
+            update_post_meta($formId, '_wp_paymentform_currency_settings', $currency_settings);
+        }
+
         wp_send_json_success(array(
             'message' => __('Settings successfully updated', 'wppayform')
         ), 200);

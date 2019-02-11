@@ -140,15 +140,10 @@
                         icon: 'dashicons dashicons-lightbulb'
                     },
                     {
-                        route: 'payment_options',
+                        route: 'confirmation_settings',
                         title: 'Form Settings',
                         icon: 'dashicons dashicons-admin-settings'
                     },
-                    {
-                        route: 'design_options',
-                        title: 'Form Design',
-                        icon: 'dashicons dashicons-art'
-                    }
                 ], this.form_id);
             }
         },

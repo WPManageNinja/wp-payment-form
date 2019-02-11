@@ -1,6 +1,6 @@
 <template>
     <el-container>
-        <el-main>
+        <el-main class="no_shadow">
             <div v-loading="fetching" class="edit_form_warpper">
                 <div class="all_payforms_wrapper payform_section">
                     <div class="payform_section_header">
