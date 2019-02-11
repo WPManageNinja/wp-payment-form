@@ -281,13 +281,43 @@ class Forms
     public static function getDesignSettings($formId)
     {
         $settings = get_post_meta($formId, '_form_design_settings', true);
-        if(!$settings) {
+        if (!$settings) {
             $settings = array();
         }
         $defaults = array(
-            'labelPlacement' => 'top',
-            'asteriskPlacement' => 'none',
+            'labelPlacement'         => 'top',
+            'asteriskPlacement'      => 'none',
             'submit_button_position' => 'left'
+        );
+        return wp_parse_args($settings, $defaults);
+    }
+
+    public static function getSchedulingSettings($formId)
+    {
+        $settings = get_post_meta($formId, '_form_scheduling_settings', true);
+        if (!$settings) {
+            $settings = array();
+        }
+        $defaults = array(
+            'limitNumberOfEntries' => array(
+                'status'                => 'no',
+                'limit_type'            => 'total',
+                'number_of_entries'     => 100,
+                'limit_payment_statuses'  => array(),
+                'limit_exceeds_message' => __('Number of entry has been exceeds, Please check back later', 'wppayform')
+            ),
+            'scheduleForm'         => array(
+                'status'               => 'no',
+                'start_date'           => date('Y-m-d H:i:s'),
+                'end_date'             => '',
+                'before_start_message' => __('Form submission time schedule is not started yet. Please check back later', 'wppayform'),
+                'expire_message'       => __('Form submission time has been expired.')
+            ),
+            'requireLogin'         => array(
+                'status'  => 'no',
+                'message' => __('You need to login to submit this form', 'wppayform')
+            ),
+            'restriction_applied_type' => 'hide_form'
         );
         return wp_parse_args($settings, $defaults);
     }

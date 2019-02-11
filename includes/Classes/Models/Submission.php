@@ -155,4 +155,35 @@ class Submission
             ->where('submission_id', $sumissionId)
             ->delete();
     }
+
+    public function getEntryCountByPaymentStatus($formId, $paymentStatuses = array(), $period = 'total')
+    {
+        $query = wpPayformDB()->table('wpf_submissions')
+                    ->where('form_id', $formId);
+        if($paymentStatuses && count($paymentStatuses)) {
+            $query->whereIn('payment_status', $paymentStatuses);
+        }
+
+        if($period && $period != 'total') {
+            $col               = 'created_at';
+            if ( $period == 'day' ) {
+                $year  = "YEAR(`{$col}`) = YEAR(NOW())";
+                $month = "MONTH(`{$col}`) = MONTH(NOW())";
+                $day   = "DAY(`{$col}`) = DAY(NOW())";
+                $query->where( wpPayformDB()->raw( "{$year} AND {$month} AND {$day}" ) );
+            } elseif ( $period == 'week' ) {
+                $query->where(
+                    wpFluent()->raw( "YEARWEEK(`{$col}`, 1) = YEARWEEK(CURDATE(), 1)" )
+                );
+            } elseif ( $period == 'month' ) {
+                $year  = "YEAR(`{$col}`) = YEAR(NOW())";
+                $month = "MONTH(`{$col}`) = MONTH(NOW())";
+                $query->where( wpPayformDB()->raw( "{$year} AND {$month}" ) );
+            } elseif ( $period == 'year' ) {
+                $query->where( wpPayformDB()->raw( "YEAR(`{$col}`) = YEAR(NOW())" ) );
+            }
+        }
+
+        return $query->count();
+    }
 }

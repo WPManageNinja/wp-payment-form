@@ -671,3 +671,42 @@ a.el-button {
 main.el-main.no_shadow {
   box-shadow: none;
 }
+
+//transition: slide
+.slide-down-enter-active {
+  transition: all .8s;
+  max-height: 100vh;
+}
+.slide-down-leave-active {
+  transition: all .3s;
+  max-height: 100vh;
+
+}
+.slide-down-enter, .slide-down-leave-to {
+  max-height: 0;
+}
+
+.payform_pro_message {
+  padding: 20px;
+  background: rgb(255, 245, 160);
+  text-align: center;
+  margin-bottom: 30px;
+  box-shadow: 0 7px 14px 0 rgba(60, 66, 87, 0.1), 0 3px 6px 0 rgba(0, 0, 0, 0.07);
+  h3 {
+    padding: 0;
+    margin: 0;
+  }
+  a {
+    display: inline-block;
+    background: #2196F3;
+    color: white;
+    text-decoration: none;
+    padding: 10px 30px;
+    border-radius: 5px;
+    border: 1px solid transparent;
+    &:hover {
+      border: 1px solid white;
+      box-shadow: 0 7px 14px 0 rgba(60, 66, 87, 0.1), 0 3px 6px 0 rgba(0, 0, 0, 0.07);
+    }
+  }
+}

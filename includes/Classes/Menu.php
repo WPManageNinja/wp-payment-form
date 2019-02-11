@@ -28,8 +28,8 @@ class Menu
         }
         global $submenu;
         add_menu_page(
-            __( 'Payment Forms', 'wppayform' ),
-            __( 'Payment Forms', 'wppayform' ),
+            __( 'WPPay Forms', 'wppayform' ),
+            __( 'WPPay Forms', 'wppayform' ),
             $menuPermission,
             'wppayform.php',
             array($this, 'render'),
@@ -87,7 +87,8 @@ class Menu
                 )),
                 'image_upload_url' => admin_url('admin-ajax.php?action=wpf_global_settings_handler&route=wpf_upload_image'),
                 'forms_count' => Forms::getTotalCount(),
-                'assets_url' => WPPAYFORM_URL.'assets/'
+                'assets_url' => WPPAYFORM_URL.'assets/',
+                'has_pro' => defined('WPPAYFORMHASPRO') && WPPAYFORMHASPRO
             ));
         }
     }

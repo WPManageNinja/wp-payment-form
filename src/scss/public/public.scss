@@ -242,4 +242,21 @@
 
 
   }
+
+  &.wpf_restriction_action_hide_form {
+    form.wpf_form {
+      display: none !important;
+      visibility: hidden !important;
+    }
+  }
+  &.wpf_restriction_action_hide_submit_button {
+    form.wpf_form {
+      .wpf_form_submissions {
+        display: none !important;
+        visibility: hidden !important;
+      }
+    }
+  }
 }
+
+

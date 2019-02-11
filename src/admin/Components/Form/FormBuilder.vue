@@ -21,7 +21,8 @@
                                 :element="'div'"
                             >
                                 <transition-group type="transition">
-                                    <div v-for="element in builder_elements" :key="element.id" class="payform_builder_item">
+                                    <div v-for="element in builder_elements" :key="element.id"
+                                         class="payform_builder_item">
                                         <div class="payform_builder_header">
                                             <div class="payform_head_left">
                                                 <div class="handler payform_inline_item">
@@ -41,15 +42,20 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div v-if="current_editing == element.id" class="payform_builder_item_settings">
-                                            <element-editor @deleteItem="deleteItem(element)" @updateItem="saveSettings"
-                                                            :element="element" :all_elements="builder_elements"/>
-                                        </div>
+                                        <transition name="slide-down">
+                                            <div v-if="current_editing == element.id"
+                                                 class="payform_builder_item_settings">
+                                                <element-editor @deleteItem="deleteItem(element)"
+                                                                @updateItem="saveSettings"
+                                                                :element="element" :all_elements="builder_elements"/>
+                                            </div>
+                                        </transition>
                                     </div>
                                 </transition-group>
                             </draggable>
 
-                            <div v-if="builder_elements.length" class="payform_submit_button_settings payform_builder_item">
+                            <div v-if="builder_elements.length"
+                                 class="payform_submit_button_settings payform_builder_item">
                                 <div class="payform_builder_header">
                                     <div class="payform_head_left">
                                         <div class="payform_inline_item">
@@ -68,14 +74,17 @@
                                         </div>
                                     </div>
                                 </div>
-                                <div v-if="current_editing == '_submit_button'" class="payform_builder_item_settings">
-                                    <submit-button-settings @updateSettings="saveSettings"
-                                                            :submit_button="submit_button_settings"/>
-                                </div>
+                                <transition name="slide-down">
+                                    <div v-if="current_editing == '_submit_button'"
+                                         class="payform_builder_item_settings">
+                                        <submit-button-settings @updateSettings="saveSettings"
+                                                                :submit_button="submit_button_settings"/>
+                                    </div>
+                                </transition>
                             </div>
                         </div>
                         <div v-else class="empty_builder_items">
-                            <img style="max-width: 100%; max-height: 300px;" :src="empty_form_image" />
+                            <img style="max-width: 100%; max-height: 300px;" :src="empty_form_image"/>
                         </div>
                         <div v-if="form_tips" class="payform_builder_notices">
                             <p>
@@ -116,6 +125,7 @@
     import ElementEditor from './editor/_ElementEditor';
     import draggable from 'vuedraggable'
     import SubmitButtonSettings from './editor/_SubmitButtonSettings';
+
     export default {
         name: 'payment_settings',
         components: {
@@ -132,7 +142,7 @@
                 components: {},
                 adding_component: '',
                 submit_button_settings: {},
-                empty_form_image: window.wpPayFormsAdmin.assets_url+'images/form_instruction.png'
+                empty_form_image: window.wpPayFormsAdmin.assets_url + 'images/form_instruction.png'
             }
         },
         computed: {
@@ -185,7 +195,7 @@
                     }
                 }
                 each(this.components, (component, componentName) => {
-                    if(componentGroups[component.postion_group]) {
+                    if (componentGroups[component.postion_group]) {
                         componentGroups[component.postion_group].elements[componentName] = component;
                     }
                 });
@@ -223,10 +233,10 @@
 
                 // check if it's single only
                 if (component.single_only && this.alreadyExistElement(component.group)) {
-                    this.$message( {
+                    this.$message({
                         message: 'Element already exists on your form. You can not add more of this type',
                         type: 'error'
-                    } );
+                    });
                     return;
                 }
 
@@ -306,9 +316,11 @@
     .flip-list-move {
         transition: transform 0.5s;
     }
+
     .no-move {
         transition: transform 0s;
     }
+
     .ghost {
         opacity: 0.1;
         background: gray;

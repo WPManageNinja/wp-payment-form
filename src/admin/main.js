@@ -34,7 +34,8 @@ window.WPPayForms.Vue.mixin({
     },
     data(){
         return {
-
+            has_pro: window.wpPayFormsAdmin.has_pro,
+            pro_purchase_url: '#'
         }
     },
     filters: {

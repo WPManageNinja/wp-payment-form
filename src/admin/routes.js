@@ -1,12 +1,13 @@
 const DashBoardStats = require('./Components/Dashboard');
 const GlobalView = require('./Components/Global/index');
 const AllForms = require('./Components/Forms/AllForms');
-const EditFormView = require('./Components/Form/index');
 
+const EditFormView = require('./Components/Form/index');
 const FormBuilder = require('./Components/Form/FormBuilder');
 const FormSettingsIndex = require('./Components/Form/settings/index')
 const FormPaymentSettings = require('./Components/Form/settings/ConfirmationSettings');
 const FormCurrencySettings = require('./Components/Form/settings/CurrencySettings');
+const FormSchedulingSetting = require('./Components/Form/settings/SchedulingSettings');
 
 import Entries from './Components/Entries/Entries';
 import Entry from './Components/Entries/Entry';
@@ -42,6 +43,11 @@ const formEditorChildrenRoutes = window.WPPayForms.applyFilters('wpf_main_childr
         path: 'design_options',
         name: 'design_options',
         component: FormDesignSettings
+    },
+    {
+        path: 'scheduling_settings',
+        name: 'scheduling_settings',
+        component: FormSchedulingSetting
     }
 ]);
 const formEditRoutes = window.WPPayForms.applyFilters('wpf_edit_children_roues',[

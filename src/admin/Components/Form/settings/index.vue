@@ -1,6 +1,5 @@
 <template>
     <div class="wppaymform_editor">
-
         <div class="payform_editor_wrapper">
             <el-container>
                 <el-aside width="200px">
@@ -50,6 +49,11 @@
                         route: 'design_options',
                         title: 'Design Settings',
                         icon: 'dashicons dashicons-art'
+                    },
+                    {
+                        route: 'scheduling_settings',
+                        title: 'Scheduling Settings',
+                        icon: 'dashicons dashicons-calendar-alt'
                     }
                 ]
             }

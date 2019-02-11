@@ -20,6 +20,10 @@ class Render
     {
         $form = Forms::getForm($formId);
 
+        if (!$form) {
+            return;
+        }
+
         if($show_title) {
             $form->show_title = $show_title;
         }
@@ -33,9 +37,8 @@ class Render
             $form->show_description = $titleDescription;
         }
 
-        if (!$form) {
-            return;
-        }
+        $form->scheduleing_settings = Forms::getSchedulingSettings($formId);
+
         $elements = Forms::getBuilderSettings($formId);
         $form->designSettings = Forms::getDesignSettings($formId);
         $form->asteriskPosition = $form->designSettings['asteriskPlacement'];
@@ -68,6 +71,9 @@ class Render
         if($labelPlacement != 'top') {
             $css_classes[] = 'wpf_inline_labels';
         }
+
+        $css_classes = apply_filters('wppayform/form_css_classes', $css_classes, $form);
+
         $formAttributes = array(
             'data-stripe_pub_key' => wpfGetStripePubKey(),
             'data-wpf_form_id'    => $form->ID,
@@ -77,8 +83,12 @@ class Render
             'id'                  => "wpf_form_id_" . $form->ID
         );
         $formAttributes = apply_filters('wppayform/form_attributes', $formAttributes, $form);
+        $formWrapperClasses = apply_filters('wppayform/form_wrapper_css_classes', array(
+            'wpf_form_wrapper',
+            'wpf_form_wrapper_'.$form->ID
+        ), $form);
         ?>
-        <div class="wpf_form_wrapper wpf_form_wrapper_<?php echo $form->ID; ?>">
+        <div class="<?php echo implode(' ', $formWrapperClasses); ?>">
         <?php if ($form->show_title == 'yes'): ?>
         <h3 class="wp_form_title"><?php echo $form->post_title; ?></h3>
         <?php endif; ?>
@@ -133,6 +143,7 @@ class Render
         <div style="display: none" class="wpf_form_notices wpf_form_errors"></div>
         <div style="display: none" class="wpf_form_notices wpf_form_success"></div>
         <?php do_action('wppayform/form_render_after', $form); ?>
+        <?php do_action('wppayform/form_render_after_'.$form->ID, $form); ?>
         </div>
         <?php
     }

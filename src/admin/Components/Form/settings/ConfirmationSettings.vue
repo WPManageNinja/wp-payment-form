@@ -30,7 +30,6 @@
 
 <script type="text/babel">
     import ConfirmationSettings from './_AddConfirmation';
-
     export default {
         name: 'confirmation_settings',
         props: ['form_id'],
