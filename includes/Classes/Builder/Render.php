@@ -16,9 +16,23 @@ if (!defined('ABSPATH')) {
  */
 class Render
 {
-    public function render($formId)
+    public function render($formId, $show_title = false, $show_description = false)
     {
         $form = Forms::getForm($formId);
+
+        if($show_title) {
+            $form->show_title = $show_title;
+        }
+        if($show_description) {
+            $form->show_description = $show_description;
+        }
+
+        if(!$show_title || !$show_description) {
+            $titleDescription = get_post_meta($formId, '_show_title_description', true);
+            $form->show_title = $titleDescription;
+            $form->show_description = $titleDescription;
+        }
+
         if (!$form) {
             return;
         }
@@ -65,12 +79,14 @@ class Render
         $formAttributes = apply_filters('wppayform/form_attributes', $formAttributes, $form);
         ?>
         <div class="wpf_form_wrapper wpf_form_wrapper_<?php echo $form->ID; ?>">
-        <?php if ($form->show_title_description == 'yes'): ?>
+        <?php if ($form->show_title == 'yes'): ?>
         <h3 class="wp_form_title"><?php echo $form->post_title; ?></h3>
+        <?php endif; ?>
+        <?php if ($form->show_description == 'yes'): ?>
         <div class="wpf_form_description">
             <?php echo do_shortcode($form->post_content); ?>
         </div>
-    <?php endif; ?>
+        <?php endif; ?>
         <?php do_action('wppayform/form_render_before', $form); ?>
         <form <?php echo $this->builtAttributes($formAttributes); ?>>
         <input type="hidden" name="__wpf_form_id" value="<?php echo $form->ID; ?>"/>

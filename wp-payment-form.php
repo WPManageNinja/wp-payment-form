@@ -88,15 +88,18 @@ class WPPayForm
         // Register the shortcode
         add_shortcode('wppayform', function ($args) {
             $args = shortcode_atts(array(
-                'id' => ''
+                'id' => '',
+                'show_title' => false,
+                'show_description' => false
             ), $args);
+
             if (!$args['id']) {
                 return;
             }
-            $builder = new \WPPayForm\Classes\Builder\Render();
-            return $builder->render($args['id']);
-        });
 
+            $builder = new \WPPayForm\Classes\Builder\Render();
+            return $builder->render($args['id'], $args['show_title'], $args['show_description']);
+        });
         add_shortcode('wppayform_reciept', function () {
             if (isset($_REQUEST['wpf_submission']) && $_REQUEST['wpf_submission']) {
                 $submissionHash = sanitize_text_field($_REQUEST['wpf_submission']);
