@@ -35,6 +35,6 @@ class Transaction
     public function update($transactionId, $data)
     {
         $data['updated_at'] = date('Y-m-d H:i:s');
-        return wpPayformDB()->table('wpf_order_transactions')->where('id', $transactionId)->insert($data);
+        return wpPayformDB()->table('wpf_order_transactions')->where('id', $transactionId)->update($data);
     }
 }

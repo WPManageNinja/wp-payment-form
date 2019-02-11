@@ -26,7 +26,7 @@ class Stripe
         add_filter('wppayform/parsed_entry', array($this, 'addAddressToView'), 10, 2);
         add_filter('wppayform/submission_data_formatted', array($this, 'pushAddressToInput'), 10, 3);
         add_action('wppayform/form_submission_make_payment_stripe', array($this, 'makeFormPayment'), 10, 4);
-        add_filter('wppayform/submission_transactions', array($this, 'addTransactionUrl'), 10, 2);
+        add_filter('wppayform/entry_transactions', array($this, 'addTransactionUrl'), 10, 2);
         add_filter('wppayform/choose_payment_method_for_submission', array($this, 'choosePaymentMethod'), 10, 4);
         add_action('wppayform/wpf_before_submission_data_insert_stripe', array($this, 'validateStripeToken'), 10, 2);
 
@@ -114,8 +114,10 @@ class Stripe
         }
 
         if (!$paymentStatus) {
-            do_action('wppayform/stripe_charge_failed', $transactionId, $charge, $form, $paymentArgs);
-            do_action('wppayform/form_payment_failed', $transactionId, $charge, $form, $paymentArgs);
+
+            do_action('wppayform/form_payment_stripe_failed', $transaction, $form->ID, $charge);
+            do_action('wppayform/form_payment_failed', $transaction, $form->ID, $charge);
+
             $transactionModel->update( $transactionId, array(
                 'status'         => 'failed',
                 'payment_method' => 'stripe',
@@ -163,8 +165,9 @@ class Stripe
             'content'       => __('Payment status changed from pending to success', 'wppayform')
         ) );
 
-        do_action('wppayform/form_payment_success_stripe', $transactionId, $charge, $form, $paymentArgs);
-        do_action('wppayform/form_payment_success', $transactionId, $charge, $form, $paymentArgs);
+        $transaction = $transactionModel->where('id', $transactionId)->first();
+        do_action('wppayform/form_payment_success_stripe', $transaction, $transaction->form_id, $charge);
+        do_action('wppayform/form_payment_success', $transaction, $transaction->form_id, $charge);
     }
 
     public function addTransactionUrl($transactions, $formId)

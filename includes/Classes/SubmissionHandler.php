@@ -184,6 +184,7 @@ class SubmissionHandler
                 'user_id'       => $currentUserId,
                 'submission_id' => $submissionId,
                 'charge_id'     => '',
+                'payment_method' => $paymentMethod,
                 'payment_total' => $paymentTotal,
                 'currency'      => $currency,
                 'status'        => 'pending',

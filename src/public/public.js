@@ -75,6 +75,10 @@ var wpPayformApp = {};
                     form.parent().addClass('wpf_form_submitted');
                     form.trigger('wpf_form_submitted', response.data);
                     if(confirmation.redirectTo == 'samePage') {
+                        form.removeClass('wpf_submitting_form');
+                        form.find('button.wpf_submit_button').removeAttr('disabled');
+                        form.parent().removeClass('wpf_form_has_errors');
+
                         form.parent().find('.wpf_form_success').html(confirmation.messageToShow).show();
                         if(confirmation.samePageFormBehavior == 'hide_form') {
                             form.hide();
@@ -99,11 +103,12 @@ var wpPayformApp = {};
                     $errorDiv.append('</ul>');
                     form.parent().addClass('wpf_form_has_errors');
                     form.trigger('wpf_form_fail_submission', error.responseJSON.data);
-                })
-                .always(() => {
-                    form.parent().removeClass('wpf_form_has_errors');
+                    form.removeClass('wpf_submitting_form');
+
                     form.removeClass('wpf_submitting_form');
                     form.find('button.wpf_submit_button').removeAttr('disabled');
+                })
+                .always(() => {
                     form.find('input[name=stripeToken]').remove();
                 })
         },

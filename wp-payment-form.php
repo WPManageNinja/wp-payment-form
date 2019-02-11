@@ -192,3 +192,10 @@ function sql_logger()
     }
     fclose($log_file);
 }
+
+function wpf_logger($data) {
+    $log_file = fopen(ABSPATH . '/ipn_log.txt', 'a');
+    fwrite($log_file, "//////////////////////////////////////////\n\n" . date("F j, Y, g:i:s a") . "\n");
+    fwrite($log_file, json_encode($data));
+    fclose($log_file);
+}

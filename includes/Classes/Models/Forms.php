@@ -154,9 +154,7 @@ class Forms
     {
         $settings = self::getCurrencySettings($formId);
         $globalSettings = GeneralSettings::getGlobalCurrencySettings($formId);
-        if ($settings['settings_type'] == 'global') {
-            $settings = $globalSettings;
-        } else {
+        if (isset($settings['settings_type']) && $settings['settings_type'] != 'global') {
             if (empty($settings['locale'])) {
                 $settings['locale'] = 'auto';
             }
@@ -166,9 +164,9 @@ class Forms
             $settings['currency_sign_position'] = $globalSettings['currency_sign_position'];
             $settings['currency_separator'] = $globalSettings['currency_separator'];
             $settings['decimal_points'] = $globalSettings['decimal_points'];
+        } else {
+            $settings = $globalSettings;
         }
-
-
         $settings['currency_sign'] = GeneralSettings::getCurrencySymbol($settings['currency']);
         return $settings;
     }

@@ -164,7 +164,7 @@
                     })
                     .always(() => {
                         this.deleteDialogVisible = false;
-                        this.this.deleteingForm = {};
+                        this.deleteingForm = {};
                     });
             },
             handleDeleteClose() {

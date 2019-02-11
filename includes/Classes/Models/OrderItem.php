@@ -20,7 +20,7 @@ class OrderItem
 
     public function getOrderItems($submissionId)
     {
-        $orderItems = wpPayformDB()->table('wpf_order_items')->where('submission_id', $submissionId)->first();
+        $orderItems = wpPayformDB()->table('wpf_order_items')->where('submission_id', $submissionId)->get();
         return apply_filters('wppayform/order_items', $orderItems, $submissionId);
     }
 }
