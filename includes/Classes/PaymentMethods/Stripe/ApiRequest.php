@@ -79,7 +79,7 @@ class ApiRequest
         $user_agent = self::get_user_agent();
         $app_info = $user_agent['application'];
         return apply_filters(
-            'wpf_stripe_request_headers',
+            'wppayform/stripe_request_headers',
             array(
                 'Authorization'              => 'Basic ' . base64_encode(self::get_secret_key() . ':'),
                 'Stripe-Version'             => self::STRIPE_API_VERSION,
@@ -106,7 +106,7 @@ class ApiRequest
         if ('charges' === $api && 'POST' === $method) {
             $customer = !empty($request['customer']) ? $request['customer'] : '';
             $source = !empty($request['source']) ? $request['source'] : $customer;
-            $idempotency_key = apply_filters('wpf_stripe_idempotency_key', ArrayHelper::get($request, 'metadata.wppayform_tid') . '-' . $source . '-' . $api, $request);
+            $idempotency_key = apply_filters('wppayform/stripe_idempotency_key', ArrayHelper::get($request, 'metadata.wppayform_tid') . '-' . $source . '-' . $api, $request);
             $headers['Idempotency-Key'] = $idempotency_key;
         }
         $response = wp_safe_remote_post(
@@ -114,7 +114,7 @@ class ApiRequest
             array(
                 'method'  => $method,
                 'headers' => $headers,
-                'body'    => apply_filters('wpf_stripe_request_body', $request, $api),
+                'body'    => apply_filters('wppayform/stripe_request_body', $request, $api),
                 'timeout' => 70,
             )
         );

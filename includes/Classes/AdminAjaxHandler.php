@@ -39,6 +39,7 @@ class AdminAjaxHandler
 
         if (isset($validRoutes[$route])) {
             AccessControl::checkAndPresponseError($route, 'forms');
+            do_action('wppayform/doing_ajax_forms_'.$route);
             return $this->{$validRoutes[$route]}();
         }
     }
@@ -53,7 +54,7 @@ class AdminAjaxHandler
             'offset'         => $perPage * ($pageNumber - 1)
         );
 
-        $args = apply_filters('wpf_get_all_forms_args', $args);
+        $args = apply_filters('wppayform/get_all_forms_args', $args);
 
         if ($searchString) {
             $args['s'] = $searchString;
@@ -76,7 +77,12 @@ class AdminAjaxHandler
             'post_status' => 'publish'
         );
 
+        do_action('wppayform/before_create_form', $data);
+
         $formId = Forms::create($data);
+
+        do_action('wppayform/after_create_form', $formId, $data);
+
         if (is_wp_error($formId)) {
             wp_send_json_error(array(
                 'message' => __('Something is wrong when createding the form. Please try again', 'wppayform')
@@ -104,7 +110,11 @@ class AdminAjaxHandler
             'post_title'   => $title,
             'post_content' => wp_kses_post($_REQUEST['post_content'])
         );
+
+        do_action('wppayform/before_update_form', $formId, $formData);
         Forms::update($formId, $formData);
+        do_action('wppayform/after_update_form', $formId, $formData);
+
         update_post_meta($formId, '_show_title_description', sanitize_text_field($_REQUEST['show_title_description']));
         wp_send_json_success(array(
             'message' => __('Form successfully updated', 'wppayform')
@@ -184,9 +194,9 @@ class AdminAjaxHandler
     protected function deleteForm()
     {
         $formId = intval($_REQUEST['form_id']);
-        do_action('wpf_before_form_delete', $formId);
+        do_action('wppayform/before_form_delete', $formId);
         Forms::deleteForm($formId);
-
+        do_action('wppayform/after_form_delete', $formId);
         wp_send_json_success(array(
             'message' => __('Selected form successfully deleted', 'wppayform')
         ), 200);

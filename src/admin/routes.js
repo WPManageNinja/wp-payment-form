@@ -4,6 +4,7 @@ const AllForms = require('./Components/Forms/AllForms');
 const EditFormView = require('./Components/Form/index');
 
 const FormBuilder = require('./Components/Form/FormBuilder');
+const FormSettingsIndex = require('./Components/Form/settings/index')
 const FormPaymentSettings = require('./Components/Form/settings/ConfirmationSettings');
 const FormCurrencySettings = require('./Components/Form/settings/CurrencySettings');
 
@@ -14,12 +15,19 @@ import StripeSettings from './Components/Settings/StripeSettings'
 import GeneralSettings from './Components/Settings/GeneralSettings'
 import FormDesignSettings from './Components/Form/settings/FormDesignSettings'
 
-const formEditorChildrenRoutes = window.WPPayForms.applyFilters('wpf_form_children_roues', [
+const globalSettingsViewChilderRoutes = window.WPPayForms.applyFilters('wpf_global_settings_childern_routes', [
     {
-        path: 'form-builder',
-        name: 'edit_form',
-        component: FormBuilder
+        name: 'stripe_settings',
+        path: 'stripe-settings',
+        component: StripeSettings
     },
+    {
+        name: 'general_settings',
+        path: 'general-settings',
+        component: GeneralSettings
+    }
+]);
+const formEditorChildrenRoutes = window.WPPayForms.applyFilters('wpf_main_children_roues', [
     {
         path: 'confirmation_settings',
         name: 'confirmation_settings',
@@ -36,17 +44,16 @@ const formEditorChildrenRoutes = window.WPPayForms.applyFilters('wpf_form_childr
         component: FormDesignSettings
     }
 ]);
-
-const globalSettingsViewChilderRoutes = window.WPPayForms.applyFilters('wpf_global_settings_childern_routes', [
+const formEditRoutes = window.WPPayForms.applyFilters('wpf_edit_children_roues',[
     {
-        name: 'stripe_settings',
-        path: 'stripe-settings',
-        component: StripeSettings
+        path: 'form-builder',
+        name: 'edit_form',
+        component: FormBuilder
     },
     {
-        name: 'general_settings',
-        path: 'general-settings',
-        component: GeneralSettings
+        path: 'settings',
+        component: FormSettingsIndex,
+        children: formEditorChildrenRoutes
     }
 ]);
 
@@ -84,9 +91,9 @@ export const routes = [
         ]
     },
     {
-        path: '/edit-form/:form_id/settings/',
+        path: '/edit-form/:form_id/',
         component: EditFormView,
         props: true,
-        children: formEditorChildrenRoutes
+        children: formEditRoutes
     }
 ];

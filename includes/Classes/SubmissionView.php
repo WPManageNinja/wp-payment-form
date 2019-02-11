@@ -36,6 +36,7 @@ class SubmissionView
 
         if(isset($routes[$route])) {
             AccessControl::checkAndPresponseError($route, 'submissions');
+            do_action('wppayform/doing_ajax_submissions_'.$route);
             $this->{$routes[$route]}();
             return;
         }
@@ -67,11 +68,13 @@ class SubmissionView
             $currencySettings['currency_sign'] = GeneralSettings::getCurrencySymbol($submission->currency);
             $submission->currencySettings = $currencySettings;
         }
+        $submissionItems = apply_filters('wppayform/form_entries', $submissions->items, $formId);
 
         wp_send_json_success(array(
-            'submissions' => $submissions->items,
+            'submissions' => $submissionItems,
             'total'       => (int)$submissions->total
         ), 200);
+
     }
 
     public function getSubmission($submissionId = false)
@@ -87,6 +90,8 @@ class SubmissionView
         $currencySetting = GeneralSettings::getGlobalCurrencySettings($formId);
         $currencySetting['currency_sign'] = GeneralSettings::getCurrencySymbol($submission->currency);
         $submission->currencySetting = $currencySetting;
+
+        $submission = apply_filters('wppayform/form_entry', $submission);
 
         wp_send_json_success(array(
             'submission'    => $submission,
@@ -147,14 +152,19 @@ class SubmissionView
         $userId = get_current_user_id();
         $user = get_user_by('ID', $userId);
 
-        SubmissionActivity::createActivity(array(
+        $note = array(
             'form_id'            => $formId,
             'submission_id'      => $submissionId,
             'type'               => 'custom_note',
             'content'            => $content,
             'created_by'         => $user->display_name,
             'created_by_user_id' => $userId
-        ));
+        );
+
+        $note = apply_filters('wppayform/add_note_by_user', $note, $formId, $submissionId);
+        do_action('wppayform/before_create_note_by_user', $note);
+        SubmissionActivity::createActivity($note);
+        do_action('wppayform/after_create_note_by_user', $note);
 
         wp_send_json_success(array(
             'message'    => __('Note successfully added', 'wppayform'),
@@ -174,11 +184,11 @@ class SubmissionView
             ), 423);
         }
 
-        do_action('wpf_before_payment_status_change', $submission, $newStatus);
+        do_action('wppayform/before_payment_status_change_manually', $submission, $newStatus, $submission->payment_status);
         $submissionModel->update($submissionId, array(
             'payment_status' => $newStatus
         ));
-        do_action('wpf_after_payment_status_change', $submissionId, $newStatus);
+        do_action('wppayform/after_payment_status_change_manually', $submissionId, $newStatus, $submission->payment_status);
 
         $activityContent = 'Payment status changed from <b>' . $submission->payment_status . '</b> to <b>' . $newStatus . '</b>';
 
@@ -186,6 +196,7 @@ class SubmissionView
             $note = wp_kses_post($_REQUEST['status_change_note']);
             $activityContent .= '<br />Note: ' . $note;
         }
+
         $userId = get_current_user_id();
         $user = get_user_by('ID', $userId);
         SubmissionActivity::createActivity(array(
@@ -206,10 +217,10 @@ class SubmissionView
     {
         $submissionId = intval($_REQUEST['submission_id']);
         $formId = intval($_REQUEST['form_id']);
-        do_action('wpf_before_delete_submission', $submissionId, $formId);
+        do_action('wppayform/before_delete_submission', $submissionId, $formId);
         $submissionModel = new Submission();
         $submissionModel->deleteSubmission($submissionId);
-        do_action('wpf_after_delete_submission', $submissionId, $formId);
+        do_action('wppayform/after_delete_submission', $submissionId, $formId);
 
         wp_send_json_success(array(
             'message' => __('Selected submission successfully deleted', 'wppayform')

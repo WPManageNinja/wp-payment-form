@@ -1,10 +1,5 @@
 <?php
 
-function wpfFomatPrice($price, $formId = false)
-{
-    return '$' . $price;
-}
-
 function wpfGetStripePaymentMode()
 {
     $paymentSettings = wpfGetStripePaymentSettings();

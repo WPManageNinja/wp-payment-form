@@ -23,12 +23,12 @@ class Stripe
         new StripeCardElementComponent();
 
         // Register The Action and Filters
-        add_filter('wpf_parse_submission', array($this, 'addAddressToView'), 10, 2);
-        add_filter('wpf_form_data_formatted_input', array($this, 'pushAddressToInput'), 10, 3);
-        add_action('wpf_form_submission_make_payment_stripe', array($this, 'makeFormPayment'), 10, 4);
-        add_filter('wpf_form_transactions', array($this, 'addTransactionUrl'), 10, 2);
-        add_filter('wpf_payment_method_for_submission', array($this, 'choosePaymentMethod'), 10, 4);
-        add_action('wpf_before_form_submission_stripe', array($this, 'validateStripeToken'), 10, 2);
+        add_filter('wppayform/parsed_entry', array($this, 'addAddressToView'), 10, 2);
+        add_filter('wppayform/submission_data_formatted', array($this, 'pushAddressToInput'), 10, 3);
+        add_action('wppayform/form_submission_make_payment_stripe', array($this, 'makeFormPayment'), 10, 4);
+        add_filter('wppayform/submission_transactions', array($this, 'addTransactionUrl'), 10, 2);
+        add_filter('wppayform/choose_payment_method_for_submission', array($this, 'choosePaymentMethod'), 10, 4);
+        add_action('wppayform/wpf_before_submission_data_insert_stripe', array($this, 'validateStripeToken'), 10, 2);
 
         // ajax endpoints
         add_action('wp_ajax_wpf_save_stripe_settings', array($this, 'savePaymentSettings'));
@@ -91,6 +91,7 @@ class Stripe
             'wppayform_tid'  => $transactionId,
             'wp_plugin_slug' => 'wppayform'
         );
+
         if ($submission->customer_email) {
             $paymentArgs['receipt_email'] = $submission->customer_email;
             $metadata['customer_email'] = $submission->customer_email;
@@ -112,27 +113,26 @@ class Stripe
             $paymentStatus = false;
         }
 
-
         if (!$paymentStatus) {
-            do_action('wpf_stripe_charge_failed', $transactionId, $charge, $form, $paymentArgs);
-            do_action('wpf_form_payment_failed', $transactionId, $charge, $form, $paymentArgs);
-            $transactionModel->update($transactionId, array(
+            do_action('wppayform/stripe_charge_failed', $transactionId, $charge, $form, $paymentArgs);
+            do_action('wppayform/form_payment_failed', $transactionId, $charge, $form, $paymentArgs);
+            $transactionModel->update( $transactionId, array(
                 'status'         => 'failed',
                 'payment_method' => 'stripe',
                 'payment_mode'   => $paymentMode,
-            ));
-            $submissionModel->update($submissionId, array(
+            ) );
+            $submissionModel->update( $submissionId, array(
                 'payment_status' => 'failed',
                 'payment_method' => 'stripe',
                 'payment_mode'   => $paymentMode,
-            ));
+            ) );
 
             SubmissionActivity::createActivity( array(
                 'form_id'       => $form->ID,
                 'submission_id' => $submissionId,
                 'type'          => 'activity',
                 'created_by'    => 'PayForm BOT',
-                'content'       => 'Payment Failed via stripe. Status changed from Pending to Failed.'
+                'content'       => __('Payment Failed via stripe. Status changed from Pending to Failed.', 'wppayform')
             ) );
 
             wp_send_json_error(array(
@@ -160,11 +160,11 @@ class Stripe
             'submission_id' => $submissionId,
             'type'          => 'activity',
             'created_by'    => 'PayForm BOT',
-            'content'       => 'Payment status changed from pending to success'
+            'content'       => __('Payment status changed from pending to success', 'wppayform')
         ) );
 
-        do_action('wpf_stripe_charge_success', $transactionId, $charge, $form, $paymentArgs);
-        do_action('wpf_form_payment_success', $transactionId, $charge, $form, $paymentArgs);
+        do_action('wppayform/form_payment_success_stripe', $transactionId, $charge, $form, $paymentArgs);
+        do_action('wppayform/form_payment_success', $transactionId, $charge, $form, $paymentArgs);
     }
 
     public function addTransactionUrl($transactions, $formId)
@@ -261,7 +261,9 @@ class Stripe
             'company_name' =>  sanitize_text_field($settings['company_name']),
             'checkout_logo' =>  sanitize_text_field($settings['checkout_logo'])
         );
+        do_action('wppayform/before_save_stripe_settings', $data);
         update_option('wpf_stripe_payment_settings', $data, false);
+        do_action('wppayform/after_save_stripe_settings', $data);
 
         wp_send_json_success(array(
             'message' => __('Settings successfully updated', 'wppayform')

@@ -43,7 +43,7 @@ class Charge
                 return self::errorHandler($errotType, $errorCode. $response->error->message);
             }
             if ( false !== $response ) {
-                do_action( 'wpf_stripe_charge_created', $response, $paymentArgs );
+                do_action( 'wppayform/stripe_charge_created', $response, $paymentArgs );
                 return $response;
             }
         } catch ( \Exception $e ) {

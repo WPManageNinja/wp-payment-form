@@ -29,20 +29,20 @@ class PaymentReceipt
     private function beforePaymentReceipt($submission)
     {
         ob_start();
-        do_action('wpf_receipt_before_content', $submission);
+        do_action('wppayform/payment_receipt/before_content', $submission);
         return ob_get_clean();
     }
 
     private function afterPaymentReceipt($submission)
     {
         ob_start();
-        do_action('wpf_receipt_after_content', $submission);
+        do_action('wppayform/payment_receipt/after_content', $submission);
         return ob_get_clean();
     }
 
     private function paymentReceptHeader($submission)
     {
-        $preRender = apply_filters('wpf_payment_receipt_render_header', '', $submission);
+        $preRender = apply_filters('wppayform/payment_receipt/pre_render_header', '', $submission);
         if ($preRender) {
             // We are returning the header if someone want to render the recept. peace!!!
             return $preRender;
@@ -52,7 +52,7 @@ class PaymentReceipt
 
     private function paymentInfo($submission)
     {
-        $preRender = apply_filters('wpf_payment_receipt_render_payment_info', '', $submission);
+        $preRender = apply_filters('wppayform/payment_receipt/pre_render_payment_info', '', $submission);
         if ($preRender) {
             return $preRender;
         }
@@ -61,7 +61,7 @@ class PaymentReceipt
 
     private function itemDetails($submission)
     {
-        $preRender = apply_filters('wpf_payment_receipt_render_item_details', '', $submission);
+        $preRender = apply_filters('wppayform/payment_receipt/pre_render_item_details', '', $submission);
         if ($preRender) {
             return $preRender;
         }
@@ -70,7 +70,7 @@ class PaymentReceipt
 
     private function customerDetails($submission)
     {
-        $preRender = apply_filters('wpf_payment_receipt_render_customer_details', '', $submission);
+        $preRender = apply_filters('wppayform/payment_receipt/pre_render_customer_details', '', $submission);
         if ($preRender) {
             return $preRender;
         }
@@ -81,7 +81,7 @@ class PaymentReceipt
     {
         // normalize the filename
         $fileName = str_replace(array('../', './'), '', $fileName);
-        $basePath = apply_filters('wpf_receipt_template_base_path', WPPAYFORM_DIR . 'includes/views/', $fileName, $data);
+        $basePath = apply_filters('wppayform/receipt_template_base_path', WPPAYFORM_DIR . 'includes/views/', $fileName, $data);
         $filePath = $basePath . $fileName . '.php';
         extract($data);
         ob_start();

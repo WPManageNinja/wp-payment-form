@@ -17,7 +17,7 @@ class DateComponent extends BaseComponent
 
     public function component()
     {
-        $dateFormats = apply_filters('wpf_available_date_formats', array(
+        $dateFormats = apply_filters('wppayform/available_date_formats', array(
             'M/D/YYYY'    => 'M/D/YYYY - (Ex: 4/28/2019)',
             'M/D/YY'      => 'M/D/YY - (Ex: 4/28/18)',
             'MM/DD/YY'    => 'MM/DD/YY - (Ex: 04/28/18)',

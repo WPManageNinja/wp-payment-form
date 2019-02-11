@@ -27,6 +27,7 @@ class GlobalSettingsHandler
         $route = sanitize_text_field($_REQUEST['route']);
         if (isset($routes[$route])) {
             AccessControl::checkAndPresponseError($route, 'global');
+            do_action('wppayform/doing_ajax_global_'.$route);
             $this->{$routes[$route]}();
             return;
         }

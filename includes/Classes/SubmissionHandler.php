@@ -78,7 +78,7 @@ class SubmissionHandler
             }
         }
 
-        $errors = apply_filters('wpf_submission_form_validation', $errors, $formId, $formattedElements);
+        $errors = apply_filters('wppayform/form_submission_validation_errors', $errors, $formId, $formattedElements);
 
         if ($errors) {
             wp_send_json_error(array(
@@ -117,12 +117,12 @@ class SubmissionHandler
         $currencySetting = Forms::getCurrencySettings($formId);
 
         $paymentMethod = '';
-        $paymentMethod = apply_filters('wpf_payment_method_for_submission', $paymentMethod, $elements, $formId, $form_data);
+        $paymentMethod = apply_filters('wppayform/choose_payment_method_for_submission', $paymentMethod, $elements, $formId, $form_data);
 
 
 
         $currency = $currencySetting['currency'];
-        $inputItems = apply_filters('wpf_form_data_formatted_input', $inputItems, $form_data, $formId);
+        $inputItems = apply_filters('wppayform/submission_data_formatted', $inputItems, $form_data, $formId);
 
         if (isset($form_data['__stripe_billing_address_json'])) {
             $address = json_decode($form_data['__stripe_billing_address_json'], true);
@@ -153,21 +153,22 @@ class SubmissionHandler
         );
 
         $ipLoggingStatus = GeneralSettings::ipLoggingStatus(true);
-        if (apply_filters('wpf_record_client_info', $ipLoggingStatus, $form)) {
+        if (apply_filters('wppayform/record_client_info', $ipLoggingStatus, $form)) {
             $browser = new Browser();
             $submission['ip_address'] = $browser->getIp();
             $submission['browser'] = $browser->getBrowser();
             $submission['device'] = $browser->getPlatform();
         }
 
-        $submission = apply_filters('wpf_create_submission_data', $submission, $formId, $form_data);
+        $submission = apply_filters('wppayform/create_submission_data', $submission, $formId, $form_data);
 
-        do_action('wpf_before_form_submission_'.$paymentMethod, $submission, $form_data);
-        do_action('wpf_before_form_submission', $submission, $form_data);
+        do_action('wppayform/wpf_before_submission_data_insert_'.$paymentMethod, $submission, $form_data);
+        do_action('wppayform/wpf_before_submission_data_insert', $submission, $form_data);
 
         // Insert Submission
         $submissionModel = new Submission();
         $submissionId = $submissionModel->create($submission);
+        do_action('wppayform/after_submission_data_insert', $submissionId, $formId);
 
         if ($paymentItems) {
             // Insert Payment Items
@@ -190,10 +191,11 @@ class SubmissionHandler
                 'updated_at'    => date('Y-m-d H:i:s')
             );
 
-            $transaction = apply_filters('wpf_create_transaction_data', $transaction, $formId, $form_data);
+            $transaction = apply_filters('wppayform/submission_transaction_data', $transaction, $formId, $form_data);
 
             $transactionModel = new Transaction();
             $transactionId = $transactionModel->create($transaction);
+            do_action('wppayform/after_transaction_data_insert', $transactionId, $transaction);
 
             SubmissionActivity::createActivity(array(
                 'form_id'       => $form->ID,
@@ -204,19 +206,20 @@ class SubmissionHandler
             ));
 
             if ($paymentMethod) {
-                do_action('wpf_form_submission_make_payment_' . $paymentMethod, $transactionId, $submissionId, $form_data, $form);
+                do_action('wppayform/form_submission_make_payment_' . $paymentMethod, $transactionId, $submissionId, $form_data, $form);
             }
         }
 
         $submission = $submissionModel->getSubmission($submissionId);
-        do_action('wpf_after_form_submission', $submission, $formId);
+
+        do_action('wppayfrom/after_form_submission_complete', $submission, $formId);
+
         $confirmation = Forms::getConfirmationSettings($formId);
         $confirmation = $this->parseConfirmation($confirmation, $submission);
-
+        $confirmation = apply_filters('wppayform/form_confirmation', $confirmation, $submissionId, $formId);
         wp_send_json_success(array(
             'message'       => __('Form is successfully submitted', 'wppayform'),
             'submission_id' => $submissionId,
-            'submission'    => $submission,
             'confirmation'  => $confirmation
         ), 200);
     }
@@ -294,7 +297,7 @@ class SubmissionHandler
             }
         }
         $label = $label . __(' is required', 'wppayform');
-        return apply_filters('wpf_error_label_text', $label, $element, $formId);
+        return apply_filters('wppayform/error_label_text', $label, $element, $formId);
     }
 
     private function parseConfirmation($confirmation, $submission)
@@ -307,7 +310,6 @@ class SubmissionHandler
         } else if ($confirmation['redirectTo'] == 'samePage') {
             $confirmation['messageToShow'] = PlaceholderParser::parse($confirmation['messageToShow'], $submission);
         }
-        $confirmation = apply_filters('wpf_form_submission_confirmation', $confirmation, $submission);
         return $confirmation;
     }
 

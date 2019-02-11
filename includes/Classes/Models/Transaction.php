@@ -2,35 +2,20 @@
 
 namespace WPPayForm\Classes\Models;
 
-use WPPayForm\Classes\ArrayHelper;
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
 /**
- * Manage Submission
+ *  Transaction Model
  * @since 1.0.0
  */
 class Transaction
 {
-    private $model;
-    private $db;
-
-    public function __construct()
-    {
-        global $wpdb;
-        $this->model = $wpdb->prefix . 'wpf_order_transactions';
-        $this->db = $wpdb;
-    }
-
     public function create($item)
     {
-        $result = $this->db->insert($this->model, $item);
-        if ($result) {
-            return $this->db->insert_id;
-        }
-        return false;
+        return wpPayformDB()->table('wpf_order_transactions')->insert($item);
     }
 
     public function getTransactions($submissionId)
@@ -39,7 +24,7 @@ class Transaction
                             ->where('submission_id', $submissionId)
                             ->get();
 
-        return apply_filters('wpf_form_transactions', $transactions, $submissionId);
+        return apply_filters('wppayform/entry_transactions', $transactions, $submissionId);
     }
 
     public function getTransaction($transactionId)
@@ -50,6 +35,6 @@ class Transaction
     public function update($transactionId, $data)
     {
         $data['updated_at'] = date('Y-m-d H:i:s');
-        return $this->db->update($this->model, $data, array('id' => $transactionId));
+        return wpPayformDB()->table('wpf_order_transactions')->where('id', $transactionId)->insert($data);
     }
 }

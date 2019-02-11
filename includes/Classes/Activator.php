@@ -2,8 +2,6 @@
 
 namespace WPPayForm\Classes;
 
-use WPPayForm\Classes\Models\Forms;
-
 if (!defined('ABSPATH')) {
     exit;
 }

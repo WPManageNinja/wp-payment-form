@@ -60,7 +60,7 @@ class WPPayForm
         $menu = new \WPPayForm\Classes\Menu();
         $menu->register();
 
-        add_action('wppayform_render_admin_app', function () {
+        add_action('wppayform/render_admin_app', function () {
             $adminApp = new \WPPayForm\Classes\AdminApp();
             $adminApp->bootView();
         });
@@ -171,7 +171,7 @@ register_activation_hook(__FILE__, function ($newWorkWide) {
     $activator->migrateDatabases($newWorkWide);
 });
 
-
+// Development Purpose only
 add_action('shutdown', 'sql_logger');
 function sql_logger()
 {

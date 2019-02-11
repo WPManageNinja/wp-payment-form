@@ -22,7 +22,6 @@
                 </a>
             </div>
         </div>
-
         <el-menu mode="horizontal"
                  :router="true"
                  :default-active="current_route"
@@ -75,7 +74,6 @@
 <script type="text/babel">
     import WpEditor from '../Common/_wp_editor';
     import Clipboard from 'clipboard';
-
     export default {
         name: 'global_wrapper',
         components: {WpEditor},
@@ -136,7 +134,7 @@
                 this.form_menus = this.applyFilters('wpf_set_form_menus', [
                     {
                         route: 'edit_form',
-                        title: 'Form Builder',
+                        title: 'Form Fields',
                         icon: 'dashicons dashicons-lightbulb'
                     },
                     {

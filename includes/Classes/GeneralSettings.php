@@ -18,7 +18,7 @@ class GeneralSettings
     public static function getCurrencies()
     {
 
-        return apply_filters('wpf_accepted_stripe_currencies', array(
+        return apply_filters('wppayform/accepted_currencies', array(
             'AED' => 'United Arab Emirates Dirham',
             'AFN' => 'Afghan Afghani',
             'ALL' => 'Albanian Lek',
@@ -185,7 +185,7 @@ class GeneralSettings
     public static function getComponents()
     {
         $components = array();
-        return apply_filters('wp_payment_form_components', $components);;
+        return apply_filters('wppayform/form_components', $components);;
     }
 
     /**
@@ -195,15 +195,13 @@ class GeneralSettings
      */
     public static function getCurrencySymbol($currency = '')
     {
-
         if (!$currency) {
             // If no currency is passed then default it to USD
             $currency = 'USD';
         }
-
         $currency = strtoupper($currency);
 
-        $symbols = apply_filters('wpf_currency_symbols', array(
+        $symbols = apply_filters('wppayform/currency_symbols', array(
             'AED' => '&#x62f;.&#x625;',
             'AFN' => '&#x60b;',
             'ALL' => 'L',
@@ -367,7 +365,7 @@ class GeneralSettings
             'ZMW' => 'ZK',
         ));
         $currency_symbol = isset($symbols[$currency]) ? $symbols[$currency] : '';
-        return apply_filters('wpf_currency_symbol', $currency_symbol, $currency);
+        return apply_filters('wppayform/currency_symbol', $currency_symbol, $currency);
     }
 
     public static function getGlobalCurrencySettings()
@@ -382,7 +380,7 @@ class GeneralSettings
         );
 
         $settings = wp_parse_args($settings, $defaults);
-        $settings = apply_filters('wpf_global_currency_setting', $settings);
+        $settings = apply_filters('wppayform/global_currency_setting', $settings);
         return $settings;
     }
 
@@ -393,8 +391,8 @@ class GeneralSettings
             $status = 'yes';
         }
         if($bool) {
-            return $status == 'yes';
+            $status == 'yes';
         }
-        return $status;
+        return apply_filters('wppayform/ip_logging_status', $status);
     }
 }

@@ -59,24 +59,26 @@ class Menu
     }
 
     public function render() {
-        do_action('wppayform_render_admin_app');
+        do_action('wppayform/render_admin_app');
     }
 
     public function enqueueAssets()
     {
         if(isset($_GET['page']) && $_GET['page'] == 'wppayform.php') {
+
             if (function_exists('wp_enqueue_editor')) {
                 wp_enqueue_editor();
             }
             wp_enqueue_script('wppayform_boot', WPPAYFORM_URL.'assets/js/payforms-boot.js', array('jquery'), WPPAYFORM_VERSION, true);
+            // 3rd party developers can now add their scripts here
+            do_action('wppayform/booting_admin_app');
             wp_enqueue_script('wppayform_admin_app', WPPAYFORM_URL.'assets/js/payforms-admin.js', array('wppayform_boot'), WPPAYFORM_VERSION, true);
             wp_enqueue_style('wppayform_admin_app', WPPAYFORM_URL.'assets/css/payforms-admin.css', array(), WPPAYFORM_VERSION);
-
             wp_localize_script('wppayform_boot', 'wpPayFormsAdmin', array(
                 'i18n' => array(
                     'All Payment Forms' => __('All Payment Forms', 'wppayform')
                 ),
-                'paymentStatuses' => apply_filters('wpf_available_payment_statuses', array(
+                'paymentStatuses' => apply_filters('wppayform/available_payment_statuses', array(
                     'pending' => __('Pending', 'wppayform'),
                     'processing' => __('Processing', 'wppayform'),
                     'paid' => __('Paid', 'wppayform'),

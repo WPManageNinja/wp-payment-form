@@ -2,39 +2,25 @@
 
 namespace WPPayForm\Classes\Models;
 
-use WPPayForm\Classes\ArrayHelper;
 
 if (!defined('ABSPATH')) {
     exit;
 }
 
 /**
- * Manage Submission
+ * Order Items Model
  * @since 1.0.0
  */
 class OrderItem
 {
-    private $model;
-    private $db;
-
-    public function __construct()
-    {
-        global $wpdb;
-        $this->model = $wpdb->prefix . 'wpf_order_items';
-        $this->db = $wpdb;
-    }
-
     public function create($item)
     {
-        $result = $this->db->insert($this->model, $item);
-        if ($result) {
-            return $this->db->insert_id;
-        }
-        return false;
+        return wpPayformDB()->table('wpf_order_items')->insert($item);
     }
 
     public function getOrderItems($submissionId)
     {
-        return $this->db->get_results("SELECT * FROM {$this->model} WHERE submission_id = {$submissionId}");
+        $orderItems = wpPayformDB()->table('wpf_order_items')->where('submission_id', $submissionId)->first();
+        return apply_filters('wppayform/order_items', $orderItems, $submissionId);
     }
 }

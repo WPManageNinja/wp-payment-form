@@ -24,7 +24,7 @@ class SubmissionActivity
             }
         }
         
-        return apply_filters('wpf_submission_activities', $activities, $submissionId);
+        return apply_filters('wppayform/entry_activities', $activities, $submissionId);
     }
 
     public static function createActivity($data)

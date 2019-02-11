@@ -30,7 +30,7 @@ class Render
         $this->renderFormHeader($form);
         if ($elements):
             foreach ($elements as $element) {
-                do_action('wppayform_render_' . $element['type'], $element, $form, $elements);
+                do_action('wppayform/render_component_' . $element['type'], $element, $form, $elements);
             }
         endif;
         $this->renderFormFooter($form);
@@ -62,7 +62,7 @@ class Render
             'action'              => site_url(),
             'id'                  => "wpf_form_id_" . $form->ID
         );
-        $formAttributes = apply_filters('wpf_form_attributes', $formAttributes, $form);
+        $formAttributes = apply_filters('wppayform/form_attributes', $formAttributes, $form);
         ?>
         <div class="wpf_form_wrapper wpf_form_wrapper_<?php echo $form->ID; ?>">
         <?php if ($form->show_title_description == 'yes'): ?>
@@ -71,11 +71,11 @@ class Render
             <?php echo do_shortcode($form->post_content); ?>
         </div>
     <?php endif; ?>
-        <?php do_action('wpf_form_render_before', $form); ?>
+        <?php do_action('wppayform/form_render_before', $form); ?>
         <form <?php echo $this->builtAttributes($formAttributes); ?>>
         <input type="hidden" name="__wpf_form_id" value="<?php echo $form->ID; ?>"/>
         <input type="hidden" name="__wpf_current_url" value="<?php echo $currentUrl; ?>">
-        <?php do_action('wpf_form_render_start_form', $form); ?>
+        <?php do_action('wppayform/form_render_start_form', $form); ?>
         <?php
     }
 
@@ -95,12 +95,12 @@ class Render
             $submitButton['css_class'],
             $submitButton['button_style']
         );
-        $buttonAttributes = apply_filters('wpf_submit_button_attributes', array(
+        $buttonAttributes = apply_filters('wppayform/submit_button_attributes', array(
             'id'    => 'stripe_form_submit_' . $form->ID,
             'class' => implode(' ', array_unique($buttonClasses))
         ), $form);
         ?>
-        <?php do_action('wpf_form_render_before_submit_button', $form); ?>
+        <?php do_action('wppayform/form_render_before_submit_button', $form); ?>
         <div class="wpf_form_group wpf_form_submissions">
             <button <?php echo $this->builtAttributes($buttonAttributes); ?>>
                 <span class="wpf_txt_normal"><?php echo $this->parseText($button_text, $form->ID); ?></span>
@@ -112,11 +112,11 @@ class Render
                 <svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="30px" height="30px" viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve"><path opacity="0.2" fill="#000" d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946 s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634 c0-6.425,5.209-11.634,11.634-11.634c6.425,0,11.633,5.209,11.633,11.634C31.834,26.541,26.626,31.749,20.201,31.749z"/><path fill="#000"  d="M26.013,10.047l1.654-2.866c-2.198-1.272-4.743-2.012-7.466-2.012h0v3.312h0 C22.32,8.481,24.301,9.057,26.013,10.047z"><animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 20 20" to="360 20 20" dur="0.5s" repeatCount="indefinite"/></path></svg>
             </div>
         </div>
-        <?php do_action('wpf_form_render_after_submit_button', $form); ?>
+        <?php do_action('wppayform/form_render_after_submit_button', $form); ?>
         </form>
         <div style="display: none" class="wpf_form_notices wpf_form_errors"></div>
         <div style="display: none" class="wpf_form_notices wpf_form_success"></div>
-        <?php do_action('wpf_form_render_after', $form); ?>
+        <?php do_action('wppayform/form_render_after', $form); ?>
         </div>
         <?php
     }
@@ -129,7 +129,7 @@ class Render
         wp_register_script('pikaday', WPPAYFORM_URL . 'assets/libs/datepicker/js/pikaday.min.js', array('jquery', 'moment'), WPPAYFORM_VERSION, true);
         wp_enqueue_script('wppayform_public', WPPAYFORM_URL . 'assets/js/payforms-public.js', array('jquery'), WPPAYFORM_VERSION, true);
         wp_enqueue_style('wppayform_public', WPPAYFORM_URL . 'assets/css/payforms-public.css', array(), WPPAYFORM_VERSION);
-        wp_localize_script('wppayform_public', 'wp_payform_' . $form->ID, apply_filters('wpf_checkout_vars', array(
+        wp_localize_script('wppayform_public', 'wp_payform_' . $form->ID, apply_filters('wppayform/checkout_vars', array(
             'form_id'              => $form->ID,
             'checkout_title'       => $paymentSettings['company_name'],
             'checkout_description' => $form->post_title,

@@ -14,23 +14,10 @@ if (!defined('ABSPATH')) {
  */
 class Submission
 {
-    private $model;
-    private $db;
-
-    public function __construct()
-    {
-        global $wpdb;
-        $this->model = $wpdb->prefix . 'wpf_submissions';
-        $this->db = $wpdb;
-    }
-
     public function create($submission)
     {
-        $result = $this->db->insert($this->model, $submission);
-        if ($result) {
-            return $this->db->insert_id;
-        }
-        return false;
+        return wpPayformDB()->table('wpf_submissions')
+            ->insert($submission);
     }
 
     public function getSubmissions($formId = false, $wheres = array(), $perPage, $skip)
@@ -97,18 +84,17 @@ class Submission
 
     public function getTotalCount($formId = false)
     {
+        $query = wpPayformDB()->table('wpf_submissions');
         if ($formId) {
-            return $this->db->get_var("SELECT COUNT(*) FROM {$this->model} WHERE form_id = {$formId}");
+            $query = $query->where('form_id', $formId);
         }
-
-        return $this->db->get_var("SELECT COUNT(*) FROM {$this->model}");
-
+        return $query->count();
     }
 
     public function update($submissionId, $data)
     {
         $data['updated_at'] = date('Y-m-d H:i:s');
-        return $this->db->update($this->model, $data, array('id' => $submissionId));
+        return wpPayformDB()->table('wpf_submissions')->where('id', $submissionId)->update($data);
     }
 
     public function getParsedSubmission($submission)
@@ -124,7 +110,7 @@ class Submission
         foreach ($elements as $element) {
             if ($element['group'] == 'input') {
                 $elementId = ArrayHelper::get($element, 'id');
-                $elementValue = apply_filters('wpf_rendering_value_' . $element['type'], ArrayHelper::get($inputValues, $elementId));
+                $elementValue = apply_filters('wppayform/rendering_entry_value_' . $element['type'], ArrayHelper::get($inputValues, $elementId));
                 if (is_array($elementValue)) {
                     $elementValue = implode(', ', $elementValue);
                 }
@@ -136,7 +122,7 @@ class Submission
             }
         }
 
-        return apply_filters('wpf_parse_submission', $parsedSubmission, $submission);
+        return apply_filters('wppayform/parsed_entry', $parsedSubmission, $submission);
     }
 
     private function getLabel($element)

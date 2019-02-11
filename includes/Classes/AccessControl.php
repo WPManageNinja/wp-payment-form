@@ -55,7 +55,7 @@ class AccessControl
     public static function hasEndPointPermission($endpoint = false, $group = false)
     {
         if($grandAccess = self::hasGrandAccess()) {
-            return $grandAccess;
+            return apply_filters(apply_filters('wppayform/has_endpoint_access', $grandAccess, $endpoint, $group));
         }
 
         $permissions = self::getEndpointPermissionMaps($group);
@@ -63,11 +63,11 @@ class AccessControl
             $relatedPermission = $permissions[$endpoint];
             foreach ($relatedPermission as $permission) {
                 if(current_user_can($permission)) {
-                    return $permission;
+                    return apply_filters('wppayform/has_endpoint_access', $permission, $endpoint, $group);
                 }
             }
         }
-        return false;
+        return apply_filters('wppayform/has_endpoint_access', false, $endpoint, $group);
     }
 
     public static function getEndpointPermissionMaps($group = false)

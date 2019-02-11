@@ -20,8 +20,8 @@ abstract class BaseComponent
 
     public function registerHooks($elementName, $priority = 10)
     {
-        add_filter('wp_payment_form_components', array($this, 'addComponent'), $priority);
-        add_action('wppayform_render_' . $elementName, array($this, 'render'), 10, 3);
+        add_filter('wppayform/form_components', array($this, 'addComponent'), $priority);
+        add_action('wppayform/render_component_' . $elementName, array($this, 'render'), 10, 3);
     }
 
     public function addComponent($components)
@@ -266,7 +266,7 @@ abstract class BaseComponent
 
     public function elementControlClass($element)
     {
-        return apply_filters('wppayfrom_element_control_class', 'wpf_form_group wpf_item_' . $element['type'], $element);
+        return apply_filters('wppayfrom/element_control_class', 'wpf_form_group wpf_item_' . $element['type'], $element);
     }
 
     public function elementInputClass($element)
@@ -275,7 +275,7 @@ abstract class BaseComponent
         if (isset($element['extra_input_class'])) {
             $extraClasses = ' ' . $element['extra_input_class'];
         }
-        return apply_filters('wppayfrom_element_input_class', 'wpf_form_control' . $extraClasses, $element);
+        return apply_filters('wppayfrom/element_input_class', 'wpf_form_control' . $extraClasses, $element);
     }
 
     public function parseText($text, $formId)

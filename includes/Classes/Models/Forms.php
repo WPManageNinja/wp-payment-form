@@ -33,7 +33,7 @@ class Forms
             $form->preview_url = site_url('?wp_paymentform_preview=' . $form->ID);
         }
 
-        $forms = apply_filters('wppayment_forms_get_all_forms', $forms);
+        $forms = apply_filters('wppayform/get_all_forms', $forms);
 
         $total = self::getTotalCount();
         $lastPage = ceil($total / $args['posts_per_page']);
