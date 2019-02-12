@@ -37,7 +37,7 @@ class Stripe
 
     public function validateStripeToken($submission, $form_data)
     {
-        if($submission['payment_total'] && empty($form_data['stripeToken'])) {
+        if ($submission['payment_total'] && empty($form_data['stripeToken'])) {
             wp_send_json_error(array(
                 'message' => __('Stripe payment token is missing. Please input your card details', 'wppayform'),
                 'errors'  => array()
@@ -47,13 +47,13 @@ class Stripe
 
     public function choosePaymentMethod($paymentMethod, $elements, $formId, $form_data)
     {
-        if($paymentMethod) {
+        if ($paymentMethod) {
             // Already someone choose that it's their payment method
             return $paymentMethod;
         }
         // Now We have to analyze the elements and return our payment method
         foreach ($elements as $element) {
-            if(isset($element['type']) && $element['type'] == 'stripe_card_element') {
+            if (isset($element['type']) && $element['type'] == 'stripe_card_element') {
                 return 'stripe';
             }
         }
@@ -66,7 +66,7 @@ class Stripe
         $transactionModel = new Transaction();
         $transaction = $transactionModel->getTransaction($transactionId);
 
-        if(!$transaction->payment_total) {
+        if (!$transaction->payment_total) {
             return;
         }
 
@@ -118,24 +118,24 @@ class Stripe
             do_action('wppayform/form_payment_stripe_failed', $transaction, $form->ID, $charge);
             do_action('wppayform/form_payment_failed', $transaction, $form->ID, $charge);
 
-            $transactionModel->update( $transactionId, array(
+            $transactionModel->update($transactionId, array(
                 'status'         => 'failed',
                 'payment_method' => 'stripe',
                 'payment_mode'   => $paymentMode,
-            ) );
-            $submissionModel->update( $submissionId, array(
+            ));
+            $submissionModel->update($submissionId, array(
                 'payment_status' => 'failed',
                 'payment_method' => 'stripe',
                 'payment_mode'   => $paymentMode,
-            ) );
+            ));
 
-            SubmissionActivity::createActivity( array(
+            SubmissionActivity::createActivity(array(
                 'form_id'       => $form->ID,
                 'submission_id' => $submissionId,
                 'type'          => 'activity',
                 'created_by'    => 'PayForm BOT',
                 'content'       => __('Payment Failed via stripe. Status changed from Pending to Failed.', 'wppayform')
-            ) );
+            ));
 
             wp_send_json_error(array(
                 'message'       => $message,
@@ -157,15 +157,15 @@ class Stripe
             'payment_mode'   => $paymentMode,
         ));
 
-        SubmissionActivity::createActivity( array(
+        SubmissionActivity::createActivity(array(
             'form_id'       => $form->ID,
             'submission_id' => $submissionId,
             'type'          => 'activity',
             'created_by'    => 'PayForm BOT',
             'content'       => __('Payment status changed from pending to success', 'wppayform')
-        ) );
+        ));
 
-        $transaction = $transactionModel->where('id', $transactionId)->first();
+        $transaction = $transactionModel->getTransaction($transactionId);
         do_action('wppayform/form_payment_success_stripe', $transaction, $transaction->form_id, $charge);
         do_action('wppayform/form_payment_success', $transaction, $transaction->form_id, $charge);
     }
@@ -237,17 +237,17 @@ class Stripe
         $settings = $_REQUEST['settings'];
         // Validate the data first
         $mode = $settings['payment_mode'];
-        if($mode == 'test') {
+        if ($mode == 'test') {
             // We require test keys
-            if(empty($settings['test_pub_key']) || empty($settings['test_secret_key'])) {
+            if (empty($settings['test_pub_key']) || empty($settings['test_secret_key'])) {
                 wp_send_json_error(array(
                     'message' => __('Please provide Test Publishable key and Test Secret Key', 'wppayform')
                 ), 423);
             }
         }
 
-        if($mode == 'live' && !wpfIsStripeKeysDefined()) {
-            if(empty($settings['live_pub_key']) || empty($settings['live_secret_key'])) {
+        if ($mode == 'live' && !wpfIsStripeKeysDefined()) {
+            if (empty($settings['live_pub_key']) || empty($settings['live_secret_key'])) {
                 wp_send_json_error(array(
                     'message' => __('Please provide Live Publishable key and Live Secret Key', 'wppayform')
                 ), 423);
@@ -256,13 +256,13 @@ class Stripe
 
         // Validation Passed now let's make the data
         $data = array(
-            'payment_mode' => sanitize_text_field($mode),
-            'live_pub_key' =>  sanitize_text_field($settings['live_pub_key']),
+            'payment_mode'    => sanitize_text_field($mode),
+            'live_pub_key'    => sanitize_text_field($settings['live_pub_key']),
             'live_secret_key' => sanitize_text_field($settings['live_secret_key']),
-            'test_pub_key' =>  sanitize_text_field($settings['test_pub_key']),
+            'test_pub_key'    => sanitize_text_field($settings['test_pub_key']),
             'test_secret_key' => sanitize_text_field($settings['test_secret_key']),
-            'company_name' =>  sanitize_text_field($settings['company_name']),
-            'checkout_logo' =>  sanitize_text_field($settings['checkout_logo'])
+            'company_name'    => sanitize_text_field($settings['company_name']),
+            'checkout_logo'   => sanitize_text_field($settings['checkout_logo'])
         );
         do_action('wppayform/before_save_stripe_settings', $data);
         update_option('wpf_stripe_payment_settings', $data, false);
@@ -277,7 +277,7 @@ class Stripe
     {
         AccessControl::checkAndPresponseError('get_payment_settings', 'global');
         wp_send_json_success(array(
-            'settings' => wpfGetStripePaymentSettings(),
+            'settings'       => wpfGetStripePaymentSettings(),
             'is_key_defined' => wpfIsStripeKeysDefined()
         ), 200);
     }

@@ -122,7 +122,8 @@ class WPPayForm
     {
         // Form Submission Handler
         $submissionHandler = new \WPPayForm\Classes\SubmissionHandler();
-        $submissionHandler->registerActions();
+        add_action('wp_ajax_wpf_submit_form', array($submissionHandler, 'handeSubmission'));
+        add_action('wp_ajax_nopriv_wpf_submit_form', array($submissionHandler, 'handeSubmission'));
 
         // Stripe Paument Method Init Here
         $stripe = new \WPPayForm\Classes\PaymentMethods\Stripe\Stripe();

@@ -14,6 +14,31 @@ class StripeCardElementComponent extends BaseComponent
     public function __construct()
     {
         parent::__construct('stripe_card_element', 6);
+        add_action('wppayform/payment_method_choose_element_render_stripe', array($this, 'renderForMultiple'), 10, 3);
+        add_filter('wppayform/available_payment_methods', array($this, 'pushPaymentMethod'), 1, 1);
+    }
+
+    public function pushPaymentMethod($methods)
+    {
+        $methods['stripe'] = array(
+            'label'           => 'Credit/Debit Card (Stripe)',
+            'isActive'        => true,
+            'editor_elements' => array(
+                'label'                  => array(
+                    'label' => 'Payment Option Label',
+                    'type'  => 'text'
+                ),
+                'checkout_display_style' => array(
+                    'label' => 'Checkout display style',
+                    'type'  => 'checkout_display_options'
+                ),
+                'verify_zip'             => array(
+                    'label' => 'Verify Zip/Postal Code',
+                    'type'  => 'switch'
+                ),
+            )
+        );
+        return $methods;
     }
 
     public function component()
@@ -63,6 +88,7 @@ class StripeCardElementComponent extends BaseComponent
             wp_enqueue_script('stripe_checkout', 'https://checkout.stripe.com/checkout.js', array('jquery'), '3.0', true);
             $atrributes = array(
                 'data-checkout_style'        => $checkOutStyle,
+                'data-wpf_payment_method'    => 'stripe',
                 'class'                      => 'wpf_stripe_card_element',
                 'data-verify_zip'            => ArrayHelper::get($fieldOptions, 'verify_zip'),
                 'data-require_billing_info'  => ArrayHelper::get($fieldOptions, 'checkout_display_style.require_billing_info'),
@@ -73,21 +99,22 @@ class StripeCardElementComponent extends BaseComponent
         } else {
             wp_enqueue_script('stripe_elements', 'https://js.stripe.com/v3/', array('jquery'), '3.0', true);
         }
-
         $inputClass = $this->elementInputClass($element);
         $inputId = 'wpf_input_' . $form->ID . '_' . $this->elementName;
         $label = ArrayHelper::get($fieldOptions, 'label');
         $attributes = array(
-            'data-checkout_style' => $checkOutStyle,
-            'name'                => $element['id'],
-            'class'               => 'wpf_stripe_card_element ' . $inputClass,
-            'data-verify_zip'     => ArrayHelper::get($fieldOptions, 'verify_zip'),
-            'id'                  => $inputId
+            'data-checkout_style'     => $checkOutStyle,
+            'data-wpf_payment_method' => 'stripe',
+            'name'                    => $element['id'],
+            'class'                   => 'wpf_stripe_card_element ' . $inputClass,
+            'data-verify_zip'         => ArrayHelper::get($fieldOptions, 'verify_zip'),
+            'id'                      => $inputId
         );
         ?>
-        <?php if(!wpfGetStripePubKey()) { ?>
+        <?php if (!wpfGetStripePubKey()) { ?>
         <p style="color: red">You did not configure stripe payment gateway. Please configure stripe payment gateway</p>
-        <?php return; }  ?>
+        <?php return;
+    } ?>
         <div class="wpf_form_group wpf_item_<?php echo $element['id']; ?>>">
             <?php if ($label): ?>
                 <label for="<?php echo $inputId; ?>">
@@ -96,10 +123,19 @@ class StripeCardElementComponent extends BaseComponent
             <?php endif; ?>
             <div <?php echo $this->builtAttributes($attributes); ?>></div>
             <div class="wpf_card-errors" role="alert"></div>
-            <?php  if(wpfGetStripePaymentMode() == 'test') { ?>
-                <p class="wpf_test_mode_message" style="margin: 0;padding: 0;font-style: italic;">Stripe test mode activated</p>
+            <?php if (wpfGetStripePaymentMode() == 'test') { ?>
+                <p class="wpf_test_mode_message" style="margin: 0;padding: 0;font-style: italic;">Stripe test mode
+                    activated</p>
             <?php } ?>
         </div>
         <?php
+    }
+
+    public function renderForMultiple($paymentSettings, $form, $elements)
+    {
+        $component = $this->component();
+        $component['id'] = 'stripe_card_element';
+        $component['field_options'] = $paymentSettings;
+        $this->render($component, $form, $elements);
     }
 }

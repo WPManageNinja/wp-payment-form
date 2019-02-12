@@ -26,7 +26,7 @@ let StripeCheckoutHandler = {
             handler.close();
         });
 
-        this.form.on('submit', function (event) {
+        this.form.on('stripe_payment_submit', function (event) {
             event.preventDefault();
             if(!that.form.data('payment_total')) {
                 that.callback();

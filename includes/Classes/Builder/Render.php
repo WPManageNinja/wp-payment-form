@@ -44,14 +44,17 @@ class Render
         $form->asteriskPosition = $form->designSettings['asteriskPlacement'];
         $this->addAssets($form);
         ob_start();
-        $this->renderFormHeader($form);
         if ($elements):
             foreach ($elements as $element) {
                 do_action('wppayform/render_component_' . $element['type'], $element, $form, $elements);
             }
         endif;
         $this->renderFormFooter($form);
-        return ob_get_clean();
+        $html = ob_get_clean();
+        ob_start();
+        $this->renderFormHeader($form);
+        $header_html = ob_get_clean();
+        return $header_html.$html;
     }
 
     public function renderFormHeader($form)

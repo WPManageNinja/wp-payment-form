@@ -13,44 +13,44 @@ class ChoosePaymentMethodComponent extends BaseComponent
     public function __construct()
     {
         parent::__construct('choose_payment_method', 4);
+        add_filter('wppayform/choose_payment_method_for_submission', array($this, 'choosePaymentMethod'), 10, 4);
+    }
+
+    public function choosePaymentMethod($paymentMethod, $elements, $formId, $form_data)
+    {
+        if ($paymentMethod) {
+            // Already someone choose that it's their payment method
+            return $paymentMethod;
+        }
+        $methodElement = false;
+        foreach ($elements as $element) {
+            if ((isset($element['type']) && $element['type'] == 'choose_payment_method')) {
+                $methodElement = $element;
+            }
+        }
+        if(!$methodElement) {
+            return $paymentMethod;
+        }
+        $selectedPaymentMethod = ArrayHelper::get($form_data, '__wpf_selected_payment_method');
+        $methods = ArrayHelper::get($methodElement, 'options.method_settings.payment_settings', array());
+        foreach ($methods as $payMethod => $method) {
+            if($method['enabled'] == 'yes') {
+                if($payMethod == $selectedPaymentMethod) {
+                    return $payMethod;
+                }
+            }
+        }
+
+        return $paymentMethod;
     }
 
     public function component()
     {
-        $available_methods = array(
-            'stripe' => array(
-                'label'           => 'Stripe Payment Method',
-                'isActive'        => true,
-                'editor_elements' => array(
-                    'label'                  => array(
-                        'label' => 'Payment Option Label',
-                        'type'  => 'text'
-                    ),
-                    'checkout_display_style' => array(
-                        'label' => 'Checkout display style',
-                        'type'  => 'checkout_display_options'
-                    ),
-                    'verify_zip'             => array(
-                        'label' => 'Verify Zip/Postal Code',
-                        'type'  => 'switch'
-                    ),
-                )
-            ),
-            'paypal' => array(
-                'label'           => 'Paypal Payment Method',
-                'isActive'        => true,
-                'editor_elements' => array(
-                    'label'                    => array(
-                        'label' => 'Field Label',
-                        'type'  => 'text'
-                    ),
-                    'require_shipping_address' => array(
-                        'label' => 'Require Shipping Address',
-                        'type'  => 'switch'
-                    )
-                )
-            )
-        );
+        $available_methods = apply_filters('wppayform/available_payment_methods', array());
+
+        if(!$available_methods || count($available_methods) > 2) {
+            return;
+        }
 
         return array(
             'type'            => 'choose_payment_method',
@@ -72,7 +72,6 @@ class ChoosePaymentMethodComponent extends BaseComponent
             'field_options'   => array(
                 'label'           => __('Select Payment Method', 'wppayform'),
                 'method_settings' => array(
-                    'choosed_methods' => array('stripe'),
                     'prefered_method' => ''
                 )
             )
@@ -90,12 +89,17 @@ class ChoosePaymentMethodComponent extends BaseComponent
         );
         $methods = ArrayHelper::get($fieldOption, 'method_settings.payment_settings', array());
         $validMethods = array();
-        $defaultValue = 'stripex';
+        $defaultValue = 'paypals';
+        $lastPaymentMethod = '';
         foreach ($methods as $methodName => $method) {
             if (isset($method['enabled']) && $method['enabled'] == 'yes') {
+                $lastPaymentMethod = $methodName;
                 $validMethods[$methodName] = $method;
             }
         }
+        echo '<input type="hidden" name="__wpf_valid_payment_methods_count" value="'.count($validMethods).'"/>';
+
+        if($validMethods && count($validMethods) > 1) :
         ?>
         <div <?php echo $this->builtAttributes($controlAttributes); ?>>
             <?php $this->buildLabel($fieldOption, $form); ?>
@@ -123,6 +127,16 @@ class ChoosePaymentMethodComponent extends BaseComponent
                     </div>
                 <?php endforeach; ?>
             </div>
+        </div>
+        <?php else: ?>
+            <input data-wpf_payment_method="<?php echo $lastPaymentMethod; ?>" type="hidden" name="__wpf_selected_payment_method" value="<?php echo $lastPaymentMethod; ?>" />
+        <?php endif; ?>
+        <div class="wpf_all_payment_methods_wrapper">
+            <?php foreach ($validMethods as $methodName => $method): ?>
+                <div data-payment_method="<?php echo $methodName; ?>" class="wpf_payment_method_element wpf_payment_method_element_<?php echo $methodName ?>">
+                    <?php do_action('wppayform/payment_method_choose_element_render_'.$methodName, $method, $form, $elements); ?>
+                </div>
+            <?php endforeach; ?>
         </div>
         <?php
     }

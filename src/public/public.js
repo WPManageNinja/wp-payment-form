@@ -22,14 +22,43 @@ var wpPayformApp = {};
             let that = this;
             this.calculatePayments(form);
 
+            if( parseInt(form.find('input[name=__wpf_valid_payment_methods_count]').val()) > 1 ) {
+                let defaultSelected = form.find('input[name=__wpf_selected_payment_method]:checked').val();
+                that.handlePaymentMethodChange(form, defaultSelected);
+                form.find('input[name=__wpf_selected_payment_method]').on('change',function () {
+                    form.trigger('payment_method_changed', $(this).val());
+                });
+                form.on('payment_method_changed', (event, value) => {
+                    that.handlePaymentMethodChange(form, value);
+                });
+            } else {
+                // We have to check if any hidden / single payment method exists or not
+                let paymentMethod = form.find('[data-wpf_payment_method]').data('wpf_payment_method');
+                if(paymentMethod) {
+                    form.data('selected_payment_method', paymentMethod);
+                }
+            }
+
             form.find('.wpf_payment_item, .wpf_item_qty').on('change', () => {
                 this.calculatePayments(form);
             });
 
             let $cardElementDiv = $('.wpf_stripe_card_element');
             let cardEleementStyle = $cardElementDiv.data('checkout_style');
+            form.on('submit', function (e) {
+                e.preventDefault();
+                let selectedPaymentMethod = form.data('selected_payment_method');
+                if(selectedPaymentMethod == 'stripe') {
+                    // we have the selected payment method! So, we are triggering that
+                    form.trigger(selectedPaymentMethod+'_payment_submit');
+                    // We have to do a promise based method because all payment methods does not have
+                    // onpage checkout anc callbacks
+                } else {
+                    that.submitForm(form);
+                }
+            });
 
-            if(cardEleementStyle == 'embeded_form' || cardEleementStyle == 'overlay_form') {
+            if(cardEleementStyle == 'embeded_form') {
                 let elementHandler = StripeElementHandler;
                 elementHandler.init({
                     form: form,
@@ -50,12 +79,6 @@ var wpPayformApp = {};
                 StripeCheckoutHandler.init(checkoutSettings, function () {
                     that.submitForm(form);
                 });
-            } else {
-                // No Card Found So, It's normal Form without payment processing
-                form.on('submit', function (e) {
-                    e.preventDefault();
-                    that.submitForm(form);
-                })
             }
         },
         submitForm(form) {
@@ -192,6 +215,16 @@ var wpPayformApp = {};
                 });
 
             }
+        },
+        handlePaymentMethodChange(form, value) {
+            form.data('selected_payment_method', value);
+            if(!value) {
+                form.find('.wpf_all_payment_methods_wrapper').hide();
+                return;
+            }
+            form.find('.wpf_all_payment_methods_wrapper').show();
+            form.find('.wpf_all_payment_methods_wrapper .wpf_payment_method_element').hide();
+            form.find('.wpf_all_payment_methods_wrapper .wpf_payment_method_element_'+value).show();
         }
     };
 

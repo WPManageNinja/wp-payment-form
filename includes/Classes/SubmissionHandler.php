@@ -18,11 +18,10 @@ if (!defined('ABSPATH')) {
  */
 class SubmissionHandler
 {
-    public function registerActions()
-    {
-        add_action('wp_ajax_wpf_submit_form', array($this, 'handeSubmission'));
-        add_action('wp_ajax_nopriv_wpf_submit_form', array($this, 'handeSubmission'));
-    }
+    private $customerName = '';
+    private $customerEmail = '';
+    private $selectedPaymentMethod = '';
+
 
     public function handeSubmission()
     {
@@ -33,12 +32,18 @@ class SubmissionHandler
         $elements = Forms::getBuilderSettings($formId);
         $form = Forms::getForm($formId);
 
+        if(!$form) {
+            wp_send_json_error(array(
+                'message' => __('Invalid request. Please try again', 'wppayform')
+            ), 423);
+        }
+
         $formattedElements = array(
             'input'         => array(),
             'payment'       => array(),
+            'payment_method_element' => array(),
             'item_quantity' => array()
         );
-
         foreach ($elements as $element) {
             $formattedElements[$element['group']][$element['id']] = array(
                 'options' => $element['field_options'],
@@ -46,100 +51,69 @@ class SubmissionHandler
                 'id'      => $element['id']
             );
         }
-        $errors = array();
 
-        $customerName = '';
-        $customerEmail = '';
+        $this->validate($form_data, $formattedElements, $form);
 
-        // Validate Normal Inputs
-        foreach ($formattedElements['input'] as $elementId => $element) {
-            if (ArrayHelper::get($element, 'options.required') == 'yes' && empty($form_data[$elementId])) {
-                $errors[$elementId] = $this->getErrorLabel($element, $formId);
-            }
-            if ($element['type'] == 'customer_name' && !$customerName && isset($form_data[$elementId])) {
-                $customerName = $form_data[$elementId];
-            } else if ($element['type'] == 'customer_email' && !$customerEmail && isset($form_data[$elementId])) {
-                $customerEmail = $form_data[$elementId];
-            }
-        }
-
-        // Validate Payment Fields
-        foreach ($formattedElements['payment'] as $elementId => $element) {
-            if (ArrayHelper::get($element, 'options.required') == 'yes' && !isset($form_data[$elementId])) {
-                $errors[$elementId] = $this->getErrorLabel($element, $formId);
-            }
-        }
-
-        foreach ($formattedElements['item_quantity'] as $elementId => $element) {
-            if (isset($form_data[ArrayHelper::get($element, 'options.target_product')])) {
-                if (ArrayHelper::get($element, 'options.required') == 'yes' && empty($form_data[$elementId])) {
-                    $errors[$elementId] = $this->getErrorLabel($element, $formId);
-                }
-            }
-        }
-
-        $errors = apply_filters('wppayform/form_submission_validation_errors', $errors, $formId, $formattedElements);
-
-        if ($errors) {
-            wp_send_json_error(array(
-                'message' => __('Form Validation failed', 'wppayform'),
-                'errors'  => $errors
-            ), 423);
-        }
-
-        // Calculare Payment total Now
-        $paymentTotal = 0;
+        // Extract Payment Items Here
         $paymentItems = array();
         foreach ($formattedElements['payment'] as $paymentId => $payment) {
             $quantity = $this->getItemQuantity($formattedElements['item_quantity'], $paymentId, $form_data);
             $lineItems = $this->getPaymentLine($payment, $paymentId, $quantity, $form_data);
             $paymentItems = array_merge($paymentItems, $lineItems);
         }
+
+        // Extract Input Items Here
         $inputItems = array();
         foreach ($formattedElements['input'] as $inputId => $input) {
             $inputItems[$inputId] = ArrayHelper::get($form_data, $inputId);
         }
+
+        // Calculate Payment Total Now
+        $paymentTotal = 0;
         foreach ($paymentItems as $paymentItem) {
             $paymentTotal += $paymentItem['line_total'];
         }
 
         $currentUserId = get_current_user_id();
-        if (!$customerName && $currentUserId) {
+        if (!$this->customerName && $currentUserId) {
             $currentUser = get_user_by('ID', $currentUserId);
-            $customerName = $currentUser->display_name;
+            $this->customerName = $currentUser->display_name;
         }
 
-        if (!$customerEmail && $currentUserId) {
+        if (!$this->customerEmail && $currentUserId) {
             $currentUser = get_user_by('ID', $currentUserId);
-            $customerEmail = $currentUser->user_email;
+            $this->customerEmail = $currentUser->user_email;
+        }
+
+        $paymentMethod = apply_filters('wppayform/choose_payment_method_for_submission', '', $formattedElements['payment_method_element'], $formId, $form_data);
+
+        if( $formattedElements['payment_method_element'] && !$paymentMethod) {
+            wp_send_json_error(array(
+                'message' => __('Validation failed, because selected payment method could not be found', 'wppayform')
+            ), 423);
+            exit;
         }
 
         $currencySetting = Forms::getCurrencySettings($formId);
-
-        $paymentMethod = '';
-        $paymentMethod = apply_filters('wppayform/choose_payment_method_for_submission', $paymentMethod, $elements, $formId, $form_data);
-
-
-
         $currency = $currencySetting['currency'];
         $inputItems = apply_filters('wppayform/submission_data_formatted', $inputItems, $form_data, $formId);
 
         if (isset($form_data['__stripe_billing_address_json'])) {
             $address = json_decode($form_data['__stripe_billing_address_json'], true);
-            if (!$customerName && isset($address['name'])) {
-                $customerName = $address['name'];
+            if (!$this->customerName && isset($address['name'])) {
+                $this->customerName = $address['name'];
             }
         }
 
-        if (!$customerEmail && isset($form_data['__stripe_user_email'])) {
-            $customerEmail = $address['__stripe_user_email'];
+        if (!$this->customerEmail && isset($form_data['__stripe_user_email'])) {
+            $this->customerEmail = $address['__stripe_user_email'];
         }
 
         $submission = array(
             'form_id'             => $formId,
             'user_id'             => $currentUserId,
-            'customer_name'       => $customerName,
-            'customer_email'      => $customerEmail,
+            'customer_name'       => $this->customerName,
+            'customer_email'      => $this->customerEmail,
             'form_data_raw'       => maybe_serialize($form_data),
             'form_data_formatted' => maybe_serialize(wp_unslash($inputItems)),
             'currency'            => $currency,
@@ -162,7 +136,7 @@ class SubmissionHandler
 
         $submission = apply_filters('wppayform/create_submission_data', $submission, $formId, $form_data);
 
-        do_action('wppayform/wpf_before_submission_data_insert_'.$paymentMethod, $submission, $form_data);
+        do_action('wppayform/wpf_before_submission_data_insert_' . $paymentMethod, $submission, $form_data);
         do_action('wppayform/wpf_before_submission_data_insert', $submission, $form_data);
 
         // Insert Submission
@@ -180,16 +154,16 @@ class SubmissionHandler
             }
             // Insert Transaction Item Now
             $transaction = array(
-                'form_id'       => $formId,
-                'user_id'       => $currentUserId,
-                'submission_id' => $submissionId,
-                'charge_id'     => '',
+                'form_id'        => $formId,
+                'user_id'        => $currentUserId,
+                'submission_id'  => $submissionId,
+                'charge_id'      => '',
                 'payment_method' => $paymentMethod,
-                'payment_total' => $paymentTotal,
-                'currency'      => $currency,
-                'status'        => 'pending',
-                'created_at'    => date('Y-m-d H:i:s'),
-                'updated_at'    => date('Y-m-d H:i:s')
+                'payment_total'  => $paymentTotal,
+                'currency'       => $currency,
+                'status'         => 'pending',
+                'created_at'     => date('Y-m-d H:i:s'),
+                'updated_at'     => date('Y-m-d H:i:s')
             );
 
             $transaction = apply_filters('wppayform/submission_transaction_data', $transaction, $formId, $form_data);
@@ -214,7 +188,6 @@ class SubmissionHandler
         $submission = $submissionModel->getSubmission($submissionId);
 
         do_action('wppayfrom/after_form_submission_complete', $submission, $formId);
-
         $confirmation = Forms::getConfirmationSettings($formId);
         $confirmation = $this->parseConfirmation($confirmation, $submission);
         $confirmation = apply_filters('wppayform/form_confirmation', $confirmation, $submissionId, $formId);
@@ -223,6 +196,55 @@ class SubmissionHandler
             'submission_id' => $submissionId,
             'confirmation'  => $confirmation
         ), 200);
+    }
+
+    private function validate($form_data, $formattedElements, $form)
+    {
+        $errors = array();
+        $formId = $form->ID;
+        $customerName = '';
+        $customerEmail = '';
+
+        // Validate Normal Inputs
+        foreach ($formattedElements['input'] as $elementId => $element) {
+            if (ArrayHelper::get($element, 'options.required') == 'yes' && empty($form_data[$elementId])) {
+                $errors[$elementId] = $this->getErrorLabel($element, $formId);
+            }
+            if ($element['type'] == 'customer_name' && !$customerName && isset($form_data[$elementId])) {
+                $customerName = $form_data[$elementId];
+            } else if ($element['type'] == 'customer_email' && !$customerEmail && isset($form_data[$elementId])) {
+                $customerEmail = $form_data[$elementId];
+            }
+        }
+
+        // Validate Payment Fields
+        foreach ($formattedElements['payment'] as $elementId => $element) {
+            if (ArrayHelper::get($element, 'options.required') == 'yes' && !isset($form_data[$elementId])) {
+                $errors[$elementId] = $this->getErrorLabel($element, $formId);
+            }
+        }
+        // Validate Item Quanity Elements
+        foreach ($formattedElements['item_quantity'] as $elementId => $element) {
+            if (isset($form_data[ArrayHelper::get($element, 'options.target_product')])) {
+                if (ArrayHelper::get($element, 'options.required') == 'yes' && empty($form_data[$elementId])) {
+                    $errors[$elementId] = $this->getErrorLabel($element, $formId);
+                }
+            }
+        }
+
+        $errors = apply_filters('wppayform/form_submission_validation_errors', $errors, $formId, $formattedElements);
+
+        if ($errors) {
+            wp_send_json_error(array(
+                'message' => __('Form Validation failed', 'wppayform'),
+                'errors'  => $errors
+            ), 423);
+        }
+
+        $this->customerName = $customerName;
+        $this->customerEmail = $customerEmail;
+
+        return;
     }
 
     private function getItemQuantity($quantityElements, $tragetItemId, $formData)
