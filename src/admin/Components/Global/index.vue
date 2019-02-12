@@ -30,7 +30,7 @@
                         title: 'Entries & Payments'
                     },
                     {
-                        route: 'stripe_settings',
+                        route: 'general_settings',
                         title: 'Settings'
                     },
                     {

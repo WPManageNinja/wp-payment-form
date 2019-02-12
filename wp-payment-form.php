@@ -151,6 +151,7 @@ class WPPayForm
         new \WPPayForm\Classes\FormComponents\ItemQuantityComponent();
         new \WPPayForm\Classes\FormComponents\DateComponent();
         new \WPPayForm\Classes\FormComponents\CustomAmountComponent();
+        new \WPPayForm\Classes\FormComponents\ChoosePaymentMethodComponent();
     }
 
     public function textDomain()

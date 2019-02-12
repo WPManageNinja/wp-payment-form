@@ -33,24 +33,36 @@
         name: 'global_settings',
         data() {
             return {
-                current_route: this.$route.name,
-                form_menus: [
-                    {
-                        route: 'stripe_settings',
-                        title: 'Stripe Settings',
-                        icon: 'dashicons dashicons-cart'
-                    },
-                    {
-                        route: 'general_settings',
-                        title: 'General Settings',
-                        icon: 'dashicons dashicons-translation'
-                    }
-                ],
+                form_menus: [],
                 editFormModalShow: false,
                 form: {},
                 fetching: false,
                 saving: false,
             }
+        },
+        computed: {
+            current_route() {
+                return this.$route.name;
+            }
+        },
+        methods: {
+            setMenu() {
+                this.form_menus = this.applyFilters('global_settings_menu', [
+                    {
+                        route: 'general_settings',
+                        title: 'General Settings',
+                        icon: 'dashicons dashicons-translation'
+                    },
+                    {
+                        route: 'stripe_settings',
+                        title: 'Stripe Settings',
+                        icon: 'dashicons dashicons-products'
+                    }
+                ]);
+            }
+        },
+        mounted() {
+            this.setMenu();
         }
     }
 </script>

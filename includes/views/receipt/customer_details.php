@@ -12,6 +12,7 @@
             </tr>
         </tbody>
     </table>
+
     <?php if($billingDetails = \WPPayForm\Classes\ArrayHelper::get($submission->parsedData, '__checkout_billing_address_details.value')): ?>
         <h5><?php _e('Billing address') ?></h5>
         <div class="wpf_address_details"><?php echo $billingDetails; ?></div>

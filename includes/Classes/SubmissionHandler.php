@@ -301,7 +301,7 @@ class SubmissionHandler
         return apply_filters('wppayform/error_label_text', $label, $element, $formId);
     }
 
-    private function parseConfirmation($confirmation, $submission)
+    public function parseConfirmation($confirmation, $submission)
     {
         // add payment hash to the url
         if ($confirmation['redirectTo'] == 'customUrl') {

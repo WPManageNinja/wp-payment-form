@@ -40,6 +40,7 @@ class Activator
         $this->createOrderItemsTable();
         $this->createTransactionsTable();
         $this->createSubmissionActivitiesTable();
+        $this->createPages();
     }
 
     public function createSubmissionsTable()
@@ -152,5 +153,36 @@ class Activator
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
         }
+    }
+
+    /**
+     * Create the pages for success and failure redirects
+     */
+    public function createPages() {
+        $options = get_option( 'wppayform_confirmation_pages' );
+        if ( false === $options || ! array_key_exists( 'confirmation', $options ) ) {
+            $charge_confirmation = wp_insert_post(array(
+                'post_title'     => __('Payment Confirmation', 'wppayform'),
+                'post_content'   => '[wppayform_reciept]',
+                'post_status'    => 'publish',
+                'post_author'    => 1,
+                'post_type'      => 'page',
+                'comment_status' => 'closed',
+            ));
+            $options['confirmation'] = $charge_confirmation;
+        }
+        if ( false === $options || ! array_key_exists( 'failed', $options ) ) {
+            $charge_failed = wp_insert_post(array(
+                'post_title'     => __('Payment Failed', 'wppayform'),
+                /* translators: %s: The [simpay_errors] shortcode */
+                'post_content'   => __("We're sorry, but your transaction failed to process. Please try again or contact site support.", 'wppayform'),
+                'post_status'    => 'publish',
+                'post_author'    => 1,
+                'post_type'      => 'page',
+                'comment_status' => 'closed',
+            ));
+            $options['failed'] = $charge_failed;
+        }
+        update_option( 'wppayform_confirmation_pages', $options );
     }
 }

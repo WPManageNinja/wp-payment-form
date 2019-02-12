@@ -23,4 +23,13 @@ class OrderItem
         $orderItems = wpPayformDB()->table('wpf_order_items')->where('submission_id', $submissionId)->get();
         return apply_filters('wppayform/order_items', $orderItems, $submissionId);
     }
+
+    public function getSingleOrderItems($submissionId)
+    {
+        $orderItems = wpPayformDB()->table('wpf_order_items')
+            ->where('submission_id', $submissionId)
+            ->where('type', 'single')
+            ->get();
+        return apply_filters('wppayform/order_items', $orderItems, $submissionId);
+    }
 }

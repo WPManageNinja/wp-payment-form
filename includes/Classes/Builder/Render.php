@@ -57,7 +57,7 @@ class Render
     public function renderFormHeader($form)
     {
         global $wp;
-        $currentUrl = home_url($wp->request);
+        $currentUrl = home_url(add_query_arg($_GET,$wp->request));;
         $labelPlacement = $form->designSettings['labelPlacement'];
         $btnPosition = ArrayHelper::get($form->designSettings, 'submit_button_position');
         $css_classes = array(

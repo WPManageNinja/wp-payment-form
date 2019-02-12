@@ -89,6 +89,9 @@ var wpPayformApp = {};
                         $('#wpf_form_id_'+formId)[0].reset();
                         form.trigger('stripe_clear');
                     } else if(confirmation.redirectTo == 'customUrl') {
+                        if(confirmation.messageToShow) {
+                            form.parent().find('.wpf_form_success').html(confirmation.messageToShow).show();
+                        }
                         window.location.href = confirmation.customUrl;
                         return false;
                     }

@@ -7,7 +7,7 @@
                         <el-input :placeholder="item.label" size="mini" v-model="element.field_options[itemName]"></el-input>
                     </el-form-item>
                 </template>
-                <template v-if="item.type == 'number'">
+                <template v-else-if="item.type == 'number'">
                     <el-form-item :label="item.label">
                         <el-input-number :placeholder="item.label" size="mini" v-model="element.field_options[itemName]"></el-input-number>
                     </el-form-item>
@@ -63,6 +63,10 @@
                 <template v-else-if="item.type == 'checkout_display_options'">
                     <checkout-display-option :item="item" :item_name="itemName" :checkout_settings="element.field_options[itemName]"></checkout-display-option>
                 </template>
+                <template v-else-if="item.type == 'choose_payment_method'">
+                    <payment-method-choice :item="item" :method_settings="element.field_options[itemName]" />
+                </template>
+
                 <template v-else>
 
                 </template>
@@ -84,6 +88,7 @@
     import PaymentOptionsSettings from './_PaymentOptions'
     import ItemSelector from './_ProductSelector';
     import CheckoutDisplayOption from './_StripeCheckoutSettings';
+    import PaymentMethodChoice from './_payment_method_settings';
 
     export default {
         name: 'elementEditor',
@@ -91,7 +96,8 @@
             KeyPairOptions,
             PaymentOptionsSettings,
             ItemSelector,
-            CheckoutDisplayOption
+            CheckoutDisplayOption,
+            PaymentMethodChoice
         },
         props: ['element', 'all_elements'],
         comments: {
