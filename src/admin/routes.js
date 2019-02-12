@@ -13,6 +13,7 @@ import Entries from './Components/Entries/Entries';
 import Entry from './Components/Entries/Entry';
 import SettingView from './Components/Settings/index'
 import StripeSettings from './Components/Settings/StripeSettings'
+const PayPalSettings = require('./Components/Settings/PayPalSettings');
 import GeneralSettings from './Components/Settings/GeneralSettings'
 import FormDesignSettings from './Components/Form/settings/FormDesignSettings'
 
@@ -26,7 +27,13 @@ const globalSettingsViewChilderRoutes = window.WPPayForms.applyFilters('wpf_glob
         name: 'general_settings',
         path: 'general-settings',
         component: GeneralSettings
-    }
+    },
+    {
+        name: 'paypal_settings',
+        path: 'paypal-settings',
+        component: PayPalSettings
+    },
+
 ]);
 const formEditorChildrenRoutes = window.WPPayForms.applyFilters('wpf_main_children_roues', [
     {

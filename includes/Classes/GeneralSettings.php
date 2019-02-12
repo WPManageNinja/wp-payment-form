@@ -395,4 +395,13 @@ class GeneralSettings
         }
         return apply_filters('wppayform/ip_logging_status', $status);
     }
+
+    public static function getConfirmationPageSettings()
+    {
+        $settings = get_option('wppayform_confirmation_pages');
+        if(is_array($settings)) {
+            return $settings;
+        }
+        return array();
+    }
 }

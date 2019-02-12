@@ -56,7 +56,12 @@
                     {
                         route: 'stripe_settings',
                         title: 'Stripe Settings',
-                        icon: 'dashicons dashicons-products'
+                        icon: 'dashicons dashicons-category'
+                    },
+                    {
+                        route: 'paypal_settings',
+                        title: 'Paypal Settings',
+                        icon: 'dashicons dashicons-category'
                     }
                 ]);
             }
