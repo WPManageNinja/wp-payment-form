@@ -32,7 +32,7 @@ class Render
         }
 
         if(!$show_title || !$show_description) {
-            $titleDescription = get_post_meta($formId, '_show_title_description', true);
+            $titleDescription = get_post_meta($formId, 'wppayform_show_title_description', true);
             $form->show_title = $titleDescription;
             $form->show_description = $titleDescription;
         }

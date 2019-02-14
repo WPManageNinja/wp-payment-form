@@ -33,10 +33,10 @@
                         route: 'general_settings',
                         title: 'Settings'
                     },
-                    {
-                        route: 'support',
-                        title: 'Support'
-                    }
+                    // {
+                    //     route: 'support',
+                    //     title: 'Support'
+                    // }
                 ])
             }
         },

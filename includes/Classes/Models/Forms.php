@@ -78,7 +78,7 @@ class Forms
 
     public static function getButtonSettings($formId)
     {
-        $settings = get_post_meta($formId, '_wpf_submit_button_settings', true);
+        $settings = get_post_meta($formId, 'wppayform_submit_button_settings', true);
         if (!$settings) {
             $settings = array();
         }
@@ -95,17 +95,17 @@ class Forms
     public static function getForm($formId)
     {
         $form = get_post($formId, 'OBJECT');
-        if (!$form && $form->post_type != 'wp_payform') {
+        if (!$form || $form->post_type != 'wp_payform') {
             return false;
         }
-        $form->show_title_description = get_post_meta($formId, '_show_title_description', true);
+        $form->show_title_description = get_post_meta($formId, 'wppayform_show_title_description', true);
         $form->preview_url = site_url('?wp_paymentform_preview=' . $form->ID);
         return $form;
     }
 
     public static function getFormInputLabels($formId)
     {
-        $elements = get_post_meta($formId, '_wp_paymentform_builder_settings', true);
+        $elements = get_post_meta($formId, 'wppayform_paymentform_builder_settings', true);
         if (!$elements) {
             return (object)array();
         }
@@ -127,14 +127,14 @@ class Forms
 
     public static function getConfirmationSettings($formId)
     {
-        $confirmationSettings = get_post_meta($formId, '_wp_paymentform_confirmation_settings', true);
+        $confirmationSettings = get_post_meta($formId, 'wppapyform_paymentform_confirmation_settings', true);
         if (!$confirmationSettings) {
             $confirmationSettings = array();
         }
         $defaultSettings = array(
             'confirmation_type'    => 'custom',
             'redirectTo'           => 'samePage',
-            'messageToShow'        => __('Form successfully submitted', 'wppayform'),
+            'messageToShow'        => __('Form has been successfully submitted', 'wppayform'),
             'samePageFormBehavior' => 'hide_form',
         );
         return wp_parse_args($confirmationSettings, $defaultSettings);
@@ -142,7 +142,7 @@ class Forms
 
     public static function getCurrencySettings($formId)
     {
-        $currencySettings = get_post_meta($formId, '_wp_paymentform_currency_settings', true);
+        $currencySettings = get_post_meta($formId, 'wppayform_paymentform_currency_settings', true);
         if (!$currencySettings) {
             $currencySettings = array();
         }
@@ -173,7 +173,7 @@ class Forms
 
     public static function getEditorShortCodes($formId)
     {
-        $builderSettings = get_post_meta($formId, '_wp_paymentform_builder_settings', true);
+        $builderSettings = get_post_meta($formId, 'wppayform_paymentform_builder_settings', true);
         if (!$builderSettings) {
             return array();
         }
@@ -222,7 +222,7 @@ class Forms
 
     public static function getBuilderSettings($formId)
     {
-        $builderSettings = get_post_meta($formId, '_wp_paymentform_builder_settings', true);
+        $builderSettings = get_post_meta($formId, 'wppayform_paymentform_builder_settings', true);
         if (!$builderSettings) {
             $builderSettings = array();
         }
@@ -278,7 +278,7 @@ class Forms
 
     public static function getDesignSettings($formId)
     {
-        $settings = get_post_meta($formId, '_form_design_settings', true);
+        $settings = get_post_meta($formId, 'wppayform_form_design_settings', true);
         if (!$settings) {
             $settings = array();
         }
@@ -296,7 +296,7 @@ class Forms
 
     public static function getSchedulingSettings($formId)
     {
-        $settings = get_post_meta($formId, '_form_scheduling_settings', true);
+        $settings = get_post_meta($formId, 'wppayform_form_scheduling_settings', true);
         if (!$settings) {
             $settings = array();
         }

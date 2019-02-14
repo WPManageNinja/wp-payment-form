@@ -99,7 +99,7 @@ class Submission
 
     public function getParsedSubmission($submission)
     {
-        $elements = get_post_meta($submission->form_id, '_wp_paymentform_builder_settings', true);
+        $elements = get_post_meta($submission->form_id, 'wppayform_paymentform_builder_settings', true);
         if (!$elements) {
             return array();
         }

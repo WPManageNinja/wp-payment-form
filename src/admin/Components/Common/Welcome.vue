@@ -7,36 +7,44 @@
                 Create a Payment Form
             </el-button>
         </div>
-        <hr/>
-        <div class="ninja_docs">
-            <h4>WP Payment Form Documentation:</h4>
-            <ul>
-                <li>
-                    <a target="_blank"
-                       href="https://wpmanageninja.com/docs/ninja-tables/configure-tables/?ninja_intro=1">
-                        Demo and Basic Settings
-                    </a>
-                </li>
-                <li>
-                    <a target="_blank"
-                       href="https://wpmanageninja.com/docs/ninja-tables/setting-up-a-table/?ninja_intro=1">
-                        Configure Stripe Payment API
-                    </a>
-                </li>
-                <li>
-                    <a target="_blank"
-                       href="https://wpmanageninja.com/docs/ninja-tables/configure-responsive-breakdowns-for-table/?ninja_intro=1">
-                        Setting Up a Form
-                    </a>
-                </li>
-            </ul>
-        </div>
+        <template v-if="docs.length">
+            <hr/>
+            <div class="ninja_docs">
+                <h4>WP Payment Form Documentation:</h4>
+                <ul>
+                    <li>
+                        <a target="_blank"
+                           href="https://wpmanageninja.com/docs/ninja-tables/configure-tables/?ninja_intro=1">
+                            Demo and Basic Settings
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank"
+                           href="https://wpmanageninja.com/docs/ninja-tables/setting-up-a-table/?ninja_intro=1">
+                            Configure Stripe Payment API
+                        </a>
+                    </li>
+                    <li>
+                        <a target="_blank"
+                           href="https://wpmanageninja.com/docs/ninja-tables/configure-responsive-breakdowns-for-table/?ninja_intro=1">
+                            Setting Up a Form
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </template>
+
     </div>
 </template>
 
 <script>
     export default {
         name: "Welcome",
+        data() {
+            return {
+                docs: []
+            }
+        },
         methods: {
             create() {
                 this.$emit('create', true);

@@ -50,11 +50,11 @@
                         title: 'Design Settings',
                         icon: 'dashicons dashicons-art'
                     },
-                    {
-                        route: 'scheduling_settings',
-                        title: 'Scheduling Settings',
-                        icon: 'dashicons dashicons-calendar-alt'
-                    }
+                    // {
+                    //     route: 'scheduling_settings',
+                    //     title: 'Scheduling Settings',
+                    //     icon: 'dashicons dashicons-calendar-alt'
+                    // }
                 ]
             }
         }

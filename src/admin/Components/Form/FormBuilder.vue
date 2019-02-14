@@ -272,7 +272,7 @@
             saveSettings() {
                 this.saving = true;
                 this.$adminPost({
-                    action: 'wp_payment_forms_admin_ajax',
+                    action: 'wppayform_forms_admin_ajax',
                     form_id: this.form_id,
                     builder_settings: this.builder_elements,
                     submit_button_settings: this.submit_button_settings,

@@ -370,13 +370,14 @@ class GeneralSettings
 
     public static function getGlobalCurrencySettings()
     {
-        $settings = get_option('_wppayform_global_currency_settings', array());
+        $settings = get_option('wppayform_global_currency_settings', array());
         $defaults = array(
             'currency' => 'USD',
             'locale' => 'auto',
             'currency_sign_position' => 'left',
             'currency_separator' => 'dot_comma',
-            'decimal_points' => 0
+            'decimal_points' => 0,
+            'settings_type' => 'global'
         );
 
         $settings = wp_parse_args($settings, $defaults);
@@ -386,7 +387,7 @@ class GeneralSettings
 
     public static function ipLoggingStatus($bool = false)
     {
-        $status = get_option('_wpf_ip_logging_status');
+        $status = get_option('wppayform_ip_logging_status');
         if(!$status) {
             $status = 'yes';
         }

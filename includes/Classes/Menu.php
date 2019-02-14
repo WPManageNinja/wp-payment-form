@@ -49,13 +49,14 @@ class Menu
         $submenu['wppayform.php']['settings'] = array(
             __('Settings', 'wppayform'),
             $menuPermission,
-            'admin.php?page=wppayform.php#/settings/stripe-settings',
+            'admin.php?page=wppayform.php#/settings/general-settings',
         );
-        $submenu['wppayform.php']['support'] = array(
-            __('Support', 'wppayform'),
-            $menuPermission,
-            'admin.php?page=wppayform.php#/support',
-        );
+        // We will add support in the next version
+//        $submenu['wppayform.php']['support'] = array(
+//            __('Support', 'wppayform'),
+//            $menuPermission,
+//            'admin.php?page=wppayform.php#/support',
+//        );
     }
 
     public function render() {

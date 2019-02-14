@@ -129,13 +129,12 @@
                     search_string: this.search_string
                 })
                     .then(response => {
-                        console.log(response);
                         this.paymentForms = response.data.forms;
                         this.hasForms = !!response.data.total;
                         this.total = response.data.total;
                     })
                     .fail(error => {
-
+                        this.$message.error(error.responseJSON.message);
                     })
                     .always(() => {
                         this.loading = false;
@@ -147,7 +146,7 @@
             },
             deleteFormNow() {
                 this.$adminPost({
-                    action: 'wp_payment_forms_admin_ajax',
+                    action: 'wppayform_forms_admin_ajax',
                     route: 'delete_form',
                     form_id: this.deleteingForm.ID
                 })

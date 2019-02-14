@@ -61,8 +61,8 @@ class GlobalSettingsHandler
             'currency_separator'     => sanitize_text_field($settings['currency_separator']),
             'decimal_points'         => intval($settings['decimal_points']),
         );
-        update_option('_wppayform_global_currency_settings', $data);
-        update_option('_wpf_ip_logging_status', sanitize_text_field($_REQUEST['ip_logging_status']), false);
+        update_option('wppayform_global_currency_settings', $data);
+        update_option('wppayform_ip_logging_status', sanitize_text_field($_REQUEST['ip_logging_status']), false);
         wp_send_json_success(array(
             'message' => __('Settings successfully updated', 'wppayform')
         ), 200);

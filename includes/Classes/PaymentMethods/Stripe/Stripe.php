@@ -276,7 +276,7 @@ class Stripe
             'checkout_logo'   => sanitize_text_field($settings['checkout_logo'])
         );
         do_action('wppayform/before_save_stripe_settings', $data);
-        update_option('wpf_stripe_payment_settings', $data, false);
+        update_option('wppayform_stripe_payment_settings', $data, false);
         do_action('wppayform/after_save_stripe_settings', $data);
 
         wp_send_json_success(array(
@@ -303,7 +303,7 @@ class Stripe
     // wpfGetStripePaymentSettings
     private function getStripeSettings()
     {
-        $settings = get_option('wpf_stripe_payment_settings', array());
+        $settings = get_option('wppayform_stripe_payment_settings', array());
         $defaults = array(
             'payment_mode'    => 'test',
             'live_pub_key'    => '',

@@ -17,7 +17,7 @@ class AdminAjaxHandler
 {
     public function registerEndpoints()
     {
-        add_action('wp_ajax_wp_payment_forms_admin_ajax', array($this, 'handeEndPoint'));
+        add_action('wp_ajax_wppayform_forms_admin_ajax', array($this, 'handeEndPoint'));
     }
 
     public function handeEndPoint()
@@ -115,7 +115,7 @@ class AdminAjaxHandler
         Forms::update($formId, $formData);
         do_action('wppayform/after_update_form', $formId, $formData);
 
-        update_post_meta($formId, '_show_title_description', sanitize_text_field($_REQUEST['show_title_description']));
+        update_post_meta($formId, 'wppayform_show_title_description', sanitize_text_field($_REQUEST['show_title_description']));
         wp_send_json_success(array(
             'message' => __('Form successfully updated', 'wppayform')
         ), 200);
@@ -148,11 +148,11 @@ class AdminAjaxHandler
         $formId = absint($_REQUEST['form_id']);
         if(isset($_REQUEST['confirmation_settings'])) {
             $confirmationSettings = wp_unslash($_REQUEST['confirmation_settings']);
-            update_post_meta($formId, '_wp_paymentform_confirmation_settings', $confirmationSettings);
+            update_post_meta($formId, 'wppapyform_paymentform_confirmation_settings', $confirmationSettings);
         }
         if(isset($_REQUEST['currency_settings'])) {
             $currency_settings = wp_unslash($_REQUEST['currency_settings']);
-            update_post_meta($formId, '_wp_paymentform_currency_settings', $currency_settings);
+            update_post_meta($formId, 'wppayform_paymentform_currency_settings', $currency_settings);
         }
 
         wp_send_json_success(array(
@@ -171,8 +171,8 @@ class AdminAjaxHandler
         }
         $submit_button_settings = wp_unslash($_REQUEST['submit_button_settings']);
 
-        update_post_meta($formId, '_wp_paymentform_builder_settings', $builderSettings);
-        update_post_meta($formId, '_wpf_submit_button_settings', $submit_button_settings);
+        update_post_meta($formId, 'wppayform_paymentform_builder_settings', $builderSettings);
+        update_post_meta($formId, 'wppayform_submit_button_settings', $submit_button_settings);
 
         wp_send_json_success(array(
             'message' => __('Settings successfully updated', 'wppayform')
@@ -214,7 +214,7 @@ class AdminAjaxHandler
     {
         $formId = intval($_REQUEST['form_id']);
         $layoutSettings = wp_unslash($_REQUEST['layout_settings']);
-        update_post_meta($formId, '_form_design_settings', $layoutSettings);
+        update_post_meta($formId, 'wppayform_form_design_settings', $layoutSettings);
         wp_send_json_success(array(
             'message' => __('Settings successfully updated', 'wppayform')
         ), 200);

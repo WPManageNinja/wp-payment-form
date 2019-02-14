@@ -19,7 +19,7 @@ export default class WPPayForms {
     }
 
     $adminGet(options) {
-        options.action = 'wp_payment_forms_admin_ajax';
+        options.action = 'wppayform_forms_admin_ajax';
         return window.jQuery.get(window.ajaxurl, options);
     }
 
@@ -28,7 +28,7 @@ export default class WPPayForms {
     }
 
     $adminPost(options) {
-        options.action = 'wp_payment_forms_admin_ajax';
+        options.action = 'wppayform_forms_admin_ajax';
         return window.jQuery.post(window.ajaxurl, options);
     }
 

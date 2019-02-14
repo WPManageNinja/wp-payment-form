@@ -153,7 +153,9 @@
         props: ['form_id'],
         data() {
             return {
-                layout_settings: {},
+                layout_settings: {
+                    extra_styles: {}
+                },
                 labelPlacementOptions: {
                     'top': 'Top',
                     'left': 'Left',
