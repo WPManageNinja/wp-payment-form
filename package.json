@@ -16,7 +16,7 @@
   "license": "ISC",
   "devDependencies": {
     "cross-env": "^5.2.0",
-    "laravel-mix": "^3.0.0",
+    "laravel-mix": "^4.0.14",
     "resolve-url-loader": "2.3.1",
     "sass": "^1.16.1",
     "sass-loader": "7.*",

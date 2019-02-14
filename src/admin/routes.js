@@ -1,19 +1,19 @@
-const DashBoardStats = require('./Components/Dashboard');
-const GlobalView = require('./Components/Global/index');
-const AllForms = require('./Components/Forms/AllForms');
+import DashBoardStats from './Components/Dashboard';
+import GlobalView from './Components/Global/index';
+import AllForms from './Components/Forms/AllForms';
 
-const EditFormView = require('./Components/Form/index');
-const FormBuilder = require('./Components/Form/FormBuilder');
-const FormSettingsIndex = require('./Components/Form/settings/index')
-const FormPaymentSettings = require('./Components/Form/settings/ConfirmationSettings');
-const FormCurrencySettings = require('./Components/Form/settings/CurrencySettings');
-const FormSchedulingSetting = require('./Components/Form/settings/SchedulingSettings');
+import EditFormView from './Components/Form/index';
+import FormBuilder from './Components/Form/FormBuilder';
+import FormSettingsIndex from './Components/Form/settings/index';
+import FormPaymentSettings from './Components/Form/settings/ConfirmationSettings';
+import FormCurrencySettings from './Components/Form/settings/CurrencySettings';
+import FormSchedulingSetting from './Components/Form/settings/SchedulingSettings';
 
 import Entries from './Components/Entries/Entries';
 import Entry from './Components/Entries/Entry';
 import SettingView from './Components/Settings/index'
 import StripeSettings from './Components/Settings/StripeSettings'
-const PayPalSettings = require('./Components/Settings/PayPalSettings');
+import PayPalSettings from './Components/Settings/PayPalSettings';
 import GeneralSettings from './Components/Settings/GeneralSettings'
 import FormDesignSettings from './Components/Form/settings/FormDesignSettings'
 

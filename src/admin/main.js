@@ -52,9 +52,11 @@ const router = new window.WPPayForms.Router({
     linkActiveClass: 'active'
 });
 
+import App from './App';
+
 new window.WPPayForms.Vue({
     el: '#wppayformsapp',
-    render: h => h(require('./App')),
+    render: h => h(App),
     router: router,
     mounted() {
         window.WPPayFormsBus.$on('site_title', (title) => {
