@@ -5,6 +5,7 @@ namespace WPPayForm\Classes;
 use WPPayForm\Classes\Models\Forms;
 use WPPayForm\Classes\Models\Submission;
 use WPPayForm\Classes\Models\SubmissionActivity;
+use WPPayForm\Classes\Models\Transaction;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -187,6 +188,10 @@ class SubmissionView
         do_action('wppayform/before_payment_status_change_manually', $submission, $newStatus, $submission->payment_status);
         $submissionModel->update($submissionId, array(
             'payment_status' => $newStatus
+        ));
+        wpPayFormDB()->table('wpf_order_transactions')->where('submission_id', $submissionId)->update(array(
+            'status' => $newStatus,
+            'updated_at' => date('Y-m-d H:i:s')
         ));
         do_action('wppayform/after_payment_status_change_manually', $submissionId, $newStatus, $submission->payment_status);
 

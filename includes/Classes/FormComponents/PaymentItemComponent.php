@@ -134,13 +134,13 @@ class PaymentItemComponent extends BaseComponent
                         <?php if ($placeholder): ?>
                             <option data-type="placeholder" value=""><?php echo $placeholder; ?></option>
                         <?php endif; ?>
-                        <?php foreach ($prices as $price): ?>
+                        <?php foreach ($prices as $index => $price): ?>
                             <?php
                             $optionAttributes = array(
-                                'value'      => $price['label'],
+                                'value'      => $index,
                                 'data-price' => $price['value'] * 100,
                             );
-                            if ($defaultValue == $price['value']) {
+                            if ($defaultValue == $price['label']) {
                                 $optionAttributes['selected'] = 'true';
                             }
                             ?>
@@ -165,7 +165,7 @@ class PaymentItemComponent extends BaseComponent
                             'value'      => $index
                         );
 
-                        if ($price['value'] == $defaultValue) {
+                        if ($price['label'] == $defaultValue) {
                             $attributes['checked'] = 'true';
                         }
                         ?>

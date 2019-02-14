@@ -12,8 +12,8 @@ $currencySetting['currency_sign'] = \WPPayForm\Classes\GeneralSettings::getCurre
             <thead>
                 <th><?php _e('Item', 'wppayform'); ?></th>
                 <th><?php _e('Quantity', 'wppayform'); ?></th>
-                <th><?php _e('Quantity', 'Price'); ?></th>
-                <th><?php _e('Line Total', 'Price'); ?></th>
+                <th><?php _e('Price', 'wppayform'); ?></th>
+                <th><?php _e('Line Total', 'wppayform'); ?></th>
             </thead>
             <tbody>
             <?php foreach ($submission->order_items as $order_item): ?>
