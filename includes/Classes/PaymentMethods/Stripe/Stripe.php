@@ -33,6 +33,17 @@ class Stripe
         // ajax endpoints
         add_action('wp_ajax_wpf_save_stripe_settings', array($this, 'savePaymentSettings'));
         add_action('wp_ajax_wpf_get_stripe_settings', array($this, 'getPaymentSettings'));
+
+        add_filter('wppayform/checkout_vars', array($this, 'addLocalizeVars'));
+    }
+
+    public function addLocalizeVars($vars)
+    {
+        $paymentSettings = $this->getStripeSettings();
+        $vars['stripe_checkout_title'] = $paymentSettings['company_name'];
+        $vars['stripe_checkout_logo'] = $paymentSettings['checkout_logo'];
+        $vars['stripe_pub_key'] = $this->getPubKey();
+        return $vars;
     }
 
     public function validateStripeToken($submission, $form_data)
@@ -62,7 +73,7 @@ class Stripe
 
     public function makeFormPayment($transactionId, $submissionId, $form_data, $form)
     {
-        $paymentMode = wpfGetStripePaymentMode();
+        $paymentMode = $this->getMode();
         $transactionModel = new Transaction();
         $transaction = $transactionModel->getTransaction($transactionId);
 
@@ -246,7 +257,7 @@ class Stripe
             }
         }
 
-        if ($mode == 'live' && !wpfIsStripeKeysDefined()) {
+        if ($mode == 'live' && !$this->isStripeKeysDefined()) {
             if (empty($settings['live_pub_key']) || empty($settings['live_secret_key'])) {
                 wp_send_json_error(array(
                     'message' => __('Please provide Live Publishable key and Live Secret Key', 'wppayform')
@@ -277,8 +288,62 @@ class Stripe
     {
         AccessControl::checkAndPresponseError('get_payment_settings', 'global');
         wp_send_json_success(array(
-            'settings'       => wpfGetStripePaymentSettings(),
-            'is_key_defined' => wpfIsStripeKeysDefined()
+            'settings'       => $this->getStripeSettings(),
+            'is_key_defined' => $this->isStripeKeysDefined()
         ), 200);
+    }
+
+
+    public function getMode()
+    {
+        $paymentSettings = $this->getStripeSettings();
+        return ($paymentSettings['payment_mode'] == 'live') ? 'live' : 'test';
+    }
+
+    // wpfGetStripePaymentSettings
+    private function getStripeSettings()
+    {
+        $settings = get_option('wpf_stripe_payment_settings', array());
+        $defaults = array(
+            'payment_mode'    => 'test',
+            'live_pub_key'    => '',
+            'live_secret_key' => '',
+            'test_pub_key'    => '',
+            'test_secret_key' => '',
+            'company_name'    => get_bloginfo('name'),
+            'checkout_logo'   => ''
+        );
+        return wp_parse_args($settings, $defaults);
+    }
+
+    public function getPubKey()
+    {
+        $paymentSettings = $this->getStripeSettings();
+        if($paymentSettings['payment_mode'] == 'live') {
+            if ($this->isStripeKeysDefined()) {
+                return WP_PAY_FORM_STRIPE_PUB_KEY;
+            } else {
+                return $paymentSettings['live_pub_key'];
+            }
+        }
+        return $paymentSettings['test_pub_key'];
+    }
+
+    function getSecretKey()
+    {
+        $paymentSettings = $this->getStripeSettings();
+        if($paymentSettings['payment_mode'] == 'live') {
+            if ($this->isStripeKeysDefined()) {
+                return WP_PAY_FORM_STRIPE_SECRET_KEY;
+            } else {
+                return $paymentSettings['live_secret_key'];
+            }
+        }
+        return $paymentSettings['test_secret_key'];
+    }
+
+    function isStripeKeysDefined()
+    {
+        return defined('WP_PAY_FORM_STRIPE_SECRET_KEY') && defined('WP_PAY_FORM_STRIPE_PUB_KEY');
     }
 }

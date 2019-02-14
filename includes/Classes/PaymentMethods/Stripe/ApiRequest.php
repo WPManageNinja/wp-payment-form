@@ -40,7 +40,8 @@ class ApiRequest
     public static function get_secret_key()
     {
         if (!self::$secret_key) {
-            self::set_secret_key(wpfGetStripeSecretKey());
+            $stripe = new Stripe();
+            self::set_secret_key($stripe->getSecretKey());
         }
         return self::$secret_key;
     }

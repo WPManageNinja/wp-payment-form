@@ -16,13 +16,13 @@ class Submission
 {
     public function create($submission)
     {
-        return wpPayformDB()->table('wpf_submissions')
+        return wpPayFormDB()->table('wpf_submissions')
             ->insert($submission);
     }
 
     public function getSubmissions($formId = false, $wheres = array(), $perPage, $skip)
     {
-        $resultQuery = wpPayformDB()->table('wpf_submissions')
+        $resultQuery = wpPayFormDB()->table('wpf_submissions')
             ->select(array('wpf_submissions.*', 'posts.post_title'))
             ->join('posts', 'posts.ID', '=', 'wpf_submissions.form_id')
             ->orderBy('wpf_submissions.id', 'DESC')
@@ -56,7 +56,7 @@ class Submission
     public function getSubmission($submissionId, $with = array())
     {
 
-        $result = wpPayformDB()->table('wpf_submissions')
+        $result = wpPayFormDB()->table('wpf_submissions')
             ->select(array('wpf_submissions.*', 'posts.post_title'))
             ->join('posts', 'posts.ID', '=', 'wpf_submissions.form_id')
             ->where('wpf_submissions.id', $submissionId)
@@ -84,7 +84,7 @@ class Submission
 
     public function getTotalCount($formId = false)
     {
-        $query = wpPayformDB()->table('wpf_submissions');
+        $query = wpPayFormDB()->table('wpf_submissions');
         if ($formId) {
             $query = $query->where('form_id', $formId);
         }
@@ -94,7 +94,7 @@ class Submission
     public function update($submissionId, $data)
     {
         $data['updated_at'] = date('Y-m-d H:i:s');
-        return wpPayformDB()->table('wpf_submissions')->where('id', $submissionId)->update($data);
+        return wpPayFormDB()->table('wpf_submissions')->where('id', $submissionId)->update($data);
     }
 
     public function getParsedSubmission($submission)
@@ -139,26 +139,26 @@ class Submission
 
     public function deleteSubmission($sumissionId)
     {
-        wpPayformDB()->table('wpf_submissions')
+        wpPayFormDB()->table('wpf_submissions')
             ->where('id', $sumissionId)
             ->delete();
 
-        wpPayformDB()->table('wpf_order_items')
+        wpPayFormDB()->table('wpf_order_items')
             ->where('submission_id', $sumissionId)
             ->delete();
 
-        wpPayformDB()->table('wpf_order_transactions')
+        wpPayFormDB()->table('wpf_order_transactions')
             ->where('submission_id', $sumissionId)
             ->delete();
 
-        wpPayformDB()->table('wpf_submission_activities')
+        wpPayFormDB()->table('wpf_submission_activities')
             ->where('submission_id', $sumissionId)
             ->delete();
     }
 
     public function getEntryCountByPaymentStatus($formId, $paymentStatuses = array(), $period = 'total')
     {
-        $query = wpPayformDB()->table('wpf_submissions')
+        $query = wpPayFormDB()->table('wpf_submissions')
                     ->where('form_id', $formId);
         if($paymentStatuses && count($paymentStatuses)) {
             $query->whereIn('payment_status', $paymentStatuses);
@@ -170,7 +170,7 @@ class Submission
                 $year  = "YEAR(`{$col}`) = YEAR(NOW())";
                 $month = "MONTH(`{$col}`) = MONTH(NOW())";
                 $day   = "DAY(`{$col}`) = DAY(NOW())";
-                $query->where( wpPayformDB()->raw( "{$year} AND {$month} AND {$day}" ) );
+                $query->where( wpPayFormDB()->raw( "{$year} AND {$month} AND {$day}" ) );
             } elseif ( $period == 'week' ) {
                 $query->where(
                     wpFluent()->raw( "YEARWEEK(`{$col}`, 1) = YEARWEEK(CURDATE(), 1)" )
@@ -178,9 +178,9 @@ class Submission
             } elseif ( $period == 'month' ) {
                 $year  = "YEAR(`{$col}`) = YEAR(NOW())";
                 $month = "MONTH(`{$col}`) = MONTH(NOW())";
-                $query->where( wpPayformDB()->raw( "{$year} AND {$month}" ) );
+                $query->where( wpPayFormDB()->raw( "{$year} AND {$month}" ) );
             } elseif ( $period == 'year' ) {
-                $query->where( wpPayformDB()->raw( "YEAR(`{$col}`) = YEAR(NOW())" ) );
+                $query->where( wpPayFormDB()->raw( "YEAR(`{$col}`) = YEAR(NOW())" ) );
             }
         }
 

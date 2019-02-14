@@ -8,8 +8,7 @@ let cardElementHandler = {
         this.elementId = config.element_id;
         this.style = config.style;
         this.callback = callback;
-        let pubKey = this.form.data('stripe_pub_key');
-        var stripe = Stripe(pubKey);
+        var stripe = Stripe(config.pub_key);
         // Create an instance of Elements.
         var elements = stripe.elements();
 

@@ -47,14 +47,14 @@ class Forms
 
     public static function getTotalCount()
     {
-        return wpPayformDB()->table('posts')
+        return wpPayFormDB()->table('posts')
             ->where('post_type', 'wp_payform')
             ->count();
     }
 
     public static function getAllAvailableForms()
     {
-        return wpPayformDB()->table('posts')
+        return wpPayFormDB()->table('posts')
             ->select(array('ID', 'post_title'))
             ->where('post_type', 'wp_payform')
             ->get();
@@ -245,19 +245,19 @@ class Forms
     public static function deleteForm($formID)
     {
         wp_delete_post($formID, true);
-        wpPayformDB()->table('wpf_submissions')
+        wpPayFormDB()->table('wpf_submissions')
             ->where('form_id', $formID)
             ->delete();
 
-        wpPayformDB()->table('wpf_order_items')
+        wpPayFormDB()->table('wpf_order_items')
             ->where('form_id', $formID)
             ->delete();
 
-        wpPayformDB()->table('wpf_order_transactions')
+        wpPayFormDB()->table('wpf_order_transactions')
             ->where('form_id', $formID)
             ->delete();
 
-        wpPayformDB()->table('wpf_submission_activities')
+        wpPayFormDB()->table('wpf_submission_activities')
             ->where('form_id', $formID)
             ->delete();
 

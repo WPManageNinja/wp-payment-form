@@ -14,7 +14,7 @@ class SubmissionActivity
 {
     public static function getSubmissionActivity($submissionId)
     {
-        $activities = wpPayformDB()->table('wpf_submission_activities')
+        $activities = wpPayFormDB()->table('wpf_submission_activities')
             ->where('submission_id', $submissionId)
             ->orderBy('id', 'DESC')
             ->get();
@@ -32,7 +32,7 @@ class SubmissionActivity
         $data['created_at'] = date('Y-m-d H:i:s');
         $data['updated_at'] = date('Y-m-d H:i:s');
 
-        return wpPayformDB()->table('wpf_submission_activities')
+        return wpPayFormDB()->table('wpf_submission_activities')
             ->insert($data);
     }
 }

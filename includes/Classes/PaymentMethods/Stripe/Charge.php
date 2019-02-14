@@ -29,7 +29,8 @@ class Charge
             $paymentArgs['statement_descriptor'] = $descriptor;
         }
         try {
-            ApiRequest::set_secret_key(wpfGetStripeSecretKey());
+            $stripe = new Stripe();
+            ApiRequest::set_secret_key($stripe->getSecretKey());
             $response = ApiRequest::request($paymentArgs, 'charges');
             if ( !empty($response->error) ) {
                 $errotType = 'general';

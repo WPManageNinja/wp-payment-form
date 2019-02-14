@@ -9,12 +9,10 @@ let StripeCheckoutHandler = {
         this.form = config.form;
         this.style = config.style;
         this.callback = callback;
-        let pubKey = this.form.data('stripe_pub_key');
-
 
         var handler = StripeCheckout.configure({
-            key: pubKey,
-            image: that.config.form_settings.checkout_logo,
+            key: config.form_settings.stripe_pub_key,
+            image: config.form_settings.stripe_checkout_logo,
             locale: 'auto',
             token: function (token, billing_shipping) {
                 that.stripeTokenHandler(token, billing_shipping);
@@ -34,7 +32,7 @@ let StripeCheckoutHandler = {
             }
             // Open Checkout with further options:
             handler.open({
-                name: that.config.form_settings.checkout_title,
+                name: config.form_settings.stripe_checkout_title,
                 description: that.config.form_settings.checkout_description,
                 amount: that.form.data('payment_total'),
                 currency: that.config.form_settings.currency_settings.currency,

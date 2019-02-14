@@ -15,12 +15,12 @@ class Transaction
 {
     public function create($item)
     {
-        return wpPayformDB()->table('wpf_order_transactions')->insert($item);
+        return wpPayFormDB()->table('wpf_order_transactions')->insert($item);
     }
 
     public function getTransactions($submissionId)
     {
-        $transactions = wpPayformDB()->table('wpf_order_transactions')
+        $transactions = wpPayFormDB()->table('wpf_order_transactions')
                             ->where('submission_id', $submissionId)
                             ->get();
 
@@ -29,12 +29,12 @@ class Transaction
 
     public function getTransaction($transactionId)
     {
-        return wpPayformDB()->table('wpf_order_transactions')->where('id', $transactionId)->first();
+        return wpPayFormDB()->table('wpf_order_transactions')->where('id', $transactionId)->first();
     }
 
     public function update($transactionId, $data)
     {
         $data['updated_at'] = date('Y-m-d H:i:s');
-        return wpPayformDB()->table('wpf_order_transactions')->where('id', $transactionId)->update($data);
+        return wpPayFormDB()->table('wpf_order_transactions')->where('id', $transactionId)->update($data);
     }
 }

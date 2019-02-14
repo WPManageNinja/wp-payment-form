@@ -20,6 +20,7 @@ var wpPayformApp = {};
         },
         initForm(form) {
             let that = this;
+            let form_settings = window['wp_payform_'+ form.data('wpf_form_id')];
             this.calculatePayments(form);
 
             if( parseInt(form.find('input[name=__wpf_valid_payment_methods_count]').val()) > 1 ) {
@@ -63,7 +64,8 @@ var wpPayformApp = {};
                 elementHandler.init({
                     form: form,
                     element_id: $cardElementDiv.attr('id'),
-                    style: false
+                    style: false,
+                    pub_key: form_settings.stripe_pub_key
                 }, function () {
                     that.submitForm(form);
                 });
@@ -74,7 +76,8 @@ var wpPayformApp = {};
                     shipping: $cardElementDiv.data('require_shipping_info') == 'yes',
                     verify_zip: $cardElementDiv.data('verify_zip') == 'yes',
                     allowRememberMe: $cardElementDiv.data('allow_remember_me') == 'yes',
-                    form_settings: window['wp_payform_'+ form.data('wpf_form_id')]
+                    form_settings: form_settings,
+                    pub_key: form_settings.stripe_pub_key
                 }
                 StripeCheckoutHandler.init(checkoutSettings, function () {
                     that.submitForm(form);

@@ -72,7 +72,7 @@ class PlaceholderParser
                 );
             } else if($group == 'payment_item') {
                 foreach ($items as $itemkey =>  $item) {
-                   $itemNames = wpPayformDB()->table('wpf_order_items')
+                   $itemNames = wpPayFormDB()->table('wpf_order_items')
                        ->select(array('item_name'))
                        ->where('submission_id', $submission->id )
                        ->where('parent_holder', $item)
@@ -90,7 +90,7 @@ class PlaceholderParser
         foreach ($parsables as $parseKey => $parseValue) {
             $value = ArrayHelper::get($parsedData, $parseValue, '');
             if($value && $parseKey == '{submission.payment_total}') {
-                $value = wpfFormattedMoney($value, Forms::getCurrencyAndLocale($submission->form_id));
+                $value = wpPayFormFormattedMoney($value, Forms::getCurrencyAndLocale($submission->form_id));
             }
             if( is_array($value) ) {
                 $value = implode(' ', $value);

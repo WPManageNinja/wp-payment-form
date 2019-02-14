@@ -79,6 +79,7 @@ class StripeCardElementComponent extends BaseComponent
 
     public function render($element, $form, $elements)
     {
+        $stripe = new Stripe();
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
         if (!$fieldOptions) {
             return;
@@ -111,7 +112,7 @@ class StripeCardElementComponent extends BaseComponent
             'id'                      => $inputId
         );
         ?>
-        <?php if (!wpfGetStripePubKey()) { ?>
+        <?php if (!$stripe->getPubKey()) { ?>
         <p style="color: red">You did not configure stripe payment gateway. Please configure stripe payment gateway</p>
         <?php return;
     } ?>
@@ -123,7 +124,7 @@ class StripeCardElementComponent extends BaseComponent
             <?php endif; ?>
             <div <?php echo $this->builtAttributes($attributes); ?>></div>
             <div class="wpf_card-errors" role="alert"></div>
-            <?php if (wpfGetStripePaymentMode() == 'test') { ?>
+            <?php if ($stripe->getMode() == 'test') { ?>
                 <p class="wpf_test_mode_message" style="margin: 0;padding: 0;font-style: italic;">Stripe test mode
                     activated</p>
             <?php } ?>

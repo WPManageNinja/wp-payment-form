@@ -15,18 +15,18 @@ class OrderItem
 {
     public function create($item)
     {
-        return wpPayformDB()->table('wpf_order_items')->insert($item);
+        return wpPayFormDB()->table('wpf_order_items')->insert($item);
     }
 
     public function getOrderItems($submissionId)
     {
-        $orderItems = wpPayformDB()->table('wpf_order_items')->where('submission_id', $submissionId)->get();
+        $orderItems = wpPayFormDB()->table('wpf_order_items')->where('submission_id', $submissionId)->get();
         return apply_filters('wppayform/order_items', $orderItems, $submissionId);
     }
 
     public function getSingleOrderItems($submissionId)
     {
-        $orderItems = wpPayformDB()->table('wpf_order_items')
+        $orderItems = wpPayFormDB()->table('wpf_order_items')
             ->where('submission_id', $submissionId)
             ->where('type', 'single')
             ->get();

@@ -86,7 +86,6 @@ class Render
         $css_classes = apply_filters('wppayform/form_css_classes', $css_classes, $form);
 
         $formAttributes = array(
-            'data-stripe_pub_key' => wpfGetStripePubKey(),
             'data-wpf_form_id'    => $form->ID,
             'class'               => implode(' ', $css_classes),
             'method'              => 'POST',
@@ -162,17 +161,15 @@ class Render
     private function addAssets($form)
     {
         $currencySettings = Forms::getCurrencyAndLocale($form->ID);
-        $paymentSettings = wpfGetStripePaymentSettings();
         wp_register_script('moment', WPPAYFORM_URL . 'assets/libs/datepicker/js/moment.min.js', array(), WPPAYFORM_VERSION, true);
         wp_register_script('pikaday', WPPAYFORM_URL . 'assets/libs/datepicker/js/pikaday.min.js', array('jquery', 'moment'), WPPAYFORM_VERSION, true);
         wp_enqueue_script('wppayform_public', WPPAYFORM_URL . 'assets/js/payforms-public.js', array('jquery'), WPPAYFORM_VERSION, true);
         wp_enqueue_style('wppayform_public', WPPAYFORM_URL . 'assets/css/payforms-public.css', array(), WPPAYFORM_VERSION);
+
         wp_localize_script('wppayform_public', 'wp_payform_' . $form->ID, apply_filters('wppayform/checkout_vars', array(
             'form_id'              => $form->ID,
-            'checkout_title'       => $paymentSettings['company_name'],
             'checkout_description' => $form->post_title,
             'currency_settings'    => $currencySettings,
-            'checkout_logo'        => $paymentSettings['checkout_logo']
         ), $form));
 
         wp_localize_script('wppayform_public', 'wp_payform_general', array(

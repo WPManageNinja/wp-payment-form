@@ -117,7 +117,7 @@ class SubmissionView
             $orderBy = 'ASC';
         }
 
-        $submissionQuery = wpPayformDB()->table('wpf_submissions')
+        $submissionQuery = wpPayFormDB()->table('wpf_submissions')
                         ->orderBy('id', $orderBy)
                         ->where('id', $whereOperator, $currentSubmissionId);
 

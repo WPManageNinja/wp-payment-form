@@ -20,15 +20,15 @@ $currencySetting['currency_sign'] = \WPPayForm\Classes\GeneralSettings::getCurre
                 <tr>
                     <td><?php echo $order_item->item_name; ?></td>
                     <td><?php echo $order_item->quantity; ?></td>
-                    <td><?php echo wpfFormattedMoney($order_item->item_price, $currencySetting); ?></td>
-                    <td><?php echo wpfFormattedMoney($order_item->line_total, $currencySetting); ?></td>
+                    <td><?php echo wpPayFormFormattedMoney($order_item->item_price, $currencySetting); ?></td>
+                    <td><?php echo wpPayFormFormattedMoney($order_item->line_total, $currencySetting); ?></td>
                 </tr>
             <?php endforeach; ?>
             </tbody>
             <tfoot>
                 <tr class="wpf_total_row">
                     <th style="text-align: right" colspan="3">Total</th>
-                    <td><?php echo wpfFormattedMoney($submission->payment_total, $currencySetting); ?></td>
+                    <td><?php echo wpPayFormFormattedMoney($submission->payment_total, $currencySetting); ?></td>
                 </tr>
             </tfoot>
         </table>

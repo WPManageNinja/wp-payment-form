@@ -103,7 +103,7 @@ class WPPayForm
         add_shortcode('wppayform_reciept', function () {
             if (isset($_REQUEST['wpf_submission']) && $_REQUEST['wpf_submission']) {
                 $submissionHash = sanitize_text_field($_REQUEST['wpf_submission']);
-                $submission = wpPayformDB()->table('wpf_submissions')
+                $submission = wpPayFormDB()->table('wpf_submissions')
                     ->where('submission_hash', '=', $submissionHash)
                     ->first();
                 if ($submission) {

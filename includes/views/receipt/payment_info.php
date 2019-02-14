@@ -14,7 +14,7 @@
     ?>
     <div class="wpf_payment_info_item wpf_payment_info_item_total">
         <div class="wpf_item_heading"><?php _e('Total:');?></div>
-        <div class="wpf_item_value"><?php echo wpfFormattedMoney($submission->payment_total, $currencySetting); ?></div>
+        <div class="wpf_item_value"><?php echo wpPayFormFormattedMoney($submission->payment_total, $currencySetting); ?></div>
     </div>
     <?php endif; ?>
     <?php if($submission->payment_method): ?>

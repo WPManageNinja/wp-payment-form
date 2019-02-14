@@ -145,7 +145,7 @@ class PaymentItemComponent extends BaseComponent
                             }
                             ?>
                             <option <?php echo $this->builtAttributes($optionAttributes); ?>><?php echo esc_attr($price['label']); ?>
-                                (<?php echo esc_html(wpfFormattedMoney(floatval($price['value']) * 100, $currenySettings)); ?>
+                                (<?php echo esc_html(wpPayFormFormattedMoney(floatval($price['value']) * 100, $currenySettings)); ?>
                                 )
                             </option>
                         <?php endforeach; ?>
@@ -176,7 +176,7 @@ class PaymentItemComponent extends BaseComponent
                                       itemprop="description"><?php echo $price['label']; ?></span>
                                 <span class="wpf_price_option_sep">&nbsp;–&nbsp;</span>
                                 <span
-                                    class="wpf_price_option_price"><?php echo wpfFormattedMoney(floatval($price['value']) * 100, $currenySettings); ?></span>
+                                    class="wpf_price_option_price"><?php echo wpPayFormFormattedMoney(floatval($price['value']) * 100, $currenySettings); ?></span>
                                 <meta itemprop="price" content="<?php echo $price['value']; ?>">
                             </label>
                         </div>
@@ -241,7 +241,7 @@ class PaymentItemComponent extends BaseComponent
                                   itemprop="description"><?php echo $option['label']; ?></span>
                             <span class="wpf_price_option_sep">&nbsp;–&nbsp;</span>
                             <span
-                                class="wpf_price_option_price"><?php echo wpfFormattedMoney(floatval($option['value'] * 100), $currenySettings); ?></span>
+                                class="wpf_price_option_price"><?php echo wpPayFormFormattedMoney(floatval($option['value'] * 100), $currenySettings); ?></span>
                             <meta itemprop="price" content="<?php echo $option['value']; ?>"/>
                         </label>
                     </div>
