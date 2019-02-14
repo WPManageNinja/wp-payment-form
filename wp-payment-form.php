@@ -178,26 +178,3 @@ register_activation_hook(__FILE__, function ($newWorkWide) {
     $activator = new \WPPayForm\Classes\Activator();
     $activator->migrateDatabases($newWorkWide);
 });
-
-// Development Purpose only
-//add_action('shutdown', 'sql_logger');
-//function sql_logger()
-//{
-//    return;
-//    global $wpdb;
-//    $log_file = fopen(ABSPATH . '/sql_log.txt', 'a');
-//    fwrite($log_file, "//////////////////////////////////////////\n\n" . date("F j, Y, g:i:s a") . "\n");
-//    foreach ($wpdb->queries as $q) {
-//        if (strpos($q[0], 'wp_wpf_') != false || strpos($q[0], 'pay') != false) {
-//            fwrite($log_file, $q[0] . " - ($q[1] s)" . " [Stack]: $q[2]" . "\n\n");
-//        }
-//    }
-//    fclose($log_file);
-//}
-//
-//function wpf_logger($data) {
-//    $log_file = fopen(ABSPATH . '/ipn_log.txt', 'a');
-//    fwrite($log_file, "//////////////////////////////////////////\n\n" . date("F j, Y, g:i:s a") . "\n");
-//    fwrite($log_file, json_encode($data));
-//    fclose($log_file);
-//}

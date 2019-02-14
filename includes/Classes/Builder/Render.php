@@ -63,6 +63,12 @@ class Render
         $currentUrl = home_url(add_query_arg($_GET,$wp->request));;
         $labelPlacement = $form->designSettings['labelPlacement'];
         $btnPosition = ArrayHelper::get($form->designSettings, 'submit_button_position');
+
+        $extraCssClasses = array_keys(array_filter($form->designSettings['extra_styles'], function ($value) {
+            return $value == 'yes';
+        }));
+
+
         $css_classes = array(
             'wpf_form',
             'wpf_strip_default_style',
@@ -71,6 +77,8 @@ class Render
             'wpf_asterisk_' . $form->asteriskPosition,
             'wpf_submit_button_pos_'.$btnPosition
         );
+        $css_classes = array_merge($css_classes, $extraCssClasses);
+
         if($labelPlacement != 'top') {
             $css_classes[] = 'wpf_inline_labels';
         }

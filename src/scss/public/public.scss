@@ -257,6 +257,52 @@
       }
     }
   }
+
+
+  form.wpf_bold_labels {
+    .wpf_input_label {
+      > label {
+        font-weight: bold;
+      }
+    }
+  }
+
+
+}
+
+
+form.wpf_default_form_styles {
+  .wpf_form_group {
+    input[type="text"], input[type="email"], input[type="url"], input[type="password"], input[type="search"], input[type="number"], input[type="tel"], input[type="range"], input[type="date"], input[type="month"], input[type="week"], input[type="time"], input[type="datetime"], input[type="datetime-local"], input[type="color"] {
+      display: block;
+      width: 100%;
+      padding: .375rem .75rem;
+      font-size: 1rem;
+      line-height: 1.5;
+      color: rgb(73, 80, 87);
+      background-color: rgb(255, 255, 255);
+      background-clip: padding-box;
+      border: 1px solid rgb(206, 212, 218);
+      border-radius: .25rem;
+      transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    }
+    select {
+      height: calc(2.25rem + 2px);
+    }
+    textarea {
+      display: block;
+      width: 100%;
+      padding: .375rem .75rem;
+      font-size: 1rem;
+      line-height: 1.5;
+      color: rgb(73, 80, 87);
+      background-color: rgb(255, 255, 255);
+      background-clip: padding-box;
+      border: 1px solid rgb(206, 212, 218);
+      border-radius: .25rem;
+      transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+    }
+  }
 }
 
 

@@ -16,7 +16,7 @@
                     </div>
                     <div class="payform_section_body">
                         <el-form ref="layout_settings" :model="layout_settings" label-width="220px">
-                            <div class="wpf_sub_section">
+                            <div class="wpf_settings_section">
                                 <div class="sub_section_header">
                                     <h3>Form Layout</h3>
                                 </div>
@@ -91,6 +91,50 @@
                                             <el-radio label="center" border>Center</el-radio>
                                             <el-radio label="right" border>Right</el-radio>
                                         </el-radio-group>
+                                    </el-form-item>
+
+                                </div>
+                            </div>
+
+                            <div class="wpf_settings_section">
+                                <div class="sub_section_header">
+                                    <h3>Form Element Stylings</h3>
+                                </div>
+                                <div class="sub_section_body">
+                                    <!--Label placement-->
+                                    <el-form-item>
+                                        <template slot="label">
+                                            Form Labels Font Weight
+                                            <el-tooltip class="item" placement="bottom-start" effect="light">
+                                                <div slot="content">
+                                                    <h3>Form Labels Font Weight</h3>
+                                                    <p>
+                                                        Select how you want to show the form labels. To make the form labels as bold check this option.
+                                                    </p>
+                                                </div>
+
+                                                <i class="el-icon-info el-text-info"></i>
+                                            </el-tooltip>
+                                        </template>
+                                        <el-checkbox true-label="yes" false-label="no" v-model="layout_settings.extra_styles.wpf_bold_labels">Make Labels as bold</el-checkbox>
+                                    </el-form-item>
+
+                                    <!--Input Styling Option-->
+                                    <el-form-item>
+                                        <template slot="label">
+                                            Input Item Styles
+                                            <el-tooltip class="item" placement="bottom-start" effect="light">
+                                                <div slot="content">
+                                                    <h3>Input Item Styles</h3>
+                                                    <p>
+                                                        Check this if you want default input stylings offered wp payment form
+                                                    </p>
+                                                </div>
+
+                                                <i class="el-icon-info el-text-info"></i>
+                                            </el-tooltip>
+                                        </template>
+                                        <el-checkbox true-label="yes" false-label="no" v-model="layout_settings.extra_styles.wpf_default_form_styles">Enable Default form styles</el-checkbox>
                                     </el-form-item>
 
                                 </div>

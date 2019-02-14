@@ -285,7 +285,11 @@ class Forms
         $defaults = array(
             'labelPlacement'         => 'top',
             'asteriskPlacement'      => 'none',
-            'submit_button_position' => 'left'
+            'submit_button_position' => 'left',
+            'extra_styles' => array(
+                'wpf_default_form_styles' => 'no',
+                'wpf_bold_labels' => 'no'
+            )
         );
         return wp_parse_args($settings, $defaults);
     }
