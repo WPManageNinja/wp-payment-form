@@ -16,44 +16,41 @@
                     <div class="payform_section_body">
                         <div v-if="builder_elements.length" class="payform_builder_items">
                             <draggable
-                                :options="{handle:'.handler', animation: 0, ghostClass: 'ghost'}"
+                                :options="{handle:'.handler', animation: 0, ghostClass: 'ghost', group:'components'}"
                                 :list="builder_elements"
                                 :element="'div'"
                             >
-                                <transition-group type="transition">
-                                    <div v-for="element in builder_elements" :key="element.id"
-                                         class="payform_builder_item">
-                                        <div class="payform_builder_header">
-                                            <div class="payform_head_left">
-                                                <div class="handler payform_inline_item">
-                                                    <span class="dashicons dashicons-menu"></span>
-                                                </div>
-                                                <div class="element_title payform_inline_item">
-                                                    {{ (element.field_options && element.field_options.label) ?
-                                                    element.field_options.label : element.editor_title }}
-                                                </div>
+                                <div v-for="element in builder_elements" :key="element.id"
+                                     class="payform_builder_item">
+                                    <div class="payform_builder_header">
+                                        <div class="payform_head_left">
+                                            <div class="handler payform_inline_item">
+                                                <span class="dashicons dashicons-menu"></span>
                                             </div>
-                                            <div @click="toggleEditing(element.id)" class="payform_head_right">
-                                                <div class="element_type payform_inline_item">
-                                                    {{ element.editor_title }}
-                                                </div>
-                                                <div class="element_control payform_inline_item">
-                                                    <span class="dashicons dashicons-arrow-down-alt2"></span>
-                                                </div>
+                                            <div class="element_title payform_inline_item">
+                                                {{ (element.field_options && element.field_options.label) ?
+                                                element.field_options.label : element.editor_title }}
                                             </div>
                                         </div>
-                                        <transition name="slide-down">
-                                            <div v-if="current_editing == element.id"
-                                                 class="payform_builder_item_settings">
-                                                <element-editor @deleteItem="deleteItem(element)"
-                                                                @updateItem="saveSettings"
-                                                                :element="element" :all_elements="builder_elements"/>
+                                        <div @click="toggleEditing(element.id)" class="payform_head_right">
+                                            <div class="element_type payform_inline_item">
+                                                {{ element.editor_title }}
                                             </div>
-                                        </transition>
+                                            <div class="element_control payform_inline_item">
+                                                <span class="dashicons dashicons-arrow-down-alt2"></span>
+                                            </div>
+                                        </div>
                                     </div>
-                                </transition-group>
+                                    <transition name="slide-down">
+                                        <div v-if="current_editing == element.id"
+                                             class="payform_builder_item_settings">
+                                            <element-editor @deleteItem="deleteItem(element)"
+                                                            @updateItem="saveSettings"
+                                                            :element="element" :all_elements="builder_elements"/>
+                                        </div>
+                                    </transition>
+                                </div>
                             </draggable>
-
                             <div v-if="builder_elements.length"
                                  class="payform_submit_button_settings payform_builder_item">
                                 <div class="payform_builder_header">
@@ -86,33 +83,41 @@
                         <div v-else class="empty_builder_items">
                             <img style="max-width: 100%; max-height: 300px;" :src="empty_form_image"/>
                         </div>
-                        <div v-if="form_tips" class="payform_builder_notices">
-                            <p>
-                                <i class="el-icon-info"></i>
-                                <span class="payform_builder_error" v-html="form_tips"></span>
-                            </p>
-                        </div>
+
+                        <el-alert
+                            v-if="form_tips && showNotice"
+                            class="payform_builder_notices"
+                            @close="hideNotices"
+                            type="warning">
+                            <p v-html="form_tips"></p>
+                        </el-alert>
                     </div>
                 </div>
             </div>
         </el-main>
         <el-aside width="250px">
-            <div v-for="componentGroup in fieldGroups" class="wpf_field_group">
+            <div v-for="(componentGroup,componentGroupIndex) in fieldGroups" class="wpf_field_group">
                 <div class="field_group_header">
                     <i :class="componentGroup.icon"></i> {{componentGroup.title}}
                 </div>
                 <div class="field_group_body">
-                    <el-button
-                        v-for="(component,component_name) in componentGroup.elements"
-                        :key="component_name"
-                        size="mini"
-                        type="plain"
-                        class="wpf_element_items"
-                        :class="'wpf_item_'+component.group"
-                        @click="addComponent(component_name)"
-                    >
-                        {{ component.editor_title }}
-                    </el-button>
+                    <draggable v-model="fieldGroups[componentGroupIndex].elements"
+                               class="dragArea"
+                               :clone="cloneItem"
+                               :options="{ draggable:'.item_active', group:{ name:'components',  pull:'clone', put:false }, sort: false }">
+                        <el-button
+                            v-for="(component,componentIndex) in componentGroup.elements"
+                            :key="'item_'+componentIndex"
+                            size="mini"
+                            :data-item_name="component.type"
+                            type="plain"
+                            class="wpf_element_items"
+                            :class="getItemClasses(component)"
+                            @click="addComponent(component)"
+                        >
+                            {{ component.editor_title }}
+                        </el-button>
+                    </draggable>
                 </div>
             </div>
         </el-aside>
@@ -127,7 +132,7 @@
     import SubmitButtonSettings from './editor/_SubmitButtonSettings';
 
     export default {
-        name: 'payment_settings',
+        name: 'form_builder',
         components: {
             ElementEditor,
             draggable,
@@ -142,7 +147,8 @@
                 components: {},
                 adding_component: '',
                 submit_button_settings: {},
-                empty_form_image: window.wpPayFormsAdmin.assets_url + 'images/form_instruction.png'
+                empty_form_image: window.wpPayFormsAdmin.assets_url + 'images/form_instruction.png',
+                showNotice: true
             }
         },
         computed: {
@@ -152,6 +158,16 @@
                     elements.push(element.id);
                 });
                 return elements;
+            },
+            hasPaymentMethodField() {
+                let hasField = false;
+                each(this.builder_elements, (element) => {
+                    if (element.group == 'payment_method_element') {
+                        hasField = true;
+                        return true;
+                    }
+                });
+                return hasField;
             },
             form_tips() {
                 let hasPaymentField = false;
@@ -175,34 +191,38 @@
                 if (this.builder_elements.length && !hasPaymentField && !hasItemField) {
                     return 'Add <b>Product Fields</b> and <b>Payment Method Field</b> field to accept payment';
                 }
+                return false;
             },
             fieldGroups() {
                 let componentGroups = {
                     payment: {
                         title: 'Product Fields',
-                        elements: {},
+                        elements: [],
                         icon: 'dashicons dashicons-cart'
                     },
                     payment_method: {
                         title: 'Payment Method Fields',
-                        elements: {},
+                        elements: [],
                         icon: 'dashicons dashicons-shield'
                     },
                     general: {
                         title: 'General Fields',
                         icon: 'dashicons dashicons-feedback',
-                        elements: {}
+                        elements: []
                     }
                 }
                 each(this.components, (component, componentName) => {
                     if (componentGroups[component.postion_group]) {
-                        componentGroups[component.postion_group].elements[componentName] = component;
+                        componentGroups[component.postion_group].elements.push(component);
                     }
                 });
                 return componentGroups;
             }
         },
         methods: {
+            cloneItem(component) {
+                return this.getClonedItem(component);
+            },
             getSettings() {
                 this.fetching = true;
                 this.$adminGet({
@@ -221,8 +241,8 @@
                         this.fetching = false;
                     })
             },
-            addComponent(componentName) {
-                let component = this.components[componentName];
+            addComponent(component, newIndex) {
+                let componentName = component.type;
                 if (!componentName) {
                     this.$message({
                         message: 'Please Select valid Component',
@@ -230,7 +250,6 @@
                     });
                     return;
                 }
-
                 // check if it's single only
                 if (component.single_only && this.alreadyExistElement(component.group)) {
                     this.$message({
@@ -239,18 +258,25 @@
                     });
                     return;
                 }
-
+                let nonMutableElement = this.getClonedItem(component);
+                if (newIndex == undefined) {
+                    this.builder_elements.push(nonMutableElement);
+                } else {
+                    this.builder_elements.splice(newIndex, 0, nonMutableElement);
+                }
+                this.current_editing = nonMutableElement.id;
+                this.adding_component = '';
+            },
+            getClonedItem(component) {
+                let componentName = component.type;
                 let nonMutableElement = JSON.parse(JSON.stringify(component));
                 // Find an unique name for this elament
                 nonMutableElement.id = this.getComponentUID(componentName);
                 if (!nonMutableElement.field_options) {
                     nonMutableElement.field_options = {};
                 }
-                this.builder_elements.push(nonMutableElement);
-                this.current_editing = nonMutableElement.id;
-                this.adding_component = '';
+                return nonMutableElement;
             },
-
             alreadyExistElement(type) {
                 let status = false;
                 each(this.builder_elements, (element) => {
@@ -271,6 +297,11 @@
             },
             saveSettings() {
                 this.saving = true;
+
+                if(!this.form_tips) {
+                    this.deleteStoreData('hide_form_'+this.form_id);
+                }
+
                 this.$adminPost({
                     action: 'wppayform_forms_admin_ajax',
                     form_id: this.form_id,
@@ -303,10 +334,21 @@
             },
             deleteItem(element) {
                 this.builder_elements.splice(findIndex(this.builder_elements, element), 1);
+            },
+            getItemClasses(component) {
+                let isActive = '';
+                if(!this.hasPaymentMethodField || component.group != 'payment_method_element') {
+                    isActive = ' item_active';
+                }
+                return 'wpf_item_'+component.group+isActive;
+            },
+            hideNotices() {
+                this.setStoreData( 'hide_form_'+this.form_id, 'yes' );
             }
         },
         mounted() {
             this.getSettings();
+            this.showNotice = this.getFromStore('hide_form_'+this.form_id) != 'yes';
             window.WPPayFormsBus.$emit('site_title', 'Form Builder');
         }
     }
@@ -322,7 +364,12 @@
     }
 
     .ghost {
-        opacity: 0.1;
+        opacity: 0.2;
         background: gray;
+        color: white;
+        width: 100%;
+        padding: 15px;
+        display: block;
+        overflow: hidden;
     }
 </style>

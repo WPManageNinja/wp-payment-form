@@ -14,6 +14,11 @@ window.WPPayForms.Vue.mixin({
                 localStorage.setItem("wppayforms_"+key, value);
             }
         },
+        deleteStoreData(key) {
+            if(window.localStorage) {
+                localStorage.removeItem("wppayforms_"+key);
+            }
+        },
         getFromStore(key, defaultValue) {
             if(window.localStorage) {
                 let itemValue = localStorage.getItem('wppayforms_'+key);
