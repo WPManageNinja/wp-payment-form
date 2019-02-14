@@ -1,9 +1,13 @@
 <template>
     <el-dialog title="Create a Payment Form" :visible.sync="isVisible">
             <div class="pay_form_modal_body">
-                <el-form ref="payForm" :model="payForm" label-width="120px">
+                <el-form ref="payForm" :model="payForm" label-width="120px" @submit.native.prevent>
                     <el-form-item label="Form Title">
-                        <el-input placeholder="Form Title" v-model="payForm.postTitle"></el-input>
+                        <el-input
+                                placeholder="Form Title"
+                                v-model="payForm.postTitle"
+                                @keyup.enter.native="createForm"
+                        ></el-input>
                     </el-form-item>
                 </el-form>
             </div>
