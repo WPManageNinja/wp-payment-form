@@ -163,9 +163,9 @@ class WPPayForm
     public function loadDependecies()
     {
         require_once(WPPAYFORM_DIR . 'includes/autoload.php');
-//        if(file_exists(WPPAYFORM_DIR.'includes/Pro/init.php')) {
-//            require_once WPPAYFORM_DIR.'includes/Pro/init.php';
-//        }
+        if(file_exists(WPPAYFORM_DIR.'includes/Pro/init.php')) {
+            require_once WPPAYFORM_DIR.'includes/Pro/init.php';
+        }
     }
 }
 
