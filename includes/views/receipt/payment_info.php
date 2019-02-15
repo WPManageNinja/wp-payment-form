@@ -1,6 +1,10 @@
 <div class="wpf_payment_info">
     <div class="wpf_payment_info_item wpf_payment_info_item_order_id">
+        <?php if($submission->order_items): ?>
         <div class="wpf_item_heading"><?php _e('Order ID:');?></div>
+        <?php else: ?>
+        <div class="wpf_item_heading"><?php _e('Submission ID:');?></div>
+        <?php endif; ?>
         <div class="wpf_item_value">#<?php echo $submission->id; ?></div>
     </div>
     <div class="wpf_payment_info_item wpf_payment_info_item_date">
@@ -23,7 +27,7 @@
             <div class="wpf_item_value"><?php echo ucfirst($submission->payment_method); ?></div>
         </div>
     <?php endif; ?>
-    <?php if($submission->payment_status): ?>
+    <?php if($submission->payment_status && $submission->order_items): ?>
         <div class="wpf_payment_info_item wpf_payment_info_item_payment_status">
             <div class="wpf_item_heading"><?php _e('Payment Status:');?></div>
             <div class="wpf_item_value"><?php echo ucfirst($submission->payment_status); ?></div>

@@ -13,42 +13,51 @@
                             </el-button>
                         </div>
                     </div>
-                    <div class="payform_section_body">
-                        <div v-if="builder_elements.length" class="payform_builder_items">
+                    <div id="payform_builder" class="payform_section_body">
+                        <div v-if="validationErrors" class="validation_errors_block">
+                            <el-alert v-for="(error,error_key) in validationErrors" :key="error_key" type="error">{{error}}</el-alert>
+                        </div>
+
+                        <div class="payform_builder_items">
                             <draggable
                                 :options="{handle:'.handler', animation: 0, ghostClass: 'ghost', group:'components'}"
                                 :list="builder_elements"
                                 :element="'div'"
                             >
-                                <div v-for="element in builder_elements" :key="element.id"
-                                     class="payform_builder_item">
-                                    <div class="payform_builder_header">
-                                        <div class="payform_head_left">
-                                            <div class="handler payform_inline_item">
-                                                <span class="dashicons dashicons-menu"></span>
+                                <template v-if="builder_elements.length">
+                                    <div v-for="element in builder_elements" :key="element.id"
+                                         class="payform_builder_item">
+                                        <div class="payform_builder_header">
+                                            <div class="payform_head_left">
+                                                <div class="handler payform_inline_item">
+                                                    <span class="dashicons dashicons-menu"></span>
+                                                </div>
+                                                <div class="element_title payform_inline_item">
+                                                    {{ (element.field_options && element.field_options.label) ?
+                                                    element.field_options.label : element.editor_title }}
+                                                </div>
                                             </div>
-                                            <div class="element_title payform_inline_item">
-                                                {{ (element.field_options && element.field_options.label) ?
-                                                element.field_options.label : element.editor_title }}
+                                            <div @click="toggleEditing(element.id)" class="payform_head_right">
+                                                <div class="element_type payform_inline_item">
+                                                    {{ element.editor_title }}
+                                                </div>
+                                                <div class="element_control payform_inline_item">
+                                                    <span class="dashicons dashicons-arrow-down-alt2"></span>
+                                                </div>
                                             </div>
                                         </div>
-                                        <div @click="toggleEditing(element.id)" class="payform_head_right">
-                                            <div class="element_type payform_inline_item">
-                                                {{ element.editor_title }}
+                                        <transition name="slide-down">
+                                            <div v-if="current_editing == element.id"
+                                                 class="payform_builder_item_settings">
+                                                <element-editor @deleteItem="deleteItem(element)"
+                                                                @updateItem="saveSettings"
+                                                                :element="element" :all_elements="builder_elements"/>
                                             </div>
-                                            <div class="element_control payform_inline_item">
-                                                <span class="dashicons dashicons-arrow-down-alt2"></span>
-                                            </div>
-                                        </div>
+                                        </transition>
                                     </div>
-                                    <transition name="slide-down">
-                                        <div v-if="current_editing == element.id"
-                                             class="payform_builder_item_settings">
-                                            <element-editor @deleteItem="deleteItem(element)"
-                                                            @updateItem="saveSettings"
-                                                            :element="element" :all_elements="builder_elements"/>
-                                        </div>
-                                    </transition>
+                                </template>
+                                <div v-else class="empty_builder_items">
+                                    <img style="max-width: 100%; max-height: 300px;" :src="empty_form_image"/>
                                 </div>
                             </draggable>
                             <div v-if="builder_elements.length"
@@ -79,9 +88,6 @@
                                     </div>
                                 </transition>
                             </div>
-                        </div>
-                        <div v-else class="empty_builder_items">
-                            <img style="max-width: 100%; max-height: 300px;" :src="empty_form_image"/>
                         </div>
 
                         <el-alert
@@ -148,7 +154,8 @@
                 adding_component: '',
                 submit_button_settings: {},
                 empty_form_image: window.wpPayFormsAdmin.assets_url + 'images/form_instruction.png',
-                showNotice: true
+                showNotice: true,
+                validationErrors: false
             }
         },
         computed: {
@@ -297,7 +304,7 @@
             },
             saveSettings() {
                 this.saving = true;
-
+                this.validationErrors = false;
                 if(!this.form_tips) {
                     this.deleteStoreData('hide_form_'+this.form_id);
                 }
@@ -320,6 +327,12 @@
                             message: error.responseJSON.data.message,
                             type: 'error'
                         });
+                        if(error.responseJSON.data.errors) {
+                            this.validationErrors = error.responseJSON.data.errors;
+                            jQuery([document.documentElement, document.body]).animate({
+                                scrollTop: jQuery('#payform_builder').offset().top - 100
+                            }, 200);
+                        }
                     })
                     .always(() => {
                         this.saving = false;

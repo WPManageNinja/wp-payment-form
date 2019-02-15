@@ -39,7 +39,7 @@ class AdminAjaxHandler
 
         if (isset($validRoutes[$route])) {
             AccessControl::checkAndPresponseError($route, 'forms');
-            do_action('wppayform/doing_ajax_forms_'.$route);
+            do_action('wppayform/doing_ajax_forms_' . $route);
             return $this->{$validRoutes[$route]}();
         }
     }
@@ -133,24 +133,30 @@ class AdminAjaxHandler
 
     protected function getFormSettings()
     {
+        $allPages = wpPayFormDB()->table('posts')
+            ->select(array('ID', 'post_title'))
+            ->where('post_type', 'page')
+            ->where('post_status', 'publish')
+            ->get();
         $formId = absint($_REQUEST['form_id']);
         wp_send_json_success(array(
             'confirmation_settings' => Forms::getConfirmationSettings($formId),
             'currency_settings'     => Forms::getCurrencySettings($formId),
             'editor_shortcodes'     => Forms::getEditorShortCodes($formId),
             'currencies'            => GeneralSettings::getCurrencies(),
-            'locales'               => GeneralSettings::getLocales()
+            'locales'               => GeneralSettings::getLocales(),
+            'pages'                 => $allPages
         ), 200);
     }
 
     protected function saveFormSettings()
     {
         $formId = absint($_REQUEST['form_id']);
-        if(isset($_REQUEST['confirmation_settings'])) {
+        if (isset($_REQUEST['confirmation_settings'])) {
             $confirmationSettings = wp_unslash($_REQUEST['confirmation_settings']);
             update_post_meta($formId, 'wppapyform_paymentform_confirmation_settings', $confirmationSettings);
         }
-        if(isset($_REQUEST['currency_settings'])) {
+        if (isset($_REQUEST['currency_settings'])) {
             $currency_settings = wp_unslash($_REQUEST['currency_settings']);
             update_post_meta($formId, 'wppayform_paymentform_currency_settings', $currency_settings);
         }
@@ -166,11 +172,29 @@ class AdminAjaxHandler
         $builderSettings = wp_unslash($_REQUEST['builder_settings']);
         if (!$formId || !$builderSettings) {
             wp_send_json_error(array(
-                'message' => __('Validation Error, Please try again', 'wppayform')
+                'message' => __('Validation Error, Please try again', 'wppayform'),
+                'errors' => array(
+                    'general' => __('Please add atleast one input element', 'wppayform')
+                )
             ), 423);
         }
-        $submit_button_settings = wp_unslash($_REQUEST['submit_button_settings']);
+        $errors = array();
 
+        foreach ($builderSettings as $builderSetting) {
+            $error = apply_filters('wppayform/validate_component_on_save_'.$builderSetting['type'], false, $builderSetting, $formId);
+            if($error) {
+                $errors[$builderSetting['id']] = $error;
+            }
+        }
+
+        if($errors) {
+            wp_send_json_error(array(
+                'message' => __('Validation failed when saving the form', 'wppayform'),
+                'errors' => $errors
+            ), 423);
+        }
+
+        $submit_button_settings = wp_unslash($_REQUEST['submit_button_settings']);
         update_post_meta($formId, 'wppayform_paymentform_builder_settings', $builderSettings);
         update_post_meta($formId, 'wppayform_submit_button_settings', $submit_button_settings);
 

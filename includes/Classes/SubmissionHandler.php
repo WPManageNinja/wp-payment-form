@@ -32,23 +32,24 @@ class SubmissionHandler
         $elements = Forms::getBuilderSettings($formId);
         $form = Forms::getForm($formId);
 
-        if(!$form) {
+        if (!$form) {
             wp_send_json_error(array(
                 'message' => __('Invalid request. Please try again', 'wppayform')
             ), 423);
         }
 
         $formattedElements = array(
-            'input'         => array(),
-            'payment'       => array(),
+            'input'                  => array(),
+            'payment'                => array(),
             'payment_method_element' => array(),
-            'item_quantity' => array()
+            'item_quantity'          => array()
         );
         foreach ($elements as $element) {
             $formattedElements[$element['group']][$element['id']] = array(
                 'options' => $element['field_options'],
                 'type'    => $element['type'],
-                'id'      => $element['id']
+                'id'      => $element['id'],
+                'label'   => ArrayHelper::get($element['field_options'], 'label')
             );
         }
 
@@ -87,7 +88,7 @@ class SubmissionHandler
 
         $paymentMethod = apply_filters('wppayform/choose_payment_method_for_submission', '', $formattedElements['payment_method_element'], $formId, $form_data);
 
-        if( $formattedElements['payment_method_element'] && !$paymentMethod) {
+        if ($formattedElements['payment_method_element'] && !$paymentMethod) {
             wp_send_json_error(array(
                 'message' => __('Validation failed, because selected payment method could not be found', 'wppayform')
             ), 423);
@@ -207,9 +208,15 @@ class SubmissionHandler
 
         // Validate Normal Inputs
         foreach ($formattedElements['input'] as $elementId => $element) {
+            $error = false;
             if (ArrayHelper::get($element, 'options.required') == 'yes' && empty($form_data[$elementId])) {
-                $errors[$elementId] = $this->getErrorLabel($element, $formId);
+                $error = $this->getErrorLabel($element, $formId);
             }
+            $error = apply_filters('wppayform/validate_data_on_submission_' . $element['type'], $error, $elementId, $element, $form_data);
+            if ($error) {
+                $errors[$elementId] = $error;
+            }
+
             if ($element['type'] == 'customer_name' && !$customerName && isset($form_data[$elementId])) {
                 $customerName = $form_data[$elementId];
             } else if ($element['type'] == 'customer_email' && !$customerEmail && isset($form_data[$elementId])) {
@@ -326,8 +333,16 @@ class SubmissionHandler
     public function parseConfirmation($confirmation, $submission)
     {
         // add payment hash to the url
-        if ($confirmation['redirectTo'] == 'customUrl') {
-            $url = $confirmation['customUrl'];
+        if (
+            ($confirmation['redirectTo'] == 'customUrl' && $confirmation['customUrl']) ||
+            ($confirmation['redirectTo'] == 'customPage' && $confirmation['customPage'])
+        ) {
+            if ($confirmation['redirectTo'] == 'customUrl') {
+                $url = $confirmation['customUrl'];
+            } else {
+                $url = get_permalink(intval($confirmation['customPage']));
+            }
+            $confirmation['redirectTo'] = 'customUrl';
             $url = add_query_arg('wpf_submission', $submission->submission_hash, $url);
             $confirmation['customUrl'] = PlaceholderParser::parse($url, $submission);
         } else if ($confirmation['redirectTo'] == 'samePage') {

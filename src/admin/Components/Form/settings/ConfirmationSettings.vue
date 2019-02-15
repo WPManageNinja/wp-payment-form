@@ -56,6 +56,7 @@
                     .then(response => {
                         this.confirmation_settings = response.data.confirmation_settings;
                         this.editorShortcodes = response.data.editor_shortcodes;
+                        this.pages = response.data.pages;
                     })
                     .fail(error => {
 

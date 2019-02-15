@@ -23,6 +23,7 @@ With easy to use for builder, customers can pay you in less than a minute withou
 - Multiple choice payment items as Select Option
 - Checkbox payment items where users can check which items they want to pay
 - Donation / User inputed payment
+- Quanity Field for any payment item field
 
 = Stripe Checkout Fields =
 - Stripe checkout.js popup option
@@ -38,10 +39,15 @@ With easy to use for builder, customers can pay you in less than a minute withou
 - Radio Field
 - Checkbox Field
 - Date Field
+- Hidden Field
 - Custom HTML Markup
 
 = Currency Settings =
 This plugin support in 135+ currencies (as per stripe), so you can accept any currency type you want. In your site you can set currency on form level. For example, In form A you can accept USD and in Form B you can accept Euro.
+
+= Design Settings =
+You can customize your form design styles from wide range of design settings options including label postion, submit button position, form labels and styling for input fields.
+Your form will look great in any themes.
 
 = Submission Management =
 With built-in submission management, you can see total view of your submissions, which payments are failed and which are paid. You can filter by status and form.
@@ -51,5 +57,5 @@ You can also add any note to a submission.
 
 == Changelog ==
 
-= 1.0.0 - February 09, 2019 =
+= 1.0.0 - February 15, 2019 =
 - initial release

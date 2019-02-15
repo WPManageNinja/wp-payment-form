@@ -8,12 +8,27 @@
             </el-radio-group>
         </el-form-item>
 
-        <el-form-item v-if="pricing_details.one_time_type == 'single'" label="One Time Payment Amount">
-            <el-input-number :precision="2" size="small" v-model="pricing_details.payment_amount" :min="0"></el-input-number>
-        </el-form-item>
+        <template v-if="pricing_details.one_time_type == 'single'">
+            <el-form-item label="One Time Payment Amount">
+                <el-input-number
+                    :precision="2"
+                    size="small"
+                    v-model="pricing_details.payment_amount"
+                    :min="0"></el-input-number>
+            </el-form-item>
+            <el-form-item label="Show Item title and Price">
+                <el-checkbox
+                    true-label="yes"
+                    false-label="no"
+                    v-model="pricing_details.show_onetime_labels">
+                    Show item title and price
+                </el-checkbox>
+            </el-form-item>
+        </template>
 
-        <div v-else-if="pricing_details.one_time_type == 'choose_single' || pricing_details.one_time_type == 'choose_multiple'"
-             class="pricing_key_pair_options">
+        <div
+            v-else-if="pricing_details.one_time_type == 'choose_single' || pricing_details.one_time_type == 'choose_multiple'"
+            class="pricing_key_pair_options">
             <el-form-item label="Pricing Details">
                 <key-pair-pricing :value.sync="pricing_details.multiple_pricing"></key-pair-pricing>
             </el-form-item>
@@ -38,9 +53,7 @@
             KeyPairPricing
         },
         data() {
-            return {
-
-            }
+            return {}
         }
     }
 </script>

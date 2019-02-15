@@ -34,7 +34,7 @@ class RadioComponent extends BaseComponent
                     'type'  => 'text'
                 ),
                 'options'       => array(
-                    'label' => 'Field Options',
+                    'label' => 'Field Choices',
                     'type' => 'key_pair'
                 )
             ),
@@ -44,8 +44,12 @@ class RadioComponent extends BaseComponent
                 'required' => 'no',
                 'options' => array(
                     array(
-                        'label' => '',
-                        'value' => ''
+                        'label' => 'Radio Item 1',
+                        'value' => 'Radio Item 1'
+                    ),
+                    array(
+                        'label' => 'Radio Item 2',
+                        'value' => 'Radio Item 2'
                     )
                 )
             )

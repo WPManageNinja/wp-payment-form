@@ -33,6 +33,11 @@ abstract class BaseComponent
         return $components;
     }
 
+    public function validateOnSave($error, $element, $formId) {
+        return 'OK';
+        return $error;
+    }
+
     public function renderNormalInput($element, $form)
     {
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
@@ -97,7 +102,7 @@ abstract class BaseComponent
             'id'            => $inputId
         );
         if (ArrayHelper::get($fieldOptions, 'required') == 'yes') {
-            $inputAttributes['required'] = 'true';
+            $inputAttributes['required'] = true;
         }
         $controlAttributes = array(
             'id'                => 'wpf_' . $this->elementName,
@@ -142,15 +147,7 @@ abstract class BaseComponent
         $defaultValue = ArrayHelper::get($fieldOptions, 'default_value');
 
         $options = ArrayHelper::get($fieldOptions, 'options', array());
-        $inputAttributes = array(
-            'data-required' => ArrayHelper::get($fieldOptions, 'required'),
-            'name'          => $element['id'],
-            'class'         => $inputClass,
-            'id'            => $inputId
-        );
-        if (ArrayHelper::get($fieldOptions, 'required') == 'yes') {
-            $inputAttributes['required'] = 'true';
-        }
+
         $controlAttributes = array(
             'id'                => 'wpf_' . $this->elementName,
             'data-element_type' => $this->elementName,
@@ -170,9 +167,11 @@ abstract class BaseComponent
                         'id'    => $optionId,
                         'value' => $option['value']
                     );
-
                     if ($option['value'] == $defaultValue) {
                         $attributes['checked'] = 'true';
+                    }
+                    if (ArrayHelper::get($fieldOptions, 'required') == 'yes') {
+                        $attributes['required'] = true;
                     }
                     ?>
                     <div class="form-check">
@@ -199,20 +198,15 @@ abstract class BaseComponent
         $defaultValue = ArrayHelper::get($fieldOptions, 'default_value');
         $defaultValues = explode(',', $defaultValue);
         $options = ArrayHelper::get($fieldOptions, 'options', array());
-        $inputAttributes = array(
-            'data-required' => ArrayHelper::get($fieldOptions, 'required'),
-            'name'          => $element['id'],
-            'class'         => $inputClass,
-            'id'            => $inputId
-        );
-        if (ArrayHelper::get($fieldOptions, 'required') == 'yes') {
-            $inputAttributes['required'] = 'true';
-        }
+
         $controlAttributes = array(
             'id'                => 'wpf_' . $this->elementName,
             'data-element_type' => $this->elementName,
             'class'             => $controlClass
         );
+        if (ArrayHelper::get($fieldOptions, 'required') == 'yes') {
+            $controlAttributes['data-checkbox_required'] = 'yes';
+        }
         ?>
         <div <?php echo $this->builtAttributes($controlAttributes); ?>>
             <?php $this->buildLabel($fieldOptions, $form, array('for' => $inputId)); ?>

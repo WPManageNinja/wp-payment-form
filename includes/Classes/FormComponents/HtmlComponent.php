@@ -10,14 +10,14 @@ class HtmlComponent extends BaseComponent
 {
     public function __construct()
     {
-        parent::__construct('custom_html', 18);
+        parent::__construct('custom_html', 20);
     }
 
     public function component()
     {
         return array(
             'type'            => 'custom_html',
-            'editor_title'    => 'Custom HTML',
+            'editor_title'    => 'HTML Markup',
             'group'           => 'html',
             'postion_group'   => 'general',
             'editor_elements' => array(

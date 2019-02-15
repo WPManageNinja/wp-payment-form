@@ -49,6 +49,18 @@ class CustomerNameComponent extends BaseComponent
     public function render($element, $form, $elements)
     {
         $element['type'] = 'text';
+
+        $defaultValue = $element['field_options']['default_value'];
+        if($defaultValue && strpos($defaultValue, '{current_user.display_name}') !== false) {
+            $currentUserId = get_current_user_id();
+            $replaceValue = '';
+            if($currentUserId) {
+                $currentUser = get_user_by('ID', $currentUserId);
+                $replaceValue = $currentUser->display_name;
+            }
+            $element['field_options']['default_value'] = str_replace('{current_user.display_name}', $replaceValue, $defaultValue);
+        }
+
         $this->renderNormalInput($element, $form);
     }
 }

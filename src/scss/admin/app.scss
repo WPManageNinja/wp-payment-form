@@ -732,3 +732,18 @@ main.el-main.no_shadow {
     padding: 10px 20px;
   }
 }
+
+.el-dropdown-menu__item {
+  line-height: 30px;
+  padding: 0 20px;
+  margin: 0;
+  font-size: 13px;
+  color: rgb(96, 98, 102);
+  cursor: pointer;
+  outline: 0;
+  text-align: left;
+  border-bottom: 1px solid rgb(245, 245, 245);
+  &:last-child {
+    border-bottom: 0;
+  }
+}

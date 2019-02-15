@@ -25,6 +25,10 @@ class SelectComponent extends BaseComponent
                     'label' => 'Field Label',
                     'type'  => 'text'
                 ),
+                'placeholder'   => array(
+                    'label' => 'Placeholder',
+                    'type'  => 'text'
+                ),
                 'required'      => array(
                     'label' => 'Required',
                     'type'  => 'switch'
@@ -34,18 +38,22 @@ class SelectComponent extends BaseComponent
                     'type'  => 'text'
                 ),
                 'options'       => array(
-                    'label' => 'Field Options',
-                    'type' => 'key_pair'
+                    'label' => 'Field Choices',
+                    'type'  => 'key_pair'
                 )
             ),
             'field_options'   => array(
-                'label' => '',
+                'label'       => '',
                 'placeholder' => '',
-                'required' => 'no',
-                'options' => array(
+                'required'    => 'no',
+                'options'     => array(
                     array(
-                        'label' => '',
-                        'value' => ''
+                        'label' => 'Select Item 1',
+                        'value' => 'Select Item 1'
+                    ),
+                    array(
+                        'label' => 'Select Item 2',
+                        'value' => 'Select Item 2'
                     )
                 )
             )

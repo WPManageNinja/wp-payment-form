@@ -30,13 +30,11 @@ class Render
         if($show_description) {
             $form->show_description = $show_description;
         }
-
         if(!$show_title || !$show_description) {
             $titleDescription = get_post_meta($formId, 'wppayform_show_title_description', true);
             $form->show_title = $titleDescription;
             $form->show_description = $titleDescription;
         }
-
         $form->scheduleing_settings = Forms::getSchedulingSettings($formId);
 
         $elements = Forms::getBuilderSettings($formId);
@@ -48,13 +46,17 @@ class Render
             foreach ($elements as $element) {
                 do_action('wppayform/render_component_' . $element['type'], $element, $form, $elements);
             }
+            $form_body = ob_get_clean();
         endif;
-        $this->renderFormFooter($form);
-        $html = ob_get_clean();
         ob_start();
         $this->renderFormHeader($form);
         $header_html = ob_get_clean();
-        return $header_html.$html;
+        ob_start();
+        $this->renderFormFooter($form);
+        $formFooter = ob_get_clean();
+        $html = $header_html.$form_body.$formFooter;
+        
+        return apply_filters('wppayform/rendered_form_html', $html, $form);
     }
 
     public function renderFormHeader($form)
@@ -67,7 +69,6 @@ class Render
         $extraCssClasses = array_keys(array_filter($form->designSettings['extra_styles'], function ($value) {
             return $value == 'yes';
         }));
-
 
         $css_classes = array(
             'wpf_form',

@@ -139,6 +139,7 @@ class Activator
 				type varchar(255),
 				created_by varchar(255),
 				created_by_user_id int(11),
+				title varchar(255),
 				content text,
 				created_at timestamp NULL,
 				updated_at timestamp NULL

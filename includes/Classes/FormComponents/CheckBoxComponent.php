@@ -39,7 +39,19 @@ class CheckBoxComponent extends BaseComponent
                 )
             ),
             'field_options'   => array(
-                'label' => ''
+                'label' => '',
+                'required' => 'no',
+                'default_value' => '',
+                'options'     => array(
+                    array(
+                        'label' => 'Checkbox Item 1',
+                        'value' => 'Checkbox Item 1'
+                    ),
+                    array(
+                        'label' => 'Checkbox Item 2',
+                        'value' => 'Checkbox Item 2'
+                    )
+                )
             )
         );
     }

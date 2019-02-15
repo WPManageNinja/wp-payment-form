@@ -51,13 +51,11 @@
                     <el-tooltip class="item" placement="bottom-start" effect="light">
                         <div slot="content">
                             <h3>After Form Submission Behavior</h3>
-
                             <p>
                                 Select the behavior after form submission, <br>
                                 whether you want to hide or reset the form.
                             </p>
                         </div>
-
                         <i class="el-icon-info el-text-info"></i>
                     </el-tooltip>
                 </template>
@@ -101,6 +99,7 @@
                     :value="page.ID"
                 />
             </el-select>
+            <p>Add the following shortcode to the page to show payment receipt: <code>[wppayform_reciept]</code></p>
         </el-form-item>
 
         <!--Custom URL-->
@@ -116,7 +115,6 @@
                             they have submitted the form.
                         </p>
                     </div>
-
                     <i class="el-icon-info el-text-info" />
                 </el-tooltip>
             </template>
@@ -151,7 +149,8 @@
             return {
                 redirectToOptions: {
                     samePage: 'Same Page',
-                    customUrl: 'To a Custom URL'
+                    customPage: 'To a Page',
+                    customUrl: 'To a Custom URL',
                 }
             }
         }

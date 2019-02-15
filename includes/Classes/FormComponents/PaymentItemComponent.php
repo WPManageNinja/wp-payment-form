@@ -14,6 +14,7 @@ class PaymentItemComponent extends BaseComponent
     public function __construct()
     {
         parent::__construct('payment_item', 1);
+        add_filter('wppayform/validate_component_on_save_payment_item', array($this, 'validateOnSave'), 1, 3);
     }
 
     public function component()
@@ -54,6 +55,7 @@ class PaymentItemComponent extends BaseComponent
                 'pricing_details' => array(
                     'one_time_type'       => 'single',
                     'payment_amount'      => '10.00',
+                    'show_onetime_labels' => 'yes',
                     'multiple_pricing'    => array(
                         array(
                             'label' => '',
@@ -66,6 +68,21 @@ class PaymentItemComponent extends BaseComponent
         );
     }
 
+    public function validateOnSave($error, $element, $formId) {
+        $pricingDetails = ArrayHelper::get($element, 'field_options.pricing_details', array());
+        $paymentType = ArrayHelper::get($pricingDetails, 'one_time_type');
+        if($paymentType == 'single') {
+            if(!ArrayHelper::get($pricingDetails, 'payment_amount')) {
+                $error = __('Payment amount is required for item:', 'wppayform').' '.ArrayHelper::get($element, 'field_options.label');
+            }
+        } else if($paymentType == 'choose_multiple' || $paymentType == 'choose_single') {
+            if(!count(ArrayHelper::get($pricingDetails, 'multiple_pricing', array()))) {
+                $error = __('Pricing Details is required for item:', 'wppayform').' '.ArrayHelper::get($element, 'field_options.label');
+            }
+        }
+        return $error;
+    }
+
     public function render($element, $form, $elements)
     {
         $pricingDetails = ArrayHelper::get($element, 'field_options.pricing_details', array());
@@ -74,7 +91,7 @@ class PaymentItemComponent extends BaseComponent
         }
         $paymentType = ArrayHelper::get($pricingDetails, 'one_time_type');
         if ($paymentType == 'single') {
-            $this->renderSingleAmount($element, ArrayHelper::get($pricingDetails, 'payment_amount'));
+            $this->renderSingleAmount($element, $form, ArrayHelper::get($pricingDetails, 'payment_amount'));
             return;
         } else if ($paymentType == 'choose_single') {
             $displayType = ArrayHelper::get($pricingDetails, 'prices_display_type', 'radio');
@@ -93,11 +110,26 @@ class PaymentItemComponent extends BaseComponent
         }
     }
 
-    public function renderSingleAmount($element, $amount = false)
+    public function renderSingleAmount($element, $form, $amount = false)
     {
-        if ($amount) {
-            echo '<input name=' . $element['id'] . ' type="hidden" class="wpf_payment_item" data-price="' . $amount * 100 . '" value="' . $amount . '" />';
+        $showTitle = ArrayHelper::get($element, 'field_options.pricing_details.show_onetime_labels') == 'yes';
+        if ($showTitle) {
+            $title = ArrayHelper::get($element, 'field_options.label');
+            $currenySettings = Forms::getCurrencyAndLocale($form->ID);
+            $controlAttributes = array(
+                'id'                => 'wpf_' . $element['id'],
+                'data-element_type' => $this->elementName,
+                'class'             => $this->elementControlClass($element)
+            );
+            ?>
+            <div <?php echo $this->builtAttributes($controlAttributes); ?>>
+                <div class="wpf_input_label">
+                    <?php echo $title ?> (<?php echo wpPayFormFormattedMoney($amount * 100, $currenySettings); ?>)
+                </div>
+            </div>
+            <?php
         }
+        echo '<input name=' . $element['id'] . ' type="hidden" class="wpf_payment_item" data-price="' . $amount * 100 . '" value="' . $amount . '" />';
     }
 
     public function renderSingleChoice($type, $prices = array(), $element, $form)
