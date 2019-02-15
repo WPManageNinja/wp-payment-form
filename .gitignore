@@ -3,3 +3,6 @@ node_modules
 assets
 includes/Pro/
 wp-payment-form-pro/
+svn
+svn.php
+wp-payment-form-pro.php

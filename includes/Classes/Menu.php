@@ -26,10 +26,16 @@ class Menu
         if (!$menuPermission) {
             return;
         }
+
+        $title = __('WPPayForms', 'wppayform');
+        if(defined('WPPAYFORMHASPRO')) {
+            $title .= ' Pro';
+        }
+
         global $submenu;
         add_menu_page(
-            __( 'WPPay Forms', 'wppayform' ),
-            __( 'WPPay Forms', 'wppayform' ),
+            $title,
+            $title,
             $menuPermission,
             'wppayform.php',
             array($this, 'render'),

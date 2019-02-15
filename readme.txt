@@ -1,6 +1,6 @@
-=== WPPayForm -  ===
+=== WPPayForm - WordPress Payments Made Simple with Powerful Form Builder and Stripe Payment Method integration ===
 Contributors: techjewel, wpmanageninja
-Tags: form, payment form, contact form, chekout.js, stripe, payments, stripe checkout, stripejs, paymentform
+Tags: secure form, secure payment form, contact form, form, payment form, stripe, stripe form, payments, credit card, stripe checkout, Accept PayPal Payments, credit card payments
 Requires at least: 4.5
 Tested up to: 5.1
 Stable tag: trunk
@@ -21,7 +21,7 @@ Building a payment form has never been easier and with stripe integration, you c
 
 With easy to use form builder, customers can pay you in less than a minute without going to another page.
 
-= Payment Fields =
+== Payment Fields ==
 - Single Payment Amount
 - Multiple choice payment items as Radio Option
 - Multiple choice payment items as Select Option
@@ -29,11 +29,11 @@ With easy to use form builder, customers can pay you in less than a minute witho
 - Donation / User inputted payment
 - Quantity Field for any payment item field
 
-= Stripe Checkout Fields =
+== Stripe Checkout Fields ==
 - Stripe checkout.js popup option
 - Stripe Elements Checkout option with securely embedded feature
 
-= General Input Fields =
+== General Input Fields ==
 - Customer Email
 - Customer Name
 - Single Line text
@@ -46,19 +46,19 @@ With easy to use form builder, customers can pay you in less than a minute witho
 - Hidden Field
 - Custom HTML Markup
 
-= Currency Settings =
+== Currency Settings ==
 This plugin supports 135+ currencies (same as stripe). So you can accept any currency type you want. Each form can have their own currency type. For example, in Form A you can accept USD, and in Form B you can accept Euro.
 
 = Design Settings =
 You can customize your form design styles from a wide range of design settings including label position, submit button position, form labels and styling for input fields. The form will look great in any themes.
 
-= Submission Management =
+== Submission Management ==
 With built-in submission management system, you can see the total view of your submissions, which payments are failed and which are paid. You can filter by status and form.
 
 In individual submission page, you can see the complete data, order items as payment table, payment, and activity. You can also change the payment status easily. The submissions can have their own notes too.
 
-= Documentation and User Guide =
-<h4>Getting Started with WPPayForm</h4>
+== Documentation and User Guide ==
+=Getting Started with WPPayForm=
 <ul>
  	<li><a href="https://wpmanageninja.com/docs/wppayform/getting-started-with-wppayform/install-and-activate-wppayform/" target="_blank" rel="noopener">Install and Activate - WPPayForm</a></li>
  	<li><a href="https://wpmanageninja.com/docs/wppayform/getting-started-with-wppayform/configure-payment-methods-and-currency/" target="_blank" rel="noopener">Configure Payment Methods and Currency</a></li>
@@ -95,6 +95,16 @@ In individual submission page, you can see the complete data, order items as pay
 - Export Data as CSV/Excel/PDF
 
 This plugin is a very planned project, and we have a long term development plan for this. We already invested around 200 human working hours (+coffees) on it, and we have the intention to spend much more on it. Please let us know what features you want, and we are happy to add that in our development sprint.
+
+
+== Installation ==
+
+This section describes how to install the plugin and get it working.
+e.g.
+
+1. Upload the plugin files to the /wp-content/plugins/ directory, or install the plugin through the WordPress plugins screen directly.
+1. Activate the plugin through the ‘Plugins’ screen in WordPress
+1. Use the WPPay Forms -> All Forms -> Add a Form to create a form and get started.
 
 
 == Frequently Asked Questions ==
