@@ -42,6 +42,20 @@ class Menu
             $this->getIcon(),
             25
         );
+        
+        if(defined('WPPAYFORMHASPRO')) {
+            $license = get_option('_wppayform_pro_license_status');
+            if ($license != 'valid') {
+                $submenu['wppayform.php']['activate_license'] = array(
+                    '<span style="color:#f39c12;">Activate License</span>',
+                    $menuPermission,
+                    'admin.php?page=wppayform.php#/settings/licensing',
+                    '',
+                    'wppayform_license_menu'
+                );
+            }
+        }
+
         $submenu['wppayform.php']['all_forms'] = array(
             __('All Forms', 'wppayform'),
             $menuPermission,
@@ -94,7 +108,8 @@ class Menu
                 'image_upload_url' => admin_url('admin-ajax.php?action=wpf_global_settings_handler&route=wpf_upload_image'),
                 'forms_count' => Forms::getTotalCount(),
                 'assets_url' => WPPAYFORM_URL.'assets/',
-                'has_pro' => defined('WPPAYFORMHASPRO') && WPPAYFORMHASPRO
+                'has_pro' => defined('WPPAYFORMHASPRO') && WPPAYFORMHASPRO,
+                'hasValidLicense' => get_option('_wppayform_pro_license_status'),
             ));
         }
     }

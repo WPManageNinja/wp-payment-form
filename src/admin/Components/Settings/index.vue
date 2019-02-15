@@ -47,7 +47,8 @@
         },
         methods: {
             setMenu() {
-                this.form_menus = this.applyFilters('global_settings_menu', [
+
+                let menu = [
                     {
                         route: 'general_settings',
                         title: 'General Settings',
@@ -63,7 +64,16 @@
                         title: 'Paypal Settings',
                         icon: 'dashicons dashicons-category'
                     }
-                ]);
+                ];
+
+                if(this.has_pro) {
+                    menu.push({
+                        route: 'licensing',
+                        title: 'Licensing',
+                        icon: 'dashicons dashicons-category'
+                    })
+                }
+                this.form_menus = this.applyFilters('global_settings_menu', menu);
             }
         },
         mounted() {

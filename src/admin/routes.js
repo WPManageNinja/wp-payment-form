@@ -16,6 +16,7 @@ import StripeSettings from './Components/Settings/StripeSettings'
 import PayPalSettings from './Components/Settings/PayPalSettings';
 import GeneralSettings from './Components/Settings/GeneralSettings'
 import FormDesignSettings from './Components/Form/settings/FormDesignSettings'
+import Licensing from './Components/Settings/License'
 
 const globalSettingsViewChilderRoutes = window.WPPayForms.applyFilters('wpf_global_settings_childern_routes', [
     {
@@ -33,6 +34,11 @@ const globalSettingsViewChilderRoutes = window.WPPayForms.applyFilters('wpf_glob
         path: 'paypal-settings',
         component: PayPalSettings
     },
+    {
+        name: 'licensing',
+        path: 'licensing',
+        component: Licensing
+    }
 
 ]);
 const formEditorChildrenRoutes = window.WPPayForms.applyFilters('wpf_main_children_roues', [
