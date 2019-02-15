@@ -51,12 +51,11 @@ class Menu
             $menuPermission,
             'admin.php?page=wppayform.php#/settings/general-settings',
         );
-        // We will add support in the next version
-//        $submenu['wppayform.php']['support'] = array(
-//            __('Support', 'wppayform'),
-//            $menuPermission,
-//            'admin.php?page=wppayform.php#/support',
-//        );
+        $submenu['wppayform.php']['support'] = array(
+            __('Support', 'wppayform'),
+            $menuPermission,
+            'admin.php?page=wppayform.php#/support',
+        );
     }
 
     public function render() {

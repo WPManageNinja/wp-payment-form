@@ -747,3 +747,54 @@ main.el-main.no_shadow {
     border-bottom: 0;
   }
 }
+
+.wpf_support_block {
+  background: white;
+  margin-top: 20px;
+  .support_block_header {
+    padding: 10px 15px;
+    border-bottom: 1px solid rgb(221, 221, 221);
+    h3 {
+      margin: 0;
+    }
+  }
+
+  .support_block_body {
+    padding: 10px 20px;
+    ul.support_block_lists {
+      h4 {
+        font-size: 15px;
+        margin: 0 0 10px;
+        display: block;
+      }
+      li {
+        ul {
+          margin-bottom: 30px;
+          margin-left: 20px;
+          list-style: disc;
+          li  a{
+            text-decoration: none;
+          }
+        }
+      }
+    }
+  }
+
+  ul.support_items {
+    margin: 15px 0px;
+    li {
+      list-style: disc;
+      margin-left: 30px;
+      line-height: 25px;
+      font-size: 14px;
+    }
+  }
+}
+
+.wpf_pagination {
+  text-align: right;
+  margin-top: 20px;
+}
+
+
+

@@ -1,4 +1,4 @@
-import DashBoardStats from './Components/Dashboard';
+import SupportAndDocumentation from './Components/SupportAndDocumentation';
 import GlobalView from './Components/Global/index';
 import AllForms from './Components/Forms/AllForms';
 
@@ -99,7 +99,7 @@ export const routes = [
             {
                 path: '/support',
                 name: 'support',
-                component: DashBoardStats
+                component: SupportAndDocumentation
             }
         ]
     },

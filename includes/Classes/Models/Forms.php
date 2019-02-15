@@ -23,7 +23,7 @@ class Forms
             'orderby'        => 'date',
             'order'          => 'DESC',
             'post_type'      => 'wp_payform',
-            'post_status'    => 'any',
+            'post_status'    => 'publish',
         );
         $args = wp_parse_args($args, $argsDefault);
 
@@ -245,6 +245,10 @@ class Forms
     public static function deleteForm($formID)
     {
         wp_delete_post($formID, true);
+        wpPayFormDB()->table('posts')
+            ->where('ID', $formID)
+            ->delete();
+
         wpPayFormDB()->table('wpf_submissions')
             ->where('form_id', $formID)
             ->delete();

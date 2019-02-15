@@ -67,6 +67,18 @@
                         </template>
                     </el-table-column>
                 </el-table>
+                <div class="wpf_pagination">
+                    <el-pagination
+                        background
+                        @size-change="handleSizeChange"
+                        @current-change="handleCurrentChange"
+                        :current-page="page_number"
+                        :page-size="per_page"
+                        :page-sizes="pageSizes"
+                        layout="total, sizes, prev, pager, next"
+                        :total="total">
+                    </el-pagination>
+                </div>
             </div>
         </div>
         <!-- Load Modals-->
@@ -100,7 +112,7 @@
 
     export default {
         name: 'AllForms',
-        components: {CreateForm, Welcome},
+        components: { CreateForm, Welcome },
         comments: {
             Welcome
         },
@@ -109,13 +121,14 @@
                 createFormModal: false,
                 paymentForms: [],
                 hasForms: false,
-                per_page: 10,
+                per_page: 20,
                 page_number: 1,
                 search_string: '',
                 total: 0,
                 loading: false,
                 deleteDialogVisible: false,
                 deleteingForm: {},
+                pageSizes: [10, 20, 30, 40, 50, 100, 200],
                 forms_count: parseInt(window.wpPayFormsAdmin.forms_count)
             }
         },
@@ -168,6 +181,14 @@
             },
             handleDeleteClose() {
                 this.this.deleteingForm = {};
+            },
+            handleCurrentChange(val) {
+                this.page_number = val;
+                this.fetchForms();
+            },
+            handleSizeChange(val) {
+                this.per_page = val;
+                this.fetchForms();
             }
         },
         mounted() {

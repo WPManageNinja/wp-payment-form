@@ -1,39 +1,36 @@
 <template>
     <div class="ninja_intro_welcome">
-        <h2>Welcome to WP Payment Form</h2>
-        <p>Thank you for installing WP Payment Form - Simply accept payments in minutes</p>
+        <h2>Welcome to WPPayForm</h2>
+        <p>Thank you for installing WPPayForm - WordPress Payments Made Simple</p>
         <div class="ninja_actions">
             <el-button type="success" @click="create">
-                Create a Payment Form
+                Create a Form
             </el-button>
         </div>
-        <template v-if="docs.length">
-            <hr/>
-            <div class="ninja_docs">
-                <h4>WP Payment Form Documentation:</h4>
-                <ul>
-                    <li>
-                        <a target="_blank"
-                           href="https://wpmanageninja.com/docs/ninja-tables/configure-tables/?ninja_intro=1">
-                            Demo and Basic Settings
-                        </a>
-                    </li>
-                    <li>
-                        <a target="_blank"
-                           href="https://wpmanageninja.com/docs/ninja-tables/setting-up-a-table/?ninja_intro=1">
-                            Configure Stripe Payment API
-                        </a>
-                    </li>
-                    <li>
-                        <a target="_blank"
-                           href="https://wpmanageninja.com/docs/ninja-tables/configure-responsive-breakdowns-for-table/?ninja_intro=1">
-                            Setting Up a Form
-                        </a>
-                    </li>
-                </ul>
-            </div>
-        </template>
-
+        <hr/>
+        <div class="ninja_docs">
+            <h4>WPPayForm Documentation:</h4>
+            <ul>
+                <li>
+                    <a target="_blank"
+                       href="https://wppayform.wpmanageninja.com/?payform_intro=1">
+                        View Available Demos
+                    </a>
+                </li>
+                <li>
+                    <a target="_blank"
+                       href="https://wpmanageninja.com/docs/wppayform/getting-started-with-wppayform/configure-payment-methods-and-currency/?payform_intro=1">
+                        Configure Stripe Payment API
+                    </a>
+                </li>
+                <li>
+                    <a target="_blank"
+                       href="https://wpmanageninja.com/docs/wppayform/form-configuration-wppayform/create-your-first-payment-form-under-a-minute-and-accept-payments/">
+                        Setting up a Form in a minute and accept payments
+                    </a>
+                </li>
+            </ul>
+        </div>
     </div>
 </template>
 

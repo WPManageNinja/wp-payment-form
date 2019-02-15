@@ -1,7 +1,7 @@
 <template>
     <div class="wppaymform_global">
         <div class="wppayform_main_nav">
-            <span class="plugin-name">WP PayForm</span>
+            <span class="plugin-name">WPPayForm</span>
             <router-link v-for="menuItem in topMenus" :key="menuItem.route" active-class="ninja-tab-active" exact :class="['ninja-tab']" :to="{ name: menuItem.route }">
                 {{ menuItem.title }}
             </router-link>
@@ -33,10 +33,10 @@
                         route: 'general_settings',
                         title: 'Settings'
                     },
-                    // {
-                    //     route: 'support',
-                    //     title: 'Support'
-                    // }
+                    {
+                        route: 'support',
+                        title: 'Support'
+                    }
                 ])
             }
         },

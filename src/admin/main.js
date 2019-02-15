@@ -40,7 +40,7 @@ window.WPPayForms.Vue.mixin({
     data(){
         return {
             has_pro: window.wpPayFormsAdmin.has_pro,
-            pro_purchase_url: '#'
+            pro_purchase_url: 'https://wpmanageninja.com/wppayform-pro-wordpress-payments-form-builder/?utm_source=upgrade&utm_medium=url&utm_campaign=wppayform_upgrade'
         }
     },
     filters: {

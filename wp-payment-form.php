@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: WP Payment Form
- * Plugin URI:  https://github.com/WPManageNinja/wp-payment-form
+ * Plugin URI:  https://wppayform.wpmanageninja.com/
  * Description: Create and Accept Payments in minutes with Stripe
  * Author: WPManageNinja LLC
  * Author URI:  https://wpmanageninja.com
@@ -88,8 +88,8 @@ class WPPayForm
         // Register the shortcode
         add_shortcode('wppayform', function ($args) {
             $args = shortcode_atts(array(
-                'id' => '',
-                'show_title' => false,
+                'id'               => '',
+                'show_title'       => false,
                 'show_description' => false
             ), $args);
 
@@ -158,14 +158,14 @@ class WPPayForm
 
     public function textDomain()
     {
-        load_plugin_textdomain( 'wppayform', false, basename( dirname( __FILE__ ) ) . '/languages' );
+        load_plugin_textdomain('wppayform', false, basename(dirname(__FILE__)) . '/languages');
     }
 
     public function loadDependecies()
     {
         require_once(WPPAYFORM_DIR . 'includes/autoload.php');
-        if(file_exists(WPPAYFORM_DIR.'includes/Pro/init.php')) {
-            require_once WPPAYFORM_DIR.'includes/Pro/init.php';
+        if (file_exists(WPPAYFORM_DIR . 'includes/Pro/init.php')) {
+            require_once WPPAYFORM_DIR . 'includes/Pro/init.php';
         }
     }
 }
@@ -173,7 +173,6 @@ class WPPayForm
 add_action('plugins_loaded', function () {
     (new WPPayForm())->boot();
 });
-
 register_activation_hook(__FILE__, function ($newWorkWide) {
     require_once(WPPAYFORM_DIR . 'includes/Classes/Activator.php');
     $activator = new \WPPayForm\Classes\Activator();

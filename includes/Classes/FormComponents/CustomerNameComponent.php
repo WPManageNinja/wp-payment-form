@@ -2,6 +2,8 @@
 
 namespace WPPayForm\Classes\FormComponents;
 
+use WPPayForm\Classes\ArrayHelper;
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -49,8 +51,7 @@ class CustomerNameComponent extends BaseComponent
     public function render($element, $form, $elements)
     {
         $element['type'] = 'text';
-
-        $defaultValue = $element['field_options']['default_value'];
+        $defaultValue = ArrayHelper::get($element, 'field_options.default_value');
         if($defaultValue && strpos($defaultValue, '{current_user.display_name}') !== false) {
             $currentUserId = get_current_user_id();
             $replaceValue = '';
