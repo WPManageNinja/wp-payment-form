@@ -24,22 +24,25 @@ class ProcessDemoPage
             add_action('pre_get_posts', array($this, 'pre_get_posts'), 100, 1);
             add_filter('post_thumbnail_html', '__return_empty_string');
             add_filter('get_the_excerpt', function ($content) {
-                return '';
-            });
+                if (in_the_loop()) {
+                    $content = '<div style="text-align: center" class="demo"><h4>WP PayForm Demo Preview ( From ID: ' . $form->ID . ' )</h4></div><hr />';
+                    $content .= do_shortcode('[wppayform id="' . $form->ID . '"]');
+                }
+                return $content;
+            },999, 1);
             add_filter('the_title', function ($title) use ($form) {
                 if (in_the_loop()) {
                     return $form->post_title;
                 }
-
                 return $title;
             }, 100, 1);
             add_filter('the_content', function ($content) use ($form) {
                 if (in_the_loop()) {
                     $content = '<div style="text-align: center" class="demo"><h4>WP PayForm Demo Preview ( From ID: ' . $form->ID . ' )</h4></div><hr />';
-                    $content .= '[wppayform id=' . $form->ID . ']';
+                    $content .= do_shortcode('[wppayform id="' . $form->ID . '"]');
                 }
                 return $content;
-            });
+            },999,1);
         }
     }
 
