@@ -446,6 +446,6 @@ class Stripe
     public function needToCreateCustomer($submission)
     {
         // @todo: need to make it configarable
-        return defined('WPPAYFORM_CREATE_CUSTOMER');
+        return defined('WPPAYFORM_CREATE_CUSTOMER') && WPPAYFORM_CREATE_CUSTOMER;
     }
 }
