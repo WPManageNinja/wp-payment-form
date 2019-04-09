@@ -67,7 +67,7 @@ class Charge
             $errors['currency'] = __('Currency is required', 'wppayform');
         }
         // Validate the token
-        if(empty($args['source'])) {
+        if(empty($args['source'])  && empty($args['customer'])) {
             $errors['source'] = __('Stripe Token is required', 'wppayform');
         }
 

@@ -1,6 +1,6 @@
-=== WPPayForm - WordPress Payments Made Simple with Powerful Form Builder and Stripe Payment Method integration ===
+=== WP Payments Form - Simply Accept Payments via Stripe and Paypal ===
 Contributors: techjewel, wpmanageninja
-Tags: secure form, secure payment form, contact form, form, payment form, stripe, stripe form, payments, credit card, stripe checkout, Accept PayPal Payments, credit card payments
+Tags: wp pay form, secure form, secure payment form, contact form, form, payment form, stripe, stripe form, payments, credit card, stripe checkout, Accept PayPal Payments, credit card payments
 Requires at least: 4.5
 Tested up to: 5.1
 Stable tag: trunk
@@ -17,9 +17,15 @@ Secure Optimized Payment Form Builder with Integrated Stripe Payment Method.
 
 With Stripe checkout and built-in form builders, you can build any forms ranging from single payment amount/multiple payment items. Or, you can allow users to pay custom amount.
 
+== Intro Video ==
+[youtube https://www.youtube.com/watch?v=zVjNnKb4bHs]
+
 Building a payment form has never been easier and with stripe integration, you can accept payment on form submission.
 
 With easy to use form builder, customers can pay you in less than a minute without going to another page.
+
+== Create a form and accept payment via Stripe Checkout ==
+[youtube https://www.youtube.com/watch?v=E8_7tBxuKfc]
 
 == Payment Fields ==
 - Single Payment Amount
@@ -57,8 +63,23 @@ With built-in submission management system, you can see the total view of your s
 
 In individual submission page, you can see the complete data, order items as payment table, payment, and activity. You can also change the payment status easily. The submissions can have their own notes too.
 
+
+== Available Demos ==
+<ul>
+<li><a href="https://wppayform.wpmanageninja.com/">Stripe Quick Checkout</a></li>
+<li><a href="https://wppayform.wpmanageninja.com/stripe-simple-checkout-with-address/">Stripe Quick Checkout with Address</a></li>
+<li><a href="https://wppayform.wpmanageninja.com/embedded-form/">Stripe Embedded Form</a></li>
+<li><a href="https://wppayform.wpmanageninja.com/simple-embedded-form/">Simple Embedded Form with Verification</a></li>
+<li><a href="https://wppayform.wpmanageninja.com/donation-form/">Donation Form</a></li>
+<li><a href="https://wppayform.wpmanageninja.com/custom-fields/">Custom Fields</a></li>
+<li><a href="https://wppayform.wpmanageninja.com/select-amount-field/">Select Amount with Quantity Field</a></li>
+<li><a href="https://wppayform.wpmanageninja.com/enter-or-select-quantity/">Enter or Select Quantity</a></li>
+<li><a href="https://wppayform.wpmanageninja.com/alternate-locale-and-currency/">Alternate Locale and Currency</a></li>
+<li><a href="https://wppayform.wpmanageninja.com/quick-pay-by-paypal/">Quick Pay by PayPal</a></li>
+</ul>
+
 == Documentation and User Guide ==
-=Getting Started with WPPayForm=
+<h4>Getting Started with WPPayForm</h4>
 <ul>
  	<li><a href="https://wpmanageninja.com/docs/wppayform/getting-started-with-wppayform/install-and-activate-wppayform/" target="_blank" rel="noopener">Install and Activate - WPPayForm</a></li>
  	<li><a href="https://wpmanageninja.com/docs/wppayform/getting-started-with-wppayform/configure-payment-methods-and-currency/" target="_blank" rel="noopener">Configure Payment Methods and Currency</a></li>
@@ -155,6 +176,14 @@ You are most welcome. You can do the following:
     <li>Need Expert Support? <a target="_blank" href="https://wpmanageninja.com/support-tickets/">Open a support Ticket</a></li>
 </ul>
 
+
+== Other Plugins by WPManageNinja ==
+<ul>
+<li><a href="https://wordpress.org/plugins/ninja-tables/" target="_blank">Ninja Tables – WP Data Table Plugin for WordPress</a></li>
+<li><a href="https://wordpress.org/plugins/fluentform/" target="_blank">WP Fluent Form – Contact Form Plugin for WordPress with Advanced Form Builder Features</a></li>
+<li><a href="https://wpmanageninja.com/azonpress/" target="_blank">AzonPress - The Most Intuitive WordPress Plugin for Amazon Affiliates</a></li>
+</ul>
+
 == Screenshots ==
 
 1. Form Builder and Showing how it works
@@ -166,6 +195,10 @@ You are most welcome. You can do the following:
 7. View Single Submission
 
 == Changelog ==
+
+= 1.0.1 - March 01, 2019 =
+- Fix small bugs
+- Fix pagination issues for form entries
 
 = 1.0.0 - February 15, 2019 =
 - initial release

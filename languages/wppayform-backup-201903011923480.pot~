@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WPPayForm\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-01 19:23+0000\n"
+"POT-Creation-Date: 2019-02-14 10:03+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -15,7 +15,7 @@ msgstr ""
 "X-Generator: Loco https://localise.biz/\n"
 "X-Loco-Version: 2.2.0; wp-5.0.3"
 
-#: wp-payment-form.php:115 wp-payment-form.php:118
+#: wp-payment-form.php:113 wp-payment-form.php:116
 msgid "Sorry, no submission receipt found, Please check your receipt URL"
 msgstr ""
 
@@ -23,16 +23,16 @@ msgstr ""
 msgid "Sorry, You do not have permission to do this action: "
 msgstr ""
 
-#: includes/Classes/Activator.php:166
+#: includes/Classes/Activator.php:165
 msgid "Payment Confirmation"
 msgstr ""
 
-#: includes/Classes/Activator.php:177
+#: includes/Classes/Activator.php:176
 msgid "Payment Failed"
 msgstr ""
 
 #. %s: The [simpay_errors] shortcode
-#: includes/Classes/Activator.php:179
+#: includes/Classes/Activator.php:178
 msgid ""
 "We're sorry, but your transaction failed to process. Please try again or "
 "contact site support."
@@ -54,27 +54,21 @@ msgstr ""
 msgid "Form successfully updated"
 msgstr ""
 
-#: includes/Classes/AdminAjaxHandler.php:165
-#: includes/Classes/AdminAjaxHandler.php:202
-#: includes/Classes/AdminAjaxHandler.php:243
+#: includes/Classes/AdminAjaxHandler.php:159
+#: includes/Classes/AdminAjaxHandler.php:178
+#: includes/Classes/AdminAjaxHandler.php:219
 #: includes/Classes/GlobalSettingsHandler.php:67
+#: includes/Pro/Classes/SchedulingSettings.php:64
 #: includes/Classes/PaymentMethods/Stripe/Stripe.php:283
+#: includes/Pro/Gateways/PayPal/Paypal.php:690
 msgid "Settings successfully updated"
 msgstr ""
 
-#: includes/Classes/AdminAjaxHandler.php:175
+#: includes/Classes/AdminAjaxHandler.php:169
 msgid "Validation Error, Please try again"
 msgstr ""
 
-#: includes/Classes/AdminAjaxHandler.php:177
-msgid "Please add atleast one input element"
-msgstr ""
-
-#: includes/Classes/AdminAjaxHandler.php:192
-msgid "Validation failed when saving the form"
-msgstr ""
-
-#: includes/Classes/AdminAjaxHandler.php:225
+#: includes/Classes/AdminAjaxHandler.php:201
 msgid "Selected form successfully deleted"
 msgstr ""
 
@@ -90,47 +84,43 @@ msgstr ""
 msgid "Something is wrong when uploading the file"
 msgstr ""
 
-#: includes/Classes/Menu.php:30
-msgid "WPPayForms"
+#: includes/Classes/Menu.php:31 includes/Classes/Menu.php:32
+msgid "WPPay Forms"
 msgstr ""
 
-#: includes/Classes/Menu.php:60
+#: includes/Classes/Menu.php:40
 msgid "All Forms"
 msgstr ""
 
-#: includes/Classes/Menu.php:65
+#: includes/Classes/Menu.php:45
 msgid "Entries"
 msgstr ""
 
-#: includes/Classes/Menu.php:70
+#: includes/Classes/Menu.php:50
 msgid "Settings"
 msgstr ""
 
-#: includes/Classes/Menu.php:75
-msgid "Support"
-msgstr ""
-
-#: includes/Classes/Menu.php:99
+#: includes/Classes/Menu.php:80
 msgid "All Payment Forms"
 msgstr ""
 
-#: includes/Classes/Menu.php:102
+#: includes/Classes/Menu.php:83
 msgid "Pending"
 msgstr ""
 
-#: includes/Classes/Menu.php:103
+#: includes/Classes/Menu.php:84
 msgid "Processing"
 msgstr ""
 
-#: includes/Classes/Menu.php:104
+#: includes/Classes/Menu.php:85
 msgid "Paid"
 msgstr ""
 
-#: includes/Classes/Menu.php:105
+#: includes/Classes/Menu.php:86
 msgid "Failed"
 msgstr ""
 
-#: includes/Classes/Menu.php:106
+#: includes/Classes/Menu.php:87
 msgid "Refunded"
 msgstr ""
 
@@ -138,19 +128,20 @@ msgstr ""
 msgid "Invalid request. Please try again"
 msgstr ""
 
-#: includes/Classes/SubmissionHandler.php:93
+#: includes/Classes/SubmissionHandler.php:92
 msgid "Validation failed, because selected payment method could not be found"
 msgstr ""
 
-#: includes/Classes/SubmissionHandler.php:196
+#: includes/Classes/SubmissionHandler.php:195
+#: includes/Pro/Gateways/PayPal/Paypal.php:130
 msgid "Form is successfully submitted"
 msgstr ""
 
-#: includes/Classes/SubmissionHandler.php:246
+#: includes/Classes/SubmissionHandler.php:239
 msgid "Form Validation failed"
 msgstr ""
 
-#: includes/Classes/SubmissionHandler.php:329
+#: includes/Classes/SubmissionHandler.php:322
 msgid " is required"
 msgstr ""
 
@@ -174,136 +165,120 @@ msgstr ""
 msgid "Selected submission successfully deleted"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:179
+#: includes/Classes/Builder/Render.php:178
 msgid "Previous Month"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:180
+#: includes/Classes/Builder/Render.php:179
 msgid "Next Month"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:182
+#: includes/Classes/Builder/Render.php:181
 msgid "January"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:183
+#: includes/Classes/Builder/Render.php:182
 msgid "February"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:184
+#: includes/Classes/Builder/Render.php:183
 msgid "March"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:185
+#: includes/Classes/Builder/Render.php:184
 msgid "April"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:186
+#: includes/Classes/Builder/Render.php:185
 msgid "May"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:187
+#: includes/Classes/Builder/Render.php:186
 msgid "June"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:188
+#: includes/Classes/Builder/Render.php:187
 msgid "July"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:189
+#: includes/Classes/Builder/Render.php:188
 msgid "August"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:190
+#: includes/Classes/Builder/Render.php:189
 msgid "September"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:191
+#: includes/Classes/Builder/Render.php:190
 msgid "October"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:192
+#: includes/Classes/Builder/Render.php:191
 msgid "November"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:193
+#: includes/Classes/Builder/Render.php:192
 msgid "December"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:195
+#: includes/Classes/Builder/Render.php:194
 msgid "Sunday"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:196
+#: includes/Classes/Builder/Render.php:195
 msgid "Monday"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:197
+#: includes/Classes/Builder/Render.php:196
 msgid "Tuesday"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:198
+#: includes/Classes/Builder/Render.php:197
 msgid "Wednesday"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:199
+#: includes/Classes/Builder/Render.php:198
 msgid "Thursday"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:200
+#: includes/Classes/Builder/Render.php:199
 msgid "Friday"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:201
+#: includes/Classes/Builder/Render.php:200
 msgid "Saturday"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:204
+#: includes/Classes/Builder/Render.php:203
 msgid "Sun"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:205
+#: includes/Classes/Builder/Render.php:204
 msgid "Mon"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:206
+#: includes/Classes/Builder/Render.php:205
 msgid "Tue"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:207
+#: includes/Classes/Builder/Render.php:206
 msgid "Wed"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:208
+#: includes/Classes/Builder/Render.php:207
 msgid "Thu"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:209
+#: includes/Classes/Builder/Render.php:208
 msgid "Fri"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:210
+#: includes/Classes/Builder/Render.php:209
 msgid "Sat"
 msgstr ""
 
 #: includes/Classes/FormComponents/ChoosePaymentMethodComponent.php:73
 msgid "Select Payment Method"
-msgstr ""
-
-#: includes/Classes/FormComponents/CustomerEmailComponent.php:63
-msgid "Valid email address is required for field:"
-msgstr ""
-
-#: includes/Classes/FormComponents/HiddenInputComponent.php:47
-msgid "Value is required for item:"
-msgstr ""
-
-#: includes/Classes/FormComponents/PaymentItemComponent.php:76
-msgid "Payment amount is required for item:"
-msgstr ""
-
-#: includes/Classes/FormComponents/PaymentItemComponent.php:80
-msgid "Pricing Details is required for item:"
 msgstr ""
 
 #: includes/Classes/Integrations/TinyMceBlock.php:40
@@ -354,17 +329,33 @@ msgstr ""
 msgid "Payment Total"
 msgstr ""
 
-#: includes/Classes/Models/Forms.php:313
+#: includes/Classes/Models/Forms.php:309
 msgid "Number of entry has been exceeds, Please check back later"
 msgstr ""
 
-#: includes/Classes/Models/Forms.php:319
+#: includes/Classes/Models/Forms.php:315
 msgid ""
 "Form submission time schedule is not started yet. Please check back later"
 msgstr ""
 
-#: includes/Classes/Models/Forms.php:324
+#: includes/Classes/Models/Forms.php:320
 msgid "You need to login to submit this form"
+msgstr ""
+
+#: includes/Pro/Classes/SchedulingSettings.php:136
+msgid "Submission limit has been excceded."
+msgstr ""
+
+#: includes/Pro/Classes/SchedulingSettings.php:152
+msgid "Form submission is not started yet."
+msgstr ""
+
+#: includes/Pro/Classes/SchedulingSettings.php:158
+msgid "Form submission is now closed."
+msgstr ""
+
+#: includes/Pro/Classes/SchedulingSettings.php:171
+msgid "You must be logged in to submit the form."
 msgstr ""
 
 #: includes/views/receipt/customer_details.php:2
@@ -444,19 +435,78 @@ msgstr ""
 msgid "Your Card info (Powered By Stripe)"
 msgstr ""
 
-#. Name of the plugin
+#: includes/Pro/Gateways/PayPal/Paypal.php:40
+msgid "Looks like you have canceled the payment from paypal"
+msgstr ""
+
+#: includes/Pro/Gateways/PayPal/Paypal.php:126
+msgid "Redirect to paypal for payment"
+msgstr ""
+
+#: includes/Pro/Gateways/PayPal/Paypal.php:136
+msgid "Your are redirecting to paypal now"
+msgstr ""
+
+#: includes/Pro/Gateways/PayPal/Paypal.php:212
+msgid "Payment failed due to invalid PayPal business email."
+msgstr ""
+
+#: includes/Pro/Gateways/PayPal/Paypal.php:221
+msgid "Payment failed due to invalid currency in PayPal IPN"
+msgstr ""
+
+#: includes/Pro/Gateways/PayPal/Paypal.php:241
+msgid "Payment failed due to invalid amount in PayPal IPN."
+msgstr ""
+
+#: includes/Pro/Gateways/PayPal/Paypal.php:248
+msgid "Payment failed due to invalid purchase key in PayPal IPN."
+msgstr ""
+
+#: includes/Pro/Gateways/PayPal/Paypal.php:267
+msgid "Payment marked as pending. You may take a look of the payment in paypal"
+msgstr ""
+
+#: includes/Pro/Gateways/PayPal/Paypal.php:325
+#, php-format
+msgid "Partial PayPal refund processed: %s amount: "
+msgstr ""
+
+#: includes/Pro/Gateways/PayPal/Paypal.php:335
+#, php-format
+msgid "PayPal Payment #%s Refunded for reason: %s"
+msgstr ""
+
+#: includes/Pro/Gateways/PayPal/Paypal.php:343
+#, php-format
+msgid "PayPal Refund Transaction ID: %s"
+msgstr ""
+
+#: includes/Pro/Gateways/PayPal/Paypal.php:418
+#, php-format
 msgid ""
-"WPPayForm - Build Payment Forms and Accept Payment using Stripe or PayPal"
+"Transaction Marked as paid and PayPal Transaction ID: %s and Payer Paypal "
+"Email ID: %s"
+msgstr ""
+
+#: includes/Pro/Gateways/PayPal/Paypal.php:667
+msgid "Please enter valid email address"
+msgstr ""
+
+#: includes/Pro/Gateways/PayPal/PayPalElement.php:64
+msgid "PayPal Payment Gateway"
+msgstr ""
+
+#. Name of the plugin
+msgid "WP Payment Form"
 msgstr ""
 
 #. Description of the plugin
-msgid ""
-"Create and Accept Payments in minutes with Stripe, PayPal with built-in form "
-"builder"
+msgid "Create and Accept Payments in minutes with Stripe"
 msgstr ""
 
 #. URI of the plugin
-msgid "https://wppayform.wpmanageninja.com/"
+msgid "https://github.com/WPManageNinja/wp-payment-form"
 msgstr ""
 
 #. Author of the plugin

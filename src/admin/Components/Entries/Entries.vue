@@ -201,12 +201,12 @@
                 this.getEntries();
             },
             pageSizeChange(pageSize) {
-                this.query.per_page = pageSize;
+                this.pagination.per_page = pageSize;
                 this.getEntries()
             },
             changePage(page) {
                 this.pagination.current_page = page;
-                this.query.page_number = page;
+                this.pagination.page_number = page;
                 this.getEntries()
             },
             getFormattedMoney(row) {

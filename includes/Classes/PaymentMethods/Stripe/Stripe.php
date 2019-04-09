@@ -111,6 +111,64 @@ class Stripe
             $metadata['customer_name'] = $submission->customer_name;
         }
         $paymentArgs['metadata'] = $metadata;
+
+
+        $customer = null;
+
+        if($this->needToCreateCustomer($submission)) {
+            // We have to create customer and then make the payment
+            $description = 'Customer for Submission ID: '.$submissionId;
+            $customerEmail = null;
+            $customerMeta = array();
+            if($submission->customer_email) {
+                $description = 'Customer for '.$submission->customer_email;
+                $customerEmail = $submission->customer_email;
+                $customerMeta['email'] = $submission->customer_email;
+            }
+            if(isset($metadata['customer_name'])) {
+                $customerMeta['name'] = $metadata['customer_name'];
+            }
+            $customerMeta['payform_id'] = $form->ID;
+
+            $customerArgs = array(
+                'description' => $description,
+                'email' => $customerEmail,
+                'metadata' => $customerMeta,
+                'source' => $token
+            );
+            $customerArgs = apply_filters('wppayform/stripe_customer_args', $customerArgs, $metadata, $submission);
+            $customer = Customer::createCustomer($customerArgs);
+
+            $customerStatus = true;
+
+            if (is_wp_error($customer)) {
+                $customerStatus = false;
+                $errorCode = $customer->get_error_code();
+                $message = $customer->get_error_message($errorCode);
+            } else if (!$customer) {
+                $customerStatus = false;
+                $message = __('Customer Create Failed via stripe. Please try again', 'wppayform');
+            }
+
+            if(!$customerStatus) {
+                $this->makeCustomerCreateFailed($submission, $transaction, $form, $paymentMode, $customer, $message);
+            }
+
+            SubmissionActivity::createActivity(array(
+                'form_id'       => $form->ID,
+                'submission_id' => $submissionId,
+                'type'          => 'activity',
+                'created_by'    => 'PayForm BOT',
+                'content'       => __('Stripe Customer created. Customer ID: ', 'wppayform').$customer->id
+            ));
+
+        }
+
+        if($customer) {
+            $paymentArgs['customer'] = $customer->id;
+            unset($paymentArgs['source']);
+        }
+
         $charge = Charge::charge($paymentArgs);
 
         $paymentStatus = true;
@@ -125,7 +183,6 @@ class Stripe
         }
 
         if (!$paymentStatus) {
-
             do_action('wppayform/form_payment_stripe_failed', $transaction, $form->ID, $charge);
             do_action('wppayform/form_payment_failed', $transaction, $form->ID, $charge);
 
@@ -162,11 +219,16 @@ class Stripe
             'payment_method' => 'stripe',
             'payment_mode'   => $paymentMode,
         ));
-        $submissionModel->update($submissionId, array(
+
+        $submissionUpdateData = array(
             'payment_status' => 'paid',
             'payment_method' => 'stripe',
             'payment_mode'   => $paymentMode,
-        ));
+        );
+        if($customer) {
+            $submissionUpdateData['customer_id'] = $customer->id;
+        }
+        $submissionModel->update($submissionId, $submissionUpdateData);
 
         SubmissionActivity::createActivity(array(
             'form_id'       => $form->ID,
@@ -179,6 +241,39 @@ class Stripe
         $transaction = $transactionModel->getTransaction($transactionId);
         do_action('wppayform/form_payment_success_stripe', $transaction, $transaction->form_id, $charge);
         do_action('wppayform/form_payment_success', $transaction, $transaction->form_id, $charge);
+    }
+
+
+    private function makeCustomerCreateFailed($submission, $transaction, $form, $paymentMode, $customer, $message)
+    {
+        $transactionModel = new Transaction();
+        $submissionModel = new Submission();
+        do_action('wppayform/form_payment_stripe_customer_create_failed', $transaction, $form->ID, $customer);
+        do_action('wppayform/form_payment_failed', $transaction, $form->ID, $customer);
+
+        $transactionModel->update($transaction->id, array(
+            'status'         => 'failed',
+            'payment_method' => 'stripe',
+            'payment_mode'   => $paymentMode,
+        ));
+        $submissionModel->update($transaction->id, array(
+            'payment_status' => 'failed',
+            'payment_method' => 'stripe',
+            'payment_mode'   => $paymentMode,
+        ));
+
+        SubmissionActivity::createActivity(array(
+            'form_id'       => $form->ID,
+            'submission_id' => $submission->id,
+            'type'          => 'activity',
+            'created_by'    => 'PayForm BOT',
+            'content'       => __('Customer Create Failed via stripe. Status changed from Pending to Failed.', 'wppayform')
+        ));
+
+        wp_send_json_error(array(
+            'message'       => $message,
+            'payment_error' => true
+        ), 423);
     }
 
     public function addTransactionUrl($transactions, $formId)
@@ -319,7 +414,7 @@ class Stripe
     public function getPubKey()
     {
         $paymentSettings = $this->getStripeSettings();
-        if($paymentSettings['payment_mode'] == 'live') {
+        if ($paymentSettings['payment_mode'] == 'live') {
             if ($this->isStripeKeysDefined()) {
                 return WP_PAY_FORM_STRIPE_PUB_KEY;
             } else {
@@ -329,10 +424,10 @@ class Stripe
         return $paymentSettings['test_pub_key'];
     }
 
-    function getSecretKey()
+    public function getSecretKey()
     {
         $paymentSettings = $this->getStripeSettings();
-        if($paymentSettings['payment_mode'] == 'live') {
+        if ($paymentSettings['payment_mode'] == 'live') {
             if ($this->isStripeKeysDefined()) {
                 return WP_PAY_FORM_STRIPE_SECRET_KEY;
             } else {
@@ -342,8 +437,15 @@ class Stripe
         return $paymentSettings['test_secret_key'];
     }
 
-    function isStripeKeysDefined()
+    public function isStripeKeysDefined()
     {
         return defined('WP_PAY_FORM_STRIPE_SECRET_KEY') && defined('WP_PAY_FORM_STRIPE_PUB_KEY');
+    }
+
+    // Decide if stripe will create customer or not
+    public function needToCreateCustomer($submission)
+    {
+        // @todo: need to make it configarable
+        return defined('WPPAYFORM_CREATE_CUSTOMER');
     }
 }
