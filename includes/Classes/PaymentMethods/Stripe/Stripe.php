@@ -280,7 +280,11 @@ class Stripe
     {
         foreach ($transactions as $transaction) {
             if ($transaction->payment_method == 'stripe' && $transaction->charge_id) {
-                $transactionUrl = 'https://dashboard.stripe.com/payments/' . $transaction->charge_id;
+                if($transaction->payment_mode == 'test') {
+                    $transactionUrl = 'https://dashboard.stripe.com/test/payments/' . $transaction->charge_id;
+                } else {
+                    $transactionUrl = 'https://dashboard.stripe.com/payments/' . $transaction->charge_id;
+                }
                 $transaction->transaction_url = $transactionUrl;
             }
         }
