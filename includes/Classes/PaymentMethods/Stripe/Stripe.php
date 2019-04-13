@@ -450,6 +450,7 @@ class Stripe
     public function needToCreateCustomer($submission)
     {
         // @todo: need to make it configarable
-        return defined('WPPAYFORM_CREATE_CUSTOMER') && WPPAYFORM_CREATE_CUSTOMER;
+        $status =  defined('WPPAYFORM_CREATE_CUSTOMER') && WPPAYFORM_CREATE_CUSTOMER;
+        return apply_filters('wppayform/stripe_create_customer', $status, $submission);
     }
 }
