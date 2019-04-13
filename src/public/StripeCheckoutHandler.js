@@ -1,21 +1,12 @@
 let StripeCheckoutHandler = {
-    form: '',
-    elementId: '',
-    config: {},
-    style: false,
     init(config, callback) {
         var that = this;
-        this.config = config;
-        this.form = config.form;
-        this.style = config.style;
-        this.callback = callback;
-
         var handler = StripeCheckout.configure({
             key: config.form_settings.stripe_pub_key,
             image: config.form_settings.stripe_checkout_logo,
             locale: 'auto',
             token: function (token, billing_shipping) {
-                that.stripeTokenHandler(token, billing_shipping);
+                that.stripeTokenHandler(config, callback, token, billing_shipping);
             }
         });
 
@@ -24,28 +15,28 @@ let StripeCheckoutHandler = {
             handler.close();
         });
 
-        this.form.on('stripe_payment_submit', function (event) {
+        config.form.on('stripe_payment_submit', function (event) {
             event.preventDefault();
-            if(!that.form.data('payment_total')) {
-                that.callback();
+            if(!config.form.data('payment_total')) {
+                callback();
                 return;
             }
             // Open Checkout with further options:
             handler.open({
                 name: config.form_settings.stripe_checkout_title,
-                description: that.config.form_settings.checkout_description,
-                amount: that.form.data('payment_total'),
-                currency: that.config.form_settings.currency_settings.currency,
+                description: config.form_settings.checkout_description,
+                amount: config.form.data('payment_total'),
+                currency: config.form_settings.currency_settings.currency,
                 zipCode: config.verify_zip,
-                email: that.form.find('input.wpf_customer_email').val(),
+                email: config.form.find('input.wpf_customer_email').val(),
                 billingAddress: config.billing,
                 shippingAddress: config.billing && config.shipping,
                 allowRememberMe: config.allowRememberMe
             });
         });
     },
-    stripeTokenHandler(token, billing_shipping) {
-        if(this.config.billing) {
+    stripeTokenHandler(config, callback, token, billing_shipping) {
+        if(config.billing) {
             var inputStripeBilling = document.createElement('input');
             inputStripeBilling.setAttribute('type', 'hidden');
             inputStripeBilling.setAttribute('name', '__stripe_billing_address_json');
@@ -57,11 +48,11 @@ let StripeCheckoutHandler = {
                 'address_country': billing_shipping.billing_address_country
             }));
             // Delete if exists
-            this.form.find('input[name=__stripe_billing_address_json]').remove();
-            this.form.append(inputStripeBilling);
+            config.form.find('input[name=__stripe_billing_address_json]').remove();
+            config.form.append(inputStripeBilling);
         }
 
-        if(this.config.billing && this.config.shipping) {
+        if(config.billing && config.shipping) {
             var inputStripeShipping = document.createElement('input');
             inputStripeShipping.setAttribute('type', 'hidden');
             inputStripeShipping.setAttribute('name', '__stripe_shipping_address_json');
@@ -73,25 +64,25 @@ let StripeCheckoutHandler = {
                 'address_country': billing_shipping.shipping_address_country
             }));
             // Delete if exists
-            this.form.find('input[name=__stripe_shipping_address_json]').remove();
-            this.form.append(inputStripeShipping);
+            config.form.find('input[name=__stripe_shipping_address_json]').remove();
+            config.form.append(inputStripeShipping);
         }
 
         var hiddenInput = document.createElement('input');
         hiddenInput.setAttribute('type', 'hidden');
         hiddenInput.setAttribute('name', 'stripeToken');
         hiddenInput.setAttribute('value', token.id);
-        this.form.append(hiddenInput);
+        config.form.append(hiddenInput);
 
         if(token.email) {
             var hiddenEmailInput = document.createElement('input');
             hiddenEmailInput.setAttribute('type', 'hidden');
             hiddenEmailInput.setAttribute('name', '__stripe_user_email');
             hiddenEmailInput.setAttribute('value', token.email);
-            this.form.append(hiddenEmailInput);
+            config.form.append(hiddenEmailInput);
         }
 
-        this.callback();
+        callback();
     }
 }
 export default StripeCheckoutHandler;
