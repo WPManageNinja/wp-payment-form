@@ -103,6 +103,27 @@ class Forms
         return $form;
     }
 
+    public static function getFormattedElements($formId)
+    {
+        $elements = Forms::getBuilderSettings($formId);
+        $formattedElements = array(
+            'input'                  => array(),
+            'payment'                => array(),
+            'payment_method_element' => array(),
+            'item_quantity'          => array()
+        );
+        foreach ($elements as $element) {
+            $formattedElements[$element['group']][$element['id']] = array(
+                'options' => $element['field_options'],
+                'type'    => $element['type'],
+                'id'      => $element['id'],
+                'label'   => ArrayHelper::get($element['field_options'], 'label')
+            );
+        }
+
+        return $formattedElements;
+    }
+
     public static function getFormInputLabels($formId)
     {
         $elements = get_post_meta($formId, 'wppayform_paymentform_builder_settings', true);
@@ -171,7 +192,7 @@ class Forms
         return $settings;
     }
 
-    public static function getEditorShortCodes($formId)
+    public static function getEditorShortCodes($formId, $html = true)
     {
         $builderSettings = get_post_meta($formId, 'wppayform_paymentform_builder_settings', true);
         if (!$builderSettings) {
@@ -216,6 +237,14 @@ class Forms
         if ($hasPayment) {
             $submissionItem['shortcodes']['{submission.payment_total}'] = __('Payment Total', 'wppayform');
         }
+
+        if ($html) {
+            $submissionItem['shortcodes']['{submission.all_input_field_html}'] = __('All input field html', 'wppayform');
+            if ($hasPayment) {
+                $submissionItem['shortcodes']['{submission.product_items_table_html}'] = __('Order items table html', 'wppayform');
+            }
+        }
+
         $items[] = $submissionItem;
         return $items;
     }
@@ -290,9 +319,9 @@ class Forms
             'labelPlacement'         => 'top',
             'asteriskPlacement'      => 'none',
             'submit_button_position' => 'left',
-            'extra_styles' => array(
-                'wpf_default_form_styles' => 'no',
-                'wpf_bold_labels' => 'no'
+            'extra_styles'           => array(
+                'wpf_default_form_styles' => 'yes',
+                'wpf_bold_labels'         => 'no'
             )
         );
         return wp_parse_args($settings, $defaults);
@@ -305,21 +334,21 @@ class Forms
             $settings = array();
         }
         $defaults = array(
-            'limitNumberOfEntries' => array(
-                'status'                => 'no',
-                'limit_type'            => 'total',
-                'number_of_entries'     => 100,
-                'limit_payment_statuses'  => array(),
-                'limit_exceeds_message' => __('Number of entry has been exceeds, Please check back later', 'wppayform')
+            'limitNumberOfEntries'     => array(
+                'status'                 => 'no',
+                'limit_type'             => 'total',
+                'number_of_entries'      => 100,
+                'limit_payment_statuses' => array(),
+                'limit_exceeds_message'  => __('Number of entry has been exceeds, Please check back later', 'wppayform')
             ),
-            'scheduleForm'         => array(
+            'scheduleForm'             => array(
                 'status'               => 'no',
                 'start_date'           => date('Y-m-d H:i:s'),
                 'end_date'             => '',
                 'before_start_message' => __('Form submission time schedule is not started yet. Please check back later', 'wppayform'),
                 'expire_message'       => __('Form submission time has been expired.')
             ),
-            'requireLogin'         => array(
+            'requireLogin'             => array(
                 'status'  => 'no',
                 'message' => __('You need to login to submit this form', 'wppayform')
             ),

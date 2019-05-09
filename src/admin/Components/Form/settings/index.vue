@@ -19,7 +19,7 @@
                         </el-menu-item>
                     </el-menu>
                 </el-aside>
-                <el-main>
+                <el-main class="payform_settings_wrapper">
                     <router-view :form_id="form_id"></router-view>
                 </el-main>
             </el-container>

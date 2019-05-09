@@ -26,19 +26,23 @@ class CustomerEmailComponent extends BaseComponent
             'editor_elements' => array(
                 'label'         => array(
                     'label' => 'Field Label',
-                    'type'  => 'text'
+                    'type'  => 'text',
+                    'group' => 'general'
                 ),
                 'placeholder'   => array(
                     'label' => 'Placeholder',
-                    'type'  => 'text'
+                    'type'  => 'text',
+                    'group' => 'general'
                 ),
                 'required'      => array(
                     'label' => 'Required',
-                    'type'  => 'switch'
+                    'type'  => 'switch',
+                    'group' => 'general'
                 ),
                 'default_value' => array(
                     'label' => 'Default Value',
-                    'type'  => 'text'
+                    'type'  => 'text',
+                    'group' => 'general'
                 ),
             ),
             'field_options'   => array(
@@ -70,7 +74,9 @@ class CustomerEmailComponent extends BaseComponent
     {
         $element['type'] = 'email';
         $element['extra_input_class'] = 'wpf_customer_email';
-        $defaultValue = $element['field_options']['default_value'];
+        $defaultValue = apply_filters('wppayform/input_default_value', ArrayHelper::get($element['field_options'], 'default_value'), $element, $form);
+        $element['field_options']['default_value'] = $defaultValue;
+
         if($defaultValue && strpos($defaultValue, '{current_user.user_email}') !== false) {
             $currentUserId = get_current_user_id();
             $replaceValue = '';

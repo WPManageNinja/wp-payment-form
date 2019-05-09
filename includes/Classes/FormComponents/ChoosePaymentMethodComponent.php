@@ -61,16 +61,24 @@ class ChoosePaymentMethodComponent extends BaseComponent
             'editor_elements' => array(
                 'label'           => array(
                     'label' => 'Field Label',
-                    'type'  => 'text'
+                    'type'  => 'text',
+                    'group' => 'general'
+                ),
+                'default_value'           => array(
+                    'label' => 'Default Payment method',
+                    'type'  => 'text',
+                    'group' => 'general'
                 ),
                 'method_settings' => array(
                     'label'             => 'Payment Methods',
                     'type'              => 'choose_payment_method',
-                    'available_methods' => $available_methods
+                    'available_methods' => $available_methods,
+                    'group' => 'general'
                 )
             ),
             'field_options'   => array(
                 'label'           => __('Select Payment Method', 'wppayform'),
+                'default_value' => '',
                 'method_settings' => array(
                     'prefered_method' => ''
                 )
@@ -89,7 +97,7 @@ class ChoosePaymentMethodComponent extends BaseComponent
         );
         $methods = ArrayHelper::get($fieldOption, 'method_settings.payment_settings', array());
         $validMethods = array();
-        $defaultValue = 'paypals';
+        $defaultValue = apply_filters('wppayform/input_default_value', ArrayHelper::get($fieldOption, 'default_value'), $element, $form);
         $lastPaymentMethod = '';
         foreach ($methods as $methodName => $method) {
             if (isset($method['enabled']) && $method['enabled'] == 'yes') {

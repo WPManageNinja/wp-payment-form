@@ -119,11 +119,14 @@
                 </el-tooltip>
             </template>
 
-            <input-popover fieldType="text"
-                           placeholder="Redirect URL"
-                           v-model="confirmation.customUrl"
-                           :data="inputsFirstShortcodes"
-            ></input-popover>
+            <el-input size="small" placeholder="Redirect URL" v-model="confirmation.customUrl">
+                <popover
+                    @command="(code) => { confirmation.customUrl += code }"
+                    slot="suffix" :data="editorShortcodes"
+                    btnType="text"
+                    buttonText='<i class="el-icon-menu"></i>'>
+                </popover>
+            </el-input>
             <p>Add the following shortcode to the page to show payment receipt: <code>[wppayform_reciept]</code></p>
         </el-form-item>
     </div>
@@ -131,13 +134,13 @@
 
 <script>
     import wpEditor from '../../Common/_wp_editor';
-    import inputPopover from '../../Common/input-popover.vue';
+    import popover from '../../Common/input-popover-dropdown.vue';
 
     export default {
         name: 'AddConfirmation',
         components: {
             wpEditor,
-            inputPopover
+            popover
         },
         props: ['pages', 'editorShortcodes', 'confirmation'],
         computed: {

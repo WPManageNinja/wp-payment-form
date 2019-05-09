@@ -27,7 +27,7 @@ $currencySetting['currency_sign'] = \WPPayForm\Classes\GeneralSettings::getCurre
             </tbody>
             <tfoot>
                 <tr class="wpf_total_row">
-                    <th style="text-align: right" colspan="3">Total</th>
+                    <th style="text-align: right" colspan="3"><?php _e('Total', 'wppayform'); ?></th>
                     <td><?php echo wpPayFormFormattedMoney($submission->payment_total, $currencySetting); ?></td>
                 </tr>
             </tfoot>

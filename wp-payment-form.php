@@ -1,11 +1,11 @@
 <?php
 /**
- * Plugin Name: WPPayForm - Build Payment Forms and Accept Payment using Stripe or PayPal
- * Plugin URI:  https://wppayform.wpmanageninja.com/
+ * Plugin Name: WPPayForm - Build Payment Forms and Accept Payment using Stripe
+ * Plugin URI:  https://wpmanageninja.com/downloads/wppayform-pro-wordpress-payments-form-builder/
  * Description: Create and Accept Payments in minutes with Stripe, PayPal with built-in form builder
  * Author: WPManageNinja LLC
  * Author URI:  https://wpmanageninja.com
- * Version: 1.0.1
+ * Version: 1.1.0
  * Text Domain: wppayform
  */
 
@@ -33,7 +33,7 @@ if (!defined('ABSPATH')) {
 
 if (!defined('WPPAYFORM_VERSION')) {
     define('WPPAYFORM_VERSION_LITE', true);
-    define('WPPAYFORM_VERSION', '1.0.1');
+    define('WPPAYFORM_VERSION', '1.1.0');
     // Stripe API version should be in 'YYYY-MM-DD' format.
     define('WPPAYFORM_STRIPE_API_VERSION', '2018-10-31');
     define('WPPAYFORM_MAIN_FILE', __FILE__);

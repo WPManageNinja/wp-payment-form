@@ -2,7 +2,6 @@
 
 namespace WPPayForm\Classes;
 
-use SimplePay\Core\Abstracts\Form;
 use WPPayForm\Classes\Models\Forms;
 
 if (!defined('ABSPATH')) {
@@ -23,6 +22,7 @@ class AdminAjaxHandler
     public function handeEndPoint()
     {
         $route = sanitize_text_field($_REQUEST['route']);
+
         $validRoutes = array(
             'get_forms'                  => 'getForms',
             'create_form'                => 'createForm',
@@ -34,7 +34,7 @@ class AdminAjaxHandler
             'delete_form'                => 'deleteForm',
             'get_form_settings'          => 'getFormSettings',
             'get_design_settings'        => 'getDesignSettings',
-            'update_design_settings'     => 'updateDesignSettings',
+            'update_design_settings'     => 'updateDesignSettings'
         );
 
         if (isset($validRoutes[$route])) {
@@ -42,6 +42,7 @@ class AdminAjaxHandler
             do_action('wppayform/doing_ajax_forms_' . $route);
             return $this->{$validRoutes[$route]}();
         }
+        do_action('wppayform/admin_ajax_handler_catch', $route);
     }
 
     protected function getForms()
@@ -138,11 +139,13 @@ class AdminAjaxHandler
             ->where('post_type', 'page')
             ->where('post_status', 'publish')
             ->get();
+
         $formId = absint($_REQUEST['form_id']);
+
         wp_send_json_success(array(
             'confirmation_settings' => Forms::getConfirmationSettings($formId),
             'currency_settings'     => Forms::getCurrencySettings($formId),
-            'editor_shortcodes'     => Forms::getEditorShortCodes($formId),
+            'editor_shortcodes'     => FormPlaceholders::getAllPlaceholders($formId),
             'currencies'            => GeneralSettings::getCurrencies(),
             'locales'               => GeneralSettings::getLocales(),
             'pages'                 => $allPages

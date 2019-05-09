@@ -8,6 +8,7 @@ import FormSettingsIndex from './Components/Form/settings/index';
 import FormPaymentSettings from './Components/Form/settings/ConfirmationSettings';
 import FormCurrencySettings from './Components/Form/settings/CurrencySettings';
 import FormSchedulingSetting from './Components/Form/settings/SchedulingSettings';
+import FormEmailSettings from './Components/Form/EmailSettings/FormEmailSettings';
 
 import Entries from './Components/Entries/Entries';
 import Entry from './Components/Entries/Entry';
@@ -73,6 +74,11 @@ const formEditRoutes = window.WPPayForms.applyFilters('wpf_edit_children_roues',
         path: 'settings',
         component: FormSettingsIndex,
         children: formEditorChildrenRoutes
+    },
+    {
+        path: 'email_settings',
+        name: 'email_settings',
+        component: FormEmailSettings
     }
 ]);
 

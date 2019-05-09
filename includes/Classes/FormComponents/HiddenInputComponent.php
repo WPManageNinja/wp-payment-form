@@ -26,15 +26,17 @@ class HiddenInputComponent extends BaseComponent
             'editor_elements' => array(
                 'label'         => array(
                     'label' => 'Admin Field Label',
-                    'type'  => 'text'
+                    'type'  => 'text',
+                    'group' => 'general'
                 ),
                 'default_value' => array(
                     'label' => 'Input Value',
-                    'type'  => 'text'
+                    'type'  => 'text',
+                    'group' => 'general'
                 )
             ),
             'field_options'   => array(
-                'label'         => '',
+                'label'         => 'Hidden Value',
                 'required'      => 'no',
                 'default_value' => ''
             )
@@ -56,9 +58,11 @@ class HiddenInputComponent extends BaseComponent
             return;
         }
         $inputId = 'wpf_input_' . $form->ID . '_' . $element['id'];
+        $defaultValue = apply_filters('wppayform/input_default_value', ArrayHelper::get($fieldOptions, 'default_value'), $element, $form);
+
         $attributes = array(
             'name'  => $element['id'],
-            'value' => ArrayHelper::get($fieldOptions, 'default_value'),
+            'value' => $defaultValue,
             'type'  => 'hidden',
             'id'    => $inputId
         );

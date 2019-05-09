@@ -47,7 +47,8 @@ import {
     Dropdown,
     DropdownItem,
     DropdownMenu,
-    Upload
+    Upload,
+    Notification
 } from 'element-ui';
 
 Vue.use(Button);
@@ -102,6 +103,7 @@ Vue.prototype.$msgbox = MessageBox;
 Vue.prototype.$alert = MessageBox.alert;
 Vue.prototype.$confirm = MessageBox.confirm;
 Vue.prototype.$prompt = MessageBox.prompt;
+Vue.prototype.$notify = Notification;
 
 locale.use(lang);
 import lang from 'element-ui/lib/locale/lang/en';

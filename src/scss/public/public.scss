@@ -75,7 +75,6 @@
     }
   }
 
-
   form.wpf_form {
     .wpf_form_group {
       .wpf_form_item_group {
@@ -114,6 +113,8 @@
             background-color: rgb(233, 236, 239);
             border: 1px solid rgb(206, 212, 218);
             border-radius: 0;
+            border-top-left-radius: 0.25rem;
+            border-bottom-left-radius: 0.25rem;
           }
         }
 
@@ -124,6 +125,9 @@
           flex: 1 1 auto;
           width: 1% !important;
           margin-bottom: 0;
+          border-top-left-radius: 0 !important;
+          border-bottom-left-radius: 0 !important;
+
         }
       }
     }
@@ -138,7 +142,6 @@
       display: inline-block;
     }
   }
-
 
   .wpf_form_group {
     display: block;
@@ -240,7 +243,6 @@
       width: 100%;
     }
 
-
   }
 
   &.wpf_restriction_action_hide_form {
@@ -258,7 +260,6 @@
     }
   }
 
-
   form.wpf_bold_labels {
     .wpf_input_label {
       > label {
@@ -267,9 +268,7 @@
     }
   }
 
-
 }
-
 
 form.wpf_default_form_styles {
   .wpf_form_group {
@@ -284,7 +283,7 @@ form.wpf_default_form_styles {
       background-clip: padding-box;
       border: 1px solid rgb(206, 212, 218);
       border-radius: .25rem;
-      transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+      transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
     }
     select {
       height: calc(2.25rem + 2px);
@@ -300,7 +299,7 @@ form.wpf_default_form_styles {
       background-clip: padding-box;
       border: 1px solid rgb(206, 212, 218);
       border-radius: .25rem;
-      transition: border-color .15s ease-in-out,box-shadow .15s ease-in-out;
+      transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
     }
   }
 }

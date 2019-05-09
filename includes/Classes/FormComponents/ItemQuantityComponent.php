@@ -3,7 +3,6 @@
 namespace WPPayForm\Classes\FormComponents;
 
 use WPPayForm\Classes\ArrayHelper;
-use WPPayForm\Classes\Models\Forms;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -26,31 +25,38 @@ class ItemQuantityComponent extends BaseComponent
             'editor_elements' => array(
                 'label'          => array(
                     'label' => 'Field Label',
-                    'type'  => 'text'
+                    'type'  => 'text',
+                    'group' => 'general'
                 ),
                 'placeholder'    => array(
                     'label' => 'Placeholder',
-                    'type'  => 'text'
+                    'type'  => 'text',
+                    'group' => 'general'
                 ),
                 'required'       => array(
                     'label' => 'Required',
-                    'type'  => 'switch'
+                    'type'  => 'switch',
+                    'group' => 'general'
                 ),
                 'default_value'  => array(
                     'label' => 'Default Quantity',
-                    'type'  => 'number'
+                    'type'  => 'text',
+                    'group' => 'general'
                 ),
                 'target_product' => array(
                     'label' => 'Target Payment Item',
-                    'type'  => 'product_selector'
+                    'type'  => 'product_selector',
+                    'group' => 'general'
                 ),
                 'min_value'      => array(
                     'label' => 'Minimum Quantity',
-                    'type'  => 'number'
+                    'type'  => 'number',
+                    'group' => 'general'
                 ),
                 'max_value'      => array(
                     'label' => 'Maximum Quantity',
-                    'type'  => 'number'
+                    'type'  => 'number',
+                    'group' => 'general'
                 )
             ),
             'field_options'   => array(
@@ -72,11 +78,14 @@ class ItemQuantityComponent extends BaseComponent
         $controlClass = $this->elementControlClass($element);
         $inputClass = $this->elementInputClass($element);
         $inputId = 'wpf_input_' . $form->ID . '_' . $element['id'];
+
+        $defaultValue = apply_filters('wppayform/input_default_value', ArrayHelper::get($fieldOptions, 'default_value'), $element, $form);
+
         $attributes = array(
             'data-required'       => ArrayHelper::get($fieldOptions, 'required'),
             'name'                => $element['id'],
             'placeholder'         => ArrayHelper::get($fieldOptions, 'placeholder'),
-            'value'               => ArrayHelper::get($fieldOptions, 'default_value'),
+            'value'               => $defaultValue,
             'type'                => 'number',
             'min'                 => ArrayHelper::get($fieldOptions, 'min_value'),
             'max'                 => ArrayHelper::get($fieldOptions, 'max_value'),

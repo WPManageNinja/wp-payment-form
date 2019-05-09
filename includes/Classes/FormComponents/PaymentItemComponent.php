@@ -27,14 +27,17 @@ class PaymentItemComponent extends BaseComponent
             'editor_elements'  => array(
                 'label'           => array(
                     'label' => 'Field Label',
-                    'type'  => 'text'
+                    'type'  => 'text',
+                    'group' => 'general'
                 ),
                 'required'        => array(
                     'label' => 'Required',
-                    'type'  => 'switch'
+                    'type'  => 'switch',
+                    'group' => 'general'
                 ),
                 'payment_options' => array(
                     'type'                   => 'payment_options',
+                    'group'                  => 'general',
                     'label'                  => 'Configure Payment Item',
                     'selection_type'         => 'Payment Type',
                     'selection_type_options' => array(
@@ -51,6 +54,7 @@ class PaymentItemComponent extends BaseComponent
             'is_system_field'  => true,
             'is_payment_field' => true,
             'field_options'    => array(
+                'label'           => 'Payment Item',
                 'required'        => 'yes',
                 'pricing_details' => array(
                     'one_time_type'       => 'single',
@@ -68,16 +72,17 @@ class PaymentItemComponent extends BaseComponent
         );
     }
 
-    public function validateOnSave($error, $element, $formId) {
+    public function validateOnSave($error, $element, $formId)
+    {
         $pricingDetails = ArrayHelper::get($element, 'field_options.pricing_details', array());
         $paymentType = ArrayHelper::get($pricingDetails, 'one_time_type');
-        if($paymentType == 'single') {
-            if(!ArrayHelper::get($pricingDetails, 'payment_amount')) {
-                $error = __('Payment amount is required for item:', 'wppayform').' '.ArrayHelper::get($element, 'field_options.label');
+        if ($paymentType == 'single') {
+            if (!ArrayHelper::get($pricingDetails, 'payment_amount')) {
+                $error = __('Payment amount is required for item:', 'wppayform') . ' ' . ArrayHelper::get($element, 'field_options.label');
             }
-        } else if($paymentType == 'choose_multiple' || $paymentType == 'choose_single') {
-            if(!count(ArrayHelper::get($pricingDetails, 'multiple_pricing', array()))) {
-                $error = __('Pricing Details is required for item:', 'wppayform').' '.ArrayHelper::get($element, 'field_options.label');
+        } else if ($paymentType == 'choose_multiple' || $paymentType == 'choose_single') {
+            if (!count(ArrayHelper::get($pricingDetails, 'multiple_pricing', array()))) {
+                $error = __('Pricing Details is required for item:', 'wppayform') . ' ' . ArrayHelper::get($element, 'field_options.label');
             }
         }
         return $error;
@@ -89,6 +94,9 @@ class PaymentItemComponent extends BaseComponent
         if (!$pricingDetails) {
             return;
         }
+
+        $element['field_options']['default_value'] = apply_filters('wppayform/input_default_value', ArrayHelper::get($element['field_options'], 'default_value'), $element, $form);
+
         $paymentType = ArrayHelper::get($pricingDetails, 'one_time_type');
         if ($paymentType == 'single') {
             $this->renderSingleAmount($element, $form, ArrayHelper::get($pricingDetails, 'payment_amount'));

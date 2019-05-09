@@ -85,7 +85,6 @@ class Menu
     public function enqueueAssets()
     {
         if(isset($_GET['page']) && $_GET['page'] == 'wppayform.php') {
-
             if (function_exists('wp_enqueue_editor')) {
                 wp_enqueue_editor();
             }

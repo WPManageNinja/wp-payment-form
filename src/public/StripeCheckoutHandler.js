@@ -21,18 +21,25 @@ let StripeCheckoutHandler = {
                 callback();
                 return;
             }
+            
             // Open Checkout with further options:
-            handler.open({
+            let paymentConfig = {
                 name: config.form_settings.stripe_checkout_title,
                 description: config.form_settings.checkout_description,
                 amount: config.form.data('payment_total'),
                 currency: config.form_settings.currency_settings.currency,
                 zipCode: config.verify_zip,
                 email: config.form.find('input.wpf_customer_email').val(),
-                billingAddress: config.billing,
-                shippingAddress: config.billing && config.shipping,
                 allowRememberMe: config.allowRememberMe
-            });
+            };
+            if(config.billing ) {
+                paymentConfig.billingAddress = true;
+            }
+
+            if(config.billing && config.shipping) {
+                paymentConfig.shippingAddress = true;
+            }
+            handler.open(paymentConfig);
         });
     },
     stripeTokenHandler(config, callback, token, billing_shipping) {

@@ -22,23 +22,27 @@ class TextComponent extends BaseComponent
             'editor_elements' => array(
                 'label'         => array(
                     'label' => 'Field Label',
-                    'type'  => 'text'
+                    'type'  => 'text',
+                    'group' => 'general'
                 ),
                 'placeholder'    => array(
                     'label' => 'Placeholder',
-                    'type'  => 'text'
+                    'type'  => 'text',
+                    'group' => 'general'
                 ),
                 'required'      => array(
                     'label' => 'Required',
-                    'type'  => 'switch'
+                    'type'  => 'switch',
+                    'group' => 'general'
                 ),
                 'default_value' => array(
                     'label' => 'Default Value',
-                    'type'  => 'text'
+                    'type'  => 'text',
+                    'group' => 'general'
                 )
             ),
             'field_options'   => array(
-                'label' => '',
+                'label' => 'Single Line Text',
                 'placeholder' => '',
                 'required' => 'no'
             )

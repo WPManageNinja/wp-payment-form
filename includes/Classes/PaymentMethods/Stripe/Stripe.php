@@ -183,8 +183,8 @@ class Stripe
         }
 
         if (!$paymentStatus) {
-            do_action('wppayform/form_payment_stripe_failed', $transaction, $form->ID, $charge);
-            do_action('wppayform/form_payment_failed', $transaction, $form->ID, $charge);
+            do_action('wppayform/form_payment_stripe_failed', $submission, $transaction, $form->ID, $charge);
+            do_action('wppayform/form_payment_failed', $submission, $transaction, $form->ID, $charge);
 
             $transactionModel->update($transactionId, array(
                 'status'         => 'failed',
@@ -239,10 +239,9 @@ class Stripe
         ));
 
         $transaction = $transactionModel->getTransaction($transactionId);
-        do_action('wppayform/form_payment_success_stripe', $transaction, $transaction->form_id, $charge);
-        do_action('wppayform/form_payment_success', $transaction, $transaction->form_id, $charge);
+        do_action('wppayform/form_payment_success_stripe', $submission, $transaction, $transaction->form_id, $charge);
+        do_action('wppayform/form_payment_success', $submission, $transaction, $transaction->form_id, $charge);
     }
-
 
     private function makeCustomerCreateFailed($submission, $transaction, $form, $paymentMode, $customer, $message)
     {

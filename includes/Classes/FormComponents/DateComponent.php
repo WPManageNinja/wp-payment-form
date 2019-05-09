@@ -35,28 +35,34 @@ class DateComponent extends BaseComponent
             'editor_elements' => array(
                 'label'         => array(
                     'label' => 'Field Label',
-                    'type'  => 'text'
+                    'type'  => 'text',
+                    'group' => 'general'
                 ),
                 'placeholder'   => array(
                     'label' => 'Placeholder',
-                    'type'  => 'text'
+                    'type'  => 'text',
+                    'group' => 'general'
                 ),
                 'required'      => array(
                     'label' => 'Required',
-                    'type'  => 'switch'
+                    'type'  => 'switch',
+                    'group' => 'general'
                 ),
                 'date_format'   => array(
                     'label'   => 'Date Format',
                     'type'    => 'select_option',
-                    'options' => $dateFormats
+                    'options' => $dateFormats,
+                    'group'   => 'general',
+                    'creatable' => 'yes'
                 ),
                 'default_value' => array(
                     'label' => 'Default Value',
-                    'type'  => 'text'
+                    'type'  => 'text',
+                    'group' => 'general'
                 )
             ),
             'field_options'   => array(
-                'label'       => '',
+                'label'       => 'Date',
                 'placeholder' => '',
                 'required'    => 'no'
             )
@@ -71,6 +77,8 @@ class DateComponent extends BaseComponent
         if (!$fieldOptions) {
             return;
         }
+        $defaultValue = apply_filters('wppayform/input_default_value', ArrayHelper::get($fieldOptions, 'default_value'), $element, $form);
+
         $controlClass = $this->elementControlClass($element);
         $inputClass = $this->elementInputClass($element);
         $inputId = 'wpf_input_' . $form->ID . '_' . $element['id'];
@@ -78,7 +86,7 @@ class DateComponent extends BaseComponent
             'data-required'    => ArrayHelper::get($fieldOptions, 'required'),
             'name'             => $element['id'],
             'placeholder'      => ArrayHelper::get($fieldOptions, 'placeholder'),
-            'value'            => ArrayHelper::get($fieldOptions, 'default_value'),
+            'value'            => $defaultValue,
             'type'             => 'text',
             'id'               => $inputId,
             'class'            => $inputClass . ' wpf_date_field',

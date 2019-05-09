@@ -17,6 +17,7 @@ var wpPayformApp = {};
                 body.trigger( 'wpPayFormProcessFormElements', [ form ] );
             });
             this.initDatePiker();
+            this.initNumericInputs();
         },
         initForm(form) {
             let that = this;
@@ -158,7 +159,7 @@ var wpPayformApp = {};
                     if(itemValue) {
                         itemTotalValue[elementName] = parseInt(itemValue);
                     }
-                } else if(elementType == 'number') {
+                } else if($(elem).data('is_custom_price') == 'yes') {
                     let itemValue = $(this).val();
                     if(itemValue) {
                         itemTotalValue[elementName] =  parseInt(parseFloat(itemValue) * 100);
@@ -218,6 +219,9 @@ var wpPayformApp = {};
                 });
 
             }
+        },
+        initNumericInputs() {
+
         },
         handlePaymentMethodChange(form, value) {
             form.data('selected_payment_method', value);

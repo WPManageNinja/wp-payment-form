@@ -33,7 +33,8 @@ abstract class BaseComponent
         return $components;
     }
 
-    public function validateOnSave($error, $element, $formId) {
+    public function validateOnSave($error, $element, $formId)
+    {
         return 'OK';
         return $error;
     }
@@ -48,12 +49,13 @@ abstract class BaseComponent
         $inputClass = $this->elementInputClass($element);
         $inputId = 'wpf_input_' . $form->ID . '_' . $element['id'];
 
+        $defaultValue = apply_filters('wppayform/input_default_value', ArrayHelper::get($fieldOptions, 'default_value'), $element, $form);
 
         $attributes = array(
             'data-required' => ArrayHelper::get($fieldOptions, 'required'),
             'name'          => $element['id'],
             'placeholder'   => ArrayHelper::get($fieldOptions, 'placeholder'),
-            'value'         => ArrayHelper::get($fieldOptions, 'default_value'),
+            'value'         => $defaultValue,
             'type'          => ArrayHelper::get($element, 'type', 'text'),
             'class'         => $inputClass,
             'id'            => $inputId
@@ -91,7 +93,8 @@ abstract class BaseComponent
         $controlClass = $this->elementControlClass($element);
         $inputClass = $this->elementInputClass($element);
         $inputId = 'wpf_input_' . $form->ID . '_' . $element['id'];
-        $defaultValue = ArrayHelper::get($fieldOptions, 'default_value');
+
+        $defaultValue = apply_filters('wppayform/input_default_value', ArrayHelper::get($fieldOptions, 'default_value'), $element, $form);
 
         $options = ArrayHelper::get($fieldOptions, 'options', array());
         $placeholder = ArrayHelper::get($fieldOptions, 'placeholder');
@@ -144,7 +147,8 @@ abstract class BaseComponent
         $controlClass = $this->elementControlClass($element);
         $inputClass = $this->elementInputClass($element);
         $inputId = 'wpf_input_' . $form->ID . '_' . $element['id'];
-        $defaultValue = ArrayHelper::get($fieldOptions, 'default_value');
+
+        $defaultValue = apply_filters('wppayform/input_default_value', ArrayHelper::get($fieldOptions, 'default_value'), $element, $form);
 
         $options = ArrayHelper::get($fieldOptions, 'options', array());
 
@@ -197,6 +201,9 @@ abstract class BaseComponent
         $inputId = 'wpf_input_' . $form->ID . '_' . $element['id'];
         $defaultValue = ArrayHelper::get($fieldOptions, 'default_value');
         $defaultValues = explode(',', $defaultValue);
+
+        $defaultValues = apply_filters('wppayform/input_default_value', $defaultValues, $element, $form);
+
         $options = ArrayHelper::get($fieldOptions, 'options', array());
 
         $controlAttributes = array(

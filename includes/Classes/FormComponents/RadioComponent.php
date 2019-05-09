@@ -23,23 +23,27 @@ class RadioComponent extends BaseComponent
             'editor_elements' => array(
                 'label'         => array(
                     'label' => 'Field Label',
-                    'type'  => 'text'
+                    'type'  => 'text',
+                    'group' => 'general'
                 ),
                 'required'      => array(
                     'label' => 'Required',
-                    'type'  => 'switch'
+                    'type'  => 'switch',
+                    'group' => 'general'
                 ),
                 'default_value' => array(
                     'label' => 'Default Value',
-                    'type'  => 'text'
+                    'type'  => 'text',
+                    'group' => 'general'
                 ),
                 'options'       => array(
                     'label' => 'Field Choices',
-                    'type' => 'key_pair'
+                    'type' => 'key_pair',
+                    'group' => 'general'
                 )
             ),
             'field_options'   => array(
-                'label' => '',
+                'label' => 'Radio',
                 'placeholder' => '',
                 'required' => 'no',
                 'options' => array(

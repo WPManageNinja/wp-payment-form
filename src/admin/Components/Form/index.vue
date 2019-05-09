@@ -142,6 +142,11 @@
                         title: 'Form Settings',
                         icon: 'dashicons dashicons-admin-settings'
                     },
+                    {
+                        route: 'email_settings',
+                        title: 'Email Notifications',
+                        icon: 'dashicons dashicons-email-alt'
+                    },
                 ], this.form_id);
             }
         },

@@ -44,6 +44,7 @@
 @import '~element-ui/lib/theme-chalk/dropdown-menu.css';
 @import '~element-ui/lib/theme-chalk/dropdown-item.css';
 @import '~element-ui/lib/theme-chalk/upload.css';
+@import '~element-ui/lib/theme-chalk/notification.css';
 @import "./_element_icons.css";
 
 .wppayform_main_nav {
@@ -95,6 +96,15 @@
   }
 }
 
+.payform_editor_wrapper {
+  * {
+    box-sizing: border-box;
+  }
+  .el-form-item__content {
+    line-height: 120%;
+  }
+}
+
 .payform_section {
   display: block;
   width: 100%;
@@ -102,12 +112,15 @@
 
   .payform_section_header {
     display: block;
-    width: 100%;
-    border-bottom: 1px solid rgb(227, 232, 238);
+    width: auto;
+    border-bottom: 1px solid #e3e8ee;
     clear: both;
     overflow: hidden;
-    margin: -10px -15px 10px;
+    margin: 0;
     padding: 10px 15px;
+    background-color: #f7fafc;
+    font-weight: bold;
+    color: #697386;
 
     .payform_section_title {
       float: left;
@@ -132,9 +145,10 @@
   }
 
   .payform_section_body {
-    width: 100%;
+    width: auto;
     display: block;
     overflow: hidden;
+    padding: 0px;
   }
 }
 
@@ -195,7 +209,7 @@
   .el-main {
     background-color: rgb(255, 255, 255);
     color: rgb(0, 0, 0);
-    padding: 15px;
+    padding: 0px;
     box-shadow: 0 7px 14px 0 rgba(60, 66, 87, 0.1), 0 3px 6px 0 rgba(0, 0, 0, 0.07);
   }
 
@@ -661,7 +675,7 @@ a.el-button {
 .payform_section_header.all_payment_form_wrapper {
   border-bottom: 0;
   margin: 0px;
-  padding: 10px 0;
+  padding: 10px 20px;
 }
 .empty_builder_items {
   text-align: right;
@@ -796,5 +810,59 @@ main.el-main.no_shadow {
   margin-top: 20px;
 }
 
+#payform_builder {
+  padding-top: 0px;
+}
 
+#email_notifications {
+  padding: 0;
+}
 
+.payform_form_item_wrapper {
+  display: block;
+  width: 100%;
+  overflow: hidden;
+  * {
+    box-sizing: border-box;
+  }
+  .payform_item_half {
+    width: 48%;
+    float: left;
+    margin-right: 2%;
+    &:last-child {
+      margin-right: 0;
+      margin-left: 2%;
+    }
+  }
+}
+label.el-form-item__label {
+  line-height: 100%;
+  padding-bottom: 5px !important;
+}
+
+.el-notification.right {
+  z-index: 99999999 !important;
+}
+.notification_edit {
+  padding: 15px 20px;
+}
+.submit_btn_right {
+  text-align: right;
+  margin-top: 30px;
+}
+.payform_hide_valdate_messages {
+  .el-form-item.is-error .el-input__inner, .el-form-item.is-error .el-input__inner:focus, .el-form-item.is-error .el-textarea__inner, .el-form-item.is-error .el-textarea__inner:focus, .el-form-item.is-success .el-input__inner, .el-form-item.is-success .el-input__inner:focus, .el-form-item.is-success .el-textarea__inner, .el-form-item.is-success .el-textarea__inner:focus {
+    border-color: #dcdfe6;
+  }
+}
+
+.payform_upgrade_section {
+  text-align: center;
+  h1 i {
+    font-size: 120px;
+  }
+}
+
+.payform_settings_wrapper .payform_section_body {
+  padding: 20px;
+}

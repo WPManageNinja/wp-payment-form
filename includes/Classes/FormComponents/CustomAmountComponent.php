@@ -26,27 +26,32 @@ class CustomAmountComponent extends BaseComponent
             'editor_elements' => array(
                 'label'         => array(
                     'label' => 'Field Label',
-                    'type'  => 'text'
+                    'type'  => 'text',
+                    'group' => 'general'
                 ),
                 'placeholder'   => array(
                     'label' => 'Placeholder',
-                    'type'  => 'text'
+                    'type'  => 'text',
+                    'group' => 'general'
                 ),
                 'required'      => array(
                     'label' => 'Required',
-                    'type'  => 'switch'
+                    'type'  => 'switch',
+                    'group' => 'general'
                 ),
                 'default_value' => array(
                     'label' => 'Default Value',
-                    'type'  => 'number'
+                    'type'  => 'text',
+                    'group' => 'general'
                 ),
                 'min_value' => array(
                     'label' => 'Minimum Value',
-                    'type'  => 'number'
+                    'type'  => 'text',
+                    'group' => 'general'
                 ),
             ),
             'field_options'   => array(
-                'label' => '',
+                'label' => 'Custom Payment Amount',
                 'placeholder' => '',
                 'required' => 'no'
             )
@@ -63,18 +68,22 @@ class CustomAmountComponent extends BaseComponent
         $controlClass = $this->elementControlClass($element);
         $inputClass = $this->elementInputClass($element);
         $inputId = 'wpf_input_' . $form->ID . '_' . $element['id'];
-        $label = ArrayHelper::get($fieldOptions, 'label');
+
+        $defaultValue = apply_filters('wppayform/input_default_value', ArrayHelper::get($fieldOptions, 'default_value'), $element, $form);
+
 
         $attributes = array(
             'data-required' => ArrayHelper::get($fieldOptions, 'required'),
             'name' => $element['id'],
             'placeholder' => ArrayHelper::get($fieldOptions, 'placeholder'),
-            'value' => ArrayHelper::get($fieldOptions, 'default_value'),
+            'value' => $defaultValue,
             'type' => 'number',
+            'step' => 'any',
+            'data-is_custom_price' => 'yes',
             'min' => ArrayHelper::get($fieldOptions, 'min_value'),
             'data-price' => 0,
             'id' => $inputId,
-            'class' => $inputClass.' wpf_custom_amount wpf_payment_item'
+            'class' => $inputClass.' wpf_custom_amount wpf_money_amount wpf_payment_item'
         );
         if (ArrayHelper::get($fieldOptions, 'required') == 'yes') {
             $attributes['required'] = true;

@@ -25,19 +25,23 @@ class CustomerNameComponent extends BaseComponent
             'editor_elements' => array(
                 'label'         => array(
                     'label' => 'Field Label',
-                    'type'  => 'text'
+                    'type'  => 'text',
+                    'group' => 'general'
                 ),
                 'placeholder'   => array(
                     'label' => 'Placeholder',
-                    'type'  => 'text'
+                    'type'  => 'text',
+                    'group' => 'general'
                 ),
                 'required'      => array(
                     'label' => 'Required',
-                    'type'  => 'switch'
+                    'type'  => 'switch',
+                    'group' => 'general'
                 ),
                 'default_value' => array(
                     'label' => 'Default Value',
-                    'type'  => 'text'
+                    'type'  => 'text',
+                    'group' => 'general'
                 ),
             ),
             'field_options'   => array(
@@ -52,6 +56,7 @@ class CustomerNameComponent extends BaseComponent
     {
         $element['type'] = 'text';
         $defaultValue = ArrayHelper::get($element, 'field_options.default_value');
+
         if($defaultValue && strpos($defaultValue, '{current_user.display_name}') !== false) {
             $currentUserId = get_current_user_id();
             $replaceValue = '';

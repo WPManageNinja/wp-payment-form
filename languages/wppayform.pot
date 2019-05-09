@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WPPayForm\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-03-01 19:23+0000\n"
+"POT-Creation-Date: 2019-05-09 22:56+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -38,44 +38,136 @@ msgid ""
 "contact site support."
 msgstr ""
 
-#: includes/Classes/AdminAjaxHandler.php:88
+#: includes/Classes/AdminAjaxHandler.php:89
 msgid "Something is wrong when createding the form. Please try again"
 msgstr ""
 
-#: includes/Classes/AdminAjaxHandler.php:93
+#: includes/Classes/AdminAjaxHandler.php:94
 msgid "Form successfully created"
 msgstr ""
 
-#: includes/Classes/AdminAjaxHandler.php:105
+#: includes/Classes/AdminAjaxHandler.php:106
 msgid "Please provide form title"
 msgstr ""
 
-#: includes/Classes/AdminAjaxHandler.php:120
+#: includes/Classes/AdminAjaxHandler.php:121
 msgid "Form successfully updated"
 msgstr ""
 
-#: includes/Classes/AdminAjaxHandler.php:165
-#: includes/Classes/AdminAjaxHandler.php:202
-#: includes/Classes/AdminAjaxHandler.php:243
+#: includes/Classes/AdminAjaxHandler.php:168
+#: includes/Classes/AdminAjaxHandler.php:205
+#: includes/Classes/AdminAjaxHandler.php:246
 #: includes/Classes/GlobalSettingsHandler.php:67
-#: includes/Classes/PaymentMethods/Stripe/Stripe.php:283
+#: includes/Classes/PaymentMethods/Stripe/Stripe.php:381
 msgid "Settings successfully updated"
 msgstr ""
 
-#: includes/Classes/AdminAjaxHandler.php:175
+#: includes/Classes/AdminAjaxHandler.php:178
 msgid "Validation Error, Please try again"
 msgstr ""
 
-#: includes/Classes/AdminAjaxHandler.php:177
+#: includes/Classes/AdminAjaxHandler.php:180
 msgid "Please add atleast one input element"
 msgstr ""
 
-#: includes/Classes/AdminAjaxHandler.php:192
+#: includes/Classes/AdminAjaxHandler.php:195
 msgid "Validation failed when saving the form"
 msgstr ""
 
-#: includes/Classes/AdminAjaxHandler.php:225
+#: includes/Classes/AdminAjaxHandler.php:228
 msgid "Selected form successfully deleted"
+msgstr ""
+
+#: includes/Classes/FormPlaceholders.php:21
+msgid "Submission Info"
+msgstr ""
+
+#: includes/Classes/FormPlaceholders.php:25
+msgid "WordPress"
+msgstr ""
+
+#: includes/Classes/FormPlaceholders.php:29
+msgid "Other"
+msgstr ""
+
+#: includes/Classes/FormPlaceholders.php:42
+msgid "Post ID"
+msgstr ""
+
+#: includes/Classes/FormPlaceholders.php:48
+msgid "Post Title"
+msgstr ""
+
+#: includes/Classes/FormPlaceholders.php:54
+msgid "Post URL"
+msgstr ""
+
+#: includes/Classes/FormPlaceholders.php:60
+msgid "Post Author"
+msgstr ""
+
+#: includes/Classes/FormPlaceholders.php:66
+msgid "Post Author Email"
+msgstr ""
+
+#: includes/Classes/FormPlaceholders.php:72
+msgid "Post Meta"
+msgstr ""
+
+#: includes/Classes/FormPlaceholders.php:78
+msgid "User ID"
+msgstr ""
+
+#: includes/Classes/FormPlaceholders.php:84
+msgid "User First Name"
+msgstr ""
+
+#: includes/Classes/FormPlaceholders.php:90
+msgid "User Last Name"
+msgstr ""
+
+#: includes/Classes/FormPlaceholders.php:96
+msgid "User Display Name"
+msgstr ""
+
+#: includes/Classes/FormPlaceholders.php:102
+msgid "User Email"
+msgstr ""
+
+#: includes/Classes/FormPlaceholders.php:108
+msgid "User URL"
+msgstr ""
+
+#: includes/Classes/FormPlaceholders.php:114
+msgid "User Meta"
+msgstr ""
+
+#: includes/Classes/FormPlaceholders.php:120
+msgid "Site Title"
+msgstr ""
+
+#: includes/Classes/FormPlaceholders.php:126
+msgid "Site URL"
+msgstr ""
+
+#: includes/Classes/FormPlaceholders.php:132
+msgid "Admin Email"
+msgstr ""
+
+#: includes/Classes/FormPlaceholders.php:145
+msgid "Query String"
+msgstr ""
+
+#: includes/Classes/FormPlaceholders.php:151
+msgid "Date"
+msgstr ""
+
+#: includes/Classes/FormPlaceholders.php:157
+msgid "Time"
+msgstr ""
+
+#: includes/Classes/FormPlaceholders.php:163
+msgid "User IP Address"
 msgstr ""
 
 #: includes/Classes/GlobalSettingsHandler.php:53
@@ -110,47 +202,47 @@ msgstr ""
 msgid "Support"
 msgstr ""
 
-#: includes/Classes/Menu.php:99
+#: includes/Classes/Menu.php:98
 msgid "All Payment Forms"
 msgstr ""
 
-#: includes/Classes/Menu.php:102
+#: includes/Classes/Menu.php:101
 msgid "Pending"
 msgstr ""
 
-#: includes/Classes/Menu.php:103
+#: includes/Classes/Menu.php:102
 msgid "Processing"
 msgstr ""
 
-#: includes/Classes/Menu.php:104
+#: includes/Classes/Menu.php:103
 msgid "Paid"
 msgstr ""
 
-#: includes/Classes/Menu.php:105
+#: includes/Classes/Menu.php:104
 msgid "Failed"
 msgstr ""
 
-#: includes/Classes/Menu.php:106
+#: includes/Classes/Menu.php:105
 msgid "Refunded"
 msgstr ""
 
-#: includes/Classes/SubmissionHandler.php:37
+#: includes/Classes/SubmissionHandler.php:39
 msgid "Invalid request. Please try again"
 msgstr ""
 
-#: includes/Classes/SubmissionHandler.php:93
+#: includes/Classes/SubmissionHandler.php:81
 msgid "Validation failed, because selected payment method could not be found"
 msgstr ""
 
-#: includes/Classes/SubmissionHandler.php:196
+#: includes/Classes/SubmissionHandler.php:184
 msgid "Form is successfully submitted"
 msgstr ""
 
-#: includes/Classes/SubmissionHandler.php:246
+#: includes/Classes/SubmissionHandler.php:234
 msgid "Form Validation failed"
 msgstr ""
 
-#: includes/Classes/SubmissionHandler.php:329
+#: includes/Classes/SubmissionHandler.php:317
 msgid " is required"
 msgstr ""
 
@@ -174,135 +266,135 @@ msgstr ""
 msgid "Selected submission successfully deleted"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:179
+#: includes/Classes/Builder/Render.php:180
 msgid "Previous Month"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:180
+#: includes/Classes/Builder/Render.php:181
 msgid "Next Month"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:182
+#: includes/Classes/Builder/Render.php:183
 msgid "January"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:183
+#: includes/Classes/Builder/Render.php:184
 msgid "February"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:184
+#: includes/Classes/Builder/Render.php:185
 msgid "March"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:185
+#: includes/Classes/Builder/Render.php:186
 msgid "April"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:186
+#: includes/Classes/Builder/Render.php:187
 msgid "May"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:187
+#: includes/Classes/Builder/Render.php:188
 msgid "June"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:188
+#: includes/Classes/Builder/Render.php:189
 msgid "July"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:189
+#: includes/Classes/Builder/Render.php:190
 msgid "August"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:190
+#: includes/Classes/Builder/Render.php:191
 msgid "September"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:191
+#: includes/Classes/Builder/Render.php:192
 msgid "October"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:192
+#: includes/Classes/Builder/Render.php:193
 msgid "November"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:193
+#: includes/Classes/Builder/Render.php:194
 msgid "December"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:195
+#: includes/Classes/Builder/Render.php:196
 msgid "Sunday"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:196
+#: includes/Classes/Builder/Render.php:197
 msgid "Monday"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:197
+#: includes/Classes/Builder/Render.php:198
 msgid "Tuesday"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:198
+#: includes/Classes/Builder/Render.php:199
 msgid "Wednesday"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:199
+#: includes/Classes/Builder/Render.php:200
 msgid "Thursday"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:200
+#: includes/Classes/Builder/Render.php:201
 msgid "Friday"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:201
+#: includes/Classes/Builder/Render.php:202
 msgid "Saturday"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:204
+#: includes/Classes/Builder/Render.php:205
 msgid "Sun"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:205
+#: includes/Classes/Builder/Render.php:206
 msgid "Mon"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:206
+#: includes/Classes/Builder/Render.php:207
 msgid "Tue"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:207
+#: includes/Classes/Builder/Render.php:208
 msgid "Wed"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:208
+#: includes/Classes/Builder/Render.php:209
 msgid "Thu"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:209
+#: includes/Classes/Builder/Render.php:210
 msgid "Fri"
 msgstr ""
 
-#: includes/Classes/Builder/Render.php:210
+#: includes/Classes/Builder/Render.php:211
 msgid "Sat"
 msgstr ""
 
-#: includes/Classes/FormComponents/ChoosePaymentMethodComponent.php:73
+#: includes/Classes/FormComponents/ChoosePaymentMethodComponent.php:80
 msgid "Select Payment Method"
 msgstr ""
 
-#: includes/Classes/FormComponents/CustomerEmailComponent.php:63
+#: includes/Classes/FormComponents/CustomerEmailComponent.php:67
 msgid "Valid email address is required for field:"
 msgstr ""
 
-#: includes/Classes/FormComponents/HiddenInputComponent.php:47
+#: includes/Classes/FormComponents/HiddenInputComponent.php:49
 msgid "Value is required for item:"
 msgstr ""
 
-#: includes/Classes/FormComponents/PaymentItemComponent.php:76
+#: includes/Classes/FormComponents/PaymentItemComponent.php:81
 msgid "Payment amount is required for item:"
 msgstr ""
 
-#: includes/Classes/FormComponents/PaymentItemComponent.php:80
+#: includes/Classes/FormComponents/PaymentItemComponent.php:85
 msgid "Pricing Details is required for item:"
 msgstr ""
 
@@ -330,41 +422,74 @@ msgstr ""
 msgid "Please Wait…"
 msgstr ""
 
-#: includes/Classes/Models/Forms.php:137
+#: includes/Classes/Models/Forms.php:158
 msgid "Form has been successfully submitted"
 msgstr ""
 
-#: includes/Classes/Models/Forms.php:210
+#: includes/Classes/Models/Forms.php:231
 msgid "Submission ID"
 msgstr ""
 
-#: includes/Classes/Models/Forms.php:211
+#: includes/Classes/Models/Forms.php:232
 msgid "Submission Hash ID"
 msgstr ""
 
-#: includes/Classes/Models/Forms.php:212
+#: includes/Classes/Models/Forms.php:233
 msgid "Customer Name"
 msgstr ""
 
-#: includes/Classes/Models/Forms.php:213
+#: includes/Classes/Models/Forms.php:234
 msgid "Customer Email"
 msgstr ""
 
-#: includes/Classes/Models/Forms.php:217
+#: includes/Classes/Models/Forms.php:238
 msgid "Payment Total"
 msgstr ""
 
-#: includes/Classes/Models/Forms.php:313
+#: includes/Classes/Models/Forms.php:242
+msgid "All input field html"
+msgstr ""
+
+#: includes/Classes/Models/Forms.php:244
+msgid "Order items table html"
+msgstr ""
+
+#: includes/Classes/Models/Forms.php:342
 msgid "Number of entry has been exceeds, Please check back later"
 msgstr ""
 
-#: includes/Classes/Models/Forms.php:319
+#: includes/Classes/Models/Forms.php:348
 msgid ""
 "Form submission time schedule is not started yet. Please check back later"
 msgstr ""
 
-#: includes/Classes/Models/Forms.php:324
+#: includes/Classes/Models/Forms.php:353
 msgid "You need to login to submit this form"
+msgstr ""
+
+#: includes/views/elements/order_items_table.php:10
+#: includes/views/receipt/item_table.php:13
+msgid "Item"
+msgstr ""
+
+#: includes/views/elements/order_items_table.php:11
+#: includes/views/receipt/item_table.php:14
+msgid "Quantity"
+msgstr ""
+
+#: includes/views/elements/order_items_table.php:12
+#: includes/views/receipt/item_table.php:15
+msgid "Price"
+msgstr ""
+
+#: includes/views/elements/order_items_table.php:13
+#: includes/views/receipt/item_table.php:16
+msgid "Line Total"
+msgstr ""
+
+#: includes/views/elements/order_items_table.php:27
+#: includes/views/receipt/item_table.php:30
+msgid "Total"
 msgstr ""
 
 #: includes/views/receipt/customer_details.php:2
@@ -375,32 +500,18 @@ msgstr ""
 msgid "Thanks for your submission. Here are the details of your submission:"
 msgstr ""
 
-#: includes/views/receipt/item_table.php:13
-msgid "Item"
-msgstr ""
-
-#: includes/views/receipt/item_table.php:14
-msgid "Quantity"
-msgstr ""
-
-#: includes/views/receipt/item_table.php:15
-msgid "Price"
-msgstr ""
-
-#: includes/views/receipt/item_table.php:16
-msgid "Line Total"
-msgstr ""
-
 #: includes/Classes/PaymentMethods/Stripe/ApiRequest.php:123
 #: includes/Classes/PaymentMethods/Stripe/ApiRequest.php:146
 msgid "There was a problem connecting to the Stripe API endpoint."
 msgstr ""
 
 #: includes/Classes/PaymentMethods/Stripe/Charge.php:19
+#: includes/Classes/PaymentMethods/Stripe/Customer.php:16
 msgid "Payment data validation failed"
 msgstr ""
 
 #: includes/Classes/PaymentMethods/Stripe/Charge.php:52
+#: includes/Classes/PaymentMethods/Stripe/Customer.php:39
 msgid "General Error"
 msgstr ""
 
@@ -420,23 +531,40 @@ msgstr ""
 msgid "Payment Amount can not be 0"
 msgstr ""
 
+#: includes/Classes/PaymentMethods/Stripe/Customer.php:49
+msgid "Stripe token is required"
+msgstr ""
+
 #: includes/Classes/PaymentMethods/Stripe/Stripe.php:53
 msgid "Stripe payment token is missing. Please input your card details"
 msgstr ""
 
-#: includes/Classes/PaymentMethods/Stripe/Stripe.php:148
+#: includes/Classes/PaymentMethods/Stripe/Stripe.php:150
+msgid "Customer Create Failed via stripe. Please try again"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Stripe.php:162
+msgid "Stripe Customer created. Customer ID: "
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Stripe.php:205
 msgid "Payment Failed via stripe. Status changed from Pending to Failed."
 msgstr ""
 
-#: includes/Classes/PaymentMethods/Stripe/Stripe.php:176
+#: includes/Classes/PaymentMethods/Stripe/Stripe.php:238
 msgid "Payment status changed from pending to success"
 msgstr ""
 
-#: includes/Classes/PaymentMethods/Stripe/Stripe.php:255
+#: includes/Classes/PaymentMethods/Stripe/Stripe.php:269
+msgid ""
+"Customer Create Failed via stripe. Status changed from Pending to Failed."
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Stripe.php:353
 msgid "Please provide Test Publishable key and Test Secret Key"
 msgstr ""
 
-#: includes/Classes/PaymentMethods/Stripe/Stripe.php:263
+#: includes/Classes/PaymentMethods/Stripe/Stripe.php:361
 msgid "Please provide Live Publishable key and Live Secret Key"
 msgstr ""
 
@@ -445,8 +573,7 @@ msgid "Your Card info (Powered By Stripe)"
 msgstr ""
 
 #. Name of the plugin
-msgid ""
-"WPPayForm - Build Payment Forms and Accept Payment using Stripe or PayPal"
+msgid "WPPayForm - Build Payment Forms and Accept Payment using Stripe"
 msgstr ""
 
 #. Description of the plugin
@@ -456,7 +583,9 @@ msgid ""
 msgstr ""
 
 #. URI of the plugin
-msgid "https://wppayform.wpmanageninja.com/"
+msgid ""
+"https://wpmanageninja.com/downloads/wppayform-pro-wordpress-payments-form-"
+"builder/"
 msgstr ""
 
 #. Author of the plugin

@@ -2,6 +2,8 @@
 
 namespace WPPayForm\Classes;
 
+use WPPayForm\Classes\Entry\Entry;
+use WPPayForm\Classes\Entry\MetaData;
 use WPPayForm\Classes\Models\Forms;
 use WPPayForm\Classes\Models\OrderItem;
 
@@ -39,66 +41,79 @@ class PlaceholderParser
     public static function parse($string, $submission)
     {
         $parsables = self::parseShortcode($string);
-        if(!$parsables) {
+        if (!$parsables) {
             return $string;
         }
-
-        $parsedData = array();
 
         $formattedParsables = array();
         foreach ($parsables as $parsableKey => $parsable) {
             // Get Parsed Group
-            $group = strtok($parsable, '.');
-            $itemExt = str_replace($group.'.', '', $parsable);
-            $formattedParsables[$group][$itemExt] = $itemExt;
-        }
-        foreach ($formattedParsables as $group => $items) {
-            if($group == 'input') {
-                $parsedData[$group] = $submission->form_data_formatted;
-            } else if($group == 'submission') {
-                $parsedData[$group] = array(
-                    'id' => $submission->id,
-                    'customer_name' => $submission->customer_name,
-                    'customer_email' => $submission->customer_email,
-                    'currency' => $submission->currency,
-                    'payment_status' => $submission->payment_status,
-                    'payment_total' => $submission->payment_total,
-                    'payment_mode' => $submission->payment_mode,
-                    'submission_hash' => $submission->submission_hash,
-                    'payment_method' => $submission->payment_method,
-                    'status' => $submission->status,
-                    'ip_address' => $submission->ip_address,
-                    'created_at' => $submission->created_at,
-                );
-            } else if($group == 'payment_item') {
-                foreach ($items as $itemkey =>  $item) {
-                   $itemNames = wpPayFormDB()->table('wpf_order_items')
-                       ->select(array('item_name'))
-                       ->where('submission_id', $submission->id )
-                       ->where('parent_holder', $item)
-                       ->get();
-                   $names = array();
-                   foreach ($itemNames as $itemName) {
-                       $names[] = $itemName->item_name;
-                   }
-                }
-                $parsedData['payment_item'][$itemkey] = $names;
-            }
+            $group = strtok($parsable, '.:');
+            $itemExt = str_replace(array($group . '.', $group . ':'), '', $parsable);
+            $formattedParsables[$group][$parsableKey] = $itemExt;
         }
 
-        $parseItems = array();
-        foreach ($parsables as $parseKey => $parseValue) {
-            $value = ArrayHelper::get($parsedData, $parseValue, '');
-            if($value && $parseKey == '{submission.payment_total}') {
-                $value = wpPayFormFormattedMoney($value, Forms::getCurrencyAndLocale($submission->form_id));
-            }
-            if( is_array($value) ) {
-                $value = implode(' ', $value);
-            }
-            $parseItems[$parseKey] = $value;
-        }
+        $entry = new Entry($submission);
+
+        $sunmissionPlaceholders = ArrayHelper::only($formattedParsables, array(
+            'input', 'quantity', 'payment_item', 'submission'
+        ));
+        $submissionParseItems = self::parseInpuFields($sunmissionPlaceholders, $entry);
+
+        $wpPlaceholders = ArrayHelper::only($formattedParsables, array(
+            'wp', 'post_meta', 'user_meta', 'querystring', 'other'
+        ));
+
+        $wpParseItems = self::parseWPFields($wpPlaceholders, $entry);
+
+        $parseItems = array_merge($submissionParseItems, $wpParseItems);
+
+        $parseItems = apply_filters('wppayform/submission_placeholders_parsed', $parseItems, $submission, $parsables);
 
         return str_replace(array_keys($parseItems), array_values($parseItems), $string);
+    }
+
+    public static function parseInpuFields($placeholders, $entry)
+    {
+        $parsedData = array();
+
+        foreach ($placeholders as $groupKey => $values) {
+            foreach ($values as $placeholder => $targetItem) {
+                if ($groupKey == 'input') {
+                    $parsedData[$placeholder] = $entry->getInput($targetItem);
+                } else if ($groupKey == 'quantity') {
+                    $parsedData[$placeholder] = $entry->getItemQuantity($targetItem);
+                } else if ($groupKey == 'payment_item') {
+                    $parsedData[$placeholder] = implode(', ', $entry->getPaymentItems($targetItem));
+                } else if ($groupKey == 'submission') {
+                    $parsedData[$placeholder] = $entry->{$targetItem};
+                }
+            }
+        }
+        return $parsedData;
+    }
+
+
+    public static function parseWPFields($placeHolders, $entry)
+    {
+        $parsedData = array();
+        $metaData = new MetaData($entry);
+        foreach ($placeHolders as $groupKey => $values) {
+            foreach ($values as $placeholder => $targetItem) {
+                if($groupKey == 'wp') {
+                    $parsedData[$placeholder] = $metaData->getWPValues($targetItem);
+                } else if($groupKey == 'post_meta') {
+                    $parsedData[$placeholder] = $metaData->getPostMeta($targetItem);
+                } else if($groupKey == 'user_meta') {
+                    $parsedData[$placeholder] = $metaData->getuserMeta($targetItem);
+                } else if($groupKey == 'querystring') {
+                    $parsedData[$placeholder] = $metaData->getFromUrlQuery($targetItem);
+                } else if($groupKey == 'other') {
+                    $parsedData[$placeholder] = $metaData->getOtherData($targetItem);
+                }
+            }
+        }
+        return $parsedData;
     }
 
     public static function parseShortcode($string)

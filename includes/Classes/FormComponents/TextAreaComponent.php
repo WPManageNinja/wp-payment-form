@@ -25,19 +25,22 @@ class TextAreaComponent extends BaseComponent
             'editor_elements' => array(
                 'label'         => array(
                     'label' => 'Field Label',
-                    'type'  => 'text'
+                    'type'  => 'text',
+                    'group' => 'general'
                 ),
                 'required'      => array(
                     'label' => 'Required',
-                    'type'  => 'switch'
+                    'type'  => 'switch',
+                    'group' => 'general'
                 ),
                 'default_value' => array(
                     'label' => 'Default Value',
-                    'type'  => 'textarea'
+                    'type'  => 'textarea',
+                    'group' => 'general'
                 )
             ),
             'field_options'   => array(
-                'label' => '',
+                'label' => 'Textarea Field',
                 'placeholder' => '',
                 'required' => 'no'
             )
@@ -53,7 +56,6 @@ class TextAreaComponent extends BaseComponent
         $controlClass = $this->elementControlClass($element);
         $inputClass = $this->elementInputClass($element);
         $inputId = 'wpf_input_' . $form->ID . '_' . $this->elementName;
-        $label = ArrayHelper::get($fieldOptions, 'label');
 
         $attributes = array(
             'data-required' => ArrayHelper::get($fieldOptions, 'required'),
@@ -66,12 +68,14 @@ class TextAreaComponent extends BaseComponent
             $attributes['required'] = true;
         }
 
+        $defaultValue = apply_filters('wppayform/input_default_value', ArrayHelper::get($fieldOptions, 'default_value'), $element, $form);
+
         ?>
         <div id="wpf_<?php echo $this->elementName; ?>" data-element_type="<?php echo $this->elementName; ?>"
              class="<?php echo $controlClass; ?>">
             <?php $this->buildLabel($fieldOptions, $form, array('for' => $inputId)); ?>
             <div class="wpf_input_content">
-                <textarea <?php echo $this->builtAttributes($attributes); ?>><?php echo ArrayHelper::get($fieldOptions, 'default_value') ?></textarea>
+                <textarea <?php echo $this->builtAttributes($attributes); ?>><?php echo $defaultValue; ?></textarea>
             </div>
         </div>
         <?php

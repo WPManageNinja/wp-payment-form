@@ -112,6 +112,7 @@ class Render
         <form <?php echo $this->builtAttributes($formAttributes); ?>>
         <input type="hidden" name="__wpf_form_id" value="<?php echo $form->ID; ?>"/>
         <input type="hidden" name="__wpf_current_url" value="<?php echo $currentUrl; ?>">
+        <input type="hidden" name="__wpf_current_page_id" value="<?php echo get_the_ID(); ?>">
         <?php do_action('wppayform/form_render_start_form', $form); ?>
         <?php
     }

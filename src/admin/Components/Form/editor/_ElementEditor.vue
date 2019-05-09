@@ -55,7 +55,7 @@
                 </template>
                 <template v-else-if="item.type == 'select_option'">
                     <el-form-item :label="item.label">
-                        <el-select class="item_full_width" size="small" v-model="element.field_options[itemName]">
+                        <el-select :allow-create="item.creatable == 'yes'" filterable default-first-option class="item_full_width" size="small" v-model="element.field_options[itemName]">
                             <el-option v-for="(option_name,option_key) in item.options" :key="option_key" :label="option_name" :value="option_key"></el-option>
                         </el-select>
                     </el-form-item>

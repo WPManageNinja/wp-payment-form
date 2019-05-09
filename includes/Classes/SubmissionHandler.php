@@ -29,7 +29,9 @@ class SubmissionHandler
         // Now Validate the form please
         $formId = absint($_REQUEST['form_id']);
         // Get Original Form Elements Now
-        $elements = Forms::getBuilderSettings($formId);
+
+        do_action('wppayform/form_submission_activity_start', $formId);
+
         $form = Forms::getForm($formId);
 
         if (!$form) {
@@ -38,21 +40,7 @@ class SubmissionHandler
             ), 423);
         }
 
-        $formattedElements = array(
-            'input'                  => array(),
-            'payment'                => array(),
-            'payment_method_element' => array(),
-            'item_quantity'          => array()
-        );
-        foreach ($elements as $element) {
-            $formattedElements[$element['group']][$element['id']] = array(
-                'options' => $element['field_options'],
-                'type'    => $element['type'],
-                'id'      => $element['id'],
-                'label'   => ArrayHelper::get($element['field_options'], 'label')
-            );
-        }
-
+        $formattedElements = Forms::getFormattedElements($formId);
         $this->validate($form_data, $formattedElements, $form);
 
         // Extract Payment Items Here
@@ -188,15 +176,15 @@ class SubmissionHandler
 
         $submission = $submissionModel->getSubmission($submissionId);
 
-        do_action('wppayfrom/after_form_submission_complete', $submission, $formId);
+        do_action('wppayform/after_form_submission_complete', $submission, $formId);
         $confirmation = Forms::getConfirmationSettings($formId);
         $confirmation = $this->parseConfirmation($confirmation, $submission);
         $confirmation = apply_filters('wppayform/form_confirmation', $confirmation, $submissionId, $formId);
-        wp_send_json_success(array(
+        wp_send_json_success( array(
             'message'       => __('Form is successfully submitted', 'wppayform'),
             'submission_id' => $submissionId,
             'confirmation'  => $confirmation
-        ), 200);
+        ), 200 );
     }
 
     private function validate($form_data, $formattedElements, $form)
@@ -356,7 +344,7 @@ class SubmissionHandler
         $prefix = 'wpf_' . time();
         $uid = uniqid($prefix);
         // now let's make a unique number from 1 to 999
-        $uid .= rand(1, 999);
+        $uid .= mt_rand(1, 999);
         $uid = str_replace(array("'", '/', '?', '#', "\\"), '', $uid);
         return $uid;
     }

@@ -23,7 +23,8 @@ class HtmlComponent extends BaseComponent
             'editor_elements' => array(
                 'custom_html' => array(
                     'label' => 'Custom HTML',
-                    'type' => 'html'
+                    'type' => 'html',
+                    'group' => 'general'
                 )
             )
         );
