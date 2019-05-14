@@ -4,12 +4,12 @@
             <div class="wpf_entry_action">
                 <label>
                     <span class="item_title">Filter By Form</span>
-                    <el-select @change="changeForm()" size="small" v-model="form_id" placeholder="All Forms">
+                    <el-select @change="changeForm()" filterable size="small" v-model="form_id" placeholder="All Forms">
                         <el-option label="All Forms" value="0"></el-option>
                         <el-option
                             v-for="form in available_forms"
                             :key="form.ID"
-                            :label="form.post_title"
+                            :label="form.post_title + ' (ID: '+form.ID+')'"
                             :value="form.ID">
                         </el-option>
                     </el-select>

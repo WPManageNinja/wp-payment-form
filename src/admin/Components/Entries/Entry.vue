@@ -43,9 +43,14 @@
                 </div>
                 <div class="payment_header_right">
                     <p class="head_small_title">{{ firstTransaction.charge_id }}</p>
-                    <a v-if="firstTransaction.transaction_url" target="_blank" :href="firstTransaction.transaction_url"
-                       class="el-button el-button--default el-button--mini">View on {{ firstTransaction.payment_method
-                        }} dashboard</a>
+                    <a
+                        v-if="isUrl(firstTransaction.transaction_url)"
+                        target="_blank"
+                        :href="firstTransaction.transaction_url"
+                       class="el-button el-button--default el-button--mini">
+                        View on {{ firstTransaction.payment_method }} dashboard
+                    </a>
+                    <span v-else>{{firstTransaction.payment_method}}</span>
                 </div>
             </div>
             <div class="payment_head_bottom">
@@ -438,6 +443,10 @@
                     .always(() => {
 
                     });
+            },
+            isUrl(maybeUrl) {
+                var regexp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
+                return regexp.test(maybeUrl);
             }
         },
         mounted() {

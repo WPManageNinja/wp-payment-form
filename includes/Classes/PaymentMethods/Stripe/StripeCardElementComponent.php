@@ -26,11 +26,15 @@ class StripeCardElementComponent extends BaseComponent
             'editor_elements' => array(
                 'label'                  => array(
                     'label' => 'Payment Option Label',
-                    'type'  => 'text'
+                    'type'  => 'text',
+                    'default' => 'Pay with Card (Stripe)'
                 ),
                 'checkout_display_style' => array(
                     'label' => 'Checkout display style',
-                    'type'  => 'checkout_display_options'
+                    'type'  => 'checkout_display_options',
+                    'default' => array(
+                        'style' => 'stripe_checkout'
+                    )
                 ),
                 'verify_zip'             => array(
                     'label' => 'Verify Zip/Postal Code',

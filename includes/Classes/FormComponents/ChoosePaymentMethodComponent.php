@@ -28,14 +28,14 @@ class ChoosePaymentMethodComponent extends BaseComponent
                 $methodElement = $element;
             }
         }
-        if(!$methodElement) {
+        if (!$methodElement) {
             return $paymentMethod;
         }
         $selectedPaymentMethod = ArrayHelper::get($form_data, '__wpf_selected_payment_method');
         $methods = ArrayHelper::get($methodElement, 'options.method_settings.payment_settings', array());
         foreach ($methods as $payMethod => $method) {
-            if($method['enabled'] == 'yes') {
-                if($payMethod == $selectedPaymentMethod) {
+            if ($method['enabled'] == 'yes') {
+                if ($payMethod == $selectedPaymentMethod) {
                     return $payMethod;
                 }
             }
@@ -48,7 +48,7 @@ class ChoosePaymentMethodComponent extends BaseComponent
     {
         $available_methods = apply_filters('wppayform/available_payment_methods', array());
 
-        if(!$available_methods || count($available_methods) > 2) {
+        if (!$available_methods || count($available_methods) < 2) {
             return;
         }
 
@@ -64,7 +64,7 @@ class ChoosePaymentMethodComponent extends BaseComponent
                     'type'  => 'text',
                     'group' => 'general'
                 ),
-                'default_value'           => array(
+                'default_value'   => array(
                     'label' => 'Default Payment method',
                     'type'  => 'text',
                     'group' => 'general'
@@ -73,12 +73,12 @@ class ChoosePaymentMethodComponent extends BaseComponent
                     'label'             => 'Payment Methods',
                     'type'              => 'choose_payment_method',
                     'available_methods' => $available_methods,
-                    'group' => 'general'
+                    'group'             => 'general'
                 )
             ),
             'field_options'   => array(
                 'label'           => __('Select Payment Method', 'wppayform'),
-                'default_value' => '',
+                'default_value'   => '',
                 'method_settings' => array(
                     'prefered_method' => ''
                 )
@@ -105,44 +105,46 @@ class ChoosePaymentMethodComponent extends BaseComponent
                 $validMethods[$methodName] = $method;
             }
         }
-        echo '<input type="hidden" name="__wpf_valid_payment_methods_count" value="'.count($validMethods).'"/>';
+        echo '<input type="hidden" name="__wpf_valid_payment_methods_count" value="' . count($validMethods) . '"/>';
 
-        if($validMethods && count($validMethods) > 1) :
-        ?>
-        <div <?php echo $this->builtAttributes($controlAttributes); ?>>
-            <?php $this->buildLabel($fieldOption, $form); ?>
-            <div class="wpf_multi_form_controls wpf_input_content">
-                <?php foreach ($validMethods as $methodName => $method): ?>
-                    <?php
-                    $optionId = $element['id'] . '_' . $methodName . '_' . $form->ID;
-                    $attributes = array(
-                        'class' => 'form-check-input',
-                        'type'  => 'radio',
-                        'name'  => '__wpf_selected_payment_method',
-                        'id'    => $optionId,
-                        'value' => $methodName,
-                        'required' => true
-                    );
-                    if ($methodName == $defaultValue) {
-                        $attributes['checked'] = 'true';
-                    }
-                    ?>
-                    <div class="form-check">
-                        <input <?php echo $this->builtAttributes($attributes); ?>>
-                        <label class="form-check-label" for="<?php echo $optionId; ?>">
-                            <?php echo $method['label']; ?>
-                        </label>
-                    </div>
-                <?php endforeach; ?>
+        if ($validMethods && count($validMethods) > 1) :
+            ?>
+            <div <?php echo $this->builtAttributes($controlAttributes); ?>>
+                <?php $this->buildLabel($fieldOption, $form); ?>
+                <div class="wpf_multi_form_controls wpf_input_content">
+                    <?php foreach ($validMethods as $methodName => $method): ?>
+                        <?php
+                        $optionId = $element['id'] . '_' . $methodName . '_' . $form->ID;
+                        $attributes = array(
+                            'class'    => 'form-check-input',
+                            'type'     => 'radio',
+                            'name'     => '__wpf_selected_payment_method',
+                            'id'       => $optionId,
+                            'value'    => $methodName,
+                            'required' => true
+                        );
+                        if ($methodName == $defaultValue) {
+                            $attributes['checked'] = 'true';
+                        }
+                        ?>
+                        <div class="form-check">
+                            <input <?php echo $this->builtAttributes($attributes); ?>>
+                            <label class="form-check-label" for="<?php echo $optionId; ?>">
+                                <?php echo $method['label']; ?>
+                            </label>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
             </div>
-        </div>
         <?php else: ?>
-            <input data-wpf_payment_method="<?php echo $lastPaymentMethod; ?>" type="hidden" name="__wpf_selected_payment_method" value="<?php echo $lastPaymentMethod; ?>" />
+            <input data-wpf_payment_method="<?php echo $lastPaymentMethod; ?>" type="hidden"
+                   name="__wpf_selected_payment_method" value="<?php echo $lastPaymentMethod; ?>"/>
         <?php endif; ?>
         <div class="wpf_all_payment_methods_wrapper">
             <?php foreach ($validMethods as $methodName => $method): ?>
-                <div data-payment_method="<?php echo $methodName; ?>" class="wpf_payment_method_element wpf_payment_method_element_<?php echo $methodName ?>">
-                    <?php do_action('wppayform/payment_method_choose_element_render_'.$methodName, $method, $form, $elements); ?>
+                <div data-payment_method="<?php echo $methodName; ?>"
+                     class="wpf_payment_method_element wpf_payment_method_element_<?php echo $methodName ?>">
+                    <?php do_action('wppayform/payment_method_choose_element_render_' . $methodName, $method, $form, $elements); ?>
                 </div>
             <?php endforeach; ?>
         </div>

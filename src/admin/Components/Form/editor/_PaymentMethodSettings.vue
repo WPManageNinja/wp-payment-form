@@ -50,7 +50,11 @@
         mounted() {
             each(this.pay_method.editor_elements, (element, elementName) => {
                 if(!this.settings[elementName]) {
-                    if(element.type == 'checkout_display_options') {
+                    if(this.settings[elementName] == null && element.default) {
+                        this.$set(this.settings, elementName, element.default);
+                    }
+
+                    if(element.type == 'checkout_display_options' && this.settings[elementName] == null) {
                         this.$set(this.settings, elementName, {});
                     }
                 }

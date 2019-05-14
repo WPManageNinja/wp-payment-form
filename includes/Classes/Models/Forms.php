@@ -57,6 +57,7 @@ class Forms
         return wpPayFormDB()->table('posts')
             ->select(array('ID', 'post_title'))
             ->where('post_type', 'wp_payform')
+            ->orderBy('ID', 'DESC')
             ->get();
     }
 
