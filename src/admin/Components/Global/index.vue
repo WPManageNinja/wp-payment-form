@@ -5,6 +5,13 @@
             <router-link v-for="menuItem in topMenus" :key="menuItem.route" active-class="ninja-tab-active" exact :class="['ninja-tab']" :to="{ name: menuItem.route }">
                 {{ menuItem.title }}
             </router-link>
+            <a
+                v-if="!has_pro"
+                style="float: right;"
+                class="el-button payform_action el-button--danger el-button--small"
+                :href="pro_purchase_url">
+                    Upgrade To Pro
+            </a>
         </div>
         <router-view></router-view>
     </div>

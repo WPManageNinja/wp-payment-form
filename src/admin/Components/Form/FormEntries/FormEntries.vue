@@ -124,6 +124,18 @@
             </span>
         </el-dialog>
 
+        <el-dialog
+            :visible.sync="show_pro"
+            width="60%">
+            <div class="payform_section_body payform_upgrade_wrapper">
+                <div class="payform_upgrade_section">
+                    <h1><i class="el-icon-lock"></i></h1>
+                    <h3>Export data is a pro feature. Upgrade to pro to unlock this feature.</h3>
+                    <a target="_blank" :href="pro_purchase_url" class="el-button el-button--primary">Upgrade To Pro
+                        version</a>
+                </div>
+            </div>
+        </el-dialog>
     </div>
 </template>
 
@@ -148,7 +160,8 @@
                 delete_pop_up: false,
                 deleting_row: null,
                 deletetingItem: false,
-                has_payment_items: true
+                has_payment_items: true,
+                show_pro: false
             }
         },
         computed: {
@@ -275,6 +288,10 @@
                     });
             },
             exportCSV(doc_type) {
+                if(!this.has_pro) {
+                    this.show_pro = true;
+                    return;
+                }
                 let query = jQuery.param({
                     action: 'wpf_export_endpoints',
                     route: 'export_data',
@@ -283,7 +300,7 @@
                     payment_status: this.selected_payment_status
                 });
 
-                window.location.href = window.wpPayFormsAdmin.ajaxurl+'?'+query;
+                window.location.href = window.wpPayFormsAdmin.ajaxurl + '?' + query;
             }
         },
         mounted() {

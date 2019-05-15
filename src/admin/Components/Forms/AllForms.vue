@@ -43,7 +43,7 @@
                                     {{ $t('Edit') }}
                                 </router-link>
                                 |
-                                <router-link :to="{ name: 'entries', query: { form_id: scope.row.ID.toString() } }">
+                                <router-link :to="{ name: 'form_entries', params: { form_id: scope.row.ID } }">
                                     {{ $t('Entries') }}
                                 </router-link>
                                 |
