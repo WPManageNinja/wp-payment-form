@@ -125,6 +125,17 @@ class Forms
         return $formattedElements;
     }
 
+    public static function hasPaymentFields($formId)
+    {
+        $elements = Forms::getBuilderSettings($formId);
+        foreach ($elements as $element) {
+           if(in_array($element['group'], ['payment', 'payment_method_element'])) {
+               return true;
+           }
+        }
+        return false;
+    }
+
     public static function getFormInputLabels($formId)
     {
         $elements = get_post_meta($formId, 'wppayform_paymentform_builder_settings', true);

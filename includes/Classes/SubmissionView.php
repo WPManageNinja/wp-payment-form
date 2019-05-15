@@ -21,23 +21,24 @@ class SubmissionView
     {
         add_action('wp_ajax_wpf_submission_endpoints', array($this, 'routeAjaxMaps'));
     }
-    
+
     public function routeAjaxMaps()
     {
         $routes = array(
-            'get_submissions' => 'getSubmissions',
-            'get_submission' => 'getSubmission',
-            'get_available_forms' => 'getAvailableForms',
+            'get_submissions'          => 'getSubmissions',
+            'get_submission'           => 'getSubmission',
+            'get_available_forms'      => 'getAvailableForms',
             'get_next_prev_submission' => 'getNextPrevSubmission',
-            'add_submission_note' => 'addSubmissionNote',
-            'change_payment_status' => 'changePaymentStatus',
-            'delete_submission' => 'deleteSubmission'
+            'add_submission_note'      => 'addSubmissionNote',
+            'change_payment_status'    => 'changePaymentStatus',
+            'delete_submission'        => 'deleteSubmission',
+            'export_csv'               => 'exportAsCSV'
         );
         $route = sanitize_text_field($_REQUEST['route']);
 
-        if(isset($routes[$route])) {
+        if (isset($routes[$route])) {
             AccessControl::checkAndPresponseError($route, 'submissions');
-            do_action('wppayform/doing_ajax_submissions_'.$route);
+            do_action('wppayform/doing_ajax_submissions_' . $route);
             $this->{$routes[$route]}();
             return;
         }
@@ -56,7 +57,7 @@ class SubmissionView
 
         $wheres = array();
 
-        if(isset($_REQUEST['payment_status']) && $_REQUEST['payment_status']) {
+        if (isset($_REQUEST['payment_status']) && $_REQUEST['payment_status']) {
             $wheres['payment_status'] = sanitize_text_field($_REQUEST['payment_status']);
         }
 
@@ -71,9 +72,16 @@ class SubmissionView
         }
         $submissionItems = apply_filters('wppayform/form_entries', $submissions->items, $formId);
 
+        $hasPaymentItem = true;
+
+        if ($formId) {
+            $hasPaymentItem = Forms::hasPaymentFields($formId);
+        }
+
         wp_send_json_success(array(
-            'submissions' => $submissionItems,
-            'total'       => (int)$submissions->total
+            'submissions'    => $submissionItems,
+            'total'          => (int)$submissions->total,
+            'hasPaymentItem' => $hasPaymentItem
         ), 200);
 
     }
@@ -81,7 +89,7 @@ class SubmissionView
     public function getSubmission($submissionId = false)
     {
         $formId = absint($_REQUEST['form_id']);
-        if(!$submissionId) {
+        if (!$submissionId) {
             $submissionId = absint($_REQUEST['submission_id']);
         }
 
@@ -95,15 +103,15 @@ class SubmissionView
         $submission = apply_filters('wppayform/form_entry', $submission);
 
         wp_send_json_success(array(
-            'submission'    => $submission,
-            'entry'         => (object) $submissionModel->getParsedSubmission($submission)
+            'submission' => $submission,
+            'entry'      => (object)$submissionModel->getParsedSubmission($submission)
         ), 200);
     }
 
     public function getNextPrevSubmission()
     {
         $formId = false;
-        if(isset($_REQUEST['form_id'])) {
+        if (isset($_REQUEST['form_id'])) {
             $formId = absint($_REQUEST['form_id']);
         }
 
@@ -113,23 +121,23 @@ class SubmissionView
         $whereOperator = '<';
         $orderBy = 'DESC';
         // find the next / previous form id
-        if($queryType == 'prev') {
+        if ($queryType == 'prev') {
             $whereOperator = '>';
             $orderBy = 'ASC';
         }
 
         $submissionQuery = wpPayFormDB()->table('wpf_submissions')
-                        ->orderBy('id', $orderBy)
-                        ->where('id', $whereOperator, $currentSubmissionId);
+            ->orderBy('id', $orderBy)
+            ->where('id', $whereOperator, $currentSubmissionId);
 
-        if($formId) {
+        if ($formId) {
             $submissionQuery->where('form_id', $formId);
         }
 
 
         $submission = $submissionQuery->first();
 
-        if(!$submission) {
+        if (!$submission) {
             wp_send_json_error(array(
                 'message' => __('Sorry, No Submission found', 'wppayform')
             ), 423);
@@ -190,7 +198,7 @@ class SubmissionView
             'payment_status' => $newStatus
         ));
         wpPayFormDB()->table('wpf_order_transactions')->where('submission_id', $submissionId)->update(array(
-            'status' => $newStatus,
+            'status'     => $newStatus,
             'updated_at' => date('Y-m-d H:i:s')
         ));
         do_action('wppayform/after_payment_status_change_manually', $submissionId, $newStatus, $submission->payment_status);
@@ -231,4 +239,5 @@ class SubmissionView
             'message' => __('Selected submission successfully deleted', 'wppayform')
         ), 200);
     }
+
 }

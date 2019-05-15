@@ -3,20 +3,6 @@
         <div class="wpf_entry_actions payform_section_header">
             <div class="wpf_entry_action">
                 <label>
-                    <span class="item_title">Filter By Form</span>
-                    <el-select @change="changeForm()" filterable size="small" v-model="form_id" placeholder="All Forms">
-                        <el-option label="All Forms" value="0"></el-option>
-                        <el-option
-                            v-for="form in available_forms"
-                            :key="form.ID"
-                            :label="form.post_title + ' (ID: '+form.ID+')'"
-                            :value="form.ID">
-                        </el-option>
-                    </el-select>
-                </label>
-            </div>
-            <div class="wpf_entry_action">
-                <label>
                     <span class="item_title">Filter By Payment Status</span>
                     <el-select @change="changePaymentStatus()" size="small" v-model="selected_payment_status"
                                placeholder="All Forms">
@@ -30,8 +16,18 @@
                     </el-select>
                 </label>
             </div>
-            <div v-if="form_id && form_id != '0'" class="wpf_entry_action">
-                <router-link :to="{ name: 'form_entries', params: { form_id: form_id } }">View Reports</router-link>
+            <div class="wpf_entry_action">
+                <el-dropdown @command="exportCSV">
+                    <el-button type="info" size="mini">
+                        Export <i class="el-icon-arrow-down el-icon--right"></i>
+                    </el-button>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item command="csv">Export as CSV</el-dropdown-item>
+                        <el-dropdown-item command="xlsx">Export as Excel (xlsv)</el-dropdown-item>
+                        <el-dropdown-item command="ods">Export as ODS</el-dropdown-item>
+                        <el-dropdown-item command="json">Export as JSON Data</el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
             </div>
         </div>
         <div v-loading="fetching" class="wpf_entries">
@@ -45,16 +41,9 @@
                     width="60">
                     <template slot-scope="scope">
                         <router-link
-                            :to="{ name: 'form_entries', params: { entry_id: scope.row.id, form_id: scope.row.form_id }}">
+                            :to="{ name: 'entry', params: { entry_id: scope.row.id, form_id: form_id }}">
                             {{scope.row.id}}
                         </router-link>
-                    </template>
-                </el-table-column>
-                <el-table-column
-                    label="Payment Form"
-                    width="220">
-                    <template slot-scope="scope">
-                        {{ scope.row.post_title }} ({{ scope.row.form_id }})
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -96,8 +85,10 @@
                     fixed="right">
                     <template slot-scope="scope">
                         <el-button-group>
-                            <el-button @click="goToViewRoute(scope.row)" type="primary" icon="el-icon-view" size="mini"></el-button>
-                            <el-button @click="showDeleteConformation(scope.row)" type="danger" size="mini" icon="el-icon-delete"></el-button>
+                            <el-button @click="goToViewRoute(scope.row)" type="primary" icon="el-icon-view"
+                                       size="mini"></el-button>
+                            <el-button @click="showDeleteConformation(scope.row)" type="danger" size="mini"
+                                       icon="el-icon-delete"></el-button>
                         </el-button-group>
                     </template>
                 </el-table-column>
@@ -115,7 +106,6 @@
             </el-pagination>
         </div>
 
-
         <!--Delete Entry Confimation Modal-->
         <el-dialog
             title="Are You Sure, You want to delete this Entry?"
@@ -123,8 +113,10 @@
             :before-close="handleDeleteClose"
             width="60%">
             <div v-if="deleting_row" class="modal_body">
-                <p>All the data assoscilate with this entry will be deleted, including payment information and other associate information</p>
-                <p>You are deleting entry id: <b>{{ deleting_row.id }}</b>. <br />Form Title: <b>{{ deleting_row.post_title }}</b></p>
+                <p>All the data assoscilate with this entry will be deleted, including payment information and other
+                    associate information</p>
+                <p>You are deleting entry id: <b>{{ deleting_row.id }}</b>. <br/>Form Title: <b>{{
+                    deleting_row.post_title }}</b></p>
             </div>
             <span slot="footer" class="dialog-footer">
                 <el-button @click="delete_pop_up = false">Cancel</el-button>
@@ -136,7 +128,7 @@
 </template>
 
 <script>
-    import fromatPrice from '../../../common/formatPrice';
+    import fromatPrice from '../../../../common/formatPrice';
 
     export default {
         name: "Entries",
@@ -149,7 +141,7 @@
                     per_page: 20,
                     total: 0
                 },
-                form_id: '0',
+                form_id: this.$route.params.form_id,
                 available_forms: [],
                 selected_payment_status: '',
                 available_statuses: window.wpPayFormsAdmin.paymentStatuses,
@@ -250,7 +242,8 @@
             goToViewRoute(row) {
                 this.$router.push({
                     name: 'entry',
-                    params: { entry_id: row.id, form_id: row.form_id }
+                    params: {entry_id: row.id},
+                    query: {form_id: this.form_id}
                 });
             },
             showDeleteConformation(row) {
@@ -280,6 +273,17 @@
                         this.deletetingItem = false;
                         this.handleDeleteClose();
                     });
+            },
+            exportCSV(doc_type) {
+                let query = jQuery.param({
+                    action: 'wpf_export_endpoints',
+                    route: 'export_data',
+                    doc_type: doc_type,
+                    form_id: parseInt(this.form_id),
+                    payment_status: this.selected_payment_status
+                });
+
+                window.location.href = window.wpPayFormsAdmin.ajaxurl+'?'+query;
             }
         },
         mounted() {

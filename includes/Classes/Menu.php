@@ -109,6 +109,7 @@ class Menu
                 'assets_url' => WPPAYFORM_URL.'assets/',
                 'has_pro' => defined('WPPAYFORMHASPRO') && WPPAYFORMHASPRO,
                 'hasValidLicense' => get_option('_wppayform_pro_license_status'),
+                'ajaxurl' => admin_url('admin-ajax.php')
             ));
         }
     }

@@ -27,7 +27,7 @@
                     },
                     {
                         route: 'entries',
-                        title: 'Entries & Payments'
+                        title: 'All Entries & Payments'
                     },
                     {
                         route: 'general_settings',

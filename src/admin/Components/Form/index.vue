@@ -35,7 +35,7 @@
                 <span>{{  formMenu.title }}</span>
             </el-menu-item>
             <el-menu-item
-                :route="{ name: 'entries', params: { form_id: form_id }, query: { form_id: form_id.toString() } }"
+                :route="{ name: 'form_entries', params: { form_id: form_id } }"
                 index="entries"
             >
                 <i class="dashicons dashicons-text"></i>

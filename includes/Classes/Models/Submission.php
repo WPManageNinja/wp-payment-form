@@ -20,14 +20,19 @@ class Submission
             ->insert($submission);
     }
 
-    public function getSubmissions($formId = false, $wheres = array(), $perPage, $skip)
+    public function getSubmissions($formId = false, $wheres = array(), $perPage = false, $skip = false, $orderBy = 'DESC')
     {
         $resultQuery = wpPayFormDB()->table('wpf_submissions')
             ->select(array('wpf_submissions.*', 'posts.post_title'))
             ->join('posts', 'posts.ID', '=', 'wpf_submissions.form_id')
-            ->orderBy('wpf_submissions.id', 'DESC')
-            ->limit($perPage)
-            ->offset($skip);
+            ->orderBy('wpf_submissions.id', $orderBy);
+
+        if($perPage) {
+            $resultQuery->limit($perPage);
+        }
+        if($skip) {
+            $resultQuery->offset($skip);
+        }
 
         if ($formId) {
             $resultQuery->where('wpf_submissions.form_id', $formId);

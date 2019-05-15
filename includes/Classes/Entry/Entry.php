@@ -22,6 +22,7 @@ class Entry
     protected $submission;
     protected $formattedInput;
     protected $rawInput;
+    public $default = false;
 
     public function __construct($submission)
     {
@@ -32,20 +33,20 @@ class Entry
         $this->rawInput = $submission->form_data_raw;
     }
 
-    public function getRawInput($key)
+    public function getRawInput($key, $default = false)
     {
         if (isset($this->rawInput[$key])) {
             return $this->rawInput[$key];
         }
-        return false;
+        return $default;
     }
 
-    public function getInput($key)
+    public function getInput($key, $default = false )
     {
         if (isset($this->formattedInput[$key])) {
             return $this->formattedInput[$key];
         }
-        return false;
+        return $default;
     }
 
     public function getItemQuantity($key)
@@ -91,12 +92,39 @@ class Entry
 
     public function getOrderItemsHtml()
     {
-        $submission = $this->submission;
-        $orderItem = new OrderItem();
-        $submission->order_items = $orderItem->getOrderItems($this->submissionId);
+        // Just check if submission order items added or not
+        $this->getOrderItems();
+
         return View::make('elements.order_items_table', array(
-            'submission' => $submission
+            'submission' => $this->submission
         ));
+    }
+
+    public function getOrderItems()
+    {
+        if(!property_exists($this->submission, 'order_items')) {
+            $orderItem = new OrderItem();
+            $this->submission->order_items = $orderItem->getOrderItems($this->submissionId);
+        }
+        return $this->submission->order_items;
+    }
+
+    public function getOrderItemsAsText($separator = "\n")
+    {
+        $orderItems = $this->getOrderItems();
+        $text = '';
+        foreach ($orderItems as $index => $orderItem) {
+
+            $text .= $orderItem->item_name.' ('.$orderItem->quantity.') - '. number_format($orderItem->line_total / 100, 2);
+            //if($index != count($orderItems) - 1) {
+                $text .= $separator;
+            //}
+            $text .= $orderItem->item_name.' ('.$orderItem->quantity.') - '. number_format($orderItem->line_total / 100, 2);
+            //if($index != count($orderItems) - 1) {
+            $text .= $separator;
+            //}
+        }
+        return $text;
     }
 
     public function __get($name)
@@ -109,15 +137,20 @@ class Entry
             return $this->getOrderItemsHtml();
         }
 
+        if ($name == 'payment_total_in_cents') {
+            return $this->submission->payment_total;
+        } else if ($name == 'payment_total_in_decimal') {
+            return number_format($this->submission->payment_total/ 100 , 2);
+        }
+
         if (property_exists($this->submission, $name)) {
             if ($name == 'payment_total') {
                 return $this->paymentTotal();
-            } else if ($name == 'payment_total_in_cents') {
-                return $this->submission->payment_total;
             }
             return $this->submission->{$name};
         }
-        return false;
+
+        return $this->default;
     }
 
     public function paymentTotal()

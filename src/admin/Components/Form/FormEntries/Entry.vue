@@ -2,7 +2,7 @@
     <div v-if="submission.id" v-loading="loading" class="wpf_payment_view">
         <div class="payment_head_info">
             <router-link class="payhead_nav_item payhead_back_icon"
-                         :to="{ name: 'entries', query: { form_id: form_id } }"><span
+                         :to="{ name: 'form_entries', params: { form_id: form_id } }"><span
                 class="dashicons dashicons-admin-home"></span></router-link>
             <div class="payhead_title">
                 {{ submission.post_title }} #{{submission.id}}
@@ -262,14 +262,12 @@
                 <el-button type="primary" @click="changePaymentStatus()">Confirm</el-button>
             </span>
         </el-dialog>
-
     </div>
-
 </template>
 
 <script type="text/babel">
     import each from 'lodash/each';
-    import fromatPrice from '../../../common/formatPrice';
+    import fromatPrice from '../../../../common/formatPrice';
 
     export default {
         name: "Entry",
@@ -278,7 +276,7 @@
                 submission: {},
                 entry_id: this.$route.params.entry_id,
                 entry_items: {},
-                form_id: 0,
+                form_id: this.$route.params.form_id,
                 fething: false,
                 loading: false,
                 show_empty: false,
