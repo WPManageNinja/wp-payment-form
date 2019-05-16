@@ -18,6 +18,11 @@ var wpPayformApp = {};
             });
             this.initDatePiker();
             this.initNumericInputs();
+
+            $('.wpf_form').on('keypress', function(e) {
+                return e.which !== 13;
+            });
+
         },
         initForm(form) {
             let that = this;
@@ -210,14 +215,11 @@ var wpPayformApp = {};
         initDatePiker() {
             let dateFields = $('.wpf_form input.wpf_date_field');
             if(dateFields.length) {
+                flatpickr.localize(window.wp_payform_general.date_i18n);
                 dateFields.each(function (index, dateField) {
-                    new Pikaday({
-                        field: dateField,
-                        format: $(this).data('date_format'),
-                        i18n: window.wp_payform_general.date_i18n
-                    });
+                    let config = $(this).data('date_config');
+                    flatpickr(dateField, config);
                 });
-
             }
         },
         initNumericInputs() {

@@ -18,15 +18,16 @@ class DateComponent extends BaseComponent
     public function component()
     {
         $dateFormats = apply_filters('wppayform/available_date_formats', array(
-            'M/D/YYYY'    => 'M/D/YYYY - (Ex: 4/28/2019)',
-            'M/D/YY'      => 'M/D/YY - (Ex: 4/28/18)',
-            'MM/DD/YY'    => 'MM/DD/YY - (Ex: 04/28/18)',
-            'MM/DD/YYYY'  => 'MM/DD/YYYY - (Ex: 04/28/2018)',
-            'MMM/DD/YYYY' => 'MMM/DD/YYYY - (Ex: Apr/28/2018)',
-            'YY/MM/DD'    => 'YY/MM/DD - (Ex: 18/04/28)',
-            'YYYY-MM-DD'  => 'YYYY-MM-DD - (Ex: 2018-04-28)',
-            'DD-MMM-YY'   => 'DD-MMM-YY - (Ex: 28-Apr-18)'
+            'n/j/Y'      => 'n/j/Y - (Ex: 4/28/2019)',
+            'n/j/y'      => 'n/j/y - (Ex: 4/28/18)',
+            'm/d/y'      => 'm/d/y - (Ex: 04/28/18)',
+            'm/d/Y'      => 'm/d/Y - (Ex: 04/28/2018)',
+            'M/d/Y'      => 'M/d/Y - (Ex: Apr/28/2018)',
+            'y/m/d'   => 'y/m/d - (Ex: 18/04/28)',
+            'Y-m-d' => 'Y-m-d - (Ex: 2018-04-28)',
+            'd-mn-y'     => 'd-mn-y - (Ex: 28-Apr-18)'
         ));
+        
         return array(
             'type'            => 'date',
             'editor_title'    => 'Date Field',
@@ -49,10 +50,10 @@ class DateComponent extends BaseComponent
                     'group' => 'general'
                 ),
                 'date_format'   => array(
-                    'label'   => 'Date Format',
-                    'type'    => 'select_option',
-                    'options' => $dateFormats,
-                    'group'   => 'general',
+                    'label'     => 'Date Format',
+                    'type'      => 'select_option',
+                    'options'   => $dateFormats,
+                    'group'     => 'general',
                     'creatable' => 'yes'
                 ),
                 'default_value' => array(
@@ -71,8 +72,9 @@ class DateComponent extends BaseComponent
 
     public function render($element, $form, $elements)
     {
-        wp_enqueue_script('pikaday');
-        wp_enqueue_script('moment');
+        wp_enqueue_script('flatpickr');
+        wp_enqueue_style('flatpickr');
+
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
         if (!$fieldOptions) {
             return;
@@ -90,8 +92,9 @@ class DateComponent extends BaseComponent
             'type'             => 'text',
             'id'               => $inputId,
             'class'            => $inputClass . ' wpf_date_field',
-            'data-date_format' => ArrayHelper::get($fieldOptions, 'date_format'),
+            'data-date_config' => $this->getDateFormatConfigJSON($fieldOptions, $form),
         );
+
 
         if (ArrayHelper::get($fieldOptions, 'required') == 'yes') {
             $attributes['required'] = true;
@@ -105,5 +108,60 @@ class DateComponent extends BaseComponent
             </div>
         </div>
         <?php
+    }
+
+    private function getDateFormatConfigJSON($fieldOptions, $form)
+    {
+        // We are converting moment.js format to flatpickr format
+        $fieldOptions['date_format'] = $this->convertDateFormat($fieldOptions['date_format']);
+        $dateFormat = ArrayHelper::get($fieldOptions, 'date_format');
+
+        $config = apply_filters('wppayform/frontend_date_format', array(
+            'dateFormat' => $dateFormat,
+            'enableTime' => $this->hasTime($dateFormat),
+            'noCalendar' => !$this->hasDate($dateFormat),
+        ), $fieldOptions, $form);
+
+        return json_encode($config);
+    }
+
+    private function hasTime($string)
+    {
+        $timeStrings = ['H', 'h', 'G', 'i', 'S', 's', 'K'];
+        foreach ($timeStrings as $timeString) {
+            if (strpos($string, $timeString) != false) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function hasDate($string)
+    {
+        $dateStrings = ['d', 'D', 'l', 'j', 'J', 'w', 'W', 'F', 'm', 'n', 'M', 'U', 'Y', 'y', 'Z'];
+        foreach ($dateStrings as $dateString) {
+            if (strpos($string, $dateString) != false) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function convertDateFormat($dateFormat)
+    {
+        $oldFormats = [
+            'M/D/YYYY'    => 'n/j/Y',
+            'M/D/YY'      => 'n/j/YY',
+            'MM/DD/YY'    => 'm/d/y',
+            'MM/DD/YYYY'  => 'MM/DD/Y',
+            'MMM/DD/YYYY' => 'MMM/DD/Y',
+            'YY/MM/DD'    => 'y/m/d',
+            'YYYY-MM-DD'  => 'Y-m-d',
+            'DD-MMM-YY'   => 'd-M-y',
+        ];
+
+        $dateFormat = str_replace(array_keys($oldFormats), array_values($oldFormats), $dateFormat);
+
+        return $dateFormat;
     }
 }
