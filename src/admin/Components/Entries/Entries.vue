@@ -1,5 +1,5 @@
 <template>
-    <div class="payform_section">
+    <div style="margin-top: 20px" class="payform_section">
         <div class="wpf_entry_actions payform_section_header">
             <div class="wpf_entry_action">
                 <label>
