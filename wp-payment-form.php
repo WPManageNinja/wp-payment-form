@@ -182,6 +182,15 @@ if (!defined('WPPAYFORM_VERSION')) {
         $activator = new \WPPayForm\Classes\Activator();
         $activator->migrateDatabases($newWorkWide);
     });
+
+    // Handle Newtwork new Site Activation
+    add_action( 'wpmu_new_blog', function ($blogId) {
+        require_once(WPPAYFORM_DIR . 'includes/Classes/Activator.php');
+        switch_to_blog( $blogId );
+        \WPPayForm\Classes\Activator::migrate();
+        restore_current_blog();
+    } );
+
 } else {
     add_action('admin_init', function () {
         deactivate_plugins(plugin_basename(__FILE__));

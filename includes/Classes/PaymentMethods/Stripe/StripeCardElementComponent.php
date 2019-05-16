@@ -25,13 +25,13 @@ class StripeCardElementComponent extends BaseComponent
             'isActive'        => true,
             'editor_elements' => array(
                 'label'                  => array(
-                    'label' => 'Payment Option Label',
-                    'type'  => 'text',
+                    'label'   => 'Payment Option Label',
+                    'type'    => 'text',
                     'default' => 'Pay with Card (Stripe)'
                 ),
                 'checkout_display_style' => array(
-                    'label' => 'Checkout display style',
-                    'type'  => 'checkout_display_options',
+                    'label'   => 'Checkout display style',
+                    'type'    => 'checkout_display_options',
                     'default' => array(
                         'style' => 'stripe_checkout'
                     )
@@ -84,6 +84,12 @@ class StripeCardElementComponent extends BaseComponent
     public function render($element, $form, $elements)
     {
         $stripe = new Stripe();
+        if (!$stripe->getPubKey()) { ?>
+            <p style="color: red">You did not configure stripe payment gateway. Please configure stripe payment
+                gateway from <b>WPPayFroms->Settings->Stripe Settings</b> to start accepting payments</p>
+            <?php return;
+        }
+
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
         if (!$fieldOptions) {
             return;
@@ -99,7 +105,9 @@ class StripeCardElementComponent extends BaseComponent
                 'data-require_billing_info'  => ArrayHelper::get($fieldOptions, 'checkout_display_style.require_billing_info'),
                 'data-require_shipping_info' => ArrayHelper::get($fieldOptions, 'checkout_display_style.require_shipping_info')
             );
-            echo '<div style="display:none !important; visibility: hidden !important;" ' . $this->builtAttributes($atrributes) . ' class="wpf_stripe_checkout"></div>';
+            echo '
+        <div
+            style="display:none !important; visibility: hidden !important;" ' . $this->builtAttributes($atrributes) . ' class="wpf_stripe_checkout"></div>';
             return;
         } else {
             wp_enqueue_script('stripe_elements', 'https://js.stripe.com/v3/', array('jquery'), '3.0', true);
@@ -116,10 +124,6 @@ class StripeCardElementComponent extends BaseComponent
             'id'                      => $inputId
         );
         ?>
-        <?php if (!$stripe->getPubKey()) { ?>
-        <p style="color: red">You did not configure stripe payment gateway. Please configure stripe payment gateway</p>
-        <?php return;
-    } ?>
         <div class="wpf_form_group wpf_item_<?php echo $element['id']; ?>>">
             <?php if ($label): ?>
                 <label for="<?php echo $inputId; ?>">

@@ -34,7 +34,7 @@ class Activator
 
     }
 
-    private function migrate()
+    public function migrate()
     {
         $this->createSubmissionsTable();
         $this->createOrderItemsTable();

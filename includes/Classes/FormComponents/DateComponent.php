@@ -18,16 +18,25 @@ class DateComponent extends BaseComponent
     public function component()
     {
         $dateFormats = apply_filters('wppayform/available_date_formats', array(
-            'n/j/Y'      => 'n/j/Y - (Ex: 4/28/2019)',
-            'n/j/y'      => 'n/j/y - (Ex: 4/28/18)',
-            'm/d/y'      => 'm/d/y - (Ex: 04/28/18)',
-            'm/d/Y'      => 'm/d/Y - (Ex: 04/28/2018)',
-            'M/d/Y'      => 'M/d/Y - (Ex: Apr/28/2018)',
-            'y/m/d'   => 'y/m/d - (Ex: 18/04/28)',
-            'Y-m-d' => 'Y-m-d - (Ex: 2018-04-28)',
-            'd-mn-y'     => 'd-mn-y - (Ex: 28-Apr-18)'
+            'm/d/Y'       => 'm/d/Y - (Ex: 04/28/2018)', // USA
+            'd/m/Y'       => 'd/m/Y - (Ex: 28/04/2018)', // Canada, UK
+            'd.m.Y'       => 'd.m.Y - (Ex: 28.04.2019)', // Germany
+            'n/j/y'       => 'n/j/y - (Ex: 4/28/18)',
+            'm/d/y'       => 'm/d/y - (Ex: 04/28/18)',
+            'M/d/Y'       => 'M/d/Y - (Ex: Apr/28/2018)',
+            'y/m/d'       => 'y/m/d - (Ex: 18/04/28)',
+            'Y-m-d'       => 'Y-m-d - (Ex: 2018-04-28)',
+            'd-mn-y'      => 'd-mn-y - (Ex: 28-Apr-18)',
+            'm/d/Y h:i K' => 'm/d/Y h:i K - (Ex: 04/28/2018 08:55 PM)', // USA
+            'm/d/Y H:i'   => 'm/d/Y H:i - (Ex: 04/28/2018 20:55)', // USA
+            'd/m/Y h:i K' => 'd/m/Y h:i K - (Ex: 28/04/2018 08:55 PM)', // Canada, UK
+            'd/m/Y H:i'   => 'd/m/Y H:i - (Ex: 28/04/2018 20:55)', // Canada, UK
+            'd.m.Y h:i K' => 'd.m.Y h:i K - (Ex: 28.04.2019 08:55 PM)', // Germany
+            'd.m.Y H:i'   => 'd.m.Y H:i - (Ex: 28.04.2019 20:55)', // Germany
+            'h:i K'       => 'h:i K (Only Time Ex: 08:55 PM)',
+            'H:i'         => 'H:i (Only Time Ex: 20:55)',
         ));
-        
+
         return array(
             'type'            => 'date',
             'editor_title'    => 'Date Field',
@@ -54,7 +63,8 @@ class DateComponent extends BaseComponent
                     'type'      => 'select_option',
                     'options'   => $dateFormats,
                     'group'     => 'general',
-                    'creatable' => 'yes'
+                    'creatable' => 'yes',
+                    'info' => 'To create your own format check this <a target="_blank" href="https://wpmanageninja.com/docs/wppayform/frequently-asked-question-for-wppayform/date-formats-customization/">documentation</a>'
                 ),
                 'default_value' => array(
                     'label' => 'Default Value',
