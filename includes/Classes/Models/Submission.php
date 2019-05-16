@@ -20,17 +20,17 @@ class Submission
             ->insert($submission);
     }
 
-    public function getSubmissions($formId = false, $wheres = array(), $perPage = false, $skip = false, $orderBy = 'DESC')
+    public function getSubmissions($formId = false, $wheres = array(), $perPage = false, $skip = false, $orderBy = 'DESC', $searchString = false)
     {
         $resultQuery = wpPayFormDB()->table('wpf_submissions')
             ->select(array('wpf_submissions.*', 'posts.post_title'))
             ->join('posts', 'posts.ID', '=', 'wpf_submissions.form_id')
             ->orderBy('wpf_submissions.id', $orderBy);
 
-        if($perPage) {
+        if ($perPage) {
             $resultQuery->limit($perPage);
         }
-        if($skip) {
+        if ($skip) {
             $resultQuery->offset($skip);
         }
 
@@ -41,6 +41,18 @@ class Submission
         foreach ($wheres as $whereKey => $where) {
             $resultQuery->where('wpf_submissions.' . $whereKey, $where);
         }
+
+        if ($searchString) {
+            $resultQuery->where(function ($q) use ($searchString) {
+                $q->where('wpf_submissions.customer_name', 'LIKE', "%{$searchString}%")
+                    ->orWhere('wpf_submissions.customer_email', 'LIKE', "%{$searchString}%")
+                    ->orWhere('wpf_submissions.payment_method', 'LIKE', "%{$searchString}%")
+                    ->orWhere('wpf_submissions.payment_total', 'LIKE', "%{$searchString}%")
+                    ->orWhere('wpf_submissions.form_data_formatted', 'LIKE', "%{$searchString}%")
+                    ->orWhere('wpf_submissions.created_at', 'LIKE', "%{$searchString}%");
+            });
+        }
+
 
         $totalItems = $resultQuery->count();
 
@@ -164,28 +176,28 @@ class Submission
     public function getEntryCountByPaymentStatus($formId, $paymentStatuses = array(), $period = 'total')
     {
         $query = wpPayFormDB()->table('wpf_submissions')
-                    ->where('form_id', $formId);
-        if($paymentStatuses && count($paymentStatuses)) {
+            ->where('form_id', $formId);
+        if ($paymentStatuses && count($paymentStatuses)) {
             $query->whereIn('payment_status', $paymentStatuses);
         }
 
-        if($period && $period != 'total') {
-            $col               = 'created_at';
-            if ( $period == 'day' ) {
-                $year  = "YEAR(`{$col}`) = YEAR(NOW())";
+        if ($period && $period != 'total') {
+            $col = 'created_at';
+            if ($period == 'day') {
+                $year = "YEAR(`{$col}`) = YEAR(NOW())";
                 $month = "MONTH(`{$col}`) = MONTH(NOW())";
-                $day   = "DAY(`{$col}`) = DAY(NOW())";
-                $query->where( wpPayFormDB()->raw( "{$year} AND {$month} AND {$day}" ) );
-            } elseif ( $period == 'week' ) {
+                $day = "DAY(`{$col}`) = DAY(NOW())";
+                $query->where(wpPayFormDB()->raw("{$year} AND {$month} AND {$day}"));
+            } elseif ($period == 'week') {
                 $query->where(
-                    wpFluent()->raw( "YEARWEEK(`{$col}`, 1) = YEARWEEK(CURDATE(), 1)" )
+                    wpFluent()->raw("YEARWEEK(`{$col}`, 1) = YEARWEEK(CURDATE(), 1)")
                 );
-            } elseif ( $period == 'month' ) {
-                $year  = "YEAR(`{$col}`) = YEAR(NOW())";
+            } elseif ($period == 'month') {
+                $year = "YEAR(`{$col}`) = YEAR(NOW())";
                 $month = "MONTH(`{$col}`) = MONTH(NOW())";
-                $query->where( wpPayFormDB()->raw( "{$year} AND {$month}" ) );
-            } elseif ( $period == 'year' ) {
-                $query->where( wpPayFormDB()->raw( "YEAR(`{$col}`) = YEAR(NOW())" ) );
+                $query->where(wpPayFormDB()->raw("{$year} AND {$month}"));
+            } elseif ($period == 'year') {
+                $query->where(wpPayFormDB()->raw("YEAR(`{$col}`) = YEAR(NOW())"));
             }
         }
 

@@ -13,7 +13,7 @@
                             </el-button>
                         </div>
                     </div>
-                    <div class="payform_section_body">
+                    <div v-loading="fetching"  class="payform_section_body">
                         <el-form ref="payment_settings" :model="currency_settings" label-width="220px">
                             <div class="wpf_sub_section">
                                 <div class="sub_section_body">

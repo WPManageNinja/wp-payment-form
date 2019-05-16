@@ -13,9 +13,16 @@
                             </el-button>
                         </div>
                     </div>
-                    <div id="payform_builder" class="payform_section_body">
+                    <div
+                        v-loading="fetching"
+                        style="min-height: 200px"
+                        element-loading-background="rgb(255, 255, 255)"
+                        element-loading-text="Loading Builder..."
+                        id="payform_builder" class="payform_section_body">
                         <div v-if="validationErrors" class="validation_errors_block">
-                            <el-alert v-for="(error,error_key) in validationErrors" :key="error_key" type="error">{{error}}</el-alert>
+                            <el-alert v-for="(error,error_key) in validationErrors" :key="error_key" type="error">
+                                {{error}}
+                            </el-alert>
                         </div>
 
                         <div class="payform_builder_items">
@@ -106,7 +113,7 @@
                 <div class="field_group_header">
                     <i :class="componentGroup.icon"></i> {{componentGroup.title}}
                 </div>
-                <div class="field_group_body">
+                <div style="min-height: 50px" element-loading-spinner="el-icon-loading" v-loading="fetching" class="field_group_body">
                     <draggable v-model="fieldGroups[componentGroupIndex].elements"
                                class="dragArea"
                                :clone="cloneItem"
@@ -305,8 +312,8 @@
             saveSettings() {
                 this.saving = true;
                 this.validationErrors = false;
-                if(!this.form_tips) {
-                    this.deleteStoreData('hide_form_'+this.form_id);
+                if (!this.form_tips) {
+                    this.deleteStoreData('hide_form_' + this.form_id);
                 }
 
                 this.$adminPost({
@@ -327,7 +334,7 @@
                             message: error.responseJSON.data.message,
                             type: 'error'
                         });
-                        if(error.responseJSON.data.errors) {
+                        if (error.responseJSON.data.errors) {
                             this.validationErrors = error.responseJSON.data.errors;
                             jQuery([document.documentElement, document.body]).animate({
                                 scrollTop: jQuery('#payform_builder').offset().top - 100
@@ -350,18 +357,18 @@
             },
             getItemClasses(component) {
                 let isActive = '';
-                if(!this.hasPaymentMethodField || component.group != 'payment_method_element') {
+                if (!this.hasPaymentMethodField || component.group != 'payment_method_element') {
                     isActive = ' item_active';
                 }
-                return 'wpf_item_'+component.group+isActive;
+                return 'wpf_item_' + component.group + isActive;
             },
             hideNotices() {
-                this.setStoreData( 'hide_form_'+this.form_id, 'yes' );
+                this.setStoreData('hide_form_' + this.form_id, 'yes');
             }
         },
         mounted() {
             this.getSettings();
-            this.showNotice = this.getFromStore('hide_form_'+this.form_id) != 'yes';
+            this.showNotice = this.getFromStore('hide_form_' + this.form_id) != 'yes';
             window.WPPayFormsBus.$emit('site_title', 'Form Builder');
         }
     }

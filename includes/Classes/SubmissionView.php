@@ -50,6 +50,7 @@ class SubmissionView
         if (isset($_REQUEST['form_id']) && $_REQUEST['form_id']) {
             $formId = absint($_REQUEST['form_id']);
         }
+        $searchString = sanitize_text_field($_REQUEST['search_string']);
 
         $page = absint($_REQUEST['page_number']);
         $perPage = absint($_REQUEST['per_page']);
@@ -62,7 +63,7 @@ class SubmissionView
         }
 
         $submissionModel = new Submission();
-        $submissions = $submissionModel->getSubmissions($formId, $wheres, $perPage, $skip);
+        $submissions = $submissionModel->getSubmissions($formId, $wheres, $perPage, $skip, 'DESC', $searchString);
 
         $currencySettings = GeneralSettings::getGlobalCurrencySettings($formId);
 
