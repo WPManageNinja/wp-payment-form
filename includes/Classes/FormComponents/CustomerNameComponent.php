@@ -12,14 +12,14 @@ class CustomerNameComponent extends BaseComponent
 {
     public function __construct()
     {
-        parent::__construct('customer_name', 13);
+        parent::__construct('customer_name', 10);
     }
 
     public function component()
     {
         return array(
             'type'            => 'customer_name',
-            'editor_title'    => 'Customer Name',
+            'editor_title'    => 'Name',
             'group'           => 'input',
             'postion_group'   => 'general',
             'editor_elements' => array(

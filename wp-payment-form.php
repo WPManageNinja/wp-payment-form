@@ -83,6 +83,10 @@ if (!defined('WPPAYFORM_VERSION')) {
             $globalTools = new \WPPayForm\Classes\Tools\GlobalTools();
             $globalTools->registerEndpoints();
 
+            // Handle Demo Forms
+            $demoForms = new \WPPayForm\Classes\Tools\DemoForms();
+            $demoForms->registerEndpoints();
+
             // init tinymce
             $tinyMCE = new \WPPayForm\Classes\Integrations\TinyMceBlock();
             $tinyMCE->register();

@@ -97,7 +97,7 @@
             </div>
         </div>
         <!-- Load Modals-->
-        <create-form v-if="createFormModal" :modalVisible.sync="createFormModal"/>
+        <create-form v-if="createFormModal" :demo_forms="demo_forms" :modalVisible.sync="createFormModal"/>
 
         <!--Delete form Confimation Modal-->
         <el-dialog
@@ -144,7 +144,9 @@
                 deleteingForm: {},
                 pageSizes: [10, 20, 30, 40, 50, 100, 200],
                 forms_count: parseInt(window.wpPayFormsAdmin.forms_count),
-                duplicatingForm: false
+                duplicatingForm: false,
+                loadingDemoForms: false,
+                demo_forms: {}
             }
         },
         methods: {
@@ -231,11 +233,27 @@
                     .always(() => {
                         this.duplicatingForm = false;
                     });
+            },
+            getDemoForms() {
+                this.loadingDemoForms = true;
+                this.$get({
+                    action: 'wppayform_demo_forms',
+                    route: 'get_forms'
+                })
+                    .then(response => {
+                        this.demo_forms = response.data.demo_forms;
+                    })
+                    .fail(error => {
+                        this.$showAjaxError(error);
+                    })
+                    .always(() => {
+                        this.loadingDemoForms = false;
+                    });
             }
         },
         mounted() {
             this.fetchForms();
-
+            this.getDemoForms();
             var clipboard = new Clipboard('.copy');
             clipboard.on('success', (e) => {
                 this.$message({

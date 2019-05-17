@@ -948,3 +948,70 @@ label.el-form-item__label {
     left: 0;
   }
 }
+
+.demo_form_cards {
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  .demo_form_card {
+    width: 200px;
+    overflow: hidden;
+    border: 1px solid #a9bac5;
+    margin-right: 20px;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    cursor: pointer;
+    box-shadow: 1px 1px 10px 2px #d6d6d6;
+    position: relative;
+    .form_card_body {
+      position: relative;
+    }
+    .demo_form_desc {
+      display: none;
+    }
+    &:hover {
+      border: 1px solid #673AB7;
+      .demo_form_desc {
+        display: block !important;
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(58, 48, 48, 0.9);
+        .desc_info {
+          color: white;
+          height: 200px;
+          display: table-cell;
+          vertical-align: middle;
+          text-align: center;
+          width: 200px;
+          margin: 0 auto;
+          padding: 10px;
+          i {
+            font-size: 40px;
+            color: white;
+          }
+          p {
+            word-break: break-word;
+          }
+        }
+      }
+      .form_card_footer {
+        background: #673AB7;
+        color: white;
+        font-weight: bolder;
+        border-top: 1px solid #673AB7;
+      }
+    }
+    img {
+      width: 100%;
+    }
+    .form_card_footer {
+      background: #f7fafc;
+      padding: 10px 15px;
+      text-align: center;
+      border-top: 1px solid #a8bac4;
+    }
+  }
+}

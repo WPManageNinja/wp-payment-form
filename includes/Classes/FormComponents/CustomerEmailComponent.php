@@ -20,7 +20,7 @@ class CustomerEmailComponent extends BaseComponent
     {
         return array(
             'type'            => 'customer_email',
-            'editor_title'    => 'Customer Email',
+            'editor_title'    => 'Email',
             'group'           => 'input',
             'postion_group'   => 'general',
             'editor_elements' => array(

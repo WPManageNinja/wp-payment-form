@@ -42,7 +42,7 @@
             close_on_insert: {
                 type: Boolean,
                 default() {
-                    return false;
+                    return true;
                 }
             },
             buttonText: {

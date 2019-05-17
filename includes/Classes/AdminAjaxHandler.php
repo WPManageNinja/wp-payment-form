@@ -71,22 +71,24 @@ class AdminAjaxHandler
     {
         $postTitle = sanitize_text_field($_REQUEST['post_title']);
         if (!$postTitle) {
-            wp_send_json_error(array(
-                'message' => __('Please provide title of this form')
-            ), 423);
+            $postTitle = 'Blank Form';
             return;
         }
+        $template = sanitize_text_field($_REQUEST['template']);
 
         $data = array(
             'post_title'  => $postTitle,
             'post_status' => 'publish'
         );
 
-        do_action('wppayform/before_create_form', $data);
+        do_action('wppayform/before_create_form', $data, $template);
 
         $formId = Forms::create($data);
 
-        do_action('wppayform/after_create_form', $formId, $data);
+        wp_update_post([
+            'ID' => $formId,
+            'post_title' => $data['post_title'] .' (#'.$formId.')'
+        ]);
 
         if (is_wp_error($formId)) {
             wp_send_json_error(array(
@@ -94,8 +96,11 @@ class AdminAjaxHandler
             ), 423);
             return;
         }
+
+        do_action('wppayform/after_create_form', $formId, $data, $template);
+
         wp_send_json_success(array(
-            'message' => __('Form successfully created', 'wppayform'),
+            'message' => __('Form successfully created.', 'wppayform'),
             'form_id' => $formId
         ), 200);
     }
