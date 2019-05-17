@@ -20,6 +20,12 @@
                 <a :href="form.preview_url" target="_blank">
                     <el-button size="mini">{{ $t('Preview') }}</el-button>
                 </a>
+                <a
+                    v-if="!has_pro"
+                    class="el-button payform_action el-button--danger el-button--mini"
+                    :href="pro_purchase_url">
+                    Upgrade To Pro
+                </a>
             </div>
         </div>
         <el-menu mode="horizontal"
