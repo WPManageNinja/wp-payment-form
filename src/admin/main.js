@@ -19,6 +19,15 @@ window.WPPayForms.Vue.mixin({
                 localStorage.removeItem("wppayforms_"+key);
             }
         },
+        $showAjaxError(error) {
+            if(error.responseJSON && error.responseJSON.message) {
+                this.$notify.error(error.responseJSON.message);
+            } else if(error.responseText) {
+                this.$notify.error(error.responseText);
+            } else {
+                this.$notify.error('Something is wrong when doing ajax request! Please try again');
+            }
+        },
         getFromStore(key, defaultValue) {
             if(window.localStorage) {
                 let itemValue = localStorage.getItem('wppayforms_'+key);

@@ -66,6 +66,11 @@
                         route: 'paypal_settings',
                         title: 'Paypal Settings',
                         icon: 'el-icon-money'
+                    },
+                    {
+                        route: 'tools',
+                        title: 'Tools',
+                        icon: 'el-icon-s-cooperation'
                     }
                 ];
 

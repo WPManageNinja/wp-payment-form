@@ -5,16 +5,16 @@
         <div class="all_payforms_wrapper payform_section" v-else>
             <div class="payform_section_header all_payment_form_wrapper">
                 <h1 class="payform_section_title">
-                    {{ $t('All Payment Forms') }}
+                    {{ $t('All Forms') }}
                 </h1>
                 <div class="payform_section_actions">
                     <div class="payform_action search_action">
-                        <el-input size="small" placeholder="Search" v-model="search_string" class="input-with-select">
+                        <el-input @keyup.enter.native="fetchForms()" size="small" placeholder="Search" v-model="search_string" class="input-with-select">
                             <el-button @click="fetchForms()" slot="append" icon="el-icon-search"></el-button>
                         </el-input>
                     </div>
                     <el-button class="payform_action" @click="createFormModal = true" size="small" type="primary">
-                        {{ $t( 'Add Payment Form' ) }}
+                        {{ $t( 'Add New Form' ) }}
                     </el-button>
                 </div>
             </div>

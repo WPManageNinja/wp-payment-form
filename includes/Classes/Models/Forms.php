@@ -17,17 +17,32 @@ class Forms
 {
     public static function getForms($args = array())
     {
-        $argsDefault = array(
-            'posts_per_page' => 10,
-            'offset'         => 0,
-            'orderby'        => 'date',
-            'order'          => 'DESC',
-            'post_type'      => 'wp_payform',
-            'post_status'    => 'publish',
+        $whereArgs = array(
+            'post_type'   => 'wp_payform',
+            'post_status' => 'publish'
         );
-        $args = wp_parse_args($args, $argsDefault);
 
-        $forms = get_posts($args);
+        $whereArgs = apply_filters('wppayform/all_forms_where_args', $whereArgs);
+
+        $formsQuery = wpPayFormDB()->table('posts')
+                    ->orderBy('ID', 'DESC')
+                    ->offset($args['offset'])
+                    ->limit($args['posts_per_page']);
+
+        foreach ($whereArgs as $key => $where) {
+            $formsQuery->where($key, $where);
+        }
+
+        if(!empty($args['s'])) {
+            $formsQuery->where(function ($q) use ($args) {
+                $q->where('post_title', 'LIKE', "%{$args['s']}%");
+                $q->orWhere('ID', 'LIKE', "%{$args['s']}%");
+            });
+        }
+
+        $total = $formsQuery->count();
+
+        $forms = $formsQuery->get();
 
         foreach ($forms as $form) {
             $form->preview_url = site_url('?wp_paymentform_preview=' . $form->ID);
@@ -35,7 +50,6 @@ class Forms
 
         $forms = apply_filters('wppayform/get_all_forms', $forms);
 
-        $total = self::getTotalCount();
         $lastPage = ceil($total / $args['posts_per_page']);
 
         return array(

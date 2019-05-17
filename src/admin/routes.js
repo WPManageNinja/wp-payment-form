@@ -19,6 +19,8 @@ import PayPalSettings from './Components/Settings/PayPalSettings';
 import GeneralSettings from './Components/Settings/GeneralSettings'
 import FormDesignSettings from './Components/Form/settings/FormDesignSettings'
 import Licensing from './Components/Settings/License'
+import GlobalTools from './Components/Settings/GlobalTools'
+
 
 const globalSettingsViewChilderRoutes = window.WPPayForms.applyFilters('wpf_global_settings_childern_routes', [
     {
@@ -35,6 +37,11 @@ const globalSettingsViewChilderRoutes = window.WPPayForms.applyFilters('wpf_glob
         name: 'paypal_settings',
         path: 'paypal-settings',
         component: PayPalSettings
+    },
+    {
+        name: 'tools',
+        path: 'tools',
+        component: GlobalTools
     },
     {
         name: 'licensing',

@@ -79,6 +79,10 @@ if (!defined('WPPAYFORM_VERSION')) {
             $globalSettingHandler = new \WPPayForm\Classes\GlobalSettingsHandler();
             $globalSettingHandler->registerHooks();
 
+            // Handle Globla Tools
+            $globalTools = new \WPPayForm\Classes\Tools\GlobalTools();
+            $globalTools->registerEndpoints();
+
             // init tinymce
             $tinyMCE = new \WPPayForm\Classes\Integrations\TinyMceBlock();
             $tinyMCE->register();
