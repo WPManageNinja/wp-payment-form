@@ -1,79 +1,82 @@
 <template>
-    <div style="min-height: 300px"
-         v-loading="fething"
-         element-loading-text="Loading Entry..."
-         class="wpf_payment_view">
-        <template v-if="submission.id">
-            <div class="payment_head_info">
-                <router-link class="payhead_nav_item payhead_back_icon"
-                             :to="{ name: 'form_entries', params: { form_id: form_id } }"><span
-                    class="dashicons dashicons-admin-home"></span></router-link>
-                <div class="payhead_title">
-                    {{ submission.post_title }} #{{submission.id}}
-                </div>
-                <div class="wpf_header_actions">
-                    <el-button-group>
-                        <el-button size="mini" @click="handleNavClick('next')" type="info" icon="el-icon-d-arrow-left">
-                            Prev
-                        </el-button>
-                        <el-button readonly size="mini" disabled type="plain">{{submission.id}}</el-button>
-                        <el-button size="mini" @click="handleNavClick('prev')" type="info">Next <i
-                            class="el-icon-d-arrow-right el-icon-right"></i></el-button>
-                        <el-dropdown @command="handleActionCommand">
-                            <el-button size="mini" type="primary">
-                                Actions <i class="el-icon-arrow-down el-icon--right"></i>
+    <div id="print_view">
+        <div style="min-height: 300px"
+             v-loading="fething"
+             :class="print_hides"
+             element-loading-text="Loading Entry..."
+             class="wpf_payment_view">
+            <template v-if="submission.id">
+                <div class="payment_head_info">
+                    <router-link class="payhead_nav_item payhead_back_icon"
+                                 :to="{ name: 'form_entries', params: { form_id: form_id } }"><span
+                        class="dashicons dashicons-admin-home"></span></router-link>
+                    <div class="payhead_title">
+                        {{ submission.post_title }} #{{submission.id}}
+                    </div>
+                    <div class="wpf_header_actions">
+                        <el-button-group>
+                            <el-button size="mini" @click="handleNavClick('next')" type="info"
+                                       icon="el-icon-d-arrow-left">
+                                Prev
                             </el-button>
-                            <el-dropdown-menu slot="dropdown">
-                                <el-dropdown-item command="payment_status"
-                                                  v-if="submission.order_items && parseInt(submission.order_items.length)">
-                                    Change Payment Status
-                                </el-dropdown-item>
-                            </el-dropdown-menu>
-                        </el-dropdown>
-                    </el-button-group>
+                            <el-button readonly size="mini" disabled type="plain">{{submission.id}}</el-button>
+                            <el-button size="mini" @click="handleNavClick('prev')" type="info">Next <i
+                                class="el-icon-d-arrow-right el-icon-right"></i></el-button>
+                            <el-dropdown @command="handleActionCommand">
+                                <el-button size="mini" type="primary">
+                                    Actions <i class="el-icon-arrow-down el-icon--right"></i>
+                                </el-button>
+                                <el-dropdown-menu slot="dropdown">
+                                    <el-dropdown-item command="payment_status"
+                                                      v-if="submission.order_items && parseInt(submission.order_items.length)">
+                                        Change Payment Status
+                                    </el-dropdown-item>
+                                </el-dropdown-menu>
+                            </el-dropdown>
+                        </el-button-group>
+                    </div>
                 </div>
-            </div>
 
-            <div class="payment_header">
-                <div v-if="parseInt(submission.order_items.length)" class="payment_head_top">
-                    <div class="payment_header_left">
-                        <p class="head_small_title">Payment</p>
-                        <div class="head_payment_amount">
-                            <span class="pay_amount" v-html="getFormattedMoney(submission.payment_total)"></span>
-                            <span class="payment_currency">{{submission.currency}}</span>
-                            <span :class="'wpf_paystatus_badge wpf_pay_status_'+submission.payment_status">
+                <div class="payment_header">
+                    <div v-if="parseInt(submission.order_items.length)" class="payment_head_top">
+                        <div class="payment_header_left">
+                            <p class="head_small_title">Payment</p>
+                            <div class="head_payment_amount">
+                                <span class="pay_amount" v-html="getFormattedMoney(submission.payment_total)"></span>
+                                <span class="payment_currency">{{submission.currency}}</span>
+                                <span :class="'wpf_paystatus_badge wpf_pay_status_'+submission.payment_status">
                             <i :class="getPaymentStatusIcon(submission.payment_status)"></i> {{submission.payment_status}}
                         </span>
+                            </div>
+                        </div>
+                        <div class="payment_header_right">
+                            <p class="head_small_title">{{ firstTransaction.charge_id }}</p>
+                            <a
+                                v-if="isUrl(firstTransaction.transaction_url)"
+                                target="_blank"
+                                :href="firstTransaction.transaction_url"
+                                class="el-button el-button--default el-button--mini">
+                                View on {{ firstTransaction.payment_method }} dashboard
+                            </a>
+                            <span v-else>{{firstTransaction.payment_method}}</span>
                         </div>
                     </div>
-                    <div class="payment_header_right">
-                        <p class="head_small_title">{{ firstTransaction.charge_id }}</p>
-                        <a
-                            v-if="isUrl(firstTransaction.transaction_url)"
-                            target="_blank"
-                            :href="firstTransaction.transaction_url"
-                            class="el-button el-button--default el-button--mini">
-                            View on {{ firstTransaction.payment_method }} dashboard
-                        </a>
-                        <span v-else>{{firstTransaction.payment_method}}</span>
-                    </div>
-                </div>
-                <div class="payment_head_bottom">
-                    <div class="info_block">
-                        <div class="info_header">Date</div>
-                        <div class="info_value">{{submission.created_at}}</div>
-                    </div>
-                    <div class="info_block">
-                        <div class="info_header">Email</div>
-                        <div class="info_value">
+                    <div class="payment_head_bottom">
+                        <div class="info_block">
+                            <div class="info_header">Date</div>
+                            <div class="info_value">{{submission.created_at}}</div>
+                        </div>
+                        <div class="info_block">
+                            <div class="info_header">Email</div>
+                            <div class="info_value">
                         <span v-if="submission.customer_email"><a target="_blank"
                                                                   :href="'mailto:'+submission.customer_email">{{submission.customer_email}}</a></span>
-                            <span v-else>n/a</span>
+                                <span v-else>n/a</span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="info_block">
-                        <div class="info_header">Name</div>
-                        <div class="info_value">
+                        <div class="info_block">
+                            <div class="info_header">Name</div>
+                            <div class="info_value">
                         <span class="wpf_capitalize" v-if="submission.customer_name">
                             <a :href="submission.user_profile_url" target="_blank" v-if="submission.user_profile_url">
                                 {{submission.customer_name}}
@@ -82,202 +85,237 @@
                                 {{submission.customer_name}}
                             </span>
                         </span>
-                            <span v-else>n/a</span>
-                        </div>
-                    </div>
-                    <div v-if="submission.payment_method" class="info_block">
-                        <div class="info_header">Payment Method</div>
-                        <div class="info_value wpf_capitalize">
-                            <span>{{submission.payment_method}}</span>
-                        </div>
-                    </div>
-                    <div v-if="submission.payment_mode" class="info_block">
-                        <div class="info_header">Payment Mode</div>
-                        <div class="info_value wpf_capitalize">{{submission.payment_mode}}</div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="entry_info_box">
-                <div class="entry_info_header">
-                    <div class="info_box_header">Form Entry Data</div>
-                    <div class="info_box_header_actions">
-                        <el-checkbox true-label="yes" false-label="no" v-model="show_empty">Show empty fields
-                        </el-checkbox>
-                    </div>
-                </div>
-                <div class="entry_info_body">
-                    <div class="wpf_entry_details">
-                        <div v-for="(entry, entry_id) in entry_items" v-show="show_empty == 'yes' || entry.value"
-                             :key="entry_id" class="wpf_each_entry">
-                            <div class="wpf_entry_label">
-                                {{entry.label}}
+                                <span v-else>n/a</span>
                             </div>
-                            <div class="wpf_entry_value" v-html="entry.value"></div>
+                        </div>
+                        <div v-if="submission.payment_method" class="info_block">
+                            <div class="info_header">Payment Method</div>
+                            <div class="info_value wpf_capitalize">
+                                <span>{{submission.payment_method}}</span>
+                            </div>
+                        </div>
+                        <div v-if="submission.payment_mode" class="info_block">
+                            <div class="info_header">Payment Mode</div>
+                            <div class="info_value wpf_capitalize">{{submission.payment_mode}}</div>
                         </div>
                     </div>
                 </div>
-            </div>
 
-            <div v-if="parseInt(submission.order_items.length)" class="entry_info_box">
-                <div class="entry_info_header">
-                    <div class="info_box_header">Order Items</div>
-                </div>
-                <div class="entry_info_body">
-                    <div class="wpf_entry_order_items">
-                        <table class="wp-list-table widefat striped">
-                            <thead>
-                            <tr>
-                                <th>Item Name</th>
-                                <th>Quantity</th>
-                                <th>Item Price</th>
-                                <th>Line Total</th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr v-for="item in submission.order_items">
-                                <td>{{item.item_name}}</td>
-                                <td>{{item.quantity}}</td>
-                                <td v-html="getFormattedMoney(item.item_price)"></td>
-                                <td v-html="getFormattedMoney(item.line_total)"></td>
-                            </tr>
-                            </tbody>
-                            <tfoot>
-                            <tr>
-                                <th style="text-align: right" colspan="3">Total:</th>
-                                <th v-html="getFormattedMoney(orderTotal)"></th>
-                            </tr>
-                            </tfoot>
-                        </table>
-                    </div>
-                </div>
-            </div>
-
-            <div v-if="parseInt(submission.order_items.length)" class="entry_info_box">
-                <div class="entry_info_header">
-                    <div class="info_box_header">Transaction Details</div>
-                </div>
-                <div class="entry_info_body">
-                    <div class="wpf_entry_transactions">
-                        <div v-for="(transaction,index) in submission.transactions" class="wpf_entry_transaction">
-                            <h4 v-show="submission.transactions.length > 1">Transaction #{{ index+1 }}</h4>
-                            <ul class="wpf_list_items">
-                                <li>
-                                    <div class="wpf_list_header">Transaction ID</div>
-                                    <div class="wpf_list_value">{{ transaction.id }}</div>
-                                </li>
-                                <li>
-                                    <div class="wpf_list_header">Payment Method</div>
-                                    <div class="wpf_list_value">
-                                        <span v-if="transaction.payment_method">{{ transaction.payment_method }}</span>
-                                        <span v-else>n/a</span>
-                                    </div>
-                                </li>
-                                <li v-if="transaction.charge_id">
-                                    <div class="wpf_list_header">Transaction ID</div>
-                                    <div class="wpf_list_value">
-
-                                        <a v-if="transaction.transaction_url" target="_blank"
-                                           :href="transaction.transaction_url">{{ transaction.charge_id }}</a>
-                                        <span v-else>{{ transaction.charge_id }}</span>
-
-                                    </div>
-                                </li>
-                                <li v-show="transaction.card_last_4">
-                                    <div class="wpf_list_header">Card Last 4</div>
-                                    <div class="wpf_list_value"><span
-                                        class="wpf_card_badge">{{ transaction.card_brand }}</span> <i
-                                        class="el-icon-more"></i> {{ transaction.card_last_4 }}
-                                    </div>
-                                </li>
-                                <li>
-                                    <div class="wpf_list_header">Payment Total</div>
-                                    <div class="wpf_list_value"
-                                         v-html="getFormattedMoney(transaction.payment_total)"></div>
-                                </li>
-                                <li>
-                                    <div class="wpf_list_header">Payment Status</div>
-                                    <div class="wpf_list_value">{{ transaction.status }}</div>
-                                </li>
-                                <li>
-                                    <div class="wpf_list_header">Date</div>
-                                    <div class="wpf_list_value">{{ transaction.created_at }}</div>
-                                </li>
-                            </ul>
+                <div class="entry_info_box entry_input_data">
+                    <div class="entry_info_header">
+                        <div class="info_box_header">Form Entry Data</div>
+                        <div class="info_box_header_actions">
+                            <el-checkbox true-label="yes" false-label="no" v-model="show_empty">Show empty fields
+                            </el-checkbox>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <div class="entry_info_box">
-                <div class="entry_info_header">
-                    <div class="info_box_header">Submission Activity Events</div>
-                    <div class="info_box_header_actions">
-                        <el-button @click="add_note_box = !add_note_box" size="mini" type="info">Add Note</el-button>
-                    </div>
-                </div>
-                <div class="entry_info_body">
-                    <div class="wpf_entry_details">
-                        <div v-if="add_note_box" class="wpf_add_note_box">
-                            <el-input
-                                type="textarea"
-                                :autosize="{ minRows: 3}"
-                                placeholder="Please Provide Note Content"
-                                v-model="new_note_content">
-                            </el-input>
-                            <el-button @click="submitNote()" size="small" type="success">Submit Note</el-button>
-                        </div>
-                        <template v-if="submission.activities && submission.activities.length">
-                            <div v-for="activity in submission.activities" :key="activity.id" class="wpf_each_entry">
+                    <div class="entry_info_body">
+                        <div class="wpf_entry_details">
+                            <div v-for="(entry, entry_id) in entry_items" v-show="show_empty == 'yes' || entry.value"
+                                 :key="entry_id" class="wpf_each_entry">
                                 <div class="wpf_entry_label">
-                                    {{activity.created_by}} - {{ activity.created_at }}
+                                    {{entry.label}}
                                 </div>
-                                <div class="wpf_entry_value" v-html="activity.content"></div>
+                                <div class="wpf_entry_value" v-html="entry.value"></div>
                             </div>
-                        </template>
-
-                        <div class="wpf_each_entry text-center" v-else>
-                            <p>No Activity found</p>
                         </div>
                     </div>
                 </div>
-            </div>
-        </template>
 
+                <div v-if="parseInt(submission.order_items.length)" class="entry_info_box entry_order_items">
+                    <div class="entry_info_header">
+                        <div class="info_box_header">Order Items</div>
+                    </div>
+                    <div class="entry_info_body">
+                        <div class="wpf_entry_order_items">
+                            <table class="wp-list-table widefat table table-bordered striped">
+                                <thead>
+                                <tr>
+                                    <th>Item Name</th>
+                                    <th>Quantity</th>
+                                    <th>Item Price</th>
+                                    <th>Line Total</th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr v-for="item in submission.order_items">
+                                    <td>{{item.item_name}}</td>
+                                    <td>{{item.quantity}}</td>
+                                    <td v-html="getFormattedMoney(item.item_price)"></td>
+                                    <td v-html="getFormattedMoney(item.line_total)"></td>
+                                </tr>
+                                </tbody>
+                                <tfoot>
+                                <tr>
+                                    <th style="text-align: right" colspan="3">Total:</th>
+                                    <th v-html="getFormattedMoney(orderTotal)"></th>
+                                </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                    </div>
+                </div>
 
-        <!--Edit Payment Status Modal-->
-        <el-dialog
-            title="Edit Payment Status"
-            :visible.sync="editPaymentStatusModal"
-            width="50%">
-            <div class="modal_body">
-                <p>Current Payment Status: <b>{{ submission.payment_status }}</b></p>
-                <el-form ref="payment_status_form" :model="payment_status_edit_model" label-width="160px">
-                    <el-form-item label="New Payment Status">
-                        <el-radio-group v-model="payment_status_edit_model.status">
-                            <el-radio v-for="(status, status_key) in available_payment_statuses" :key="status"
-                                      :label="status_key">{{status}}
-                            </el-radio>
-                        </el-radio-group>
-                    </el-form-item>
-                    <el-form-item label="Note">
-                        <el-input type="textarea" placeholder="You may add a note for this status change (optional)"
-                                  size="mini"
-                                  v-model="payment_status_edit_model.note"></el-input>
-                    </el-form-item>
-                </el-form>
+                <div v-if="parseInt(submission.order_items.length)" class="entry_info_box entry_transactions">
+                    <div class="entry_info_header">
+                        <div class="info_box_header">Transaction Details</div>
+                    </div>
+                    <div class="entry_info_body">
+                        <div class="wpf_entry_transactions">
+                            <div v-for="(transaction,index) in submission.transactions" class="wpf_entry_transaction">
+                                <h4 v-show="submission.transactions.length > 1">Transaction #{{ index+1 }}</h4>
+                                <ul class="wpf_list_items">
+                                    <li>
+                                        <div class="wpf_list_header">Transaction ID</div>
+                                        <div class="wpf_list_value">{{ transaction.id }}</div>
+                                    </li>
+                                    <li>
+                                        <div class="wpf_list_header">Payment Method</div>
+                                        <div class="wpf_list_value">
+                                            <span
+                                                v-if="transaction.payment_method">{{ transaction.payment_method }}</span>
+                                            <span v-else>n/a</span>
+                                        </div>
+                                    </li>
+                                    <li v-if="transaction.charge_id">
+                                        <div class="wpf_list_header">Transaction ID</div>
+                                        <div class="wpf_list_value">
+
+                                            <a v-if="transaction.transaction_url" target="_blank"
+                                               :href="transaction.transaction_url">{{ transaction.charge_id }}</a>
+                                            <span v-else>{{ transaction.charge_id }}</span>
+
+                                        </div>
+                                    </li>
+                                    <li v-show="transaction.card_last_4">
+                                        <div class="wpf_list_header">Card Last 4</div>
+                                        <div class="wpf_list_value"><span
+                                            class="wpf_card_badge">{{ transaction.card_brand }}</span> <i
+                                            class="el-icon-more"></i> {{ transaction.card_last_4 }}
+                                        </div>
+                                    </li>
+                                    <li>
+                                        <div class="wpf_list_header">Payment Total</div>
+                                        <div class="wpf_list_value"
+                                             v-html="getFormattedMoney(transaction.payment_total)"></div>
+                                    </li>
+                                    <li>
+                                        <div class="wpf_list_header">Payment Status</div>
+                                        <div class="wpf_list_value">{{ transaction.status }}</div>
+                                    </li>
+                                    <li>
+                                        <div class="wpf_list_header">Date</div>
+                                        <div class="wpf_list_value">{{ transaction.created_at }}</div>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="entry_info_box entry_submission_activity">
+                    <div class="entry_info_header">
+                        <div class="info_box_header">Submission Activity Events</div>
+                        <div class="info_box_header_actions">
+                            <el-button @click="add_note_box = !add_note_box" size="mini" type="info">Add Note
+                            </el-button>
+                        </div>
+                    </div>
+                    <div class="entry_info_body">
+                        <div class="wpf_entry_details">
+                            <div v-if="add_note_box" class="wpf_add_note_box">
+                                <el-input
+                                    type="textarea"
+                                    :autosize="{ minRows: 3}"
+                                    placeholder="Please Provide Note Content"
+                                    v-model="new_note_content">
+                                </el-input>
+                                <el-button @click="submitNote()" size="small" type="success">Submit Note</el-button>
+                            </div>
+                            <template v-if="submission.activities && submission.activities.length">
+                                <div v-for="activity in submission.activities" :key="activity.id"
+                                     class="wpf_each_entry">
+                                    <div class="wpf_entry_label">
+                                        {{activity.created_by}} - {{ activity.created_at }}
+                                    </div>
+                                    <div class="wpf_entry_value" v-html="activity.content"></div>
+                                </div>
+                            </template>
+
+                            <div class="wpf_each_entry text-center" v-else>
+                                <p>No Activity found</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <div class="print_button_controls">
+                <el-button @click="show_print_settings = !show_print_settings" size="mini"><i
+                    class="el-icon-setting"></i></el-button>
+                <el-button @click="print" type="info" size="mini" icon="el-icon-printer">Print this entry</el-button>
+                <el-button @click="exportJSON()" type="info" size="mini" icon="el-icon-document-copy">Export JSON
+                </el-button>
+                <div v-if="show_print_settings">
+                    <h3>Mark Sections to hide from print screen</h3>
+                    <el-checkbox-group v-model="print_hides">
+                        <el-checkbox label="print_hide_activities">Hide Activities</el-checkbox>
+                        <el-checkbox label="print_hide_transactions">Hide Transactions</el-checkbox>
+                        <el-checkbox label="print_hide_input_items">Hide Input Items</el-checkbox>
+                        <el-checkbox label="print_hide_header_items">Hide Header Bar</el-checkbox>
+                        <el-checkbox label="print_hide_order_items">Hide Order Items</el-checkbox>
+                    </el-checkbox-group>
+                </div>
             </div>
-            <span slot="footer" class="dialog-footer">
+            <!--Edit Payment Status Modal-->
+            <el-dialog
+                title="Edit Payment Status"
+                :visible.sync="editPaymentStatusModal"
+                width="50%">
+                <div class="modal_body">
+                    <p>Current Payment Status: <b>{{ submission.payment_status }}</b></p>
+                    <el-form ref="payment_status_form" :model="payment_status_edit_model" label-width="160px">
+                        <el-form-item label="New Payment Status">
+                            <el-radio-group v-model="payment_status_edit_model.status">
+                                <el-radio v-for="(status, status_key) in available_payment_statuses" :key="status"
+                                          :label="status_key">{{status}}
+                                </el-radio>
+                            </el-radio-group>
+                        </el-form-item>
+                        <el-form-item label="Note">
+                            <el-input type="textarea" placeholder="You may add a note for this status change (optional)"
+                                      size="mini"
+                                      v-model="payment_status_edit_model.note"></el-input>
+                        </el-form-item>
+                    </el-form>
+                </div>
+                <span slot="footer" class="dialog-footer">
                 <el-button @click="editPaymentStatusModal = false">Cancel</el-button>
                 <el-button type="primary" @click="changePaymentStatus()">Confirm</el-button>
             </span>
-        </el-dialog>
+            </el-dialog>
+
+            <el-dialog
+                :visible.sync="show_print_pro"
+                width="60%">
+                <div class="payform_section_body payform_upgrade_wrapper">
+                    <div class="payform_upgrade_section">
+                        <h1><i class="el-icon-lock"></i></h1>
+                        <h3>Print Entry is a pro feature. Upgrade to pro to unlock this feature.</h3>
+                        <a target="_blank" :href="pro_purchase_url" class="el-button el-button--primary">Upgrade To Pro
+                            version</a>
+                    </div>
+                </div>
+            </el-dialog>
+
+        </div>
     </div>
 </template>
 
 <script type="text/babel">
     import each from 'lodash/each';
     import fromatPrice from '../../../../common/formatPrice';
+    import omit from 'lodash/omit';
 
     export default {
         name: "Entry",
@@ -298,7 +336,12 @@
                     status: '',
                     note: ''
                 },
-                available_payment_statuses: window.wpPayFormsAdmin.paymentStatuses
+                available_payment_statuses: window.wpPayFormsAdmin.paymentStatuses,
+                print_hides: [
+                    'print_hide_activities'
+                ],
+                show_print_settings: false,
+                show_print_pro: false
             }
         },
         watch: {
@@ -455,6 +498,30 @@
             isUrl(maybeUrl) {
                 var regexp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/
                 return regexp.test(maybeUrl);
+            },
+            print() {
+                if (!this.has_pro) {
+                    this.show_print_pro = true;
+                    return;
+                }
+                this.$htmlToPaper('print_view');
+            },
+            exportJSON() {
+                if (!this.has_pro) {
+                    this.$notify.error('Export JSON is a pro feature. Please upgrade');
+                }
+                let submission = JSON.parse(JSON.stringify(this.submission));
+                submission = omit(submission, 'currencySetting');
+                this.downloadObjectAsJson(submission, 'entry_'+submission.id);
+            },
+            downloadObjectAsJson(exportObj, exportName) {
+                var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));
+                var downloadAnchorNode = document.createElement('a');
+                downloadAnchorNode.setAttribute("href", dataStr);
+                downloadAnchorNode.setAttribute("download", exportName + ".json");
+                document.body.appendChild(downloadAnchorNode); // required for firefox
+                downloadAnchorNode.click();
+                downloadAnchorNode.remove();
             }
         },
         mounted() {

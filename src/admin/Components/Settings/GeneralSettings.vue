@@ -13,7 +13,7 @@
                 </div>
             </div>
             <div v-loading="fetching" class="payform_section_body">
-                <el-form rel="currency_settings" :model="settings" label-width="220px">
+                <el-form rel="currency_settings" :label-position="labelPosition" :model="settings" label-width="220px">
                     <div class="wpf_settings_section">
                         <div class="sub_section_header">
                             <h3>{{ $t('Currency Settings') }}</h3>
@@ -85,6 +85,7 @@
                 saving: false,
                 currencies: {},
                 locales: {},
+                labelPosition: 'right',
                 currency_sign_positions: {
                     left: 'Left ($100)',
                     right: 'Right (100$)',
@@ -136,6 +137,9 @@
         mounted() {
             this.getSettings();
             window.WPPayFormsBus.$emit('site_title', 'General Settings');
+            if(window.outerWidth < 500) {
+                this.labelPosition = "top";
+            }
         }
     }
 </script>

@@ -2,7 +2,7 @@
     <el-container>
         <el-main class="no_shadow">
             <div class="edit_form_warpper">
-                <div class="all_payforms_wrapper payform_section wpf_min_width">
+                <div class="all_payforms_wrapper payform_section">
                     <div class="payform_section_header">
                         <h3 class="payform_section_title">
                             {{ $t('Currency and Language Settings') }}
@@ -14,7 +14,7 @@
                         </div>
                     </div>
                     <div v-loading="fetching"  class="payform_section_body">
-                        <el-form ref="payment_settings" :model="currency_settings" label-width="220px">
+                        <el-form ref="payment_settings" :label-position="labelPosition" :model="currency_settings" label-width="220px">
                             <div class="wpf_sub_section">
                                 <div class="sub_section_body">
                                     <el-form-item label="Currency & Locale Setting">
@@ -72,7 +72,8 @@
                 currency_settings: {},
                 app_ready: false,
                 currencies: {},
-                locales: {}
+                locales: {},
+                labelPosition: 'right'
             }
         },
         methods: {
@@ -122,6 +123,9 @@
         mounted() {
             this.getSettings();
             window.WPPayFormsBus.$emit('site_title', 'Form Currency Settings');
+            if(window.outerWidth < 500) {
+                this.labelPosition = "top";
+            }
         }
     }
 </script>

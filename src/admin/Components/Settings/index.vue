@@ -60,12 +60,12 @@
                     {
                         route: 'stripe_settings',
                         title: 'Stripe Settings',
-                        icon: 'dashicons dashicons-category'
+                        icon: 'el-icon-bank-card'
                     },
                     {
                         route: 'paypal_settings',
                         title: 'Paypal Settings',
-                        icon: 'dashicons dashicons-category'
+                        icon: 'el-icon-money'
                     }
                 ];
 

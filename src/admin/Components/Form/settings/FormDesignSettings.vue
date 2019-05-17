@@ -2,7 +2,7 @@
     <el-container>
         <el-main class="no_shadow">
             <div v-loading="fetching" class="edit_form_warpper">
-                <div class="all_payforms_wrapper payform_section wpf_min_width">
+                <div class="all_payforms_wrapper payform_section">
                     <div class="payform_section_header">
                         <h3 class="payform_section_title">
                             {{ $t('Form Design Settings') }}
@@ -15,7 +15,7 @@
                         </div>
                     </div>
                     <div class="payform_section_body">
-                        <el-form ref="layout_settings" :model="layout_settings" label-width="220px">
+                        <el-form ref="layout_settings" :label-position="labelPosition" :model="layout_settings" label-width="220px">
                             <div class="wpf_settings_section">
                                 <div class="sub_section_header">
                                     <h3>Form Layout</h3>
@@ -156,6 +156,7 @@
                 layout_settings: {
                     extra_styles: {}
                 },
+                labelPosition: 'right',
                 labelPlacementOptions: {
                     'top': 'Top',
                     'left': 'Left',
@@ -208,6 +209,9 @@
         mounted() {
             this.getSettings();
             window.WPPayFormsBus.$emit('site_title', 'Design Settings');
+            if(window.outerWidth < 500) {
+                this.labelPosition = "top";
+            }
         }
     }
 </script>

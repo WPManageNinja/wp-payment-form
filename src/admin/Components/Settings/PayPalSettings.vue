@@ -1,9 +1,9 @@
 <template>
     <div v-loading="fetching">
-        <div class="all_payforms_wrapper payform_section wpf_min_width">
+        <div class="all_payforms_wrapper payform_section">
             <div class="payform_section_header">
                 <h3 class="payform_section_title">
-                    {{ $t('Stripe Gateway Settings') }}
+                    {{ $t('PayPal Gateway Settings') }}
                 </h3>
                 <div v-if="has_pro" class="payform_section_actions">
                     <el-button v-loading="saving" @click="saveSettings()" class="payform_action" size="small"
@@ -20,7 +20,7 @@
                     <a target="_blank" :href="pro_purchase_url">Upgrade to WP Payment Form Pro</a>
                 </div>
 
-                <el-form rel="paypal_settings" :model="settings" label-width="220px">
+                <el-form :label-position="labelPosition" rel="paypal_settings" :model="settings" label-width="220px">
                     <el-form-item label="PayPal Payment Mode">
                         <el-radio-group v-model="settings.payment_mode">
                             <el-radio label="test">Sandbox Mode</el-radio>
@@ -93,7 +93,8 @@
                 fetching: false,
                 is_key_defined: false,
                 pages: [],
-                confirmation_pages: {}
+                confirmation_pages: {},
+                labelPosition: 'right'
             }
         },
         methods: {
@@ -143,6 +144,9 @@
                 this.getSettings();
             }
             window.WPPayFormsBus.$emit('site_title', 'Paypal Settings');
+            if(window.outerWidth < 500) {
+                this.labelPosition = "top";
+            }
         }
     }
 </script>

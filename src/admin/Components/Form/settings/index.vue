@@ -62,7 +62,7 @@
             }
         },
         mounted() {
-            if(window.outerWidth < 500) {
+            if(window.outerWidth < 600) {
                 this.sidebarWidth = "auto";
                 this.isCollapse = true;
             }

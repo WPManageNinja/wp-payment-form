@@ -1,6 +1,6 @@
 <template>
     <div v-loading="fetching">
-        <div class="all_payforms_wrapper payform_section wpf_min_width">
+        <div class="all_payforms_wrapper payform_section">
             <div class="payform_section_header">
                 <h3 class="payform_section_title">
                     {{ $t('Stripe Gateway Settings') }}
@@ -12,7 +12,7 @@
                 </div>
             </div>
             <div class="payform_section_body">
-                <el-form rel="stripe_settings" :model="settings" label-width="220px">
+                <el-form :label-position="labelPosition" rel="stripe_settings" :model="settings" label-width="220px">
                     <el-form-item label="Stripe Payment Mode">
                         <el-radio-group v-model="settings.payment_mode">
                             <el-radio label="test">Test Mode</el-radio>
@@ -75,7 +75,8 @@
                 uploadUrl: window.wpPayFormsAdmin.image_upload_url,
                 saving: false,
                 fetching: false,
-                is_key_defined: false
+                is_key_defined: false,
+                labelPosition: 'right'
             }
         },
         methods: {
@@ -121,6 +122,9 @@
         mounted() {
             this.getSettings();
             window.WPPayFormsBus.$emit('site_title', 'Stripe Settings');
+            if(window.outerWidth < 500) {
+                this.labelPosition = "top";
+            }
         }
     }
 </script>

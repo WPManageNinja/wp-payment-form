@@ -93,6 +93,7 @@ class Menu
             do_action('wppayform/booting_admin_app');
             wp_enqueue_script('wppayform_admin_app', WPPAYFORM_URL.'assets/js/payforms-admin.js', array('wppayform_boot'), WPPAYFORM_VERSION, true);
             wp_enqueue_style('wppayform_admin_app', WPPAYFORM_URL.'assets/css/payforms-admin.css', array(), WPPAYFORM_VERSION);
+
             wp_localize_script('wppayform_boot', 'wpPayFormsAdmin', array(
                 'i18n' => array(
                     'All Payment Forms' => __('All Payment Forms', 'wppayform')
@@ -103,7 +104,8 @@ class Menu
                 'assets_url' => WPPAYFORM_URL.'assets/',
                 'has_pro' => defined('WPPAYFORMHASPRO') && WPPAYFORMHASPRO,
                 'hasValidLicense' => get_option('_wppayform_pro_license_status'),
-                'ajaxurl' => admin_url('admin-ajax.php')
+                'ajaxurl' => admin_url('admin-ajax.php'),
+                'printStyles' => apply_filters('wppayform/print_styles', [])
             ));
         }
     }

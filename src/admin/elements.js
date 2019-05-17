@@ -1,4 +1,5 @@
 import Vue from 'vue';
+import VueHtmlToPaper from 'vue-html-to-paper';
 
 import {
     Button,
@@ -108,6 +109,18 @@ Vue.prototype.$notify = Notification;
 locale.use(lang);
 import lang from 'element-ui/lib/locale/lang/en';
 import locale from 'element-ui/lib/locale';
+
+const printOptions = {
+    name: '_blank',
+    specs: [
+        'fullscreen=yes',
+        'titlebar=yes',
+        'scrollbars=yes'
+    ],
+    styles: window.wpPayFormsAdmin.printStyles
+}
+
+Vue.use(VueHtmlToPaper, printOptions);
 
 export default Vue;
 

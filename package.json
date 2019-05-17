@@ -30,6 +30,7 @@
     "lodash": "^4.17.11",
     "pikaday": "^1.8.0",
     "vue": "^2.5.22",
+    "vue-html-to-paper": "^1.0.3",
     "vue-router": "^3.0.2",
     "vuedraggable": "^2.17.0"
   }
