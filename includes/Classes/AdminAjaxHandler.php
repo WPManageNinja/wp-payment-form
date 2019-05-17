@@ -3,6 +3,7 @@
 namespace WPPayForm\Classes;
 
 use WPPayForm\Classes\Models\Forms;
+use WPPayForm\Classes\Tools\GlobalTools;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -34,7 +35,8 @@ class AdminAjaxHandler
             'delete_form'                => 'deleteForm',
             'get_form_settings'          => 'getFormSettings',
             'get_design_settings'        => 'getDesignSettings',
-            'update_design_settings'     => 'updateDesignSettings'
+            'update_design_settings'     => 'updateDesignSettings',
+            'duplicate_form'             => 'duplicateForm'
         );
 
         if (isset($validRoutes[$route])) {
@@ -60,7 +62,9 @@ class AdminAjaxHandler
         if ($searchString) {
             $args['s'] = $searchString;
         }
-        wp_send_json_success(Forms::getForms($args));
+        $forms = Forms::getForms($args, $with = array('entries_count'));
+
+        wp_send_json_success($forms);
     }
 
     protected function createForm()
@@ -176,7 +180,7 @@ class AdminAjaxHandler
         if (!$formId || !$builderSettings) {
             wp_send_json_error(array(
                 'message' => __('Validation Error, Please try again', 'wppayform'),
-                'errors' => array(
+                'errors'  => array(
                     'general' => __('Please add atleast one input element', 'wppayform')
                 )
             ), 423);
@@ -184,16 +188,16 @@ class AdminAjaxHandler
         $errors = array();
 
         foreach ($builderSettings as $builderSetting) {
-            $error = apply_filters('wppayform/validate_component_on_save_'.$builderSetting['type'], false, $builderSetting, $formId);
-            if($error) {
+            $error = apply_filters('wppayform/validate_component_on_save_' . $builderSetting['type'], false, $builderSetting, $formId);
+            if ($error) {
                 $errors[$builderSetting['id']] = $error;
             }
         }
 
-        if($errors) {
+        if ($errors) {
             wp_send_json_error(array(
                 'message' => __('Validation failed when saving the form', 'wppayform'),
-                'errors' => $errors
+                'errors'  => $errors
             ), 423);
         }
 
@@ -244,6 +248,26 @@ class AdminAjaxHandler
         update_post_meta($formId, 'wppayform_form_design_settings', $layoutSettings);
         wp_send_json_success(array(
             'message' => __('Settings successfully updated', 'wppayform')
+        ), 200);
+    }
+
+    protected function duplicateForm()
+    {
+        $formId = absint($_POST['form_id']);
+        $globalTools = new GlobalTools();
+        $oldForm = $globalTools->getForm($formId);
+        $oldForm['post_title'] = '(Duplicate) '.$oldForm['post_title'];
+        $oldForm = apply_filters('wppayform/form_duplicate', $oldForm);
+
+        if(!$oldForm) {
+            wp_send_json_error(array(
+                'message' => __('No form found when duplicating the form', 'wppayform')
+            ), 423);
+        }
+        $newForm = $globalTools->createFormFromData($oldForm);
+        wp_send_json_success(array(
+            'message' => __('Form successfully duplicated', 'wppayform'),
+            'form' => $newForm
         ), 200);
     }
 }

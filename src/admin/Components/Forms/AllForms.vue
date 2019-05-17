@@ -18,7 +18,7 @@
                     </el-button>
                 </div>
             </div>
-            <div class="payform_section_body">
+            <div v-loading.fullscreen.lock="duplicatingForm" element-loading-text="Duplicating the form.. Please wait..." class="payform_section_body">
                 <el-table
                     class="payform_tables"
                     v-loading.body="loading"
@@ -47,13 +47,28 @@
                                     {{ $t('Entries') }}
                                 </router-link>
                                 |
-                                <a :href="scope.row.preview_url" target="_blank">{{ $t('Preview') }}</a> |
+                                <a :href="scope.row.preview_url" target="_blank">{{ $t('Preview') }}</a>
+                                |
                                 <a @click.prevent="confirmDeleteForm(scope.row)" href="#">{{ $t('Delete') }}</a>
+                                |
+                                <a href="#" @click.prevent="duplicateForm(scope.row.ID)">{{ $t('Duplicate Form') }}</a>
                             </div>
                         </template>
                     </el-table-column>
+                    <el-table-column label="Submissions" width="120">
+                        <template slot-scope="scope">
+                            <router-link :to="{ name: 'form_entries', params: { form_id: scope.row.ID } }">
+                                {{scope.row.entries_count}}
+                            </router-link>
 
-                    <el-table-column :label="$t('ShortCode')">
+                        </template>
+                    </el-table-column>
+                    <el-table-column label="Craete Date" width="120">
+                        <template slot-scope="scope">
+                            {{scope.row.post_date_gmt | dateFormat}}
+                        </template>
+                    </el-table-column>
+                    <el-table-column width="250" :label="$t('ShortCode')">
                         <template slot-scope="scope">
                             <el-tooltip effect="dark"
                                         content="Click to copy shortcode"
@@ -101,7 +116,6 @@
                 <el-button type="primary" @click="deleteFormNow()">Confirm</el-button>
             </span>
         </el-dialog>
-
     </div>
 </template>
 
@@ -129,7 +143,8 @@
                 deleteDialogVisible: false,
                 deleteingForm: {},
                 pageSizes: [10, 20, 30, 40, 50, 100, 200],
-                forms_count: parseInt(window.wpPayFormsAdmin.forms_count)
+                forms_count: parseInt(window.wpPayFormsAdmin.forms_count),
+                duplicatingForm: false
             }
         },
         methods: {
@@ -147,7 +162,7 @@
                         this.total = response.data.total;
                     })
                     .fail(error => {
-                        this.$message.error(error.responseJSON.message);
+                        this.$showAjaxError(error);
                     })
                     .always(() => {
                         this.loading = false;
@@ -189,6 +204,33 @@
             handleSizeChange(val) {
                 this.per_page = val;
                 this.fetchForms();
+            },
+            duplicateForm(formId) {
+                this.duplicatingForm = true;
+                this.$post({
+                    action: 'wppayform_forms_admin_ajax',
+                    route: 'duplicate_form',
+                    form_id: formId
+                })
+                    .then(response => {
+                        if(response.data.form.ID) {
+                            this.$notify.success(response.data.message);
+                            this.$router.push({
+                                name: 'edit_form',
+                                params: {
+                                    form_id: response.data.form.ID
+                                }
+                            });
+                        } else {
+                            this.$notify.error('Something is wrong! Please try again');
+                        }
+                    })
+                    .fail((error) => {
+                        this.$showAjaxError(error);
+                    })
+                    .always(() => {
+                        this.duplicatingForm = false;
+                    });
             }
         },
         mounted() {

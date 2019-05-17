@@ -28,6 +28,7 @@
     "clipboard": "^2.0.4",
     "element-ui": "^2.8.2",
     "lodash": "^4.17.11",
+    "moment": "^2.24.0",
     "pikaday": "^1.8.0",
     "vue": "^2.5.22",
     "vue-html-to-paper": "^1.0.3",

@@ -2,6 +2,7 @@
 
 namespace WPPayForm\Classes\Models;
 
+use WPPayForm\Classes\Entry\Entry;
 use WPPayForm\Classes\GeneralSettings;
 use WPPayForm\Classes\ArrayHelper;
 
@@ -15,7 +16,7 @@ if (!defined('ABSPATH')) {
  */
 class Forms
 {
-    public static function getForms($args = array())
+    public static function getForms($args = array(), $with = array())
     {
         $whereArgs = array(
             'post_type'   => 'wp_payform',
@@ -44,8 +45,13 @@ class Forms
 
         $forms = $formsQuery->get();
 
+        $submissionModel = new Submission();
+
         foreach ($forms as $form) {
             $form->preview_url = site_url('?wp_paymentform_preview=' . $form->ID);
+            if(in_array('entries_count', $with)) {
+                $form->entries_count = $submissionModel->getEntryCountByPaymentStatus($form->ID);
+            }
         }
 
         $forms = apply_filters('wppayform/get_all_forms', $forms);

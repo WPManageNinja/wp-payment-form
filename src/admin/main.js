@@ -1,3 +1,4 @@
+import moment from 'moment';
 window.WPPayFormsBus = new window.WPPayForms.Vue();
 
 window.WPPayForms.Vue.mixin({
@@ -55,6 +56,14 @@ window.WPPayForms.Vue.mixin({
     filters: {
         ucFirst(string) {
             return string.charAt(0).toUpperCase() + string.slice(1);
+        },
+        dateFormat(date, format) {
+            if(!format) {
+                format = 'MMM DD, YYYY';
+            }
+            let dateString = (date === undefined) ? null : date;
+            let dateObj = moment(dateString);
+            return dateObj.isValid() ? dateObj.format(format) : null;
         }
     }
 });

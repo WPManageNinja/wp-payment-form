@@ -54,9 +54,23 @@ class GlobalTools
     public function exportFormJson()
     {
         $formId = absint($_REQUEST['form_id']);
+        $form = $this->getForm($formId);
+
+        if (!$form) {
+           exit('No Form Found');
+        }
+
+        header('Content-disposition: attachment; filename=' . sanitize_title($form['post_title'] . '-export-form-', 'export-form-', 'view') . '-' . date('Y-m-d') . '.json');
+        header('Content-type: application/json');
+        echo json_encode($form);
+        exit();
+    }
+
+    public function getForm($formId)
+    {
         $form = get_post($formId, 'ARRAY_A');
         if (!$form || $form['post_type'] != 'wp_payform') {
-            exit('Sorry! No form found');
+            return false;
         }
 
         $metas = wpPayFormDB()->table('postmeta')
@@ -70,10 +84,8 @@ class GlobalTools
         }
 
         $form['form_meta'] = $formattedMeta;
-        header('Content-disposition: attachment; filename=' . sanitize_title($form['post_title'] . '-export-form-', 'export-form-', 'view') . '-' . date('Y-m-d') . '.json');
-        header('Content-type: application/json');
-        echo json_encode($form);
-        exit();
+
+        return $form;
     }
 
     public function handleImportForm()
@@ -96,6 +108,18 @@ class GlobalTools
 
         add_action('wppayform/before_form_json_import', $form);
 
+        $newForm = $this->createFormFromData($form);
+
+        add_action('wppayform/form_json_imported', $newForm);
+
+        wp_send_json_success(array(
+            'message' => 'Form successfully imported',
+            'form' => $newForm
+        ), 200);
+    }
+
+    public function createFormFromData($form)
+    {
         // Create the form post type
         $postId = wp_insert_post(array(
             'post_title'   => ArrayHelper::get($form, 'post_title', 'imported form '.date('Y-m-d')),
@@ -105,10 +129,12 @@ class GlobalTools
             'post_author'  => get_current_user_id()
         ));
 
-        if (is_wp_error($postId)) {
+        if (is_wp_error($postId) && wp_doing_ajax()) {
             wp_send_json_error(array(
                 'message' => 'Something is wrong when processing the file. Please try again'
             ), 423);
+        } else if(is_wp_error($postId)) {
+            return false;
         }
 
         $metas = ArrayHelper::get($form, 'form_meta', array());
@@ -118,11 +144,9 @@ class GlobalTools
             }
         }
 
-        add_action('wppayform/form_json_imported', $form);
+        $newForm = Forms::getForm($postId);
 
-        wp_send_json_success(array(
-            'message' => 'Form successfully imported',
-            'form' => Forms::getForm($postId)
-        ), 200);
+        return $newForm;
+
     }
 }
