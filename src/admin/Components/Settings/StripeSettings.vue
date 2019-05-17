@@ -1,6 +1,6 @@
 <template>
     <div v-loading="fetching">
-        <div class="all_payforms_wrapper payform_section">
+        <div class="all_payforms_wrapper payform_section wpf_min_width">
             <div class="payform_section_header">
                 <h3 class="payform_section_title">
                     {{ $t('Stripe Gateway Settings') }}

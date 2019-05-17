@@ -124,17 +124,22 @@
 
     .payform_section_title {
       float: left;
-      padding: 0;
-    }
-
-    h3.payform_section_title {
       margin: 0;
       padding: 0;
+      @media screen and (max-width: 769px) {
+        float: none;
+        width: 100%;
+        margin-bottom: 10px;
+      }
     }
 
     .payform_section_actions {
       float: right;
       text-align: right;
+      @media screen and (max-width: 769px) {
+        float: none;
+        text-align: left;
+      }
     }
 
     .payform_section_actions {
@@ -485,7 +490,7 @@ table.el-table__header thead tr th {
 
       td {
         padding: 15px 10px;
-        @media screen and (max-width: 782px) {
+        @media screen and (max-width: 769px) {
           display: table-cell !important;
         }
       }
@@ -865,4 +870,81 @@ label.el-form-item__label {
 
 .payform_settings_wrapper .payform_section_body {
   padding: 20px;
+}
+
+.wpf_report_cards {
+  display: flex;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  background: #f5f7fa;
+  .wpf_report_card {
+    flex: 1;
+    @media screen and (max-width: 769px) {
+      flex: auto;
+      margin-bottom: 20px;
+    }
+    cursor: pointer;
+    border-right: 1px solid #9ca1ac;
+    &.wpf_active_card {
+      background: white;
+      box-shadow: 0px 5px 6px 0px #c6d0d8;
+    }
+    &.card_type_ {
+      border-top: 2px solid #fff;
+    }
+
+    &.card_type_paid {
+      border-top: 2px solid #8BC34A;
+    }
+    &.card_type_pending {
+      border-top: 2px solid #FFEB3B;
+    }
+    &.card_type_processing {
+      border-top: 2px solid #03A9F4;
+    }
+
+    &.card_type_failed {
+      border-top: 2px solid #FF5722;
+    }
+    &.card_type_refunded {
+      border-top: 2px solid #000;
+    }
+
+    &:last-child {
+      border-right: 0;
+    }
+    .wpf_report_header {
+      padding: 5px 15px;
+      font-size: 15px;
+      @media screen and (max-width: 769px) {
+        padding: 0px 10px;
+        font-size: 11px;
+      }
+    }
+    .wpf_report_body {
+      padding: 15px;
+      @media screen and (max-width: 769px) {
+        padding: 5px 10px;
+      }
+    }
+    .wpf_report_line {
+      font-size: 18px;
+      line-height: 30px;
+      @media screen and (max-width: 769px) {
+        font-size: 10px;
+        line-height: 18px;
+      }
+    }
+  }
+}
+
+.wpf_min_width {
+  min-width: 500px;
+}
+@media screen and (max-width: 769px) {
+  table.el-table__body .row-actions {
+    display: block !important;
+    color: inherit;
+    left: 0;
+  }
 }

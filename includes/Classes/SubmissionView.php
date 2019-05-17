@@ -32,7 +32,7 @@ class SubmissionView
             'add_submission_note'      => 'addSubmissionNote',
             'change_payment_status'    => 'changePaymentStatus',
             'delete_submission'        => 'deleteSubmission',
-            'export_csv'               => 'exportAsCSV'
+            'get_form_report'          => 'getFormReport'
         );
         $route = sanitize_text_field($_REQUEST['route']);
 
@@ -241,4 +241,32 @@ class SubmissionView
         ), 200);
     }
 
+    public function getFormReport()
+    {
+        $formId = absint($_REQUEST['form_id']);
+        $paymentStatuses = GeneralSettings::getPaymentStatuses();
+
+        $submissionModel = new Submission();
+        $reports = [];
+        $reports[''] = [
+            'label' => 'All',
+            'submission_count' => $submissionModel->getTotalCount($formId),
+            'payment_total' => $submissionModel->paymentTotal($formId)
+        ];
+
+        foreach ($paymentStatuses as $status => $statusName)
+        {
+            $reports[$status] = [
+                'label' => $statusName,
+                'submission_count' => $submissionModel->getTotalCount($formId, $status),
+                'payment_total' => $submissionModel->paymentTotal($formId, $status)
+            ];
+        }
+
+        wp_send_json_success([
+            'reports' => $reports,
+            'currencySettings' => Forms::getCurrencyAndLocale($formId),
+            'is_payment_form' => Forms::hasPaymentFields($formId)
+        ], 200);
+    }
 }

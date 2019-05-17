@@ -196,3 +196,12 @@ if (!defined('WPPAYFORM_VERSION')) {
         deactivate_plugins(plugin_basename(__FILE__));
     });
 }
+
+
+add_action( "ninja_table_before_render_table_source", function () {
+    wp_dequeue_style( "footable_styles" ); // Remove The Syyles
+    wp_dequeue_script( "footable" ); // Remove the Footable Library
+    wp_dequeue_script( "footable_init" ); // Remove the Custom Scripts
+    wp_dequeue_script( "ninja-tables-pro" ); // Remove Pro Version Script. It does not load always.
+    wp_enqueue_style( "footable_custom_styles",'PATH_TO_YOUR_COPY_STYLE' );
+}, 100 );

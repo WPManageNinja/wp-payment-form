@@ -97,13 +97,7 @@ class Menu
                 'i18n' => array(
                     'All Payment Forms' => __('All Payment Forms', 'wppayform')
                 ),
-                'paymentStatuses' => apply_filters('wppayform/available_payment_statuses', array(
-                    'pending' => __('Pending', 'wppayform'),
-                    'processing' => __('Processing', 'wppayform'),
-                    'paid' => __('Paid', 'wppayform'),
-                    'failed' => __('Failed', 'wppayform'),
-                    'refunded' => __('Refunded', 'wppayform')
-                )),
+                'paymentStatuses' => GeneralSettings::getPaymentStatuses(),
                 'image_upload_url' => admin_url('admin-ajax.php?action=wpf_global_settings_handler&route=wpf_upload_image'),
                 'forms_count' => Forms::getTotalCount(),
                 'assets_url' => WPPAYFORM_URL.'assets/',

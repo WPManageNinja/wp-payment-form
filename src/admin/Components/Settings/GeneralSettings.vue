@@ -1,6 +1,6 @@
 <template>
-    <div v-loading="fetching">
-        <div class="all_payforms_wrapper payform_section">
+    <div>
+        <div class="all_payforms_wrapper payform_section wpf_min_width">
             <div class="payform_section_header">
                 <h3 class="payform_section_title">
                     {{ $t('General Settings') }}
@@ -12,7 +12,7 @@
                     </el-button>
                 </div>
             </div>
-            <div class="payform_section_body">
+            <div v-loading="fetching" class="payform_section_body">
                 <el-form rel="currency_settings" :model="settings" label-width="220px">
                     <div class="wpf_settings_section">
                         <div class="sub_section_header">

@@ -2,10 +2,11 @@
     <div class="wppaymform_editor">
         <div class="payform_editor_wrapper">
             <el-container>
-                <el-aside width="200px">
+                <el-aside :width="sidebarWidth">
                     <el-menu background-color="#545c64"
                              text-color="#fff"
                              :router="true"
+                             :collapse="isCollapse"
                              :default-active="current_route"
                              active-text-color="#ffd04b"
                     >
@@ -34,6 +35,8 @@
             return {
                 current_route: this.$route.name,
                 form_id: this.$route.params.form_id,
+                sidebarWidth: "200",
+                isCollapse: false,
                 form_menus: [
                     {
                         route: 'confirmation_settings',
@@ -56,6 +59,12 @@
                         icon: 'dashicons dashicons-calendar-alt'
                     }
                 ]
+            }
+        },
+        mounted() {
+            if(window.outerWidth < 500) {
+                this.sidebarWidth = "auto";
+                this.isCollapse = true;
             }
         }
     }

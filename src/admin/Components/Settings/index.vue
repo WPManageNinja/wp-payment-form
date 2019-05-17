@@ -3,10 +3,11 @@
 
         <div class="payform_editor_wrapper">
             <el-container>
-                <el-aside width="200px">
+                <el-aside :width="sidebarWidth">
                     <el-menu background-color="#545c64"
                              text-color="#fff"
                              :router="true"
+                             :collapse="isCollapse"
                              :default-active="current_route"
                              active-text-color="#ffd04b"
                     >
@@ -38,6 +39,8 @@
                 form: {},
                 fetching: false,
                 saving: false,
+                sidebarWidth: '200px',
+                isCollapse: false
             }
         },
         computed: {
@@ -78,6 +81,10 @@
         },
         mounted() {
             this.setMenu();
+            if(window.outerWidth < 500) {
+                this.sidebarWidth = "auto";
+                this.isCollapse = true;
+            }
         }
     }
 </script>

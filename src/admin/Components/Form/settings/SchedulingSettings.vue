@@ -1,7 +1,7 @@
 <template>
     <el-container>
         <el-main class="no_shadow">
-            <div v-loading="fetching" class="edit_form_warpper">
+            <div v-loading="fetching" class="edit_form_warpper wpf_min_width">
                 <div class="all_payforms_wrapper payform_section">
                     <div class="payform_section_header">
                         <h3 class="payform_section_title">

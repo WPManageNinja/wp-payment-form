@@ -405,4 +405,15 @@ class GeneralSettings
         }
         return array();
     }
+
+    public static function getPaymentStatuses()
+    {
+        return apply_filters('wppayform/available_payment_statuses', array(
+            'paid' => __('Paid', 'wppayform'),
+            'processing' => __('Processing', 'wppayform'),
+            'pending' => __('Pending', 'wppayform'),
+            'failed' => __('Failed', 'wppayform'),
+            'refunded' => __('Refunded', 'wppayform')
+        ));
+    }
 }

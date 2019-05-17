@@ -99,13 +99,33 @@ class Submission
         return $result;
     }
 
-    public function getTotalCount($formId = false)
+    public function getTotalCount($formId = false, $paymentStatus = false)
     {
         $query = wpPayFormDB()->table('wpf_submissions');
         if ($formId) {
             $query = $query->where('form_id', $formId);
         }
+        if($paymentStatus) {
+            $query = $query->where('payment_status', $paymentStatus);
+        }
         return $query->count();
+    }
+
+    public function paymentTotal($formId, $paymentStatus = false)
+    {
+        $query = wpPayFormDB()->table('wpf_submissions')
+            ->select(wpPayFormDB()->raw('SUM(payment_total) as payment_total'));
+        if ($formId) {
+            $query = $query->where('form_id', $formId);
+        }
+        if($paymentStatus) {
+            $query->where('payment_status', $paymentStatus);
+        }
+        $result =  $query->first();
+        if($result && $result->payment_total) {
+            return $result->payment_total;
+        }
+        return 0;
     }
 
     public function update($submissionId, $data)
