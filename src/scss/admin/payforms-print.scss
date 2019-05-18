@@ -68,3 +68,11 @@
 .table-striped tbody tr:nth-of-type(odd) {
   background-color: rgba(0,0,0,.05)
 }
+
+body .wpf_payment_view .entry_info_box {
+  margin-bottom: 10px !important;
+}
+.wpf_entry_transactions ul.wpf_list_items {
+  margin: 0;
+  padding: 0;
+}
