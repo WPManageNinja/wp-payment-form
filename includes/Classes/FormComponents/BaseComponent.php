@@ -35,7 +35,7 @@ abstract class BaseComponent
 
     public function validateOnSave($error, $element, $formId)
     {
-        return 'OK';
+        return 'ok';
         return $error;
     }
 
@@ -74,7 +74,7 @@ abstract class BaseComponent
         }
 
         ?>
-        <div id="wpf_<?php echo $this->elementName; ?>" data-element_type="<?php echo $this->elementName; ?>"
+        <div data-element_type="<?php echo $this->elementName; ?>"
              class="<?php echo $controlClass; ?>">
             <?php $this->buildLabel($fieldOptions, $form, array('for' => $inputId)); ?>
             <div class="wpf_input_content">
@@ -153,7 +153,6 @@ abstract class BaseComponent
         $options = ArrayHelper::get($fieldOptions, 'options', array());
 
         $controlAttributes = array(
-            'id'                => 'wpf_' . $this->elementName,
             'data-element_type' => $this->elementName,
             'class'             => $controlClass
         );
@@ -207,7 +206,6 @@ abstract class BaseComponent
         $options = ArrayHelper::get($fieldOptions, 'options', array());
 
         $controlAttributes = array(
-            'id'                => 'wpf_' . $this->elementName,
             'data-element_type' => $this->elementName,
             'class'             => $controlClass
         );
@@ -249,7 +247,7 @@ abstract class BaseComponent
         ?>
         <div class="wpf_html_content_wrapper">
             <?php
-            $text = ArrayHelper::get($element, 'field_options.' . $element['id']);
+            $text = ArrayHelper::get($element, 'field_options.custom_html');
             echo $this->parseText($text, $form->ID);
             ?>
         </div>

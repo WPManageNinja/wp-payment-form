@@ -23,6 +23,8 @@ class CustomAmountComponent extends BaseComponent
             'editor_title'    => 'User Inputed Pay Amount',
             'group'           => 'payment',
             'postion_group'   => 'payment',
+            'is_system_field'  => true,
+            'is_payment_field' => true,
             'editor_elements' => array(
                 'label'         => array(
                     'label' => 'Field Label',
@@ -89,7 +91,7 @@ class CustomAmountComponent extends BaseComponent
             $attributes['required'] = true;
         }
         ?>
-        <div id="wpf_<?php echo $this->elementName; ?>" data-element_type="<?php echo $this->elementName; ?>"
+        <div data-element_type="<?php echo $this->elementName; ?>"
              class="<?php echo $controlClass; ?>">
             <?php $this->buildLabel($fieldOptions, $form, array('for' => $inputId)); ?>
             <div class="wpf_input_content">

@@ -13,6 +13,7 @@ class ItemQuantityComponent extends BaseComponent
     public function __construct()
     {
         parent::__construct('item_quantity', 5);
+        add_filter('wppayform/validate_component_on_save_item_quantity', array($this, 'validateOnSave'), 1, 3);
     }
 
     public function component()
@@ -70,6 +71,14 @@ class ItemQuantityComponent extends BaseComponent
         );
     }
 
+    public function validateOnSave($error, $element, $formId)
+    {
+        if (!ArrayHelper::get($element, 'field_options.target_product')) {
+            $error = __('Target Product is required for item:', 'wppayform') . ' ' . ArrayHelper::get($element, 'field_options.label');
+        }
+        return $error;
+    }
+
     public function render($element, $form, $elements)
     {
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
@@ -95,7 +104,7 @@ class ItemQuantityComponent extends BaseComponent
             'id'                  => $inputId
         );
         ?>
-        <div id="wpf_<?php echo $this->elementName; ?>" data-element_type="<?php echo $this->elementName; ?>"
+        <div data-element_type="<?php echo $this->elementName; ?>"
              class="<?php echo $controlClass; ?>">
             <?php $this->buildLabel($fieldOptions, $form, array('for' => $inputId)); ?>
             <div class="wpf_input_content">

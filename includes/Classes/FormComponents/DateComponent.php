@@ -75,7 +75,8 @@ class DateComponent extends BaseComponent
             'field_options'   => array(
                 'label'       => 'Date',
                 'placeholder' => '',
-                'required'    => 'no'
+                'required'    => 'no',
+                'date_format' => 'm/d/Y'
             )
         );
     }
@@ -125,6 +126,10 @@ class DateComponent extends BaseComponent
         // We are converting moment.js format to flatpickr format
         $fieldOptions['date_format'] = $this->convertDateFormat($fieldOptions['date_format']);
         $dateFormat = ArrayHelper::get($fieldOptions, 'date_format');
+
+        if(!$dateFormat) {
+            $dateFormat = 'm/d/Y';
+        }
 
         $config = apply_filters('wppayform/frontend_date_format', array(
             'dateFormat' => $dateFormat,

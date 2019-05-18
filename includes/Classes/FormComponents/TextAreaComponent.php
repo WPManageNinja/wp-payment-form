@@ -71,7 +71,7 @@ class TextAreaComponent extends BaseComponent
         $defaultValue = apply_filters('wppayform/input_default_value', ArrayHelper::get($fieldOptions, 'default_value'), $element, $form);
 
         ?>
-        <div id="wpf_<?php echo $this->elementName; ?>" data-element_type="<?php echo $this->elementName; ?>"
+        <div data-element_type="<?php echo $this->elementName; ?>"
              class="<?php echo $controlClass; ?>">
             <?php $this->buildLabel($fieldOptions, $form, array('for' => $inputId)); ?>
             <div class="wpf_input_content">

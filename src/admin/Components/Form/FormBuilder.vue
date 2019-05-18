@@ -197,10 +197,10 @@
                 });
 
                 if (!hasPaymentField && hasItemField) {
-                    return 'You have added payment method field, to accept patments add <b>Product Fields</b>';
+                    return 'You have added payment method field, to accept payments add <b>Product Fields</b>';
                 }
                 if (hasPaymentField && !hasItemField) {
-                    return 'You have added order item field, to accept patments add <b>Payment Method Field</b>';
+                    return 'You have added order item field, to accept payments add <b>Payment Method Field</b>';
                 }
                 if (this.builder_elements.length && !hasPaymentField && !hasItemField) {
                     return 'Add <b>Product Fields</b> and <b>Payment Method Field</b> to accept payment';

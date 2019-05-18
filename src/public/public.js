@@ -50,7 +50,8 @@ var wpPayformApp = {};
                 this.calculatePayments(form);
             });
 
-            let $cardElementDiv = $('.wpf_stripe_card_element');
+            let $cardElementDiv = form.find('.wpf_stripe_card_element');
+
             let cardEleementStyle = $cardElementDiv.data('checkout_style');
             form.on('submit', function (e) {
                 e.preventDefault();
@@ -66,10 +67,11 @@ var wpPayformApp = {};
             });
 
             if(cardEleementStyle == 'embeded_form') {
+                let cardElementId = $cardElementDiv.attr('id');
                 let elementHandler = StripeElementHandler;
                 elementHandler.init({
                     form: form,
-                    element_id: $cardElementDiv.attr('id'),
+                    elementId: cardElementId,
                     style: false,
                     pub_key: form_settings.stripe_pub_key
                 }, function () {

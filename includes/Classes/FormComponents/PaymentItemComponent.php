@@ -125,7 +125,6 @@ class PaymentItemComponent extends BaseComponent
             $title = ArrayHelper::get($element, 'field_options.label');
             $currenySettings = Forms::getCurrencyAndLocale($form->ID);
             $controlAttributes = array(
-                'id'                => 'wpf_' . $element['id'],
                 'data-element_type' => $this->elementName,
                 'class'             => $this->elementControlClass($element)
             );
@@ -149,7 +148,6 @@ class PaymentItemComponent extends BaseComponent
         $currenySettings = Forms::getCurrencyAndLocale($form->ID);
         $elementId = 'wpf_' . $element['id'];
         $controlAttributes = array(
-            'id'                => $elementId,
             'data-element_type' => $this->elementName,
             'class'             => $this->elementControlClass($element)
         );
@@ -240,7 +238,6 @@ class PaymentItemComponent extends BaseComponent
         $defaultValues = explode(',', $defaultValue);
 
         $controlAttributes = array(
-            'id'                => 'wpf_' . $this->elementName,
             'data-element_type' => $this->elementName,
             'class'             => $controlClass
         );

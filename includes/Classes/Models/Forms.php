@@ -290,16 +290,20 @@ class Forms
         $defaultSettings = array();
         $elements = wp_parse_args($builderSettings, $defaultSettings);
         $allElements = GeneralSettings::getComponents();
-
         $parsedElements = array();
 
         foreach ($elements as $elementIndex => $element) {
-            if (!empty($allElements[$element['type']]['editor_elements'])) {
-                $element['editor_elements'] = $allElements[$element['type']]['editor_elements'];
+            if (!empty($allElements[$element['type']])) {
+                $componentElement = $allElements[$element['type']];
+                $fieldOption = ArrayHelper::get($element, 'field_options');
+                if($fieldOption) {
+                    $componentElement['field_options'] = $fieldOption;
+                }
+                $componentElement['id'] = ArrayHelper::get($element, 'id');
+                $element = $componentElement;
             }
             $parsedElements[$elementIndex] = $element;
         }
-
         return $parsedElements;
     }
 
