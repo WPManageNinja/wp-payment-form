@@ -25,6 +25,7 @@
                             active-value="yes"
                             inactive-value="no">
                         </el-switch>
+                        <p v-if="item.info" v-html="item.info"></p>
                     </el-form-item>
                 </template>
                 <template v-else-if="item.type == 'key_pair'">
@@ -68,6 +69,9 @@
                 <template v-else-if="item.type == 'info_html'">
                     <div v-html="item.info"></div>
                 </template>
+                <template v-else-if="item.type == 'tabular_products'">
+                    <tabular-products :item="item" :product_settings="element.field_options[itemName]"></tabular-products>
+                </template>
             </div>
             <el-form-item label="Field ID">
                 {{ element.id }}
@@ -76,7 +80,6 @@
                 <el-button @click="deleteItem()" size="mini">Delete</el-button>
                 <el-button @click="updateItem()" type="success" size="mini">Update</el-button>
             </div>
-
         </el-form>
     </div>
 </template>
@@ -87,6 +90,7 @@
     import ItemSelector from './_ProductSelector';
     import CheckoutDisplayOption from './_StripeCheckoutSettings';
     import PaymentMethodChoice from './_payment_method_settings';
+    import TabularProducts from './_tabular_products'
 
     export default {
         name: 'elementEditor',
@@ -95,7 +99,8 @@
             PaymentOptionsSettings,
             ItemSelector,
             CheckoutDisplayOption,
-            PaymentMethodChoice
+            PaymentMethodChoice,
+            TabularProducts
         },
         props: ['element', 'all_elements'],
         comments: {

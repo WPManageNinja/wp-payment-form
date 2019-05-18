@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class TaxItemComponent extends BaseComponent
+class TaxItemComponentDemo extends BaseComponent
 {
     public function __construct()
     {

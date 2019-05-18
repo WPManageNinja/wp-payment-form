@@ -17,5 +17,6 @@ new \WPPayForm\Classes\FormComponents\ChoosePaymentMethodComponent();
 new \WPPayForm\Classes\FormComponents\HiddenInputComponent();
 
 if(!defined('WPPAYFORM_PRO_INSTALLED')) {
-    new \WPPayForm\Classes\FormComponents\TaxItemComponent();
+    new \WPPayForm\Classes\FormComponents\TaxItemComponentDemo();
+    new \WPPayForm\Classes\FormComponents\TabularProductsComponentDemo();
 }

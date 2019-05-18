@@ -130,8 +130,8 @@ class PaymentItemComponent extends BaseComponent
             );
             ?>
             <div <?php echo $this->builtAttributes($controlAttributes); ?>>
-                <div class="wpf_input_label">
-                    <?php echo $title ?> (<?php echo wpPayFormFormattedMoney($amount * 100, $currenySettings); ?>)
+                <div class="wpf_input_label wpf_single_amount_label">
+                    <?php echo $title ?>: <span class="wpf_single_amount"><?php echo wpPayFormFormattedMoney($amount * 100, $currenySettings); ?></span>
                 </div>
             </div>
             <?php
@@ -274,11 +274,9 @@ class PaymentItemComponent extends BaseComponent
                     <div class="form-check">
                         <input <?php echo $this->builtAttributes($attributes); ?>>
                         <label class="form-check-label" for="<?php echo $optionId; ?>">
-                            <span class="wpf_price_option_name"
-                                  itemprop="description"><?php echo $option['label']; ?></span>
+                            <span class="wpf_price_option_name" itemprop="description"><?php echo $option['label']; ?></span>
                             <span class="wpf_price_option_sep">&nbsp;–&nbsp;</span>
-                            <span
-                                class="wpf_price_option_price"><?php echo wpPayFormFormattedMoney(floatval($option['value'] * 100), $currenySettings); ?></span>
+                            <span class="wpf_price_option_price"><?php echo wpPayFormFormattedMoney(floatval($option['value'] * 100), $currenySettings); ?></span>
                             <meta itemprop="price" content="<?php echo $option['value']; ?>"/>
                         </label>
                     </div>

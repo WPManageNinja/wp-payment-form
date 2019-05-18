@@ -300,13 +300,13 @@ class SubmissionHandler
                 $payItem['item_price'] = absint(ArrayHelper::get($priceDetailes, 'payment_amount') * 100);
                 $payItem['line_total'] = absint($payItem['item_price']) * $quantity;
             }
-        } else if ($payment['type'] == 'custom_payment_input') {
+        } else if ( $payment['type'] == 'custom_payment_input' ) {
             $payItem['item_price'] = absint($formData[$paymentId]) * 100;
             $payItem['line_total'] = absint($payItem['item_price']) * $quantity;
+        } else {
+            return array();
         }
-        return array(
-            $paymentId => $payItem
-        );
+        return array($payItem);
     }
 
     private function getErrorLabel($element, $formId)
