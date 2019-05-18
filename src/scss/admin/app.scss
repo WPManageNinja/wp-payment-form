@@ -290,13 +290,16 @@
   cursor: move;
 }
 
-.html_placeholder_instruction span {
-  background: rgb(128, 128, 128);
-  padding: 3px 10px;
-  color: rgb(255, 255, 255);
-  border-radius: 5px;
-  font-size: 12px;
-  line-height: 20px;
+.html_placeholder_instruction {
+  margin-top: 10px;
+  span {
+    background: rgb(128, 128, 128);
+    padding: 3px 10px;
+    color: rgb(255, 255, 255);
+    border-radius: 5px;
+    font-size: 12px;
+    line-height: 20px;
+  }
 }
 
 .item_full_width {

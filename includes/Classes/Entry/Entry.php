@@ -94,6 +94,7 @@ class Entry
     {
         // Just check if submission order items added or not
         $this->getOrderItems();
+        $this->getTaxItems();
 
         return View::make('elements.order_items_table', array(
             'submission' => $this->submission
@@ -104,9 +105,18 @@ class Entry
     {
         if(!property_exists($this->submission, 'order_items')) {
             $orderItem = new OrderItem();
-            $this->submission->order_items = $orderItem->getOrderItems($this->submissionId);
+            $this->submission->order_items = $orderItem->getSingleOrderItems($this->submissionId);
         }
         return $this->submission->order_items;
+    }
+
+    public function getTaxItems()
+    {
+        if(!property_exists($this->submission, 'tax_items')) {
+            $orderItem = new OrderItem();
+            $this->submission->tax_items = $orderItem->getTaxOrderItems($this->submissionId);
+        }
+        return $this->submission->tax_items;
     }
 
     public function getOrderItemsAsText($separator = "\n")

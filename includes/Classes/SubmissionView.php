@@ -95,7 +95,7 @@ class SubmissionView
         }
 
         $submissionModel = new Submission();
-        $submission = $submissionModel->getSubmission($submissionId, array('transactions', 'order_items', 'activities'));
+        $submission = $submissionModel->getSubmission($submissionId, array('transactions', 'order_items', 'tax_items', 'activities'));
 
         $currencySetting = GeneralSettings::getGlobalCurrencySettings($formId);
         $currencySetting['currency_sign'] = GeneralSettings::getCurrencySymbol($submission->currency);

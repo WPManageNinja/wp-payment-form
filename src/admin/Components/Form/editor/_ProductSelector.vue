@@ -1,6 +1,6 @@
 <template>
     <div class="item_selector">
-        <el-select v-model="field_options[item_name]">
+        <el-select size="mini" v-model="field_options[item_name]">
             <el-option v-for="element in productElements" :key="element.id" :value="element.id" :label="element.label"></el-option>
         </el-select>
     </div>

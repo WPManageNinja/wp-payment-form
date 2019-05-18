@@ -46,7 +46,8 @@ class ItemQuantityComponent extends BaseComponent
                 'target_product' => array(
                     'label' => 'Target Payment Item',
                     'type'  => 'product_selector',
-                    'group' => 'general'
+                    'group' => 'general',
+                    'info'  => 'Please select the product in where the quantity will be applied'
                 ),
                 'min_value'      => array(
                     'label' => 'Minimum Quantity',

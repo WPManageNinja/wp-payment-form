@@ -51,6 +51,8 @@ class SubmissionHandler
             $paymentItems = array_merge($paymentItems, $lineItems);
         }
 
+        $paymentItems = apply_filters('wppayform/submitted_payment_items', $paymentItems, $formattedElements, $form_data);
+
         // Extract Input Items Here
         $inputItems = array();
         foreach ($formattedElements['input'] as $inputId => $input) {
@@ -180,11 +182,11 @@ class SubmissionHandler
         $confirmation = Forms::getConfirmationSettings($formId);
         $confirmation = $this->parseConfirmation($confirmation, $submission);
         $confirmation = apply_filters('wppayform/form_confirmation', $confirmation, $submissionId, $formId);
-        wp_send_json_success( array(
+        wp_send_json_success(array(
             'message'       => __('Form is successfully submitted', 'wppayform'),
             'submission_id' => $submissionId,
             'confirmation'  => $confirmation
-        ), 200 );
+        ), 200);
     }
 
     private function validate($form_data, $formattedElements, $form)
@@ -302,7 +304,9 @@ class SubmissionHandler
             $payItem['item_price'] = absint($formData[$paymentId]) * 100;
             $payItem['line_total'] = absint($payItem['item_price']) * $quantity;
         }
-        return array($payItem);
+        return array(
+            $paymentId => $payItem
+        );
     }
 
     private function getErrorLabel($element, $formId)

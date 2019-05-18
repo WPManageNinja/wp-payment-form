@@ -39,10 +39,7 @@
                             rows="5"
                             :placeholder="item.label"
                             v-model="element.field_options[itemName]"></el-input>
-                        <div class="html_placeholder_instruction">
-                            You can use the following dynamic placeholder on your HTML
-                            <span>{payment_total}</span>
-                        </div>
+                        <div v-if="item.info" class="html_placeholder_instruction" v-html="item.info"></div>
                     </el-form-item>
                 </template>
                 <template v-else-if="item.type == 'payment_options'">
@@ -51,6 +48,7 @@
                 <template v-else-if="item.type == 'product_selector'">
                     <el-form-item :label="item.label">
                         <item-selector :all_elements="all_elements" :item_name="itemName" :field_options="element.field_options" />
+                        <p v-if="item.info" v-html="item.info"></p>
                     </el-form-item>
                 </template>
                 <template v-else-if="item.type == 'select_option'">
@@ -67,9 +65,8 @@
                 <template v-else-if="item.type == 'choose_payment_method'">
                     <payment-method-choice :item="item" :method_settings="element.field_options[itemName]" />
                 </template>
-
-                <template v-else>
-
+                <template v-else-if="item.type == 'info_html'">
+                    <div v-html="item.info"></div>
                 </template>
             </div>
             <el-form-item label="Field ID">

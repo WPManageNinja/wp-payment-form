@@ -14,7 +14,7 @@ class CustomerNameComponent extends BaseComponent
     {
         parent::__construct('customer_name', 10);
     }
-
+    
     public function component()
     {
         return array(

@@ -24,7 +24,8 @@ class HtmlComponent extends BaseComponent
                 'custom_html' => array(
                     'label' => 'Custom HTML',
                     'type' => 'html',
-                    'group' => 'general'
+                    'group' => 'general',
+                    'info' => 'You can use the following dynamic placeholder on your HTML <span>{payment_total}</span> <span>{sub_total}</span> <span>{tax_total}</span>'
                 )
             )
         );

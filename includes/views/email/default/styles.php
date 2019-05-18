@@ -222,3 +222,39 @@ text-transform: capitalize;
 .fluent_credit span a {
 text-decoration: none;
 }
+
+
+
+.table {
+width: 100%;
+margin-bottom: 1rem;
+color: #212529;
+border-collapse: collapse;
+border: 1px solid #dee2e6;
+}
+
+.table td {
+padding: .75rem;
+text-align: left;
+vertical-align: top;
+border-top: 1px solid #dee2e6;
+border: 1px solid #dee2e6;
+}
+
+.table th {
+padding: .75rem;
+text-align: left;
+vertical-align: top;
+border-top: 1px solid #dee2e6;
+border: 1px solid #dee2e6;
+border-bottom-width: 2px;
+}
+
+.table thead th {
+vertical-align: bottom;
+border-bottom: 2px solid #dee2e6;
+}
+
+.table tfoot {
+background: #f9f9f9;
+}

@@ -90,7 +90,11 @@ class Submission
         }
 
         if (in_array('order_items', $with)) {
-            $result->order_items = (new OrderItem())->getOrderItems($submissionId);
+            $result->order_items = (new OrderItem())->getSingleOrderItems($submissionId);
+        }
+
+        if (in_array('tax_items', $with)) {
+            $result->tax_items = (new OrderItem())->getTaxOrderItems($submissionId);
         }
 
         if (in_array('activities', $with)) {

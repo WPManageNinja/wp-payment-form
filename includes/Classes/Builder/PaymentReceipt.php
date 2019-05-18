@@ -15,7 +15,7 @@ class PaymentReceipt
     public function render($submissionId)
     {
         $submissionModel = new Submission();
-        $submission = $submissionModel->getSubmission($submissionId, array('transactions', 'order_items'));
+        $submission = $submissionModel->getSubmission($submissionId, array('transactions', 'order_items', 'tax_items'));
         $submission->parsedData = $submissionModel->getParsedSubmission($submission);
         $html = $this->beforePaymentReceipt($submission);
         $html .= $this->paymentReceptHeader($submission);
@@ -65,7 +65,7 @@ class PaymentReceipt
         if ($preRender) {
             return $preRender;
         }
-        return $this->loadView('receipt/item_table', array('submission' => $submission));
+        return $this->loadView('elements/order_items_table', array('submission' => $submission));
     }
 
     private function customerDetails($submission)

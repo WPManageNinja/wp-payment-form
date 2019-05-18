@@ -147,6 +147,18 @@
                                 </tbody>
                                 <tfoot>
                                 <tr>
+                                    <th style="text-align: right" colspan="3">Sub Total:</th>
+                                    <th v-html="getFormattedMoney(subTotal)"></th>
+                                </tr>
+                                <template v-if="submission.tax_items.length">
+                                    <tr v-for="taxItem in submission.tax_items">
+                                        <td style="text-align: right" colspan="3">
+                                            {{taxItem.item_name}} <span class="wpf_tax_value">({{taxItem.taxRate}}%)</span>:
+                                        </td>
+                                        <td v-html="getFormattedMoney(taxItem.line_total)"></td>
+                                    </tr>
+                                </template>
+                                <tr>
                                     <th style="text-align: right" colspan="3">Total:</th>
                                     <th v-html="getFormattedMoney(orderTotal)"></th>
                                 </tr>
@@ -350,12 +362,19 @@
             }
         },
         computed: {
-            orderTotal() {
+            subTotal() {
                 let total = 0;
                 each(this.submission.order_items, (item) => {
-                    total = total = parseInt(item.line_total);
+                    total += parseInt(item.line_total);
                 });
                 return total;
+            },
+            orderTotal() {
+                let total = 0;
+                each(this.submission.tax_items, (item) => {
+                    total += parseInt(item.line_total);
+                });
+                return total + this.subTotal;
             },
             firstTransaction() {
                 if (this.submission.transactions && this.submission.transactions.length) {
@@ -512,7 +531,7 @@
                 }
                 let submission = JSON.parse(JSON.stringify(this.submission));
                 submission = omit(submission, 'currencySetting');
-                this.downloadObjectAsJson(submission, 'entry_'+submission.id);
+                this.downloadObjectAsJson(submission, 'entry_' + submission.id);
             },
             downloadObjectAsJson(exportObj, exportName) {
                 var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(exportObj));

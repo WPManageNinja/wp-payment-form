@@ -89,6 +89,9 @@ var wpPayformApp = {};
                     that.submitForm(form);
                 });
             }
+
+            jQuery(document.body).trigger( 'wpfFormInitialized', [ form ] );
+            form.addClass('wpf_form_initialized');
         },
         submitForm(form) {
             form.find('button.wpf_submit_button').attr('disabled', true);
@@ -150,9 +153,11 @@ var wpPayformApp = {};
         calculatePayments(form) {
             let elements = form.find('.wpf_payment_item');
             let itemTotalValue = {};
+
             elements.each(function (index, elem) {
                 let elementType = elem.type;
-                let elementName = $(elem).attr('name');
+                let $elem = $(elem);
+                let elementName = $elem.attr('name');
                 if(elementType == 'radio') {
                     let itemValue = form.find('input[name='+elementName+']:checked').data('price');
                     if(itemValue) {
@@ -160,17 +165,17 @@ var wpPayformApp = {};
                     }
                 }
                 else if(elementType == 'hidden') {
-                    let itemValue = $(elem).data('price');
+                    let itemValue = $elem.data('price');
                     if(itemValue) {
                         itemTotalValue[elementName] = parseInt(itemValue);
                     }
-                } else if($(elem).data('is_custom_price') == 'yes') {
+                } else if($elem.data('is_custom_price') == 'yes') {
                     let itemValue = $(this).val();
                     if(itemValue) {
                         itemTotalValue[elementName] =  parseInt(parseFloat(itemValue) * 100);
                     }
                 } else if(elementType == 'checkbox') {
-                    let groupId = $(elem).data('group_id');
+                    let groupId = $elem.data('group_id');
                     let groups = form.find('input[data-group_id="'+groupId+'"]:checked');
                     let groupTotal = 0;
                     groups.each((index, group) => {
@@ -190,6 +195,7 @@ var wpPayformApp = {};
             });
             let formSettings = window['wp_payform_'+form.data('wpf_form_id')];
             let allTotalAmount = 0;
+
             // Get The Total Now
             jQuery.each(itemTotalValue, (itemName, itemValue) => {
                 if(itemValue) {
@@ -197,20 +203,48 @@ var wpPayformApp = {};
                     let targetQuantity = form.find('.wpf_item_qty[data-target_product='+itemName+']');
                     if(targetQuantity.length) {
                         let qty = $(targetQuantity).val();
-                        if(parseInt(qty)) {
-                            allTotalAmount +=  Math.abs(parseInt(qty)) * itemValue;
+                        if( qty == 0 || parseInt(qty) ) {
+                            let lineTotal = Math.abs(parseInt(qty)) * itemValue;
+                            itemTotalValue[itemName] = lineTotal;
+                            allTotalAmount +=  lineTotal;
                         }
                     } else {
                         allTotalAmount += itemValue;
                     }
                 }
             });
-            if(allTotalAmount) {
-                form.find('.wpf_calc_payment_total').html(formatPrice(allTotalAmount, formSettings.currency_settings));
-            } else {
-                form.find('.wpf_calc_payment_total').html(formatPrice(0, formSettings.currency_settings));
+
+
+            let subTotal = allTotalAmount;
+            let taxAmount = this.calCulateTaxAmount(form, itemTotalValue, formSettings);
+            if(taxAmount) {
+                allTotalAmount += taxAmount;
             }
+            
+            form.find('.wpf_calc_tax_total').html(formatPrice(taxAmount, formSettings.currency_settings));
+            form.find('.wpf_calc_sub_total').html(formatPrice(subTotal, formSettings.currency_settings));
+            form.find('.wpf_calc_payment_total').html(formatPrice(allTotalAmount, formSettings.currency_settings));
             form.data('payment_total', allTotalAmount);
+        },
+        calCulateTaxAmount(form, itemizedValue, formSettings) {
+            if(!form.hasClass('wpf_has_tax_item')) {
+                return 0;
+            }
+            let taxLines = form.find('label.wpf_tax_line_item');
+            let taxTotal = 0;
+            $.each(taxLines, (index, lineItem) => {
+                let $line = $(lineItem);
+                let targetItem = $line.data('target_product');
+                let taxPercent = parseFloat($line.data('tax_percent'));
+                let taxId = $line.attr('id');
+                let taxLineAmount = 0;
+                if(itemizedValue[targetItem] && taxPercent) {
+                    taxLineAmount = itemizedValue[targetItem] * (taxPercent / 100);
+                    taxTotal += taxLineAmount;
+                }
+                jQuery('span[data-target_tax='+taxId+']').html(formatPrice(taxLineAmount, formSettings.currency_settings));
+            });
+            return taxTotal;
         },
         initDatePiker() {
             let dateFields = $('.wpf_form input.wpf_date_field');
