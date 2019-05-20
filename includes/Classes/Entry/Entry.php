@@ -3,6 +3,7 @@
 namespace WPPayForm\Classes\Entry;
 
 
+use WPPayForm\Classes\ArrayHelper;
 use WPPayForm\Classes\Models\Forms;
 use WPPayForm\Classes\Models\OrderItem;
 use WPPayForm\Classes\View;
@@ -22,6 +23,8 @@ class Entry
     protected $submission;
     protected $formattedInput;
     protected $rawInput;
+    protected $formattedFields;
+    protected $instance;
     public $default = false;
 
     public function __construct($submission)
@@ -31,6 +34,7 @@ class Entry
         $this->submission = $submission;
         $this->formattedInput = $submission->form_data_formatted;
         $this->rawInput = $submission->form_data_raw;
+        $this->instance = $this;
     }
 
     public function getRawInput($key, $default = false)
@@ -43,10 +47,14 @@ class Entry
 
     public function getInput($key, $default = false )
     {
+        $value = $default;
         if (isset($this->formattedInput[$key])) {
-            return $this->formattedInput[$key];
+            $value = $this->formattedInput[$key];
         }
-        return $default;
+        if(is_array($value)) {
+            $value = $this->maybeNeedToConverHtml($value, $key);
+        }
+        return $value;
     }
 
     public function getItemQuantity($key)
@@ -79,6 +87,14 @@ class Entry
             if (!empty($labels[$itemKey])) {
                 $label = $labels[$itemKey];
             }
+
+            if(is_array($item)) {
+                $item = $this->maybeNeedToConverHtml($item, $itemKey);
+                if(is_array($item)) {
+                    $item = implode(', ', $item);
+                }
+            }
+
             $items[] = array(
                 'label' => $label,
                 'value' => $item
@@ -166,5 +182,28 @@ class Entry
     public function paymentTotal()
     {
         return wpPayFormFormattedMoney($this->submission->payment_total, Forms::getCurrencyAndLocale($this->form_id));
+    }
+
+    public function getSubmission()
+    {
+        return $this->submission;
+    }
+
+    protected function maybeNeedToConverHtml($value, $key)
+    {
+        $formattedInputs = $this->getFormattedInputs();
+        $element = ArrayHelper::get($formattedInputs, 'input.'.$key);
+        if($element) {
+           $value = apply_filters('wppayform/maybe_conver_html_'.$element['type'], $value, $this->submission, $element);
+        }
+        return $value;
+    }
+
+    public function getFormattedInputs()
+    {
+        if(!$this->formattedFields) {
+            $this->formattedFields = Forms::getFormattedElements($this->formId);
+        }
+        return $this->formattedFields;
     }
 }

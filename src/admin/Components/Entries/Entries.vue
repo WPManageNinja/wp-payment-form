@@ -40,11 +40,13 @@
             </div>
         </div>
 
-        <form-entries-table
-            :entry_ticker="entry_ticker"
-            :form_id="form_id"
-            :search_string="search_string"
-            :payment_status="selected_payment_status" />
+        <div class="has_payments_table">
+            <form-entries-table
+                :entry_ticker="entry_ticker"
+                :form_id="form_id"
+                :search_string="search_string"
+                :payment_status="selected_payment_status" />
+        </div>
 
     </div>
 </template>

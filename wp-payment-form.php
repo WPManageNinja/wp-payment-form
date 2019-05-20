@@ -39,6 +39,7 @@ if (!defined('WPPAYFORM_VERSION')) {
     define('WPPAYFORM_MAIN_FILE', __FILE__);
     define('WPPAYFORM_URL', plugin_dir_url(__FILE__));
     define('WPPAYFORM_DIR', plugin_dir_path(__FILE__));
+    define('WPPAYFORM_UPLOAD_DIR', '/wppayform');
 
     class WPPayForm
     {

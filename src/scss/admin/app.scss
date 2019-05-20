@@ -326,20 +326,20 @@ table.el-table__header thead tr th {
   text-align: right;
   margin-top: 20px;
 }
-
-.el-table {
-  .wpf_row_paid {
-    background: #f0f9eb;
-  }
-
-  .wpf_row_pending {
-    background: rgb(255, 250, 242);
-  }
-
-  .wpf_row_failed {
-    background: rgb(255, 221, 221);
+.has_payments_table {
+  .el-table {
+    .wpf_row_paid {
+      background: #f0f9eb;
+    }
+    .wpf_row_pending {
+      background: rgb(255, 250, 242);
+    }
+    .wpf_row_failed {
+      background: rgb(255, 221, 221);
+    }
   }
 }
+
 
 .wpf_entry_actions {
   padding: 15px 0px;
@@ -1018,4 +1018,56 @@ label.el-form-item__label {
       border-top: 1px solid #a8bac4;
     }
   }
+}
+
+.checkbox_new_lined .el-checkbox{
+  display: block;
+  margin-bottom: 10px;
+}
+
+.el-input-number--mini {
+  width: 250px;
+}
+
+.payform_file_lists {
+  display: flex;
+  width: 100%;
+  .payform_each_file {
+    max-width: 150px;
+    margin-right: 20px;
+    flex: 1;
+    &:hover {
+      opacity: 0.8;
+      box-shadow: 0px 2px 5px 5px #eeeeef;
+    }
+    img {
+      max-width: 100%;
+    }
+  }
+}
+
+.wpf_field_group {
+  .field_group_header {
+    cursor: pointer;
+    .field_group_icon_nav {
+      float: right;
+    }
+  }
+}
+
+.wpf_field_group.wpf_collapsed {
+  .field_group_body {
+    display: none;
+  }
+  &::after {
+    content: '...';
+    text-align: center;
+    display: block;
+    margin-top: -16px;
+    color: #687285;
+  }
+}
+
+.el-notification__content {
+  text-align: left;
 }

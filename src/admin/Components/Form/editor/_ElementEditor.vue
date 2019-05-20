@@ -1,7 +1,7 @@
 <template>
     <div class="element_editor">
         <el-form ref="element_form" :model="element" label-width="220px">
-            <div v-for="(item, itemName) in element.editor_elements" class="editor_form_item">
+            <div v-for="(item, itemName) in element.editor_elements" :class="item.wrapper_class" class="editor_form_item">
                 <template v-if="item.type == 'text'">
                     <el-form-item :label="item.label">
                         <el-input :placeholder="item.label" size="mini" v-model="element.field_options[itemName]"></el-input>
@@ -16,6 +16,13 @@
                     <el-form-item :label="item.label">
                         <el-input type="textarea" :placeholder="item.label" size="mini"
                                   v-model="element.field_options[itemName]"></el-input>
+                    </el-form-item>
+                </template>
+                <template v-else-if="item.type == 'checkbox'">
+                    <el-form-item :label="item.label">
+                        <el-checkbox-group v-model="element.field_options[itemName]">
+                            <el-checkbox v-for="(option,optionName) in item.options" :label="optionName" :key="optionName">{{option}}</el-checkbox>
+                        </el-checkbox-group>
                     </el-form-item>
                 </template>
                 <template v-else-if="item.type == 'switch'">

@@ -55,8 +55,9 @@ class SubmissionHandler
 
         // Extract Input Items Here
         $inputItems = array();
-        foreach ($formattedElements['input'] as $inputId => $input) {
-            $inputItems[$inputId] = ArrayHelper::get($form_data, $inputId);
+        foreach ($formattedElements['input'] as $inputName => $inputElement) {
+            $value = ArrayHelper::get($form_data, $inputName);
+            $inputItems[$inputName] = apply_filters('wppayform/submitted_value_'.$inputElement['type'], $value, $inputElement, $form_data);
         }
 
         // Calculate Payment Total Now
@@ -338,7 +339,9 @@ class SubmissionHandler
             $url = add_query_arg('wpf_submission', $submission->submission_hash, $url);
             $confirmation['customUrl'] = PlaceholderParser::parse($url, $submission);
         } else if ($confirmation['redirectTo'] == 'samePage') {
+            do_action('wppayform/require_entry_html');
             $confirmation['messageToShow'] = PlaceholderParser::parse($confirmation['messageToShow'], $submission);
+            do_action('wppayform/require_entry_html_done');
         }
         return $confirmation;
     }

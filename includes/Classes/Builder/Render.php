@@ -184,6 +184,9 @@ class Render
             'currency_settings'    => $currencySettings,
         ), $form));
 
+        wp_register_script('dropzone', WPPAYFORM_URL . 'assets/libs/dropzone/dropzone.min.js', array('jquery'), '5.5.0', true);
+        wp_register_script('wppayform_file_upload', WPPAYFORM_URL . 'assets/js/fileupload.js', array('jquery', 'wppayform_public', 'dropzone'), WPPAYFORM_VERSION, true);
+
         wp_localize_script('wppayform_public', 'wp_payform_general', array(
             'ajax_url'  => admin_url('admin-ajax.php'),
             'date_i18n' => array(

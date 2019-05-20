@@ -106,8 +106,7 @@ class StripeCardElementComponent extends BaseComponent
                 'data-require_shipping_info' => ArrayHelper::get($fieldOptions, 'checkout_display_style.require_shipping_info')
             );
             echo '
-        <div
-            style="display:none !important; visibility: hidden !important;" ' . $this->builtAttributes($atrributes) . ' class="wpf_stripe_checkout"></div>';
+        <div style="display:none !important; visibility: hidden !important;" ' . $this->builtAttributes($atrributes) . ' class="wpf_stripe_checkout"></div>';
             return;
         } else {
             wp_enqueue_script('stripe_elements', 'https://js.stripe.com/v3/', array('jquery'), '3.0', true);

@@ -103,9 +103,11 @@ class SubmissionView
 
         $submission = apply_filters('wppayform/form_entry', $submission);
 
+        $parsedEntry = (object)$submissionModel->getParsedSubmission($submission);
+
         wp_send_json_success(array(
             'submission' => $submission,
-            'entry'      => (object)$submissionModel->getParsedSubmission($submission)
+            'entry'      => $parsedEntry
         ), 200);
     }
 

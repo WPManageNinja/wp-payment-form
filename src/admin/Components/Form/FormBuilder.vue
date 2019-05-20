@@ -109,9 +109,11 @@
             </div>
         </el-main>
         <el-aside width="250px">
-            <div v-for="(componentGroup,componentGroupIndex) in fieldGroups" class="wpf_field_group">
-                <div class="field_group_header">
+            <div v-for="(componentGroup,componentGroupIndex) in fieldGroups" class="wpf_field_group" :class="isActiveGroup(componentGroupIndex)">
+                <div @click="toggleActiveGroup(componentGroupIndex)" class="field_group_header">
                     <i :class="componentGroup.icon"></i> {{componentGroup.title}}
+                    <span v-if="isActiveGroup(componentGroupIndex)" class="field_group_icon_nav"><i class="el-icon-caret-top"></i></span>
+                    <span v-else class="field_group_icon_nav"><i class="el-icon-caret-bottom"></i></span>
                 </div>
                 <div style="min-height: 50px" element-loading-spinner="el-icon-loading" v-loading="fetching" class="field_group_body">
                     <draggable v-model="fieldGroups[componentGroupIndex].elements"
@@ -162,7 +164,12 @@
                 submit_button_settings: {},
                 empty_form_image: window.wpPayFormsAdmin.assets_url + 'images/form_instruction.png',
                 showNotice: true,
-                validationErrors: false
+                validationErrors: false,
+                collapsedGroups: {
+                    payment: false,
+                    payment_method: false,
+                    general: false
+                }
             }
         },
         computed: {
@@ -234,7 +241,20 @@
             }
         },
         methods: {
+            isActiveGroup(index) {
+                if(this.collapsedGroups[index]) {
+                    return 'wpf_collapsed';
+                }
+                return false;
+            },
+            toggleActiveGroup(index) {
+                this.collapsedGroups[index] = !this.collapsedGroups[index];
+            },
             cloneItem(component) {
+                if(component.disabled) {
+                    this.handlePro(component);
+                    return;
+                }
                 return this.getClonedItem(component);
             },
             getSettings() {
@@ -264,6 +284,11 @@
                     });
                     return;
                 }
+
+                if(component.disabled) {
+                   return this.handlePro(component);
+                }
+
                 // check if it's single only
                 if (component.single_only && this.alreadyExistElement(component.group)) {
                     this.$message({
@@ -280,6 +305,14 @@
                 }
                 this.current_editing = nonMutableElement.id;
                 this.adding_component = '';
+            },
+            handlePro(component) {
+                let message = 'This item is disabled';
+                if(component.disabled_message) {
+                    message = component.disabled_message;
+                }
+                this.$notify.error(message);
+                return false;
             },
             getClonedItem(component) {
                 let componentName = component.type;

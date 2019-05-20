@@ -151,7 +151,13 @@ class Submission
         foreach ($elements as $element) {
             if ($element['group'] == 'input') {
                 $elementId = ArrayHelper::get($element, 'id');
-                $elementValue = apply_filters('wppayform/rendering_entry_value_' . $element['type'], ArrayHelper::get($inputValues, $elementId));
+                $elementValue = apply_filters(
+                    'wppayform/rendering_entry_value_' . $element['type'],
+                    ArrayHelper::get($inputValues, $elementId),
+                    $submission,
+                    $element
+                );
+
                 if (is_array($elementValue)) {
                     $elementValue = implode(', ', $elementValue);
                 }

@@ -1,5 +1,5 @@
 @import '../../../node_modules/pikaday/css/pikaday.css';
-
+@import "dropzone";
 .wpf_form_notices {
   padding: 10px 20px;
   margin-top: 20px;
@@ -304,4 +304,24 @@ form.wpf_default_form_styles {
   }
 }
 
+.dropzone_parent input[type=file] {
+  display: none !important;
+  visibility: hidden;
+}
 
+.payform_file_lists {
+  display: flex;
+  width: 100%;
+  .payform_each_file {
+    max-width: 150px;
+    margin-right: 20px;
+    flex: 1;
+    &:hover {
+      opacity: 0.8;
+      box-shadow: 0px 2px 5px 5px #eeeeef;
+    }
+    img {
+      max-width: 100%;
+    }
+  }
+}

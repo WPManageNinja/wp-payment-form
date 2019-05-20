@@ -258,3 +258,18 @@ border-bottom: 2px solid #dee2e6;
 .table tfoot {
 background: #f9f9f9;
 }
+
+.payform_file_lists {
+display: block;
+width: 100%;
+}
+.payform_each_file {
+max-width: 150px;
+width: 150px;
+margin-right: 20px;
+display: inline-block;
+}
+.payform_each_file img {
+max-width: 100%;
+width: 150px;
+}

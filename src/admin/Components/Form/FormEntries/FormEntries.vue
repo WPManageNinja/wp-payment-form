@@ -41,12 +41,14 @@
                 </div>
             </div>
         </div>
+        <div :class="is_payment_form ? 'has_payments_table' : 'no_payments_table'">
         <form-entries-table
             :entry_ticker="entry_ticker"
             :form_id="form_id"
             :search_string="search_string"
             :payment_status="selected_payment_status"
         />
+        </div>
 
         <el-dialog
             :visible.sync="show_pro"

@@ -258,7 +258,10 @@ abstract class BaseComponent
     {
         $atts = ' ';
         foreach ($attributes as $attributeKey => $attribute) {
-            $atts .= $attributeKey . "='" . $attribute . "' ";
+            if (is_array($attribute)) {
+                $attribute = json_encode($attribute);
+            }
+            $atts .= $attributeKey . "='" . htmlspecialchars($attribute, ENT_QUOTES) . "' ";
         }
         return $atts;
     }

@@ -9,7 +9,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class TaxItemComponentDemo extends BaseComponent
+class DemoTaxItemComponent extends BaseComponent
 {
     public function __construct()
     {
@@ -20,9 +20,11 @@ class TaxItemComponentDemo extends BaseComponent
     {
         return array(
             'type'            => 'tax_payment_input',
-            'editor_title'    => 'Tax Calculated Amount',
+            'editor_title'    => 'Tax Calculated Amount (Demo)',
             'group'           => 'payment',
             'postion_group'   => 'payment',
+            'disabled' => true,
+            'disabled_message' => 'Tax Module requires Pro Pro version of WPPayForm. Please install Pro version to make it work.',
             'editor_elements' => array(
                 'info' => array(
                     'type' => 'info_html',

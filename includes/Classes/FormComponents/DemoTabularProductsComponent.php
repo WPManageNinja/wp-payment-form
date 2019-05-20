@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-class TabularProductsComponentDemo extends BaseComponent
+class DemoTabularProductsComponent extends BaseComponent
 {
     public function __construct()
     {
@@ -17,9 +17,11 @@ class TabularProductsComponentDemo extends BaseComponent
     {
         return array(
             'type'             => 'tabular_products',
-            'editor_title'     => 'Tabular Product Items',
+            'editor_title'     => 'Tabular Products (Pro)',
             'group'            => 'payment',
             'postion_group'    => 'payment',
+            'disabled' => true,
+            'disabled_message' => 'Tabular Products Module requires Pro version of WPPayForm. Please install Pro version to make it work.',
             'editor_elements'  => array(
                 'info' => array(
                     'type' => 'info_html',

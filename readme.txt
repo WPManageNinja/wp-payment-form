@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja
 Tags: Stripe, stripe form, accept payment, stripe payments, secure payment form, form, payment form, payments, credit card, stripe checkout, Accept PayPal Payments, credit card payments, checkout.js
 Requires at least: 4.5
 Tested up to: 5.2
-Stable tag: 1.1.0
+Stable tag: 1.1.2
 Requires PHP: 5.4
 License: GPLv2 or later
 
@@ -23,6 +23,10 @@ With Stripe checkout as well as built-in form builder functionalities, you can b
 Building beautiful and customizable payment forms has never been easier; and with Stripe integration, you can accept payments on form submission.
 
 With easy to use and standard payment forms, customers can pay you in less than a minute without going to another page.
+
+== Use as a Contact Form ==
+You can use **WPPayForm** as a contact form plugin. With the built-in form builder, you can create any types of form and use as a contact/Subscription form where you can see all the submitted data in the backend.
+
 
 == Create a form and accept payment via Stripe Checkout ==
 [youtube https://www.youtube.com/watch?v=E8_7tBxuKfc&list=PLXpD0vT4thWHCXvZc6eNs52eCOt5dO3SO&index=3]
@@ -68,9 +72,6 @@ You can customize your form design styles from a wide range of design settings i
 With built-in submission management system, you can see the total view of your submissions, which payments are failed and which are completed. You can filter by status and form.
 
 In individual submission page, you can see the complete data, order items as payment table, payment, and activity. You can also change the payment status easily. The submissions can have their own notes too.
-
-== Use as a Contact Form ==
-You can use **Stripe Payments Processing - WPPayForm Plugin** as a contact form. With the built-in form builder, you can create any type of form and use as a contact/Subscription form.
 
 == Event Registration Form with Built-in Payment Processing ==
 With **Stripe Payments Processing - WPPayForm Plugin**, You can easily design a form for your next awesome event/webinar and start recieving payments along with the register information. You can see the data in your dashboard as well as you can send automatted emails to your register or yourself.

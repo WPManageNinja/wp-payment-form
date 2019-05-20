@@ -70,7 +70,15 @@ class PlaceholderParser
 
         $parseItems = apply_filters('wppayform/submission_placeholders_parsed', $parseItems, $submission, $parsables);
 
-        return str_replace(array_keys($parseItems), array_values($parseItems), $string);
+        $formatedParsedItems = [];
+        foreach ($parseItems as $parsedKey => $parseItem) {
+            if(is_array($parseItem)) {
+                $parseItem = implode(', ', $parseItem);
+            }
+            $formatedParsedItems[$parsedKey] = $parseItem;
+        }
+
+        return str_replace(array_keys($formatedParsedItems), array_values($formatedParsedItems), $string);
     }
 
     public static function parseInpuFields($placeholders, $entry)
@@ -100,15 +108,15 @@ class PlaceholderParser
         $metaData = new MetaData($entry);
         foreach ($placeHolders as $groupKey => $values) {
             foreach ($values as $placeholder => $targetItem) {
-                if($groupKey == 'wp') {
+                if ($groupKey == 'wp') {
                     $parsedData[$placeholder] = $metaData->getWPValues($targetItem);
-                } else if($groupKey == 'post_meta') {
+                } else if ($groupKey == 'post_meta') {
                     $parsedData[$placeholder] = $metaData->getPostMeta($targetItem);
-                } else if($groupKey == 'user_meta') {
+                } else if ($groupKey == 'user_meta') {
                     $parsedData[$placeholder] = $metaData->getuserMeta($targetItem);
-                } else if($groupKey == 'querystring') {
+                } else if ($groupKey == 'querystring') {
                     $parsedData[$placeholder] = $metaData->getFromUrlQuery($targetItem);
-                } else if($groupKey == 'other') {
+                } else if ($groupKey == 'other') {
                     $parsedData[$placeholder] = $metaData->getOtherData($targetItem);
                 }
             }
