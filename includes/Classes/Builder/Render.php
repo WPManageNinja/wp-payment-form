@@ -171,6 +171,8 @@ class Render
 
     private function addAssets($form)
     {
+        do_action('wppayform/wppayform_adding_assets', $form);
+
         $currencySettings = Forms::getCurrencyAndLocale($form->ID);
         wp_register_script('flatpickr', WPPAYFORM_URL . 'assets/libs/flatpickr/flatpickr.min.js', array(), '4.5.7', true);
         wp_register_style('flatpickr', WPPAYFORM_URL . 'assets/libs/flatpickr/flatpickr.min.css', array(), '4.5.7', 'all');

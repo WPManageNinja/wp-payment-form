@@ -105,7 +105,8 @@ class Menu
                 'has_pro' => defined('WPPAYFORMHASPRO') && WPPAYFORMHASPRO,
                 'hasValidLicense' => get_option('_wppayform_pro_license_status'),
                 'ajaxurl' => admin_url('admin-ajax.php'),
-                'printStyles' => apply_filters('wppayform/print_styles', [])
+                'printStyles' => apply_filters('wppayform/print_styles', []),
+                'ace_path_url' => WPPAYFORM_URL.'assets/libs/ace'
             ));
         }
     }

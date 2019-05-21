@@ -8,6 +8,8 @@ import FormSettingsIndex from './Components/Form/settings/index';
 import FormPaymentSettings from './Components/Form/settings/ConfirmationSettings';
 import FormCurrencySettings from './Components/Form/settings/CurrencySettings';
 import FormSchedulingSetting from './Components/Form/settings/SchedulingSettings';
+import FormCustomCssJs from './Components/Form/settings/FormCustomCssJs';
+
 import FormEmailSettings from './Components/Form/EmailSettings/FormEmailSettings';
 import FormEntries from './Components/Form/FormEntries/FormEntries';
 
@@ -70,6 +72,11 @@ const formEditorChildrenRoutes = window.WPPayForms.applyFilters('wpf_main_childr
         path: 'scheduling_settings',
         name: 'scheduling_settings',
         component: FormSchedulingSetting
+    },
+    {
+        path: 'custom-css-js',
+        name: 'custom_css_js',
+        component: FormCustomCssJs
     }
 ]);
 const formEditRoutes = window.WPPayForms.applyFilters('wpf_edit_children_roues',[

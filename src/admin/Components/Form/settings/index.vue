@@ -57,6 +57,11 @@
                         route: 'scheduling_settings',
                         title: 'Scheduling Settings',
                         icon: 'dashicons dashicons-calendar-alt'
+                    },
+                    {
+                        route: 'custom_css_js',
+                        title: 'Custom CSS/JS',
+                        icon: 'dashicons dashicons-media-code'
                     }
                 ]
             }
