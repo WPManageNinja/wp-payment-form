@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja
 Tags: Stripe, stripe form, accept payment, stripe payments, secure payment form, form, payment form, payments, credit card, stripe checkout, Accept PayPal Payments, credit card payments, checkout.js
 Requires at least: 4.5
 Tested up to: 5.2
-Stable tag: 1.1.2
+Stable tag: 1.1.5
 Requires PHP: 5.4
 License: GPLv2 or later
 
@@ -86,6 +86,9 @@ Design a high conversion Payment form is hard. This plugin make it easy for you.
 == Accept Donation on your WordPress site ==
 Accepting donations got easier with WPPayForm’s Stripe payment processing. Now your users can fluently donate to your site with just a couple of clicks. Your users can manually set the amount and make the donation. Optionally, You can set a default amount and minimum amount to make the process lot easier.
 
+== Super fast and Light Weight Form ==
+This is a super fast form builder and it's only loads css and js if you add the form in a page. Every line of CSS and JS is useful and there has no extra css and js. For a normal form, It's loads less than 30KB css and js combined. This form builder plugin will not slow down your site. it's the fastest form builder plugin in WordPress.
+
 == Available Demos ==
 <ul>
 <li><a href="https://wppayform.wpmanageninja.com/">Stripe Quick Checkout</a></li>
@@ -128,18 +131,23 @@ Accepting donations got easier with WPPayForm’s Stripe payment processing. Now
 - Restricted form submissions based on entries count by payment statuses
 - Build an event registration form with payments
 - Send Emails on Form Submission / Payment Success
+- Create Tabular Product where user can just input quantity of the products and pay
+- File upload field
+- Export Data in CSV/Excel/JSON/ODS
+- Print Single Submission
+- Tax Calculated Amount
+- Custom Email send on form/payment submission
 
 
-= Upcoming Features (Currently on Development) =
+= Features Tracker =
 - Payment Receipt Page *(DONE)*
 - Submission Activity and custom notes *(DONE)*
-- Email Notifications *(Done in Pro)*
+- Email Notifications *(Done)*
+- Export Data as CSV/Excel/JSON *(Done)
+- Send bulk emails to the submitters and filter by payment statuses (On development)
 - Accept Subscription Payments
-- Send bulk emails to the submitters and filter by payment statuses
-- Export Data as CSV
 
 This plugin is a very planned project, and we have a long term development plan for this. We already invested around 200 human working hours (+coffees) on it, and we have the intention to spend much more on it. Please let us know what features you want, and we are happy to add that in our development sprint.
-
 
 == Installation ==
 
@@ -209,15 +217,30 @@ You are most welcome. You can do the following:
 
 == Screenshots ==
 
-1. Form Builder and Showing how it works
-2. Form Builder
-3. Stripe Payment Popup with Custom Form Fields
-4. Payment Receipt
-5. View All Forms Index
-6. View Submissions
+1. Dashboard
+2. Pre-Build Forms
+3. Easy Form Builder
+4. Form and Payment Screen
+5. Payment Receipt
+6. Submissions and Reporting
 7. View Single Submission
+8. Email Notification Settings (Pro)
+9. Form Confirmation Settings
+10. Form Scheduling Settings
+11. Stripe Payment Gateway Settings
+12. Submission Details (2nd Part)
 
 == Changelog ==
+
+= 1.1.5 - March 21, 2019 =
+- Added Reporting screen
+- New Date Time picker
+- HTML field bug fix
+- added new hooks for developers
+- Stripe Payment Method initilization fix
+- Overall improvements
+- Added new form fields
+- estimated human hours for this release: 60 hours & Coffees
 
 = 1.0.1 - March 01, 2019 =
 - Fix small bugs

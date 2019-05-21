@@ -5,7 +5,7 @@
  * Description: Create and Accept Payments in minutes with Stripe, PayPal with built-in form builder
  * Author: WPManageNinja LLC
  * Author URI:  https://wpmanageninja.com
- * Version: 1.1.0
+ * Version: 1.1.5
  * Text Domain: wppayform
  */
 
@@ -33,7 +33,7 @@ if (!defined('ABSPATH')) {
 
 if (!defined('WPPAYFORM_VERSION')) {
     define('WPPAYFORM_VERSION_LITE', true);
-    define('WPPAYFORM_VERSION', '1.1.0');
+    define('WPPAYFORM_VERSION', '1.1.5');
     // Stripe API version should be in 'YYYY-MM-DD' format.
     define('WPPAYFORM_STRIPE_API_VERSION', '2018-10-31');
     define('WPPAYFORM_MAIN_FILE', __FILE__);
@@ -190,12 +190,3 @@ if (!defined('WPPAYFORM_VERSION')) {
         deactivate_plugins(plugin_basename(__FILE__));
     });
 }
-
-
-add_action( "ninja_table_before_render_table_source", function () {
-    wp_dequeue_style( "footable_styles" ); // Remove The Syyles
-    wp_dequeue_script( "footable" ); // Remove the Footable Library
-    wp_dequeue_script( "footable_init" ); // Remove the Custom Scripts
-    wp_dequeue_script( "ninja-tables-pro" ); // Remove Pro Version Script. It does not load always.
-    wp_enqueue_style( "footable_custom_styles",'PATH_TO_YOUR_COPY_STYLE' );
-}, 100 );
