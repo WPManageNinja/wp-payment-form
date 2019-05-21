@@ -18,6 +18,7 @@
             </el-table-column>
             <el-table-column
                 property="title"
+                width="220"
                 label="Title">
             </el-table-column>
             <el-table-column
@@ -25,8 +26,11 @@
                 label="Subject">
             </el-table-column>
             <el-table-column
-                property="sending_action"
+                width="180"
                 label="Sending Action">
+                <template slot-scope="scope">
+                    {{ humanActionName(scope.row.sending_action) }}
+                </template>
             </el-table-column>
             <el-table-column
                 width="160"
@@ -50,6 +54,16 @@
         methods: {
             emitClick(eventName, dataIndex) {
                 this.$emit(eventName, dataIndex);
+            },
+            humanActionName(action) {
+                let names = {
+                    'wppayform/after_form_submission_complete' : 'After Form Submission',
+                    'wppayform/form_payment_success' : 'After Payment Success'
+                }
+                if(names[action]) {
+                    return names[action];
+                }
+                return action;
             }
         }
     }
