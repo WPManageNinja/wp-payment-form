@@ -1,6 +1,6 @@
-let cardElementHandler = {
+const cardElementHandler = {
     init(config, callback) {
-        var that = this;
+        var $this = this;
         var stripe = Stripe(config.pub_key);
         // Create an instance of Elements.
         var elements = stripe.elements();
@@ -28,8 +28,10 @@ let cardElementHandler = {
             style: this.style,
             hidePostalCode: ! jQuery(elementId).data('verify_zip') == 'yes'
         });
+
         // Add an instance of the card Element into the `card-element` <div>.
         card.mount(elementId);
+        
         // Handle real-time validation errors from the card Element.
         card.addEventListener('change', function (event) {
             if (event.error) {
@@ -38,22 +40,26 @@ let cardElementHandler = {
                 config.form.find('.wpf_card-errors').html('');
             }
         });
+
         config.form.on('stripe_payment_submit', function (event) {
             event.preventDefault();
+            
             if(!config.form.data('payment_total')) {
                 callback();
                 return;
             }
+
             stripe.createToken(card).then(function (result) {
                 if (result.error) {
                     // Inform the user if there was an error.
                     config.form.find('.wpf_card-errors').html(result.error.message);
                 } else {
                     // Send the token to your server.
-                    that.stripeTokenHandler(config, callback, result.token);
+                    $this.stripeTokenHandler(config, callback, result.token);
                 }
             });
         });
+
         config.form.on('stripe_clear',  () => {
             card.clear();
         });
@@ -67,5 +73,5 @@ let cardElementHandler = {
         callback();
     }
 }
-export default cardElementHandler;
 
+export default cardElementHandler;

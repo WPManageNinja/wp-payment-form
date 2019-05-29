@@ -1,12 +1,12 @@
-let StripeCheckoutHandler = {
+const StripeCheckoutHandler = {
     init(config, callback) {
-        var that = this;
+        var $this = this;
         var handler = StripeCheckout.configure({
             key: config.form_settings.stripe_pub_key,
             image: config.form_settings.stripe_checkout_logo,
             locale: 'auto',
             token: function (token, billing_shipping) {
-                that.stripeTokenHandler(config, callback, token, billing_shipping);
+                $this.stripeTokenHandler(config, callback, token, billing_shipping);
             }
         });
 
@@ -32,6 +32,7 @@ let StripeCheckoutHandler = {
                 email: config.form.find('input.wpf_customer_email').val(),
                 allowRememberMe: config.allowRememberMe
             };
+
             if(config.billing ) {
                 paymentConfig.billingAddress = true;
             }
@@ -92,5 +93,5 @@ let StripeCheckoutHandler = {
         callback();
     }
 }
-export default StripeCheckoutHandler;
 
+export default StripeCheckoutHandler;
