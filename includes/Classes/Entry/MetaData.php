@@ -27,7 +27,6 @@ class MetaData
         $this->entry = $entry;
         $this->postId = $entry->getRawInput('__wpf_current_page_id');
         $this->userId = $entry->user_id;
-
     }
 
     public function getWPValues($key)

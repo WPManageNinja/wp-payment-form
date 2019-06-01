@@ -221,6 +221,8 @@ class Forms
             $settings = $globalSettings;
         }
         $settings['currency_sign'] = GeneralSettings::getCurrencySymbol($settings['currency']);
+
+        $settings['is_zero_decimal'] = GeneralSettings::isZeroDecimal($settings['currency']);
         return $settings;
     }
 

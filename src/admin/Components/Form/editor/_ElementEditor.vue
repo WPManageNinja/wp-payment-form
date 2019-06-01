@@ -1,15 +1,32 @@
 <template>
     <div class="element_editor">
         <el-form ref="element_form" :model="element" label-width="220px">
-            <div v-for="(item, itemName) in element.editor_elements" :class="item.wrapper_class" class="editor_form_item">
+            <div v-for="(item, itemName) in element.editor_elements" :class="item.wrapper_class"
+                 class="editor_form_item">
                 <template v-if="item.type == 'text'">
                     <el-form-item :label="item.label">
-                        <el-input :placeholder="item.label" size="mini" v-model="element.field_options[itemName]"></el-input>
+                        <template v-if="itemName == 'default_value'">
+                            <el-input :placeholder="item.label" size="mini" v-model="element.field_options[itemName]">
+                                <popover
+                                    v-if="has_pro"
+                                    @command="(code) => { element.field_options[itemName] += code }"
+                                    slot="suffix" :data="merge_tags"
+                                    btnType="text"
+                                    buttonText='<i class="el-icon-menu"></i>'>
+                                </popover>
+                                <el-button @click="showDevaultValuePro = true" type="text" size="mini" icon="el-icon-menu" slot="suffix" v-else></el-button>
+                            </el-input>
+                        </template>
+                        <template v-else>
+                            <el-input :placeholder="item.label" size="mini"
+                                      v-model="element.field_options[itemName]"></el-input>
+                        </template>
                     </el-form-item>
                 </template>
                 <template v-else-if="item.type == 'number'">
                     <el-form-item :label="item.label">
-                        <el-input-number :placeholder="item.label" size="mini" v-model="element.field_options[itemName]"></el-input-number>
+                        <el-input-number :placeholder="item.label" size="mini"
+                                         v-model="element.field_options[itemName]"></el-input-number>
                     </el-form-item>
                 </template>
                 <template v-else-if="item.type == 'textarea'">
@@ -21,7 +38,9 @@
                 <template v-else-if="item.type == 'checkbox'">
                     <el-form-item :label="item.label">
                         <el-checkbox-group v-model="element.field_options[itemName]">
-                            <el-checkbox v-for="(option,optionName) in item.options" :label="optionName" :key="optionName">{{option}}</el-checkbox>
+                            <el-checkbox v-for="(option,optionName) in item.options" :label="optionName"
+                                         :key="optionName">{{option}}
+                            </el-checkbox>
                         </el-checkbox-group>
                     </el-form-item>
                 </template>
@@ -55,29 +74,34 @@
                 </template>
                 <template v-else-if="item.type == 'product_selector'">
                     <el-form-item :label="item.label">
-                        <item-selector :all_elements="all_elements" :item_name="itemName" :field_options="element.field_options" />
+                        <item-selector :all_elements="all_elements" :item_name="itemName"
+                                       :field_options="element.field_options"/>
                         <p v-if="item.info" v-html="item.info"></p>
                     </el-form-item>
                 </template>
                 <template v-else-if="item.type == 'select_option'">
                     <el-form-item :label="item.label">
-                        <el-select :allow-create="item.creatable == 'yes'" filterable default-first-option class="item_full_width" size="small" v-model="element.field_options[itemName]">
-                            <el-option v-for="(option_name,option_key) in item.options" :key="option_key" :label="option_name" :value="option_key"></el-option>
+                        <el-select :allow-create="item.creatable == 'yes'" filterable default-first-option
+                                   class="item_full_width" size="small" v-model="element.field_options[itemName]">
+                            <el-option v-for="(option_name,option_key) in item.options" :key="option_key"
+                                       :label="option_name" :value="option_key"></el-option>
                         </el-select>
                         <p v-if="item.info" v-html="item.info"></p>
                     </el-form-item>
                 </template>
                 <template v-else-if="item.type == 'checkout_display_options'">
-                    <checkout-display-option :item="item" :item_name="itemName" :checkout_settings="element.field_options[itemName]"></checkout-display-option>
+                    <checkout-display-option :item="item" :item_name="itemName"
+                                             :checkout_settings="element.field_options[itemName]"></checkout-display-option>
                 </template>
                 <template v-else-if="item.type == 'choose_payment_method'">
-                    <payment-method-choice :item="item" :method_settings="element.field_options[itemName]" />
+                    <payment-method-choice :item="item" :method_settings="element.field_options[itemName]"/>
                 </template>
                 <template v-else-if="item.type == 'info_html'">
                     <div v-html="item.info"></div>
                 </template>
                 <template v-else-if="item.type == 'tabular_products'">
-                    <tabular-products :item="item" :product_settings="element.field_options[itemName]"></tabular-products>
+                    <tabular-products :item="item"
+                                      :product_settings="element.field_options[itemName]"></tabular-products>
                 </template>
             </div>
             <el-form-item label="Field ID">
@@ -88,6 +112,18 @@
                 <el-button @click="updateItem()" type="success" size="mini">Update</el-button>
             </div>
         </el-form>
+        <el-dialog
+            title="Default Value is a Pro Feature"
+            :visible.sync="showDevaultValuePro"
+            :append-to-body="true"
+            width="60%">
+            <div v-if="showDevaultValuePro" class="modal_body wpf_default_value_modal">
+                <img :src="assets_url+'images/default_value_screen.png'" />
+                <h3>Add Default Value from dynamic variables from WordPress / URL Parameter</h3>
+                <a class="el-button el-button--success" target="_blank" rel="noopener" :href="pro_purchase_url">Upgrade To Pro</a>
+            </div>
+        </el-dialog>
+
     </div>
 </template>
 
@@ -98,6 +134,7 @@
     import CheckoutDisplayOption from './_StripeCheckoutSettings';
     import PaymentMethodChoice from './_payment_method_settings';
     import TabularProducts from './_tabular_products'
+    import popover from '../../Common/input-popover-dropdown.vue'
 
     export default {
         name: 'elementEditor',
@@ -107,14 +144,19 @@
             ItemSelector,
             CheckoutDisplayOption,
             PaymentMethodChoice,
-            TabularProducts
+            TabularProducts,
+            popover
         },
         props: ['element', 'all_elements'],
         comments: {
             KeyPairOptions
         },
         data() {
-            return {}
+            return {
+                merge_tags: Object.values(window.wpPayFormsAdmin.value_placeholders),
+                showDevaultValuePro: false,
+                assets_url: window.wpPayFormsAdmin.assets_url
+            }
         },
         methods: {
             deleteItem() {

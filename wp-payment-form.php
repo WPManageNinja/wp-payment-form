@@ -92,6 +92,10 @@ if (!defined('WPPAYFORM_VERSION')) {
             $tinyMCE = new \WPPayForm\Classes\Integrations\TinyMceBlock();
             $tinyMCE->register();
 
+            // Dashboard Widget Here
+            $dashboardWidget = new \WPPayForm\Classes\DashboardWidgetModule();
+            $dashboardWidget->register();
+
         }
 
         public function registerShortcodes()

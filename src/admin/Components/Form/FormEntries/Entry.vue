@@ -22,13 +22,12 @@
                             <el-button readonly size="mini" disabled type="plain">{{submission.id}}</el-button>
                             <el-button size="mini" @click="handleNavClick('prev')" type="info">Next <i
                                 class="el-icon-d-arrow-right el-icon-right"></i></el-button>
-                            <el-dropdown @command="handleActionCommand">
+                            <el-dropdown v-if="submission.order_items && parseInt(submission.order_items.length)" @command="handleActionCommand">
                                 <el-button size="mini" type="primary">
                                     Actions <i class="el-icon-arrow-down el-icon--right"></i>
                                 </el-button>
                                 <el-dropdown-menu slot="dropdown">
-                                    <el-dropdown-item command="payment_status"
-                                                      v-if="submission.order_items && parseInt(submission.order_items.length)">
+                                    <el-dropdown-item command="payment_status">
                                         Change Payment Status
                                     </el-dropdown-item>
                                 </el-dropdown-menu>

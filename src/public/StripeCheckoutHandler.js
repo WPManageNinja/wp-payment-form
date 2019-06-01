@@ -21,12 +21,17 @@ let StripeCheckoutHandler = {
                 callback();
                 return;
             }
-            
+
+            let paymentAmoyunt = config.form.data('payment_total');
+            if(config.form_settings.currency_settings.is_zero_decimal) {
+                paymentAmoyunt = parseInt(paymentAmoyunt / 100);
+            }
+
             // Open Checkout with further options:
             let paymentConfig = {
                 name: config.form_settings.stripe_checkout_title,
                 description: config.form_settings.checkout_description,
-                amount: config.form.data('payment_total'),
+                amount: paymentAmoyunt,
                 currency: config.form_settings.currency_settings.currency,
                 zipCode: config.verify_zip,
                 email: config.form.find('input.wpf_customer_email').val(),

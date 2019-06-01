@@ -3,6 +3,7 @@
 namespace WPPayForm\Classes\PaymentMethods\Stripe;
 
 use WPPayForm\Classes\AccessControl;
+use WPPayForm\Classes\GeneralSettings;
 use WPPayForm\Classes\Models\Submission;
 use WPPayForm\Classes\Models\SubmissionActivity;
 use WPPayForm\Classes\Models\Transaction;
@@ -169,8 +170,11 @@ class Stripe
             unset($paymentArgs['source']);
         }
 
-        $charge = Charge::charge($paymentArgs);
+        if(GeneralSettings::isZeroDecimal($paymentArgs['currency'])) {
+            $paymentArgs['amount'] = intval($paymentArgs['amount'] / 100);
+        }
 
+        $charge = Charge::charge($paymentArgs);
         $paymentStatus = true;
 
         $message = 'Unknown error';
