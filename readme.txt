@@ -1,9 +1,9 @@
 === Stripe Payments Processing - WPPayForm Plugin for WordPress with Contact Form Functionalities ===
 Contributors: techjewel, wpmanageninja
-Tags: Stripe, stripe form, accept payment, stripe payments, secure payment form, form, payment form, payments, credit card, stripe checkout, Accept PayPal Payments, credit card payments, checkout.js
+Tags: Stripe, Event Registration Form, stripe form, accept payment, stripe payments, secure payment form, form, payment form, payments, credit card, stripe checkout, Accept PayPal Payments, credit card payments, checkout.js
 Requires at least: 4.5
-Tested up to: 5.2
-Stable tag: 1.1.5
+Tested up to: 5.2.1
+Stable tag: 1.1.6
 Requires PHP: 5.4
 License: GPLv2 or later
 
@@ -88,6 +88,12 @@ Accepting donations got easier with WPPayForm’s Stripe payment processing. Now
 
 == Super fast and Light Weight Form ==
 This is a super fast form builder and it's only loads css and js if you add the form in a page. Every line of CSS and JS is useful and there has no extra css and js. For a normal form, It's loads less than 30KB css and js combined. This form builder plugin will not slow down your site. it's the fastest form builder plugin in WordPress.
+
+== Pre-Build Forms to get started easily ==
+* **Contact Form** - With WPPayForm you can easily build a contact form in your site without any payment related fields. It will show the contact information beautifully on the Wordpress Backend.
+* **Donation Form** - We have build a donation form for you and with one click you can create a donation form easily and start accepting donation for your organisation.
+* **Event Registration Form with Payment** - Planning to start your next Event? Then you can use this form template where you can take basic register information and accept payment for the event. This is very easy to create an Event Registration Form.
+* **Many More Forms** - We have added many forms and you can build any type of form easily.
 
 == Available Demos ==
 <ul>
@@ -231,6 +237,11 @@ You are most welcome. You can do the following:
 12. Submission Details (2nd Part)
 
 == Changelog ==
+
+= 1.1.6 - June 02, 2019 =
+- Fix Zero Decimal Currecncy charges
+- Added Dashboard Widget
+- Impromvemt of Editor
 
 = 1.1.5 - March 21, 2019 =
 - Added Reporting screen
