@@ -134,7 +134,7 @@ class Submission
 
     public function update($submissionId, $data)
     {
-        $data['updated_at'] = date('Y-m-d H:i:s');
+        $data['updated_at'] = gmdate('Y-m-d H:i:s');
         return wpPayFormDB()->table('wpf_submissions')->where('id', $submissionId)->update($data);
     }
 

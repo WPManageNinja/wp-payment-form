@@ -31,7 +31,6 @@ class Activator
         } else {
             $this->migrate();
         }
-
     }
 
     public function migrate()
@@ -40,6 +39,8 @@ class Activator
         $this->createOrderItemsTable();
         $this->createTransactionsTable();
         $this->createSubmissionActivitiesTable();
+        $this->createMetaTable();
+        $this->createSubscriptionTable();
         $this->createPages();
     }
 
@@ -126,7 +127,6 @@ class Activator
     }
 
     public function createSubmissionActivitiesTable()
-
     {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
@@ -141,6 +141,70 @@ class Activator
 				created_by_user_id int(11),
 				title varchar(255),
 				content text,
+				created_at timestamp NULL,
+				updated_at timestamp NULL
+			) $charset_collate;";
+        $this->runSQL($sql, $table_name);
+    }
+
+    public function createMetaTable()
+    {
+        global $wpdb;
+        $charset_collate = $wpdb->get_charset_collate();
+        $table_name = $wpdb->prefix . 'wpf_meta';
+
+        $sql = "CREATE TABLE $table_name (
+				id int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+				meta_group varchar(255),
+				option_id int(11) NOT NULL,
+				meta_key varchar(255),
+				meta_value text,
+				created_at timestamp NULL,
+				updated_at timestamp NULL
+			) $charset_collate;";
+        $this->runSQL($sql, $table_name);
+    }
+
+    public function createSubscriptionTable()
+    {
+        global $wpdb;
+        $charset_collate = $wpdb->get_charset_collate();
+        $table_name = $wpdb->prefix . 'wpf_subscriptions';
+
+        $sql = "CREATE TABLE $table_name (
+				id int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+				submission_id int(11),
+				form_id int(11),
+				
+				item_name varchar(255),
+				plan_name varchar(255),
+				
+				parent_transaction_id int(11),
+				billing_interval varchar (50), /* possible values day, week, month or year. */
+				trial_days int(11),
+				initial_amount int(11),
+				quantity int(11) DEFAULT 1,
+				recurring_amount int(11),
+				bill_times int(11), /* 0 means untill cancel */
+				bill_count int(11) DEFAULT 0,
+				
+				vendor_customer_id varchar(255),
+				vendor_subscriptipn_id varchar(255),
+				vendor_plan_id varchar(255),
+				status varchar(255) DEFAULT 'pending', /* possible values pending, cancelled, active, trialling, completed*/
+				
+				inital_tax_label varchar(255),
+				inital_tax int(11),
+				
+				recurring_tax_label varchar(255),
+				recurring_tax int(11),
+				
+				element_id varchar(255),
+			
+			  	
+				note text,
+				original_plan text,
+				expiration_at timestamp NULL,
 				created_at timestamp NULL,
 				updated_at timestamp NULL
 			) $charset_collate;";

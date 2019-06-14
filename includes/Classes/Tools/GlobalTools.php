@@ -60,7 +60,7 @@ class GlobalTools
            exit('No Form Found');
         }
 
-        header('Content-disposition: attachment; filename=' . sanitize_title($form['post_title'] . '-export-form-', 'export-form-', 'view') . '-' . date('Y-m-d') . '.json');
+        header('Content-disposition: attachment; filename=' . sanitize_title($form['post_title'] . '-export-form-', 'export-form-', 'view') . '-' . gmdate('Y-m-d') . '.json');
         header('Content-type: application/json');
         echo json_encode($form);
         exit();
@@ -122,7 +122,7 @@ class GlobalTools
     {
         // Create the form post type
         $postId = wp_insert_post(array(
-            'post_title'   => ArrayHelper::get($form, 'post_title', 'imported form '.date('Y-m-d')),
+            'post_title'   => ArrayHelper::get($form, 'post_title', 'imported form '.gmdate('Y-m-d')),
             'post_content' => ArrayHelper::get($form, 'post_content', ''),
             'post_type'    => 'wp_payform',
             'post_status'  => 'publish',

@@ -202,7 +202,7 @@ class SubmissionView
         ));
         wpPayFormDB()->table('wpf_order_transactions')->where('submission_id', $submissionId)->update(array(
             'status'     => $newStatus,
-            'updated_at' => date('Y-m-d H:i:s')
+            'updated_at' => gmdate('Y-m-d H:i:s')
         ));
         do_action('wppayform/after_payment_status_change_manually', $submissionId, $newStatus, $submission->payment_status);
 

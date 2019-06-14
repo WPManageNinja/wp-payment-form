@@ -6,7 +6,9 @@ use WPPayForm\Classes\Models\Forms;
 use WPPayForm\Classes\Models\OrderItem;
 use WPPayForm\Classes\Models\Submission;
 use WPPayForm\Classes\Models\SubmissionActivity;
+use WPPayForm\Classes\Models\Subscription;
 use WPPayForm\Classes\Models\Transaction;
+use WPPayForm\Classes\PaymentMethods\Stripe\Plan;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -25,6 +27,7 @@ class SubmissionHandler
 
     public function handeSubmission()
     {
+
         parse_str($_REQUEST['form_data'], $form_data);
         // Now Validate the form please
         $formId = absint($_REQUEST['form_id']);
@@ -45,19 +48,30 @@ class SubmissionHandler
 
         // Extract Payment Items Here
         $paymentItems = array();
+        $subscriptionItems = array();
+
         foreach ($formattedElements['payment'] as $paymentId => $payment) {
             $quantity = $this->getItemQuantity($formattedElements['item_quantity'], $paymentId, $form_data);
+
+            if ($payment['type'] == 'recurring_payment_item') {
+                $subscription = $this->getSubscriptionLine($payment, $paymentId, $quantity, $form_data, $formId);
+                $subscriptionItems = array_merge($subscriptionItems, $subscription);
+            }
+
             $lineItems = $this->getPaymentLine($payment, $paymentId, $quantity, $form_data);
-            $paymentItems = array_merge($paymentItems, $lineItems);
+            if($lineItems) {
+                $paymentItems = array_merge($paymentItems, $lineItems);
+            }
         }
 
         $paymentItems = apply_filters('wppayform/submitted_payment_items', $paymentItems, $formattedElements, $form_data);
+        $subscriptionItems = apply_filters('wppayform/submitted_subscription_items', $subscriptionItems, $formattedElements, $form_data);
 
         // Extract Input Items Here
         $inputItems = array();
         foreach ($formattedElements['input'] as $inputName => $inputElement) {
             $value = ArrayHelper::get($form_data, $inputName);
-            $inputItems[$inputName] = apply_filters('wppayform/submitted_value_'.$inputElement['type'], $value, $inputElement, $form_data);
+            $inputItems[$inputName] = apply_filters('wppayform/submitted_value_' . $inputElement['type'], $value, $inputElement, $form_data);
         }
 
         // Calculate Payment Total Now
@@ -114,11 +128,12 @@ class SubmissionHandler
             'submission_hash'     => $this->getHash(),
             'payment_total'       => $paymentTotal,
             'status'              => 'new',
-            'created_at'          => date('Y-m-d H:i:s'),
-            'updated_at'          => date('Y-m-d H:i:s')
+            'created_at'          => gmdate('Y-m-d H:i:s'),
+            'updated_at'          => gmdate('Y-m-d H:i:s')
         );
 
         $ipLoggingStatus = GeneralSettings::ipLoggingStatus(true);
+
         if (apply_filters('wppayform/record_client_info', $ipLoggingStatus, $form)) {
             $browser = new Browser();
             $submission['ip_address'] = $browser->getIp();
@@ -135,8 +150,9 @@ class SubmissionHandler
         $submissionModel = new Submission();
         $submissionId = $submissionModel->create($submission);
         do_action('wppayform/after_submission_data_insert', $submissionId, $formId);
+        $submission = $submissionModel->getSubmission($submissionId);
 
-        if ($paymentItems) {
+        if ($paymentItems || $subscriptionItems) {
             // Insert Payment Items
             $itemModel = new OrderItem();
             foreach ($paymentItems as $payItem) {
@@ -144,6 +160,16 @@ class SubmissionHandler
                 $payItem['form_id'] = $formId;
                 $itemModel->create($payItem);
             }
+
+            // insert subscription items
+            $subscription = new Subscription();
+            foreach ($subscriptionItems as $subscriptionItem) {
+                $subscriptionItem['submission_id'] = $submissionId;
+                $subscription->create($subscriptionItem);
+            }
+
+            $hasSubscriptions = (bool) $subscriptionItems;
+
             // Insert Transaction Item Now
             $transaction = array(
                 'form_id'        => $formId,
@@ -154,8 +180,8 @@ class SubmissionHandler
                 'payment_total'  => $paymentTotal,
                 'currency'       => $currency,
                 'status'         => 'pending',
-                'created_at'     => date('Y-m-d H:i:s'),
-                'updated_at'     => date('Y-m-d H:i:s')
+                'created_at'     => gmdate('Y-m-d H:i:s'),
+                'updated_at'     => gmdate('Y-m-d H:i:s')
             );
 
             $transaction = apply_filters('wppayform/submission_transaction_data', $transaction, $formId, $form_data);
@@ -173,11 +199,9 @@ class SubmissionHandler
             ));
 
             if ($paymentMethod) {
-                do_action('wppayform/form_submission_make_payment_' . $paymentMethod, $transactionId, $submissionId, $form_data, $form);
+                do_action( 'wppayform/form_submission_make_payment_' . $paymentMethod, $transactionId, $submissionId, $form_data, $form, $hasSubscriptions );
             }
         }
-
-        $submission = $submissionModel->getSubmission($submissionId);
 
         do_action('wppayform/after_form_submission_complete', $submission, $formId);
         $confirmation = Forms::getConfirmationSettings($formId);
@@ -272,8 +296,8 @@ class SubmissionHandler
             'parent_holder' => $paymentId,
             'item_name'     => $label,
             'quantity'      => $quantity,
-            'created_at'    => date('Y-m-d H:i:s'),
-            'updated_at'    => date('Y-m-d H:i:s'),
+            'created_at'    => gmdate('Y-m-d H:i:s'),
+            'updated_at'    => gmdate('Y-m-d H:i:s'),
         );
 
         if ($payment['type'] == 'payment_item') {
@@ -301,13 +325,87 @@ class SubmissionHandler
                 $payItem['item_price'] = absint(ArrayHelper::get($priceDetailes, 'payment_amount') * 100);
                 $payItem['line_total'] = absint($payItem['item_price']) * $quantity;
             }
-        } else if ( $payment['type'] == 'custom_payment_input' ) {
+        }
+        else if ($payment['type'] == 'custom_payment_input') {
             $payItem['item_price'] = absint($formData[$paymentId]) * 100;
             $payItem['line_total'] = absint($payItem['item_price']) * $quantity;
-        } else {
+        }
+        else if ($payment['type'] == 'recurring_payment_item') {
+            $planIndex = $formData[$paymentId];
+            $plan = ArrayHelper::get($payment, 'options.recurring_payment_options.pricing_options.'.$planIndex);
+            if(!$plan || !$plan['signup_fee']) {
+                return array();
+            }
+            $payItem['type'] = 'signup_fee';
+            $signupLabel = __('Signup Fee for', 'wppayform');
+            $signupLabel .= ' '.$label;
+            $signupLabel = apply_filters('wppayform/signup_fee_label', $signupLabel, $payment, $formData);
+            $payItem['item_name'] = $signupLabel;
+            $payItem['item_price'] = absint($plan['signup_fee']) * 100;
+            $payItem['line_total'] = $payItem['item_price'] * $quantity;
+            return array($payItem);
+        }
+        else {
             return array();
         }
         return array($payItem);
+    }
+
+    private function getSubscriptionLine($payment, $paymentId, $quantity, $formData, $formId)
+    {
+        if ($payment['type'] != 'recurring_payment_item') {
+            return array();
+        }
+        if (!isset($formData[$paymentId])) {
+            return array();
+        }
+        $label = ArrayHelper::get($payment, 'options.label');
+        if (!$label) {
+            $label = $paymentId;
+        }
+
+
+        $pricings = ArrayHelper::get($payment, 'options.recurring_payment_options.pricing_options');
+        $plan = $pricings[$formData[$paymentId]];
+
+        if (!$plan) {
+            return array();
+        }
+
+        $daysToExpiration = absint($plan['billing_days_period']);
+        if ($plan['trial_days']) {
+            $daysToExpiration = absint($daysToExpiration);
+        }
+
+        $expirationDate = gmdate('Y-m-d H:i:s', time() + $daysToExpiration * 86400);
+
+        $subscription = array(
+            'element_id'          => $paymentId,
+            'item_name'           => $label,
+            'form_id'             => $formId,
+            'plan_name'           => $plan['name'],
+            'billing_interval' => 'month',
+            'trial_days'          => $plan['trial_days'],
+            'recurring_amount'    => absint($plan['subscription_amount'] * 100),
+            'bill_times'          => $plan['bill_times'],
+            'initial_amount'      => absint($plan['signup_fee'] * 100),
+            'status'              => 'pending',
+            'original_plan'       => maybe_serialize($plan),
+            'expiration_at'       => $expirationDate,
+            'created_at'          => gmdate('Y-m-d H:i:s'),
+            'updated_at'          => gmdate('Y-m-d H:i:s'),
+        );
+
+        $allSubscriptions = [$subscription];
+
+        if ($quantity > 1) {
+            for ($i = 1; $i < $quantity; $i++) {
+                $allSubscriptions[] = $subscription;
+            }
+        }
+
+        return $allSubscriptions;
+
     }
 
     private function getErrorLabel($element, $formId)

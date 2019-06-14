@@ -6,6 +6,7 @@ use WPPayForm\Classes\AccessControl;
 use WPPayForm\Classes\GeneralSettings;
 use WPPayForm\Classes\Models\Submission;
 use WPPayForm\Classes\Models\SubmissionActivity;
+use WPPayForm\Classes\Models\Subscription;
 use WPPayForm\Classes\Models\Transaction;
 
 if (!defined('ABSPATH')) {
@@ -26,7 +27,7 @@ class Stripe
         // Register The Action and Filters
         add_filter('wppayform/parsed_entry', array($this, 'addAddressToView'), 10, 2);
         add_filter('wppayform/submission_data_formatted', array($this, 'pushAddressToInput'), 10, 3);
-        add_action('wppayform/form_submission_make_payment_stripe', array($this, 'makeFormPayment'), 10, 4);
+        add_action('wppayform/form_submission_make_payment_stripe', array($this, 'makeFormPayment'), 10, 5);
         add_filter('wppayform/entry_transactions', array($this, 'addTransactionUrl'), 10, 2);
         add_filter('wppayform/choose_payment_method_for_submission', array($this, 'choosePaymentMethod'), 10, 4);
         add_action('wppayform/wpf_before_submission_data_insert_stripe', array($this, 'validateStripeToken'), 10, 2);
@@ -36,6 +37,7 @@ class Stripe
         add_action('wp_ajax_wpf_get_stripe_settings', array($this, 'getPaymentSettings'));
 
         add_filter('wppayform/checkout_vars', array($this, 'addLocalizeVars'));
+
     }
 
     public function addLocalizeVars($vars)
@@ -72,13 +74,13 @@ class Stripe
         return $paymentMethod;
     }
 
-    public function makeFormPayment($transactionId, $submissionId, $form_data, $form)
+    public function makeFormPayment($transactionId, $submissionId, $form_data, $form, $hasSubscriptions)
     {
         $paymentMode = $this->getMode();
         $transactionModel = new Transaction();
         $transaction = $transactionModel->getTransaction($transactionId);
 
-        if (!$transaction->payment_total) {
+        if (!$transaction->payment_total && !$hasSubscriptions) {
             return;
         }
 
@@ -114,64 +116,24 @@ class Stripe
         $paymentArgs['metadata'] = $metadata;
 
 
-        $customer = null;
-
-        if($this->needToCreateCustomer($submission)) {
-            // We have to create customer and then make the payment
-            $description = 'Customer for Submission ID: '.$submissionId;
-            $customerEmail = null;
-            $customerMeta = array();
-            if($submission->customer_email) {
-                $description = 'Customer for '.$submission->customer_email;
-                $customerEmail = $submission->customer_email;
-                $customerMeta['email'] = $submission->customer_email;
+        $isCreateCustomer = $this->needToCreateCustomer($submission);
+        if ($hasSubscriptions) {
+            $isCreateCustomer = true;
+        }
+        if ($isCreateCustomer) {
+            $customer = $this->createCustomer($token, $submission, $transaction, $form, $metadata);
+            if($customer) {
+                $paymentArgs['customer'] = $customer->id;
+                unset($paymentArgs['source']);
             }
-            if(isset($metadata['customer_name'])) {
-                $customerMeta['name'] = $metadata['customer_name'];
-            }
-            $customerMeta['payform_id'] = $form->ID;
-
-            $customerArgs = array(
-                'description' => $description,
-                'email' => $customerEmail,
-                'metadata' => $customerMeta,
-                'source' => $token
-            );
-            $customerArgs = apply_filters('wppayform/stripe_customer_args', $customerArgs, $metadata, $submission);
-            $customer = Customer::createCustomer($customerArgs);
-
-            $customerStatus = true;
-
-            if (is_wp_error($customer)) {
-                $customerStatus = false;
-                $errorCode = $customer->get_error_code();
-                $message = $customer->get_error_message($errorCode);
-            } else if (!$customer) {
-                $customerStatus = false;
-                $message = __('Customer Create Failed via stripe. Please try again', 'wppayform');
-            }
-
-            if(!$customerStatus) {
-                $this->makeCustomerCreateFailed($submission, $transaction, $form, $paymentMode, $customer, $message);
-            }
-
-            SubmissionActivity::createActivity(array(
-                'form_id'       => $form->ID,
-                'submission_id' => $submissionId,
-                'type'          => 'activity',
-                'created_by'    => 'PayForm BOT',
-                'content'       => __('Stripe Customer created. Customer ID: ', 'wppayform').$customer->id
-            ));
-
         }
 
-        if($customer) {
-            $paymentArgs['customer'] = $customer->id;
-            unset($paymentArgs['source']);
-        }
-
-        if(GeneralSettings::isZeroDecimal($paymentArgs['currency'])) {
+        if (GeneralSettings::isZeroDecimal($paymentArgs['currency'])) {
             $paymentArgs['amount'] = intval($paymentArgs['amount'] / 100);
+        }
+
+        if ($hasSubscriptions && $paymentArgs['customer']) {
+            $this->handleSubscriptions($paymentArgs['customer'], $submission, $transaction, $form);
         }
 
         $charge = Charge::charge($paymentArgs);
@@ -187,33 +149,9 @@ class Stripe
         }
 
         if (!$paymentStatus) {
-            do_action('wppayform/form_payment_stripe_failed', $submission, $transaction, $form->ID, $charge);
-            do_action('wppayform/form_payment_failed', $submission, $transaction, $form->ID, $charge);
-
-            $transactionModel->update($transactionId, array(
-                'status'         => 'failed',
-                'payment_method' => 'stripe',
-                'payment_mode'   => $paymentMode,
-            ));
-            $submissionModel->update($submissionId, array(
-                'payment_status' => 'failed',
-                'payment_method' => 'stripe',
-                'payment_mode'   => $paymentMode,
-            ));
-
-            SubmissionActivity::createActivity(array(
-                'form_id'       => $form->ID,
-                'submission_id' => $submissionId,
-                'type'          => 'activity',
-                'created_by'    => 'PayForm BOT',
-                'content'       => __('Payment Failed via stripe. Status changed from Pending to Failed.', 'wppayform')
-            ));
-
-            wp_send_json_error(array(
-                'message'       => $message,
-                'payment_error' => true
-            ), 423);
+            return $this->handlePaymentChargeError($message, $submission, $transaction, $form, $charge, 'charge');
         }
+
         // We are good here. The charge is successfull and We are ready to go.
         $transactionModel->update($transactionId, array(
             'status'         => 'paid',
@@ -229,7 +167,7 @@ class Stripe
             'payment_method' => 'stripe',
             'payment_mode'   => $paymentMode,
         );
-        if($customer) {
+        if ($customer) {
             $submissionUpdateData['customer_id'] = $customer->id;
         }
         $submissionModel->update($submissionId, $submissionUpdateData);
@@ -243,23 +181,26 @@ class Stripe
         ));
 
         $transaction = $transactionModel->getTransaction($transactionId);
+
         do_action('wppayform/form_payment_success_stripe', $submission, $transaction, $transaction->form_id, $charge);
         do_action('wppayform/form_payment_success', $submission, $transaction, $transaction->form_id, $charge);
     }
 
-    private function makeCustomerCreateFailed($submission, $transaction, $form, $paymentMode, $customer, $message)
+    public function handlePaymentChargeError($message, $submission, $transaction, $form, $charge = false, $type = 'general')
     {
-        $transactionModel = new Transaction();
+        $paymentMode = $this->getMode();
+        do_action('wppayform/form_payment_stripe_failed', $submission, $transaction, $form, $charge, $type);
+        do_action('wppayform/form_payment_failed', $submission, $transaction, $form, $charge, $type);
+
         $submissionModel = new Submission();
-        do_action('wppayform/form_payment_stripe_customer_create_failed', $transaction, $form->ID, $customer);
-        do_action('wppayform/form_payment_failed', $transaction, $form->ID, $customer);
+        $transactionModel = new Transaction();
 
         $transactionModel->update($transaction->id, array(
             'status'         => 'failed',
             'payment_method' => 'stripe',
             'payment_mode'   => $paymentMode,
         ));
-        $submissionModel->update($transaction->id, array(
+        $submissionModel->update($submission->id, array(
             'payment_status' => 'failed',
             'payment_method' => 'stripe',
             'payment_mode'   => $paymentMode,
@@ -270,8 +211,18 @@ class Stripe
             'submission_id' => $submission->id,
             'type'          => 'activity',
             'created_by'    => 'PayForm BOT',
-            'content'       => __('Customer Create Failed via stripe. Status changed from Pending to Failed.', 'wppayform')
+            'content'       => __('Payment Failed via stripe. Status changed from Pending to Failed.', 'wppayform')
         ));
+
+        if($message) {
+            SubmissionActivity::createActivity(array(
+                'form_id'       => $form->ID,
+                'submission_id' => $submission->id,
+                'type'          => 'error',
+                'created_by'    => 'PayForm BOT',
+                'content'       => $message
+            ));
+        }
 
         wp_send_json_error(array(
             'message'       => $message,
@@ -279,11 +230,12 @@ class Stripe
         ), 423);
     }
 
+
     public function addTransactionUrl($transactions, $formId)
     {
         foreach ($transactions as $transaction) {
             if ($transaction->payment_method == 'stripe' && $transaction->charge_id) {
-                if($transaction->payment_mode == 'test') {
+                if ($transaction->payment_mode == 'test') {
                     $transactionUrl = 'https://dashboard.stripe.com/test/payments/' . $transaction->charge_id;
                 } else {
                     $transactionUrl = 'https://dashboard.stripe.com/payments/' . $transaction->charge_id;
@@ -453,7 +405,102 @@ class Stripe
     public function needToCreateCustomer($submission)
     {
         // @todo: need to make it configarable
-        $status =  defined('WPPAYFORM_CREATE_CUSTOMER') && WPPAYFORM_CREATE_CUSTOMER;
+        $status = defined('WPPAYFORM_CREATE_CUSTOMER') && WPPAYFORM_CREATE_CUSTOMER;
         return apply_filters('wppayform/stripe_create_customer', $status, $submission);
+    }
+
+    private function createCustomer($token, $submission, $transaction, $form, $metadata)
+    {
+        // We have to create customer and then make the payment
+        $description = 'Customer for Submission ID: ' . $submission->id;
+        $customerEmail = null;
+        $customerMeta = array();
+        if ($submission->customer_email) {
+            $description = 'Customer for ' . $submission->customer_email;
+            $customerEmail = $submission->customer_email;
+            $customerMeta['email'] = $submission->customer_email;
+        }
+        if (isset($metadata['customer_name'])) {
+            $customerMeta['name'] = $metadata['customer_name'];
+        }
+        $customerMeta['payform_id'] = $form->ID;
+
+        $customerArgs = array(
+            'description' => $description,
+            'email'       => $customerEmail,
+            'metadata'    => $customerMeta,
+            'source'      => $token
+        );
+        $customerArgs = apply_filters('wppayform/stripe_customer_args', $customerArgs, $metadata, $submission);
+        $customer = Customer::createCustomer($customerArgs);
+
+        $customerStatus = true;
+
+        if (is_wp_error($customer)) {
+            $customerStatus = false;
+            $errorCode = $customer->get_error_code();
+            $message = $customer->get_error_message($errorCode);
+        } else if (!$customer) {
+            $customerStatus = false;
+            $message = __('Customer Create Failed via stripe. Please try again', 'wppayform');
+        }
+
+        if (!$customerStatus) {
+            return $this->handlePaymentChargeError($message, $submission, $transaction, $form, false, 'customer_create');
+        }
+
+        SubmissionActivity::createActivity(array(
+            'form_id'       => $form->ID,
+            'submission_id' => $submission->id,
+            'type'          => 'activity',
+            'created_by'    => 'PayForm BOT',
+            'content'       => __('Stripe Customer created. Customer ID: ', 'wppayform') . $customer->id
+        ));
+    }
+
+    private function handleSubscriptions($customer, $submission, $transaction, $form)
+    {
+        $subscriptionModel = new Subscription();
+        $subscriptions = $subscriptionModel->getSubscriptions($submission->id);
+        $subscription = PlanSubscription::create($subscriptions, $customer, $submission);
+
+        if(!$subscription || is_wp_error($subscription)) {
+
+            foreach ($subscriptions as $subscription) {
+                wpPayFormDB()->table('wpf_subscriptions')
+                    ->where('id', $subscription->id)
+                    ->update(array(
+                        'status' => 'failed',
+                        'updated_at' => gmdate('Y-m-d H:i:s')
+                    ));
+            }
+
+            $message = __('Stripe error when creating subscription plan for you. Please contact site admin', 'wppayform');
+            if(is_wp_error($subscription)) {
+                $errorCode = $subscription->get_error_code();
+                $message = $subscription->get_error_message($errorCode);
+            }
+            $this->handlePaymentChargeError($message, $submission, $transaction, $form, false, 'subscription_error');
+        }
+
+        // Now we have to do the maths for recurring payments
+        foreach ($subscriptions as $subscription) {
+            wpPayFormDB()->table('wpf_subscriptions')
+                ->where('id', $subscription->id)
+                ->update(array(
+                    'status' => 'active',
+                    'updated_at' => gmdate('Y-m-d H:i:s')
+                ));
+        }
+
+        SubmissionActivity::createActivity(array(
+            'form_id'       => $form->ID,
+            'submission_id' => $submission->id,
+            'type'          => 'activity',
+            'created_by'    => 'PayForm BOT',
+            'content'       => __('Stripe recurring payment subscription successfully initiated', 'wppayform')
+        ));
+
+
     }
 }
