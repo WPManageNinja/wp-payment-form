@@ -45,6 +45,13 @@ class Subscription
         return $subscription;
     }
 
+    public function update($id, $data) {
+        $data['updated_at'] = gmdate('Y-m-d H:i:s');
+        return wpPayFormDB()->table($this->dbName)
+            ->where('id', $id)
+            ->update($data);
+    }
+
     public function updateMeta($optionId, $key, $value)
     {
         $value = maybe_serialize($value);

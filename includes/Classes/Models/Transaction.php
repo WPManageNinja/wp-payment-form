@@ -15,7 +15,9 @@ class Transaction
 {
     public function create($item)
     {
-        return wpPayFormDB()->table('wpf_order_transactions')->insert($item);
+        return wpPayFormDB()
+            ->table('wpf_order_transactions')
+            ->insert($item);
     }
 
     public function getTransactions($submissionId)
@@ -29,7 +31,9 @@ class Transaction
 
     public function getTransaction($transactionId)
     {
-        return wpPayFormDB()->table('wpf_order_transactions')->where('id', $transactionId)->first();
+        return wpPayFormDB()->table('wpf_order_transactions')
+            ->where('id', $transactionId)
+            ->first();
     }
 
     public function update($transactionId, $data)

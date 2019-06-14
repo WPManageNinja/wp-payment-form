@@ -456,6 +456,8 @@ class Stripe
             'created_by'    => 'PayForm BOT',
             'content'       => __('Stripe Customer created. Customer ID: ', 'wppayform') . $customer->id
         ));
+
+        return $customer;
     }
 
     private function handleSubscriptions($customer, $submission, $transaction, $form)
@@ -466,13 +468,10 @@ class Stripe
 
         if(!$subscription || is_wp_error($subscription)) {
 
-            foreach ($subscriptions as $subscription) {
-                wpPayFormDB()->table('wpf_subscriptions')
-                    ->where('id', $subscription->id)
-                    ->update(array(
-                        'status' => 'failed',
-                        'updated_at' => gmdate('Y-m-d H:i:s')
-                    ));
+            foreach ($subscriptions as $subscriptionItem) {
+                $subscriptionModel->update($subscriptionItem->id, [
+                    'status' => 'failed',
+                ]);
             }
 
             $message = __('Stripe error when creating subscription plan for you. Please contact site admin', 'wppayform');
@@ -484,14 +483,16 @@ class Stripe
         }
 
         // Now we have to do the maths for recurring payments
-        foreach ($subscriptions as $subscription) {
-            wpPayFormDB()->table('wpf_subscriptions')
-                ->where('id', $subscription->id)
-                ->update(array(
-                    'status' => 'active',
-                    'updated_at' => gmdate('Y-m-d H:i:s')
-                ));
+        // Update Subscription Payment Status
+        foreach ($subscriptions as $subscriptionItem) {
+            $subscriptionModel->update($subscriptionItem->id, [
+                'status' => 'active',
+            ]);
         }
+
+        // Let's create the Subscription Transaction
+        print_r($subscription);
+        die();
 
         SubmissionActivity::createActivity(array(
             'form_id'       => $form->ID,
