@@ -24,6 +24,7 @@ class Transaction
     {
         $transactions = wpPayFormDB()->table('wpf_order_transactions')
                             ->where('submission_id', $submissionId)
+                            ->where('transaction_type', 'one_time')
                             ->get();
 
         return apply_filters('wppayform/entry_transactions', $transactions, $submissionId);
@@ -33,6 +34,7 @@ class Transaction
     {
         return wpPayFormDB()->table('wpf_order_transactions')
             ->where('id', $transactionId)
+            ->where('transaction_type', 'one_time')
             ->first();
     }
 

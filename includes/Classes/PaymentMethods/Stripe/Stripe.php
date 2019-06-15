@@ -7,6 +7,7 @@ use WPPayForm\Classes\GeneralSettings;
 use WPPayForm\Classes\Models\Submission;
 use WPPayForm\Classes\Models\SubmissionActivity;
 use WPPayForm\Classes\Models\Subscription;
+use WPPayForm\Classes\Models\SubscriptionTransaction;
 use WPPayForm\Classes\Models\Transaction;
 
 if (!defined('ABSPATH')) {
@@ -115,14 +116,13 @@ class Stripe
         }
         $paymentArgs['metadata'] = $metadata;
 
-
         $isCreateCustomer = $this->needToCreateCustomer($submission);
         if ($hasSubscriptions) {
             $isCreateCustomer = true;
         }
         if ($isCreateCustomer) {
             $customer = $this->createCustomer($token, $submission, $transaction, $form, $metadata);
-            if($customer) {
+            if ($customer) {
                 $paymentArgs['customer'] = $customer->id;
                 unset($paymentArgs['source']);
             }
@@ -214,7 +214,7 @@ class Stripe
             'content'       => __('Payment Failed via stripe. Status changed from Pending to Failed.', 'wppayform')
         ));
 
-        if($message) {
+        if ($message) {
             SubmissionActivity::createActivity(array(
                 'form_id'       => $form->ID,
                 'submission_id' => $submission->id,
@@ -463,36 +463,68 @@ class Stripe
     private function handleSubscriptions($customer, $submission, $transaction, $form)
     {
         $subscriptionModel = new Subscription();
+        $subscriptionTransactionModel = new SubscriptionTransaction();
         $subscriptions = $subscriptionModel->getSubscriptions($submission->id);
-        $subscription = PlanSubscription::create($subscriptions, $customer, $submission);
 
-        if(!$subscription || is_wp_error($subscription)) {
+        $isOneSucceed = false;
 
-            foreach ($subscriptions as $subscriptionItem) {
+        foreach ($subscriptions as $subscriptionItem) {
+
+            $subscription = PlanSubscription::create($subscriptionItem, $customer, $submission);
+
+            if (!$subscription || is_wp_error($subscription)) {
+
                 $subscriptionModel->update($subscriptionItem->id, [
                     'status' => 'failed',
                 ]);
+
+                if ($isOneSucceed) {
+                    $message = __('Stripe error when creating subscription plan for you. You may charged for atleast one subscription. Please contact site admin to resolve the issue', 'wppayform');
+                } else {
+                    $message = __('Stripe error when creating subscription plan for you. Please contact site admin', 'wppayform');
+                }
+
+                if (is_wp_error($subscription)) {
+                    $errorCode = $subscription->get_error_code();
+                    $message = $subscription->get_error_message($errorCode);
+                }
+                $this->handlePaymentChargeError($message, $submission, $transaction, $form, false, 'subscription_error');
             }
 
-            $message = __('Stripe error when creating subscription plan for you. Please contact site admin', 'wppayform');
-            if(is_wp_error($subscription)) {
-                $errorCode = $subscription->get_error_code();
-                $message = $subscription->get_error_message($errorCode);
-            }
-            $this->handlePaymentChargeError($message, $submission, $transaction, $form, false, 'subscription_error');
-        }
+            $isOneSucceed = true;
 
-        // Now we have to do the maths for recurring payments
-        // Update Subscription Payment Status
-        foreach ($subscriptions as $subscriptionItem) {
             $subscriptionModel->update($subscriptionItem->id, [
-                'status' => 'active',
+                'status'                 => 'active',
+                'vendor_customer_id'     => $subscription->customer,
+                'vendor_subscriptipn_id' => $subscription->id,
+                'vendor_plan_id'         => $subscription->plan->id,
+                'vendor_response'        => maybe_serialize($subscription),
             ]);
+
+            if (!$subscriptionItem->trial_days) {
+                // Let's create the Subscription Transaction
+                $latestInvoice = $subscription->latest_invoice;
+                if($latestInvoice->total) {
+                    $transactionItem = [
+                        'form_id' => $submission->form_id,
+                        'user_id' => $submission->user_id,
+                        'submission_id' => $subscriptionItem->id,
+                        'transaction_type' => 'subscription',
+                        'payment_method' => 'stripe',
+                        'charge_id' => $latestInvoice->charge,
+                        'payment_total' => $latestInvoice->total,
+                        'status' => $latestInvoice->status,
+                        'currency' => $latestInvoice->currency,
+                        'payment_mode' => $submission->payment_mode,
+                        'payment_note' => maybe_serialize($latestInvoice),
+                        'created_at' => gmdate('Y-m-d H:i:s', $latestInvoice->created),
+                        'updated_at' => gmdate('Y-m-d H:i:s', $latestInvoice->created)
+                    ];
+                    $subscriptionTransactionModel->maybeInsertCharge($transactionItem);
+                }
+            }
         }
 
-        // Let's create the Subscription Transaction
-        print_r($subscription);
-        die();
 
         SubmissionActivity::createActivity(array(
             'form_id'       => $form->ID,

@@ -175,10 +175,8 @@ class Activator
 				id int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 				submission_id int(11),
 				form_id int(11),
-				
 				item_name varchar(255),
 				plan_name varchar(255),
-				
 				parent_transaction_id int(11),
 				billing_interval varchar (50), /* possible values day, week, month or year. */
 				trial_days int(11),
@@ -187,23 +185,18 @@ class Activator
 				recurring_amount int(11),
 				bill_times int(11), /* 0 means untill cancel */
 				bill_count int(11) DEFAULT 0,
-				
 				vendor_customer_id varchar(255),
 				vendor_subscriptipn_id varchar(255),
 				vendor_plan_id varchar(255),
 				status varchar(255) DEFAULT 'pending', /* possible values pending, cancelled, active, trialling, completed*/
-				
 				inital_tax_label varchar(255),
 				inital_tax int(11),
-				
 				recurring_tax_label varchar(255),
 				recurring_tax int(11),
-				
 				element_id varchar(255),
-			
-			  	
 				note text,
 				original_plan text,
+				vendor_response longtext,
 				expiration_at timestamp NULL,
 				created_at timestamp NULL,
 				updated_at timestamp NULL

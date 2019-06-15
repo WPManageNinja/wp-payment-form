@@ -15,27 +15,33 @@ if (!defined('ABSPATH')) {
  */
 class PlanSubscription
 {
-    public static function create($subscriptions, $customer, $submission)
+    public static function create($subscription, $customer, $submission)
     {
-        $billablePlans = [];
-        foreach ($subscriptions as $subscription) {
-            $plan = Plan::getOrCreatePlan($subscription, $submission);
-            if ($plan && is_wp_error($plan)) {
-                return $plan;
-            }
-            $billablePlans[] = array(
-                'plan'     => $plan->id,
-                'quantity' => $subscription->quantity,
-                'metadata' => array(
-                    'wpf_subscription_id' => $subscription->id
-                )
-            );
+        $plan = Plan::getOrCreatePlan($subscription, $submission);
+        if ($plan && is_wp_error($plan)) {
+            return $plan;
         }
+
+        $billablePlan[] = array(
+            'plan'     => $plan->id,
+            'quantity' => $subscription->quantity,
+            'metadata' => array(
+                'wpf_subscription_id' => $subscription->id
+            )
+        );
 
         $subscriptionArgs = array(
             'customer' => $customer,
             'billing'  => 'charge_automatically',
-            'items'    => $billablePlans
+            'items'    => $billablePlan,
+            'metadata' => array(
+                'submission_id' => $submission->id,
+                'wpf_subscription_id' => $subscription->id,
+                'form_id' => $submission->form_id
+            ),
+            'expand' => [
+                'latest_invoice',
+            ]
         );
         return self::subscribe($subscriptionArgs);
     }
