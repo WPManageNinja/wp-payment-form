@@ -71,6 +71,7 @@ class SubmissionView
             $currencySettings['currency_sign'] = GeneralSettings::getCurrencySymbol($submission->currency);
             $submission->currencySettings = $currencySettings;
         }
+
         $submissionItems = apply_filters('wppayform/form_entries', $submissions->items, $formId);
 
         $hasPaymentItem = true;

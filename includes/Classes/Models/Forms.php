@@ -332,6 +332,10 @@ class Forms
             ->where('form_id', $formID)
             ->delete();
 
+        wpPayFormDB()->table('wpf_subscriptions')
+            ->where('form_id', $formID)
+            ->delete();
+
         return true;
     }
 

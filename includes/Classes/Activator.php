@@ -175,6 +175,7 @@ class Activator
 				id int(20) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 				submission_id int(11),
 				form_id int(11),
+				paid_total int(11) DEFAULT 0,
 				item_name varchar(255),
 				plan_name varchar(255),
 				parent_transaction_id int(11),

@@ -44,8 +44,11 @@
                                 <span class="pay_amount" v-html="getFormattedMoney(submission.payment_total)"></span>
                                 <span class="payment_currency">{{submission.currency}}</span>
                                 <span :class="'wpf_paystatus_badge wpf_pay_status_'+submission.payment_status">
-                            <i :class="getPaymentStatusIcon(submission.payment_status)"></i> {{submission.payment_status}}
-                        </span>
+                                    <i :class="getPaymentStatusIcon(submission.payment_status)"></i> {{submission.payment_status}}
+                                </span>
+                                <template v-if="submission.subscription_payment_total">
+                                    <span> & <span class="pay_amount" v-html="getFormattedMoney(submission.subscription_payment_total)"></span> (From Subscriptions)</span>
+                                </template>
                             </div>
                         </div>
                         <div class="payment_header_right">
@@ -167,6 +170,8 @@
                     </div>
                 </div>
 
+                <subscription-payments :payment_method="submission.payment_method" :payment_mode="submission.payment_mode" :currencySetting="submission.currencySetting" :subscriptions="submission.subscriptions" />
+
                 <div v-if="parseInt(submission.order_items.length)" class="entry_info_box entry_transactions">
                     <div class="entry_info_header">
                         <div class="info_box_header">Transaction Details</div>
@@ -223,6 +228,7 @@
                         </div>
                     </div>
                 </div>
+
 
                 <div class="entry_info_box entry_submission_activity">
                     <div class="entry_info_header">
@@ -327,9 +333,13 @@
     import each from 'lodash/each';
     import fromatPrice from '../../../../common/formatPrice';
     import omit from 'lodash/omit';
+    import SubscriptionPayments from './_subscriptions';
 
     export default {
         name: "Entry",
+        components: {
+            SubscriptionPayments
+        },
         data() {
             return {
                 submission: {},

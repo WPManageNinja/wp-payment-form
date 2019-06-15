@@ -59,11 +59,14 @@ class Submission
         $results = $resultQuery->get();
 
         $formattedResults = array();
+
         foreach ($results as $result) {
             $result->form_data_raw = maybe_unserialize($result->form_data_raw);
             $result->form_data_formatted = maybe_unserialize($result->form_data_formatted);
+            $result->payment_total += $this->getSubscriptionPaymentTotal($result->form_id, $result->id);
             $formattedResults[] = $result;
         }
+
         return (object)array(
             'items' => $results,
             'total' => $totalItems
@@ -72,7 +75,6 @@ class Submission
 
     public function getSubmission($submissionId, $with = array())
     {
-
         $result = wpPayFormDB()->table('wpf_submissions')
             ->select(array('wpf_submissions.*', 'posts.post_title'))
             ->join('posts', 'posts.ID', '=', 'wpf_submissions.form_id')
@@ -117,6 +119,7 @@ class Submission
 
     public function paymentTotal($formId, $paymentStatus = false)
     {
+        $paymentTotal = 0;
         $query = wpPayFormDB()->table('wpf_submissions')
             ->select(wpPayFormDB()->raw('SUM(payment_total) as payment_total'));
         if ($formId) {
@@ -127,9 +130,34 @@ class Submission
         }
         $result =  $query->first();
         if($result && $result->payment_total) {
-            return $result->payment_total;
+            $paymentTotal = $result->payment_total;
         }
-        return 0;
+
+        if(!$paymentStatus || $paymentStatus == 'paid') {
+            $paymentTotal += $this->getSubscriptionPaymentTotal($formId);
+        }
+
+        return $paymentTotal;
+    }
+
+    public function getSubscriptionPaymentTotal($formId, $submissionId = false) {
+        $paymentTotal = 0;
+        // Calculate from subscriptions
+        $query = wpPayFormDB()->table('wpf_subscriptions')
+            ->select(wpPayFormDB()->raw('SUM(payment_total) as payment_total'));
+        if ($formId) {
+            $query = $query->where('form_id', $formId);
+        }
+
+        if($submissionId) {
+            $query = $query->where('submission_id', $submissionId);
+        }
+
+        $result =  $query->first();
+        if($result && $result->payment_total) {
+            $paymentTotal = $result->payment_total;
+        }
+        return $paymentTotal;
     }
 
     public function update($submissionId, $data)
@@ -196,6 +224,7 @@ class Submission
 
         wpPayFormDB()->table('wpf_order_transactions')
             ->where('submission_id', $sumissionId)
+            ->where('transaction_type', 'one_time')
             ->delete();
 
         wpPayFormDB()->table('wpf_submission_activities')

@@ -1117,3 +1117,24 @@ label.el-form-item__label {
     max-width: 260px;
   }
 }
+
+.payment_header.subscripton_item {
+  margin: -15px -20px 20px;
+  background-color: #f7fafc;
+  &:last-child {
+    margin-bottom: -15px;
+  }
+  .payment_head_bottom {
+    background-color: white;
+  }
+
+  .payment_head_top {
+    background-color: #f7fafc;
+  }
+}
+span.table_payment_amount {
+  font-size: 16px;
+}
+.space_left_15 {
+  margin-left: 15px;
+}

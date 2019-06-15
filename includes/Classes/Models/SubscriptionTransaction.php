@@ -34,7 +34,22 @@ class SubscriptionTransaction
             $this->update($exists->id, $item);
             return $exists->id;
         }
-        return $this->create($item);
+        $id =  $this->create($item);
+        // We want to update the total amount here
+        $parentSubscription = wpFluent()->table('wpf_subscriptions')
+                                ->where('id', $item['submission_id'])
+                                ->first();
+
+        if($parentSubscription) {
+            wpFluent()->table('wpf_subscriptions')
+                ->where('id', $parentSubscription->id)
+                ->update([
+                    'payment_total' => intval($parentSubscription->payment_total) +  $item['payment_total'],
+                    'updated_at' => gmdate('Y-m-d H:i:s')
+                ]);
+        }
+
+        return $id;
     }
 
     public function getSubscriptionTransactions($subscriptionId)
@@ -43,6 +58,10 @@ class SubscriptionTransaction
                             ->where('submission_id', $subscriptionId)
                             ->where('transaction_type', 'subscription')
                             ->get();
+
+        foreach ($transactions as $transaction) {
+            $transaction->payment_note = maybe_unserialize($transaction->payment_note);
+        }
 
         return apply_filters('wppayform/subscription_transactions', $transactions, $subscriptionId);
     }

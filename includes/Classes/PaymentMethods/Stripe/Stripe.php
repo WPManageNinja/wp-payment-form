@@ -347,7 +347,6 @@ class Stripe
         ), 200);
     }
 
-
     public function getMode()
     {
         $paymentSettings = $this->getStripeSettings();
@@ -515,7 +514,7 @@ class Stripe
                         'payment_total' => $latestInvoice->total,
                         'status' => $latestInvoice->status,
                         'currency' => $latestInvoice->currency,
-                        'payment_mode' => $submission->payment_mode,
+                        'payment_mode' => ($latestInvoice->livemode) ? 'live' : 'test',
                         'payment_note' => maybe_serialize($latestInvoice),
                         'created_at' => gmdate('Y-m-d H:i:s', $latestInvoice->created),
                         'updated_at' => gmdate('Y-m-d H:i:s', $latestInvoice->created)

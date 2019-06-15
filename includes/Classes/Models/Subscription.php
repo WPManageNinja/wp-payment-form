@@ -29,6 +29,7 @@ class Subscription
             ->get();
         foreach ($subscriptions as $subscription) {
             $subscription->original_plan = maybe_unserialize($subscription->original_plan);
+            $subscription->vendor_response = maybe_unserialize($subscription->vendor_response);
         }
         return $subscriptions;
     }
