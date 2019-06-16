@@ -15,6 +15,10 @@ class Transaction
 {
     public function create($item)
     {
+        if(!isset($item['transaction_type'])) {
+            $item['transaction_type'] = 'one_time';
+        }
+
         return wpPayFormDB()
             ->table('wpf_order_transactions')
             ->insert($item);

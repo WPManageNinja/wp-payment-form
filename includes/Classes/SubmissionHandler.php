@@ -155,7 +155,7 @@ class SubmissionHandler
         if ($paymentItems || $subscriptionItems) {
             // Insert Payment Items
             $itemModel = new OrderItem();
-            foreach ($paymentItems as $payItem) {
+            foreach ( $paymentItems as $payItem ) {
                 $payItem['submission_id'] = $submissionId;
                 $payItem['form_id'] = $formId;
                 $itemModel->create($payItem);
@@ -170,25 +170,29 @@ class SubmissionHandler
 
             $hasSubscriptions = (bool) $subscriptionItems;
 
-            // Insert Transaction Item Now
-            $transaction = array(
-                'form_id'        => $formId,
-                'user_id'        => $currentUserId,
-                'submission_id'  => $submissionId,
-                'charge_id'      => '',
-                'payment_method' => $paymentMethod,
-                'payment_total'  => $paymentTotal,
-                'currency'       => $currency,
-                'status'         => 'pending',
-                'created_at'     => gmdate('Y-m-d H:i:s'),
-                'updated_at'     => gmdate('Y-m-d H:i:s')
-            );
+            $transactionId = false;
 
-            $transaction = apply_filters('wppayform/submission_transaction_data', $transaction, $formId, $form_data);
+            if($paymentItems) {
+                // Insert Transaction Item Now
+                $transaction = array(
+                    'form_id'        => $formId,
+                    'user_id'        => $currentUserId,
+                    'submission_id'  => $submissionId,
+                    'charge_id'      => '',
+                    'payment_method' => $paymentMethod,
+                    'payment_total'  => $paymentTotal,
+                    'currency'       => $currency,
+                    'status'         => 'pending',
+                    'created_at'     => gmdate('Y-m-d H:i:s'),
+                    'updated_at'     => gmdate('Y-m-d H:i:s')
+                );
 
-            $transactionModel = new Transaction();
-            $transactionId = $transactionModel->create($transaction);
-            do_action('wppayform/after_transaction_data_insert', $transactionId, $transaction);
+                $transaction = apply_filters('wppayform/submission_transaction_data', $transaction, $formId, $form_data);
+
+                $transactionModel = new Transaction();
+                $transactionId = $transactionModel->create($transaction);
+                do_action('wppayform/after_transaction_data_insert', $transactionId, $transaction);
+            }
 
             SubmissionActivity::createActivity(array(
                 'form_id'       => $form->ID,

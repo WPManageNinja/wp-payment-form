@@ -42,20 +42,20 @@
                         </thead>
                         <tbody>
                         <template v-for="payment in subscription.related_payments">
-                            <tr v-for="lineItem in getLineItems(payment)">
+                            <tr v-for="lineItem in payment.items">
                                 <td>
-                                    <span class="table_payment_amount" v-html="getFormattedMoney(lineItem.amount)"></span>
+                                    <span class="table_payment_amount" v-html="getFormattedMoney(lineItem.payment_total)"></span>
                                     <span class="payment_currency">{{payment.currency}}</span>
-                                    <span class="wpf_paystatus_badge wpf_pay_status_active">{{payment.status}}</span>
+                                    <span class="wpf_paystatus_badge wpf_pay_status_active">{{lineItem.status}}</span>
                                 </td>
                                 <td>
-                                    {{lineItem.description}}
+                                    {{lineItem.item_name}}
                                 </td>
                                 <td>
                                     {{payment.created_at | dateFormat('MMM DD, YYYY h:mm:ss a') }}
                                 </td>
                                 <td>
-                                    <a class="el-button el-button--primary el-button--mini" v-if="getChargeUrl(payment)" target="_blank" rel="noopener" :href="getChargeUrl(payment)">
+                                    <a class="el-button el-button--primary el-button--mini" v-if="lineItem.view_url" target="_blank" rel="noopener" :href="lineItem.view_url">
                                         <i class="el-icon-view"></i>
                                     </a>
                                 </td>

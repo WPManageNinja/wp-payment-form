@@ -101,7 +101,13 @@
                 </template>
                 <template v-else-if="item.type == 'tabular_products'">
                     <tabular-products :item="item"
-                                      :product_settings="element.field_options[itemName]"></tabular-products>
+                                      :product_settings="element.field_options[itemName]">
+                    </tabular-products>
+                </template>
+                <template v-else-if="item.type == 'recurring_payment_options'">
+                    <recurring-item
+                        :item="item"
+                        :product_settings="element.field_options[itemName]" />
                 </template>
             </div>
             <el-form-item label="Field ID">
@@ -134,7 +140,8 @@
     import CheckoutDisplayOption from './_StripeCheckoutSettings';
     import PaymentMethodChoice from './_payment_method_settings';
     import TabularProducts from './_tabular_products'
-    import popover from '../../Common/input-popover-dropdown.vue'
+    import popover from '../../Common/input-popover-dropdown.vue';
+    import RecurringItem from './_RecurringItem';
 
     export default {
         name: 'elementEditor',
@@ -145,7 +152,8 @@
             CheckoutDisplayOption,
             PaymentMethodChoice,
             TabularProducts,
-            popover
+            popover,
+            RecurringItem
         },
         props: ['element', 'all_elements'],
         comments: {

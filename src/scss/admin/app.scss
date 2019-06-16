@@ -1138,3 +1138,13 @@ span.table_payment_amount {
 .space_left_15 {
   margin-left: 15px;
 }
+
+.wpf_line_radios {
+  .el-radio {
+    display: block;
+    margin-bottom: 10px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}

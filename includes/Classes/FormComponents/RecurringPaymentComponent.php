@@ -25,51 +25,44 @@ class RecurringPaymentComponent extends BaseComponent
             'group'            => 'payment',
             'postion_group'    => 'payment',
             'editor_elements'  => array(
-                'label'           => array(
+                'label'                     => array(
                     'label' => 'Recurring Payment Item Name',
                     'type'  => 'text',
                     'group' => 'general'
                 ),
-                'required'        => array(
+                'required'                  => array(
                     'label' => 'Required',
                     'type'  => 'switch',
                     'group' => 'general'
                 ),
-                'has_variable'    => array(
-                    'label' => 'Enable variable pricing',
-                    'type'  => 'switch',
-                    'group' => 'general'
-                ),
                 'recurring_payment_options' => array(
-                    'type'                   => 'recurring_payment_options',
-                    'group'                  => 'general',
-                    'label'                  => 'Configure Recurring Subscription',
-                    'selection_type'         => 'Payment Type',
-                    'selection_type_options' => array(
-                        'one_time'        => 'One Time Payment',
-                        'one_time_custom' => 'One Time Custom Amount'
-                    ),
-                    'one_time_field_options' => array(
-                        'single'          => 'Single Item',
-                        'choose_single'   => 'Chose One From Multiple Item',
-                        'choose_multiple' => 'Choose Multiple Items'
+                    'type'         => 'recurring_payment_options',
+                    'group'        => 'general',
+                    'label'        => 'Configure Recurring Subscription Payment Plans',
+                    'choice_label' => __('Choose your pricing plan'),
+                    'choice_types' => array(
+                        'simple'          => __('Simple Recurring Plan (Single)', 'payform'),
+                        'choose_single'   => __('Chose One from Multiple Pricing Plans', 'payform'),
+                        'choose_multiple' => __('Choose Multiple Plan from Pricing Plans', 'payform')
                     )
                 )
             ),
             'is_system_field'  => true,
             'is_payment_field' => true,
             'field_options'    => array(
-                'label'                     => 'Subscription Item',
+                'label'                     => __('Subscription Item', 'payform'),
                 'required'                  => 'yes',
                 'recurring_payment_options' => array(
-                    'has_variable'    => 'no',
+                    'choice_type'     => 'simple',
                     'pricing_options' => [
                         [
-                            'name'                => '$99.99 / Month',
+                            'name'                => __('$9.99 / Month', 'payform'),
                             'trial_days'          => 0,
-                            'trial_preriod'       => 'days',
-                            'billing_days_period' => '30',
+                            'has_trial_days'      => 'no',
+                            'trial_preriod_days'  => 0,
+                            'billing_interval' => 'month',
                             'bill_times'          => 0,
+                            'has_signup_fee'      => 'no',
                             'signup_fee'          => 0,
                             'subscription_amount' => '9.99'
                         ]
@@ -102,10 +95,10 @@ class RecurringPaymentComponent extends BaseComponent
             return;
         }
         $element['field_options']['default_value'] = 0;
-       ?>
+        ?>
         <input <?php echo $this->builtAttributes([
-            'type' => 'hidden',
-            'name' => $element['id'],
+            'type'  => 'hidden',
+            'name'  => $element['id'],
             'value' => 0
         ]); ?> />
         <?php

@@ -524,7 +524,6 @@ class Stripe
             }
         }
 
-
         SubmissionActivity::createActivity(array(
             'form_id'       => $form->ID,
             'submission_id' => $submission->id,
@@ -532,7 +531,6 @@ class Stripe
             'created_by'    => 'PayForm BOT',
             'content'       => __('Stripe recurring payment subscription successfully initiated', 'wppayform')
         ));
-
 
     }
 }

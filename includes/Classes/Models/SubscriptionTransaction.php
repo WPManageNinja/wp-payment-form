@@ -16,6 +16,10 @@ class SubscriptionTransaction
     public function create($item)
     {
         $item['transaction_type'] = 'subscription';
+        if(!isset($item['created_at'])) {
+            $item['created_at'] = gmdate('Y-m-d H:i:s');
+            $item['updated_at'] = gmdate('Y-m-d H:i:s');
+        }
         return wpPayFormDB()
             ->table('wpf_order_transactions')
             ->insert($item);
@@ -61,6 +65,7 @@ class SubscriptionTransaction
 
         foreach ($transactions as $transaction) {
             $transaction->payment_note = maybe_unserialize($transaction->payment_note);
+            $transaction->items = apply_filters('wppayform/subscription_items_'.$transaction->payment_method, [], $transaction);
         }
 
         return apply_filters('wppayform/subscription_transactions', $transactions, $subscriptionId);
