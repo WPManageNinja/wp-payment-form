@@ -331,8 +331,8 @@ class SubmissionHandler
             }
         }
         else if ($payment['type'] == 'custom_payment_input') {
-            $payItem['item_price'] = absint($formData[$paymentId]) * 100;
-            $payItem['line_total'] = absint($payItem['item_price']) * $quantity;
+            $payItem['item_price'] = absint(floatval($formData[$paymentId]) * 100);
+            $payItem['line_total'] = absint($payItem['item_price'] * $quantity);
         }
         else if ($payment['type'] == 'recurring_payment_item') {
             $planIndex = $formData[$paymentId];
@@ -345,7 +345,7 @@ class SubmissionHandler
             $signupLabel .= ' '.$label;
             $signupLabel = apply_filters('wppayform/signup_fee_label', $signupLabel, $payment, $formData);
             $payItem['item_name'] = $signupLabel;
-            $payItem['item_price'] = absint($plan['signup_fee']) * 100;
+            $payItem['item_price'] = absint($plan['signup_fee'] * 100);
             $payItem['line_total'] = $payItem['item_price'] * $quantity;
             return array($payItem);
         }
