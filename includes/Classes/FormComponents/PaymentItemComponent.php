@@ -131,12 +131,12 @@ class PaymentItemComponent extends BaseComponent
             ?>
             <div <?php echo $this->builtAttributes($controlAttributes); ?>>
                 <div class="wpf_input_label wpf_single_amount_label">
-                    <?php echo $title ?>: <span class="wpf_single_amount"><?php echo wpPayFormFormattedMoney($amount * 100, $currenySettings); ?></span>
+                    <?php echo $title ?>: <span class="wpf_single_amount"><?php echo wpPayFormFormattedMoney(wpPayFormConverToCents($amount), $currenySettings); ?></span>
                 </div>
             </div>
             <?php
         }
-        echo '<input name=' . $element['id'] . ' type="hidden" class="wpf_payment_item" data-price="' . $amount * 100 . '" value="' . $amount . '" />';
+        echo '<input name=' . $element['id'] . ' type="hidden" class="wpf_payment_item" data-price="' . wpPayFormConverToCents($amount) . '" value="' . $amount . '" />';
     }
 
     public function renderSingleChoice($type, $prices = array(), $element, $form)
@@ -176,14 +176,14 @@ class PaymentItemComponent extends BaseComponent
                             <?php
                             $optionAttributes = array(
                                 'value'      => $index,
-                                'data-price' => $price['value'] * 100,
+                                'data-price' => wpPayFormConverToCents($price['value']),
                             );
                             if ($defaultValue == $price['label']) {
                                 $optionAttributes['selected'] = 'true';
                             }
                             ?>
                             <option <?php echo $this->builtAttributes($optionAttributes); ?>><?php echo esc_attr($price['label']); ?>
-                                (<?php echo esc_html(wpPayFormFormattedMoney(floatval($price['value']) * 100, $currenySettings)); ?>
+                                (<?php echo esc_html(wpPayFormFormattedMoney(wpPayFormConverToCents($price['value']), $currenySettings)); ?>
                                 )
                             </option>
                         <?php endforeach; ?>
@@ -197,7 +197,7 @@ class PaymentItemComponent extends BaseComponent
                         $attributes = array(
                             'class'      => 'form-check-input wpf_payment_item',
                             'type'       => 'radio',
-                            'data-price' => $price['value'] * 100,
+                            'data-price' => wpPayFormConverToCents($price['value']),
                             'name'       => $element['id'],
                             'id'         => $optionId,
                             'value'      => $index
@@ -214,7 +214,7 @@ class PaymentItemComponent extends BaseComponent
                                       itemprop="description"><?php echo $price['label']; ?></span>
                                 <span class="wpf_price_option_sep">&nbsp;–&nbsp;</span>
                                 <span
-                                    class="wpf_price_option_price"><?php echo wpPayFormFormattedMoney(floatval($price['value']) * 100, $currenySettings); ?></span>
+                                    class="wpf_price_option_price"><?php echo wpPayFormFormattedMoney(wpPayFormConverToCents($price['value']), $currenySettings); ?></span>
                                 <meta itemprop="price" content="<?php echo $price['value']; ?>">
                             </label>
                         </div>
@@ -261,7 +261,7 @@ class PaymentItemComponent extends BaseComponent
                     $attributes = array(
                         'class'         => 'form-check-input wpf_payment_item',
                         'type'          => 'checkbox',
-                        'data-price'    => $option['value'] * 100,
+                        'data-price'    => wpPayFormConverToCents($option['value']),
                         'name'          => $element['id'] . '[' . $index . ']',
                         'id'            => $optionId,
                         'data-group_id' => $element['id'],
@@ -276,7 +276,7 @@ class PaymentItemComponent extends BaseComponent
                         <label class="form-check-label" for="<?php echo $optionId; ?>">
                             <span class="wpf_price_option_name" itemprop="description"><?php echo $option['label']; ?></span>
                             <span class="wpf_price_option_sep">&nbsp;–&nbsp;</span>
-                            <span class="wpf_price_option_price"><?php echo wpPayFormFormattedMoney(floatval($option['value'] * 100), $currenySettings); ?></span>
+                            <span class="wpf_price_option_price"><?php echo wpPayFormFormattedMoney(wpPayFormConverToCents($option['value']), $currenySettings); ?></span>
                             <meta itemprop="price" content="<?php echo $option['value']; ?>"/>
                         </label>
                     </div>

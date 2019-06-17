@@ -92,7 +92,10 @@ var wpPayformApp = {};
                 });
             }
 
+            this.maybeSubscriptionSetup(form);
+
             jQuery(document.body).trigger('wpfFormInitialized', [form]);
+            jQuery(document.body).trigger('wpfFormInitialized_' + form.data('wpf_form_id'), [form]);
             form.addClass('wpf_form_initialized');
         },
         submitForm(form) {
@@ -298,6 +301,46 @@ var wpPayformApp = {};
             form.find('.wpf_all_payment_methods_wrapper').show();
             form.find('.wpf_all_payment_methods_wrapper .wpf_payment_method_element').hide();
             form.find('.wpf_all_payment_methods_wrapper .wpf_payment_method_element_' + value).show();
+        },
+        maybeSubscriptionSetup(form) {
+
+            // Handle Radio Button Select
+            function checkForRadio(element) {
+                let elementName = $(element).attr('name');
+                let selectedIndex = $(element).val();
+                $(element).closest('.wpf_subscription_controls_radio').find('.wpf_subscription_plan_summary_item').hide();
+                $(element).closest('.wpf_subscription_controls_radio').find('.wpf_subscription_plan_summary_'+elementName+' .wpf_subscription_plan_index_'+selectedIndex).show();
+            }
+
+            $.each(form.find('.wpf_subscription_controls_radio input:checked'), function (index, element) {
+                checkForRadio(element);
+            });
+
+            form.find('.wpf_subscription_controls_radio input').on('change', function () {
+                checkForRadio(this);
+            });
+
+            // Handle Selection Button Select
+
+            function checkForSelections(element) {
+                let elementName = $(element).attr('id');
+                let selectedIndex = $(element).val();
+                form.find('.wpf_subscription_plan_summary_'+elementName +' .wpf_subscription_plan_summary_item').hide();
+                form.find('.wpf_subscription_plan_summary_'+elementName +' .wpf_subscription_plan_index_'+selectedIndex).show();
+
+            }
+
+            $.each(form.find('.wpf_subscrion_plans_select option:selected'), function (index, element) {
+                if($(element).attr('value') != '') {
+                    checkForSelections($(element).parent());
+                }
+            });
+
+            form.find('.wpf_subscrion_plans_select select').on('change', function () {
+                checkForSelections(this);
+            });
+
+
         }
     };
 

@@ -48,6 +48,7 @@ class SubscriptionTransaction
             wpFluent()->table('wpf_subscriptions')
                 ->where('id', $parentSubscription->id)
                 ->update([
+                    'bill_count' => $parentSubscription->bill_count + 1,
                     'payment_total' => intval($parentSubscription->payment_total) +  $item['payment_total'],
                     'updated_at' => gmdate('Y-m-d H:i:s')
                 ]);

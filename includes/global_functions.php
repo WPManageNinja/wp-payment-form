@@ -36,3 +36,12 @@ function wpPayFormFormattedMoney($amountInCents, $currencySettings)
     }
     return $amount;
 }
+
+function wpPayFormConverToCents($amount)
+{
+    if(!$amount) {
+        return 0;
+    }
+    $amount = floatval($amount);
+    return round($amount * 100, 0);
+}

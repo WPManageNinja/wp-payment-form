@@ -12,8 +12,8 @@
                 </el-radio>
             </el-radio-group>
         </el-form-item>
-        <h4>Pricing Plans</h4>
 
+        <h4>Pricing Plans</h4>
         <div class="wpf_plan_cards">
             <div class="wpf_plans" v-for="(item, index) in product_settings.pricing_options">
                 <div class="plan_header">
@@ -72,7 +72,7 @@
                                 active-value="yes"
                                 inactive-value="no">
                             </el-switch>
-                            <el-input-number v-if="item.has_trial_days == 'yes'" placeholder="Trial Days" size="mini" v-model="item.trial_preriod_days" :min="0"></el-input-number>
+                            <el-input-number v-if="item.has_trial_days == 'yes'" placeholder="Trial Days" size="mini" v-model="item.trial_days" :min="0"></el-input-number>
                         </el-form-item>
 
                         <el-form-item label="Total Billing times">
@@ -129,7 +129,7 @@
                 let text = `Bill <b>${item.subscription_amount}/${item.billing_interval}</b> `;
 
                 if(item.has_trial_days == 'yes') {
-                    text += `with ${item.trial_preriod_days} trial days `;
+                    text += `with ${item.trial_days} trial days `;
                 }
                 if(item.has_signup_fee == 'yes') {
                     text += `and Inital <b>Signup Fee ${item.signup_fee}</b> `;

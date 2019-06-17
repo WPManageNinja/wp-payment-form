@@ -46,26 +46,34 @@ class SubmissionHandler
         $formattedElements = Forms::getFormattedElements($formId);
         $this->validate($form_data, $formattedElements, $form);
 
+        $paymentMethod = apply_filters('wppayform/choose_payment_method_for_submission', '', $formattedElements['payment_method_element'], $formId, $form_data);
+
         // Extract Payment Items Here
         $paymentItems = array();
         $subscriptionItems = array();
 
         foreach ($formattedElements['payment'] as $paymentId => $payment) {
             $quantity = $this->getItemQuantity($formattedElements['item_quantity'], $paymentId, $form_data);
-
             if ($payment['type'] == 'recurring_payment_item') {
                 $subscription = $this->getSubscriptionLine($payment, $paymentId, $quantity, $form_data, $formId);
                 $subscriptionItems = array_merge($subscriptionItems, $subscription);
-            }
-
-            $lineItems = $this->getPaymentLine($payment, $paymentId, $quantity, $form_data);
-            if($lineItems) {
-                $paymentItems = array_merge($paymentItems, $lineItems);
+            } else {
+                $lineItems = $this->getPaymentLine($payment, $paymentId, $quantity, $form_data);
+                if($lineItems) {
+                    $paymentItems = array_merge($paymentItems, $lineItems);
+                }
             }
         }
 
         $paymentItems = apply_filters('wppayform/submitted_payment_items', $paymentItems, $formattedElements, $form_data);
         $subscriptionItems = apply_filters('wppayform/submitted_subscription_items', $subscriptionItems, $formattedElements, $form_data);
+
+        /*
+         * providing filter hook for payment method to push some payment data
+         *  from $subscriptionItems
+         * Some PaymentGateway like stripe may add signup fee as one time fee
+         */
+        $paymentItems = apply_filters('wppayform/submitted_payment_items_'.$paymentMethod, $paymentItems, $formattedElements, $form_data, $subscriptionItems);
 
         // Extract Input Items Here
         $inputItems = array();
@@ -90,8 +98,6 @@ class SubmissionHandler
             $currentUser = get_user_by('ID', $currentUserId);
             $this->customerEmail = $currentUser->user_email;
         }
-
-        $paymentMethod = apply_filters('wppayform/choose_payment_method_for_submission', '', $formattedElements['payment_method_element'], $formId, $form_data);
 
         if ($formattedElements['payment_method_element'] && !$paymentMethod) {
             wp_send_json_error(array(
@@ -186,9 +192,7 @@ class SubmissionHandler
                     'created_at'     => gmdate('Y-m-d H:i:s'),
                     'updated_at'     => gmdate('Y-m-d H:i:s')
                 );
-
                 $transaction = apply_filters('wppayform/submission_transaction_data', $transaction, $formId, $form_data);
-
                 $transactionModel = new Transaction();
                 $transactionId = $transactionModel->create($transaction);
                 do_action('wppayform/after_transaction_data_insert', $transactionId, $transaction);
@@ -311,7 +315,7 @@ class SubmissionHandler
                 $pricings = $priceDetailes['multiple_pricing'];
                 $price = $pricings[$formData[$paymentId]];
                 $payItem['item_name'] = $price['label'];
-                $payItem['item_price'] = absint($price['value'] * 100);
+                $payItem['item_price'] = wpPayFormConverToCents($price['value']);
                 $payItem['line_total'] = $payItem['item_price'] * $quantity;
             } else if ($payType == 'choose_multiple') {
                 $selctedItems = $formData[$paymentId];
@@ -320,36 +324,19 @@ class SubmissionHandler
                 foreach ($selctedItems as $itemIndex => $selctedItem) {
                     $itemClone = $payItem;
                     $itemClone['item_name'] = $pricings[$itemIndex]['label'];
-                    $itemClone['item_price'] = absint($pricings[$itemIndex]['value'] * 100);
+                    $itemClone['item_price'] = wpPayFormConverToCents($pricings[$itemIndex]['value']);
                     $itemClone['line_total'] = $itemClone['item_price'] * $quantity;
                     $payItems[] = $itemClone;
                 }
                 return $payItems;
             } else {
-                $payItem['item_price'] = absint(ArrayHelper::get($priceDetailes, 'payment_amount') * 100);
-                $payItem['line_total'] = absint($payItem['item_price']) * $quantity;
+                $payItem['item_price'] = wpPayFormConverToCents(ArrayHelper::get($priceDetailes, 'payment_amount'));
+                $payItem['line_total'] = $payItem['item_price'] * $quantity;
             }
-        }
-        else if ($payment['type'] == 'custom_payment_input') {
-            $payItem['item_price'] = absint(floatval($formData[$paymentId]) * 100);
-            $payItem['line_total'] = absint($payItem['item_price'] * $quantity);
-        }
-        else if ($payment['type'] == 'recurring_payment_item') {
-            $planIndex = $formData[$paymentId];
-            $plan = ArrayHelper::get($payment, 'options.recurring_payment_options.pricing_options.'.$planIndex);
-            if(!$plan || !$plan['signup_fee']) {
-                return array();
-            }
-            $payItem['type'] = 'signup_fee';
-            $signupLabel = __('Signup Fee for', 'wppayform');
-            $signupLabel .= ' '.$label;
-            $signupLabel = apply_filters('wppayform/signup_fee_label', $signupLabel, $payment, $formData);
-            $payItem['item_name'] = $signupLabel;
-            $payItem['item_price'] = absint($plan['signup_fee'] * 100);
+        } else if ($payment['type'] == 'custom_payment_input') {
+            $payItem['item_price'] = wpPayFormConverToCents(floatval($formData[$paymentId]));
             $payItem['line_total'] = $payItem['item_price'] * $quantity;
-            return array($payItem);
-        }
-        else {
+        } else {
             return array();
         }
         return array($payItem);
@@ -388,17 +375,25 @@ class SubmissionHandler
             'item_name'           => $label,
             'form_id'             => $formId,
             'plan_name'           => $plan['name'],
-            'billing_interval' => 'month',
-            'trial_days'          => $plan['trial_days'],
-            'recurring_amount'    => absint($plan['subscription_amount'] * 100),
+            'billing_interval'    => $plan['billing_interval'],
+            'trial_days'          => 0,
+            'recurring_amount'    => wpPayFormConverToCents($plan['subscription_amount']),
             'bill_times'          => $plan['bill_times'],
-            'initial_amount'      => absint($plan['signup_fee'] * 100),
+            'initial_amount'      => 0,
             'status'              => 'pending',
             'original_plan'       => maybe_serialize($plan),
             'expiration_at'       => $expirationDate,
             'created_at'          => gmdate('Y-m-d H:i:s'),
             'updated_at'          => gmdate('Y-m-d H:i:s'),
         );
+
+        if($plan['has_signup_fee'] == 'yes' && $plan['signup_fee']) {
+            $subscription['initial_amount'] = wpPayFormConverToCents($plan['signup_fee']);
+        }
+
+        if($plan['has_trial_days'] == 'yes' && $plan['trial_days']) {
+            $subscription['trial_days'] = $plan['trial_days'];
+        }
 
         $allSubscriptions = [$subscription];
 
@@ -407,9 +402,7 @@ class SubmissionHandler
                 $allSubscriptions[] = $subscription;
             }
         }
-
         return $allSubscriptions;
-
     }
 
     private function getErrorLabel($element, $formId)
