@@ -102,6 +102,13 @@ class Submission
         if (in_array('activities', $with)) {
             $result->activities = SubmissionActivity::getSubmissionActivity($submissionId);
         }
+
+        if (in_array('subscriptions', $with)) {
+            if(class_exists('\WPPayForm\Pro\Classes\RecurringInfo')) {
+                $recurringPayment = new \WPPayForm\Pro\Classes\RecurringInfo();
+                $result = $recurringPayment->getSubscriptions($result);
+            }
+        }
         return $result;
     }
 

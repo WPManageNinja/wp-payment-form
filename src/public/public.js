@@ -155,6 +155,7 @@ var wpPayformApp = {};
                     form.find('input[name=stripeToken]').remove();
                 })
         },
+
         calculatePayments(form) {
             let elements = form.find('.wpf_payment_item');
             let itemTotalValue = {};
@@ -279,6 +280,7 @@ var wpPayformApp = {};
 
             return itemizedValue;
         },
+
         initDatePiker() {
             let dateFields = $('.wpf_form input.wpf_date_field');
             if (dateFields.length) {

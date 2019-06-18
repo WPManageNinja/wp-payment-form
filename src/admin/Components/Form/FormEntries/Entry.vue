@@ -37,17 +37,19 @@
                 </div>
 
                 <div class="payment_header">
-                    <div v-if="parseInt(submission.order_items.length)" class="payment_head_top">
+                    <div v-if="parseInt(submission.order_items.length) || submission.subscription_payment_total" class="payment_head_top">
                         <div class="payment_header_left">
                             <p class="head_small_title">Payment</p>
                             <div class="head_payment_amount">
-                                <span class="pay_amount" v-html="getFormattedMoney(submission.payment_total)"></span>
-                                <span class="payment_currency">{{submission.currency}}</span>
-                                <span :class="'wpf_paystatus_badge wpf_pay_status_'+submission.payment_status">
+                                <template v-if="parseInt(submission.payment_total)">
+                                    <span class="pay_amount" v-html="getFormattedMoney(submission.payment_total)"></span>
+                                    <span class="payment_currency">{{submission.currency}}</span>
+                                    <span :class="'wpf_paystatus_badge wpf_pay_status_'+submission.payment_status">
                                     <i :class="getPaymentStatusIcon(submission.payment_status)"></i> {{submission.payment_status}}
                                 </span>
+                                </template>
                                 <template v-if="submission.subscription_payment_total">
-                                    <span> & <span class="pay_amount" v-html="getFormattedMoney(submission.subscription_payment_total)"></span> (From Subscriptions)</span>
+                                    <span><span v-show="parseInt(submission.payment_total)"> & </span><span class="pay_amount" v-html="getFormattedMoney(submission.subscription_payment_total)"></span> (From Subscriptions)</span>
                                 </template>
                             </div>
                         </div>
@@ -170,7 +172,11 @@
                     </div>
                 </div>
 
-                <subscription-payments :payment_method="submission.payment_method" :payment_mode="submission.payment_mode" :currencySetting="submission.currencySetting" :subscriptions="submission.subscriptions" />
+                <subscription-payments
+                    :payment_method="submission.payment_method"
+                    :payment_mode="submission.payment_mode"
+                    :currencySetting="submission.currencySetting"
+                    :subscriptions="submission.subscriptions" />
 
                 <div v-if="parseInt(submission.order_items.length)" class="entry_info_box entry_transactions">
                     <div class="entry_info_header">

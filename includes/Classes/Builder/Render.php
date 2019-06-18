@@ -48,6 +48,7 @@ class Render
             }
             $form_body = ob_get_clean();
         endif;
+
         ob_start();
         $this->renderFormHeader($form);
         $header_html = ob_get_clean();

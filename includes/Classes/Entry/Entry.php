@@ -6,6 +6,7 @@ namespace WPPayForm\Classes\Entry;
 use WPPayForm\Classes\ArrayHelper;
 use WPPayForm\Classes\Models\Forms;
 use WPPayForm\Classes\Models\OrderItem;
+use WPPayForm\Classes\Models\Subscription;
 use WPPayForm\Classes\View;
 
 if (!defined('ABSPATH')) {
@@ -45,13 +46,13 @@ class Entry
         return $default;
     }
 
-    public function getInput($key, $default = false )
+    public function getInput($key, $default = false)
     {
         $value = $default;
         if (isset($this->formattedInput[$key])) {
             $value = $this->formattedInput[$key];
         }
-        if(is_array($value)) {
+        if (is_array($value)) {
             $value = $this->maybeNeedToConverHtml($value, $key);
         }
         return $value;
@@ -88,9 +89,9 @@ class Entry
                 $label = $labels[$itemKey];
             }
 
-            if(is_array($item)) {
+            if (is_array($item)) {
                 $item = $this->maybeNeedToConverHtml($item, $itemKey);
-                if(is_array($item)) {
+                if (is_array($item)) {
                     $item = implode(', ', $item);
                 }
             }
@@ -117,9 +118,19 @@ class Entry
         ));
     }
 
+    public function getSubscriptionsHtml()
+    {
+        // Just check if submission order items added or not
+        $this->getSubscriptionItems();
+        return View::make('elements.subscriptions_info', array(
+            'submission'     => $this->submission,
+            'load_table_css' => true
+        ));
+    }
+
     public function getOrderItems()
     {
-        if(!property_exists($this->submission, 'order_items')) {
+        if (!property_exists($this->submission, 'order_items')) {
             $orderItem = new OrderItem();
             $this->submission->order_items = $orderItem->getSingleOrderItems($this->submissionId);
         }
@@ -128,11 +139,20 @@ class Entry
 
     public function getTaxItems()
     {
-        if(!property_exists($this->submission, 'tax_items')) {
+        if (!property_exists($this->submission, 'tax_items')) {
             $orderItem = new OrderItem();
             $this->submission->tax_items = $orderItem->getTaxOrderItems($this->submissionId);
         }
         return $this->submission->tax_items;
+    }
+
+    public function getSubscriptionItems()
+    {
+        if (!property_exists($this->submission, 'subscriptions')) {
+            $subscriptionModel = new Subscription();
+            $this->submission->subscriptions = $subscriptionModel->getSubscriptions($this->submissionId);
+        }
+        return $this->submission->subscriptions;
     }
 
     public function getOrderItemsAsText($separator = "\n")
@@ -141,14 +161,25 @@ class Entry
         $text = '';
         foreach ($orderItems as $index => $orderItem) {
 
-            $text .= $orderItem->item_name.' ('.$orderItem->quantity.') - '. number_format($orderItem->line_total / 100, 2);
-            //if($index != count($orderItems) - 1) {
+            $text .= $orderItem->item_name . ' (' . $orderItem->quantity . ') - ' . number_format($orderItem->line_total / 100, 2);
+            if($index != (count($orderItems) - 1) ) {
                 $text .= $separator;
-            //}
-            $text .= $orderItem->item_name.' ('.$orderItem->quantity.') - '. number_format($orderItem->line_total / 100, 2);
-            //if($index != count($orderItems) - 1) {
-            $text .= $separator;
-            //}
+            }
+
+        }
+        return $text;
+    }
+
+    public function getSubscriptionsAsText($separator = "\n")
+    {
+        // Just check if submission order items added or not
+        $subscriptionItems = $this->getSubscriptionItems();
+        $text = '';
+        foreach ($subscriptionItems as $index => $subscriptionItem) {
+            $text .= $subscriptionItem->item_name . ' - ' . $subscriptionItem->plan_name . ' ( ' . number_format($subscriptionItem->payment_total / 100, 2) .' ) - '.$subscriptionItem->status;
+            if($index != (count($subscriptionItems) - 1) ) {
+                $text .= $separator;
+            }
         }
         return $text;
     }
@@ -159,14 +190,18 @@ class Entry
             return $this->getInputFieldsHtmlTable();
         }
 
-        if($name == 'product_items_table_html') {
+        if ($name == 'product_items_table_html') {
             return $this->getOrderItemsHtml();
+        }
+
+        if ($name == 'subscription_details_table_html') {
+            return $this->getSubscriptionsHtml();
         }
 
         if ($name == 'payment_total_in_cents') {
             return $this->submission->payment_total;
         } else if ($name == 'payment_total_in_decimal') {
-            return number_format($this->submission->payment_total/ 100 , 2);
+            return number_format($this->submission->payment_total / 100, 2);
         }
 
         if (property_exists($this->submission, $name)) {
@@ -192,16 +227,16 @@ class Entry
     protected function maybeNeedToConverHtml($value, $key)
     {
         $formattedInputs = $this->getFormattedInputs();
-        $element = ArrayHelper::get($formattedInputs, 'input.'.$key);
-        if($element) {
-           $value = apply_filters('wppayform/maybe_conver_html_'.$element['type'], $value, $this->submission, $element);
+        $element = ArrayHelper::get($formattedInputs, 'input.' . $key);
+        if ($element) {
+            $value = apply_filters('wppayform/maybe_conver_html_' . $element['type'], $value, $this->submission, $element);
         }
         return $value;
     }
 
     public function getFormattedInputs()
     {
-        if(!$this->formattedFields) {
+        if (!$this->formattedFields) {
             $this->formattedFields = Forms::getFormattedElements($this->formId);
         }
         return $this->formattedFields;

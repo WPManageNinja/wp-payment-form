@@ -14,12 +14,12 @@
     </table>
 
     <?php if($billingDetails = \WPPayForm\Classes\ArrayHelper::get($submission->parsedData, '__checkout_billing_address_details.value')): ?>
-        <h5><?php _e('Billing address') ?></h5>
+        <h5><?php _e('Billing address', 'wppayform'); ?></h5>
         <div class="wpf_address_details"><?php echo $billingDetails; ?></div>
     <?php endif; ?>
 
     <?php if($shippingDetails = \WPPayForm\Classes\ArrayHelper::get($submission->parsedData, '__checkout_shipping_address_details.value')): ?>
-        <h5><?php _e('Shipping address') ?></h5>
+        <h5><?php _e('Shipping address', 'wppayform'); ?></h5>
         <div class="wpf_address_details"><?php echo $shippingDetails; ?></div>
     <?php endif; ?>
 </div>

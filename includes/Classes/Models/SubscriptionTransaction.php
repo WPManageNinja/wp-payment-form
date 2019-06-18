@@ -30,10 +30,12 @@ class SubscriptionTransaction
         $exists = wpPayFormDB()
             ->table('wpf_order_transactions')
             ->where('transaction_type', 'subscription')
-            ->where('submission_id', $item->submission_id)
-            ->where('charge_id', $item->charge_id)
-            ->where('payment_method', $item->payment_method)
+            ->where('submission_id', $item['submission_id'])
+            ->where('subscription_id', $item['subscription_id'])
+            ->where('charge_id', $item['charge_id'])
+            ->where('payment_method', $item['payment_method'])
             ->first();
+
         if($exists) {
             $this->update($exists->id, $item);
             return $exists->id;
@@ -41,7 +43,7 @@ class SubscriptionTransaction
         $id =  $this->create($item);
         // We want to update the total amount here
         $parentSubscription = wpFluent()->table('wpf_subscriptions')
-                                ->where('id', $item['submission_id'])
+                                ->where('id', $item['subscription_id'])
                                 ->first();
 
         if($parentSubscription) {
@@ -60,8 +62,7 @@ class SubscriptionTransaction
     public function getSubscriptionTransactions($subscriptionId)
     {
         $transactions = wpPayFormDB()->table('wpf_order_transactions')
-                            ->where('submission_id', $subscriptionId)
-                            ->where('transaction_type', 'subscription')
+                            ->where('subscription_id', $subscriptionId)
                             ->get();
 
         foreach ($transactions as $transaction) {

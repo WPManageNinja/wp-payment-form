@@ -192,10 +192,16 @@ class AdminAjaxHandler
         }
         $errors = array();
 
+        $hasRecurringField = 'no';
+
         foreach ($builderSettings as $builderSetting) {
             $error = apply_filters('wppayform/validate_component_on_save_' . $builderSetting['type'], false, $builderSetting, $formId);
             if ($error) {
                 $errors[$builderSetting['id']] = $error;
+            }
+
+            if($builderSetting['type'] == 'recurring_payment_item') {
+                $hasRecurringField = 'yes';
             }
         }
 
@@ -209,6 +215,8 @@ class AdminAjaxHandler
         $submit_button_settings = wp_unslash($_REQUEST['submit_button_settings']);
         update_post_meta($formId, 'wppayform_paymentform_builder_settings', $builderSettings);
         update_post_meta($formId, 'wppayform_submit_button_settings', $submit_button_settings);
+
+        update_post_meta($formId, 'wpf_has_recurring_field', $hasRecurringField);
 
         wp_send_json_success(array(
             'message' => __('Settings successfully updated', 'wppayform')

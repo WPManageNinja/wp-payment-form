@@ -53,7 +53,11 @@ class RecurringPaymentComponent extends BaseComponent
                     'choice_types' => array(
                         'simple'          => __('Simple Recurring Plan (Single)', 'payform'),
                         'choose_single'   => __('Chose One from Multiple Pricing Plans', 'payform'),
-                        'choose_multiple' => __('Choose Multiple Plan from Pricing Plans', 'payform')
+                        //'choose_multiple' => __('Choose Multiple Plan from Pricing Plans', 'payform')
+                    ),
+                    'selection_types' => array(
+                        'radio' => __('Radio input field', 'payform'),
+                        'select' => __('Select input field', 'payform')
                     )
                 )
             ),
@@ -390,7 +394,7 @@ class RecurringPaymentComponent extends BaseComponent
         $subscriptionAmount = wpPayFormConverToCents($plan['subscription_amount']);
         $currentBillableAmount = $subscriptionAmount;
         if ($this->hasSignupFee($plan)) {
-            $currentBillableAmount = wpPayFormConverToCents($plan['signup_fee']);
+            $currentBillableAmount = wpPayFormConverToCents($plan['signup_fee'] + $plan['subscription_amount']);
         }
         if ($this->hasTrial($plan)) {
             $currentBillableAmount = 0;

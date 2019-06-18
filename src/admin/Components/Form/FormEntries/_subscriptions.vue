@@ -16,6 +16,7 @@
                             <span :class="'wpf_paystatus_badge wpf_pay_status_'+subscription.status">
                                 <i :class="getPaymentStatusIcon(subscription.status)"></i> {{subscription.status}}
                             </span>
+                            <span v-show="parseInt(subscription.initial_amount)"> & Signup Fee: <em v-html="getFormattedMoney(subscription.initial_amount)"></em></span>
                         </div>
 
                     </div>
@@ -31,7 +32,7 @@
                 </div>
                 <div class="payment_head_bottom wpf_entry_order_items">
                     <h3>Payments</h3>
-                    <table class="wp-list-table widefat table table-bordered striped">
+                    <table v-if="subscription.related_payments.length" class="wp-list-table widefat table table-bordered striped">
                         <thead>
                         <tr>
                             <th>Amount</th>
@@ -63,6 +64,9 @@
                         </template>
                         </tbody>
                     </table>
+                    <div v-else>
+                        <p>All received payments will be shown here. No payments received yet!</p>
+                    </div>
                 </div>
             </div>
 

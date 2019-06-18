@@ -15,20 +15,23 @@ class PaymentReceipt
     public function render($submissionId)
     {
         $submissionModel = new Submission();
-        $submission = $submissionModel->getSubmission($submissionId, array('transactions', 'order_items', 'tax_items'));
+        $submission = $submissionModel->getSubmission($submissionId, array('transactions', 'order_items', 'tax_items', 'subscriptions'));
         $submission->parsedData = $submissionModel->getParsedSubmission($submission);
         $html = $this->beforePaymentReceipt($submission);
         $html .= $this->paymentReceptHeader($submission);
         $html .= $this->paymentInfo($submission);
+        $html .= $this->recurringPaymentInfo($submission);
         $html .= $this->itemDetails($submission);
         $html .= $this->customerDetails($submission);
         $html .= $this->afterPaymentReceipt($submission);
+        $html .= $this->loadCss($submission);
         return $html;
     }
 
     private function beforePaymentReceipt($submission)
     {
         ob_start();
+        echo '<div class="wpf_payment_receipt">';
         do_action('wppayform/payment_receipt/before_content', $submission);
         return ob_get_clean();
     }
@@ -37,6 +40,7 @@ class PaymentReceipt
     {
         ob_start();
         do_action('wppayform/payment_receipt/after_content', $submission);
+        echo '</div>';
         return ob_get_clean();
     }
 
@@ -65,7 +69,10 @@ class PaymentReceipt
         if ($preRender) {
             return $preRender;
         }
-        return $this->loadView('elements/order_items_table', array('submission' => $submission));
+
+        $header = '<h4>'.__('Items Details', 'wppayform').'</h4>';
+        $html = $this->loadView('elements/order_items_table', array('submission' => $submission));
+        return $header.$html;
     }
 
     private function customerDetails($submission)
@@ -75,6 +82,27 @@ class PaymentReceipt
             return $preRender;
         }
         return $this->loadView('receipt/customer_details', array('submission' => $submission));
+    }
+
+    private function recurringPaymentInfo($submission)
+    {
+        if(property_exists($submission, 'subscriptions') && $submission->subscriptions) {
+            $preRender = apply_filters('wppayform/payment_receipt/pre_render_subscription_details', '', $submission);
+            if ($preRender) {
+                return $preRender;
+            }
+            $header = '<h4>'.__('Subscription Details', 'wppayform').'</h4>';
+            $html = $this->loadView('elements/subscriptions_info', array(
+                'submission' => $submission,
+                'load_table_css' => false
+            ));
+            return $header.$html;
+        }
+    }
+
+    private function loadCss($submission)
+    {
+        return $this->loadView('receipt/custom_css', array('submission' => $submission));
     }
 
     private function loadView($fileName, $data)

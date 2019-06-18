@@ -6,7 +6,8 @@
                     {{ $t('Stripe Gateway Settings') }}
                 </h3>
                 <div class="payform_section_actions">
-                    <el-button v-loading="saving" @click="saveSettings()" class="payform_action" size="small" type="primary">
+                    <el-button v-loading="saving" @click="saveSettings()" class="payform_action" size="small"
+                               type="primary">
                         {{ $t( 'Save Settings' ) }}
                     </el-button>
                 </div>
@@ -22,42 +23,72 @@
                     <div class="wpf_settings_section">
                         <h3>Stripe Test Keys</h3>
                         <el-form-item label="Test Publishable key">
-                            <el-input type="text" size="small" v-model="settings.test_pub_key" placeholder="Test Publishable key" />
+                            <el-input type="text" size="small" v-model="settings.test_pub_key"
+                                      placeholder="Test Publishable key"/>
                         </el-form-item>
                         <el-form-item label="Test Secret key">
-                            <el-input type="password" size="small" v-model="settings.test_secret_key" placeholder="Test Secret key" />
+                            <el-input type="password" size="small" v-model="settings.test_secret_key"
+                                      placeholder="Test Secret key"/>
                         </el-form-item>
                     </div>
 
                     <div v-if="!is_key_defined" class="wpf_settings_section">
                         <h3>Stripe Live Keys</h3>
                         <el-form-item label="Live Publishable key">
-                            <el-input type="text" size="small" v-model="settings.live_pub_key" placeholder="Live Publishable key" />
+                            <el-input type="text" size="small" v-model="settings.live_pub_key"
+                                      placeholder="Live Publishable key"/>
                         </el-form-item>
                         <el-form-item label="Live Secret key">
-                            <el-input type="password" size="small" v-model="settings.live_secret_key" placeholder="Live Secret key" />
+                            <el-input type="password" size="small" v-model="settings.live_secret_key"
+                                      placeholder="Live Secret key"/>
                         </el-form-item>
                     </div>
                     <div v-else class="wpf_settings_section">
                         <p>Live Publishable key and Live Secret key is defined in wp-config.php. This is good! (y)</p>
                     </div>
 
-                    <el-form-item label="Company/Business Name">
-                        <el-input type="text" size="small" v-model="settings.company_name" placeholder="Company/Business Name" />
-                    </el-form-item>
+                    <div class="wpf_settings_section">
+                        <h3>Company Info (Will be used on checkout)</h3>
 
-                    <el-form-item label="Checkout Logo">
-                        <el-upload
-                            class="avatar-uploader"
-                            :action="uploadUrl"
-                            :show-file-list="false"
-                            accept_x="image/png, image/jpeg"
-                            :on-error="handleUploadError"
-                            :on-success="handleUploadSuccess">
-                            <img v-if="settings.checkout_logo" :src="settings.checkout_logo" class="avatar" />
-                            <i v-else class="el-icon-plus avatar-uploader-icon"></i>
-                        </el-upload>
-                    </el-form-item>
+                        <el-form-item label="Company/Business Name">
+                            <el-input type="text" size="small" v-model="settings.company_name"
+                                      placeholder="Company/Business Name"/>
+                        </el-form-item>
+
+                        <el-form-item label="Checkout Logo">
+                            <el-upload
+                                class="avatar-uploader"
+                                :action="uploadUrl"
+                                :show-file-list="false"
+                                accept_x="image/png, image/jpeg"
+                                :on-error="handleUploadError"
+                                :on-success="handleUploadSuccess">
+                                <img v-if="settings.checkout_logo" :src="settings.checkout_logo" class="avatar"/>
+                                <i v-else class="el-icon-plus avatar-uploader-icon"></i>
+                            </el-upload>
+                        </el-form-item>
+                    </div>
+
+                    <div v-if="has_pro" class="wpf_settings_section">
+                        <h3>Stripe Webhook (For Recurring Payments)</h3>
+                        <p>In order for Stripe to function completely for subscription/recurring payments, you must configure your Stripe webhooks. Visit
+                            your <a href="https://dashboard.stripe.com/account/webhooks" target="_blank" rel="noopener">account
+                                dashboard</a> to configure them. Please add a webhook endpoint for the URL below.</p>
+                        <p><b>Webhook URL: </b><code>{{webhook_url}}</code></p>
+                        <p>See <a href="https://wpmanageninja.com/docs/wppayform/getting-started-with-wppayform/configure-payment-methods-and-currency/" target="_blank" rel="noopener">our documentation</a> for more information.</p>
+
+                        <div>
+                            <p><b>Please enable the following Webhook events for this URL:</b></p>
+                            <ul>
+                                <li><code>charge.succeeded</code></li>
+                                <li><code>invoice.payment_succeeded</code></li>
+                                <li><code>charge.refunded</code></li>
+                                <li><code>customer.subscription.deleted</code></li>
+                            </ul>
+                        </div>
+
+                    </div>
+
                     <div class="action_right">
                         <el-button @click="saveSettings()" type="primary" size="small">Save Settings</el-button>
                     </div>
@@ -76,7 +107,8 @@
                 saving: false,
                 fetching: false,
                 is_key_defined: false,
-                labelPosition: 'right'
+                labelPosition: 'right',
+                webhook_url: ''
             }
         },
         methods: {
@@ -88,6 +120,7 @@
                     .then((response) => {
                         this.settings = response.data.settings;
                         this.is_key_defined = response.data.is_key_defined
+                        this.webhook_url = response.data.webhook_url
                     })
                     .fail(error => {
                         this.$message.error(error.responseJSON.data.message);
@@ -122,7 +155,7 @@
         mounted() {
             this.getSettings();
             window.WPPayFormsBus.$emit('site_title', 'Stripe Settings');
-            if(window.outerWidth < 500) {
+            if (window.outerWidth < 500) {
                 this.labelPosition = "top";
             }
         }
@@ -137,9 +170,11 @@
         position: relative;
         overflow: hidden;
     }
+
     .avatar-uploader .el-upload:hover {
         border-color: #409EFF;
     }
+
     .avatar-uploader-icon {
         font-size: 28px;
         color: #8c939d;
@@ -148,6 +183,7 @@
         line-height: 178px !important;
         text-align: center;
     }
+
     .avatar {
         width: 178px;
         height: 178px;

@@ -34,29 +34,3 @@
         </div>
     <?php endif; ?>
 </div>
-<style type="text/css">
-    .wpf_payment_info {
-        width: 100%;
-        -webkit-box-shadow: 0px -2px #e3e8ee;
-        box-shadow: 0px -2px #e3e8ee;
-        background-color: rgb(247, 250, 252);
-        color: rgb(56, 56, 56);
-    }
-    .wpf_payment_info_item {
-        display: inline-block;
-        margin-right: 0px;
-        -webkit-box-shadow: inset -1px 0 #e3e8ee;
-        box-shadow: inset -1px 0 #e3e8ee;
-        padding: 12px;
-    }
-    .wpf_payment_info_item:last-child {
-        box-shadow: none;
-    }
-    .wpf_payment_info_item .wpf_item_heading {
-        font-size: 14px;
-        font-weight: bold;
-    }
-    .wpf_payment_info_item .wpf_item_value {
-        font-size: 14px;
-    }
-</style>

@@ -26,15 +26,15 @@ class Forms
         $whereArgs = apply_filters('wppayform/all_forms_where_args', $whereArgs);
 
         $formsQuery = wpPayFormDB()->table('posts')
-                    ->orderBy('ID', 'DESC')
-                    ->offset($args['offset'])
-                    ->limit($args['posts_per_page']);
+            ->orderBy('ID', 'DESC')
+            ->offset($args['offset'])
+            ->limit($args['posts_per_page']);
 
         foreach ($whereArgs as $key => $where) {
             $formsQuery->where($key, $where);
         }
 
-        if(!empty($args['s'])) {
+        if (!empty($args['s'])) {
             $formsQuery->where(function ($q) use ($args) {
                 $q->where('post_title', 'LIKE', "%{$args['s']}%");
                 $q->orWhere('ID', 'LIKE', "%{$args['s']}%");
@@ -49,7 +49,7 @@ class Forms
 
         foreach ($forms as $form) {
             $form->preview_url = site_url('?wp_paymentform_preview=' . $form->ID);
-            if(in_array('entries_count', $with)) {
+            if (in_array('entries_count', $with)) {
                 $form->entries_count = $submissionModel->getEntryCountByPaymentStatus($form->ID);
             }
         }
@@ -149,9 +149,9 @@ class Forms
     {
         $elements = Forms::getBuilderSettings($formId);
         foreach ($elements as $element) {
-           if(in_array($element['group'], ['payment', 'payment_method_element'])) {
-               return true;
-           }
+            if (in_array($element['group'], ['payment', 'payment_method_element'])) {
+                return true;
+            }
         }
         return false;
     }
@@ -277,7 +277,15 @@ class Forms
             if ($hasPayment) {
                 $submissionItem['shortcodes']['{submission.product_items_table_html}'] = __('Order items table html', 'wppayform');
             }
+
+            // check if subsction payment is available for this for
+            $hasRecurringField = get_post_meta($formId, 'wpf_has_recurring_field', true) == 'yes';
+            if ($hasRecurringField) {
+                $submissionItem['shortcodes']['{submission.subscription_details_table_html}'] = __('Subscription details table html ', 'wppayform');
+            }
+
         }
+
 
         $items[] = $submissionItem;
         return $items;
@@ -298,7 +306,7 @@ class Forms
             if (!empty($allElements[$element['type']])) {
                 $componentElement = $allElements[$element['type']];
                 $fieldOption = ArrayHelper::get($element, 'field_options');
-                if($fieldOption) {
+                if ($fieldOption) {
                     $componentElement['field_options'] = $fieldOption;
                 }
                 $componentElement['id'] = ArrayHelper::get($element, 'id');
@@ -397,5 +405,10 @@ class Forms
             'restriction_applied_type' => 'hide_form'
         );
         return wp_parse_args($settings, $defaults);
+    }
+
+    public static function hasRecurring($formId)
+    {
+        return get_post_meta($formId, 'wpf_has_recurring_field', true) == 'yes';
     }
 }

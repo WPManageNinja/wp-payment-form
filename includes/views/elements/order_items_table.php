@@ -26,7 +26,6 @@ $currencySetting['currency_sign'] = \WPPayForm\Classes\GeneralSettings::getCurre
         endforeach; ?>
     </tbody>
     <tfoot>
-
     <?php if($submission->tax_items): ?>
         <tr class="wpf_sub_total_row">
             <th style="text-align: right" colspan="3"><?php _e('Sub Total', 'wppayform'); ?></th>

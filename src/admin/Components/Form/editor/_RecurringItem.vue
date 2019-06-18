@@ -1,7 +1,6 @@
 <template>
     <div class="tabular_products_wrapper">
         <h3 style="margin:0 0 20px">{{item.label}}</h3>
-
         <el-form-item class="wpf_line_radios" :label="item.choice_label">
             <el-radio-group @change="checkPricingPlans()" v-model="product_settings.choice_type">
                 <el-radio
@@ -12,6 +11,18 @@
                 </el-radio>
             </el-radio-group>
         </el-form-item>
+
+        <el-form-item v-if="product_settings.choice_type == 'choose_single'" class="wpf_line_radios" label="Plan Selection Type">
+            <el-radio-group v-model="product_settings.selection_type">
+                <el-radio
+                    v-for="(label, type) in item.selection_types"
+                    :key="type"
+                    :label="type">
+                    {{ label }}
+                </el-radio>
+            </el-radio-group>
+        </el-form-item>
+
 
         <h4>Pricing Plans</h4>
         <div class="wpf_plan_cards">
@@ -122,7 +133,7 @@
                     bill_times: 0,
                     has_signup_fee: 'no',
                     signup_fee: 0,
-                    subscription_amount: '9.99'
+                    subscription_amount: '19.99'
                 });
             },
             getAdvancedText(item) {

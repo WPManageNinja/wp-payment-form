@@ -48,6 +48,8 @@ class SubmissionHandler
 
         $paymentMethod = apply_filters('wppayform/choose_payment_method_for_submission', '', $formattedElements['payment_method_element'], $formId, $form_data);
 
+        $this->selectedPaymentMethod = $paymentMethod;
+
         // Extract Payment Items Here
         $paymentItems = array();
         $subscriptionItems = array();
@@ -74,6 +76,7 @@ class SubmissionHandler
          * Some PaymentGateway like stripe may add signup fee as one time fee
          */
         $paymentItems = apply_filters('wppayform/submitted_payment_items_'.$paymentMethod, $paymentItems, $formattedElements, $form_data, $subscriptionItems);
+
 
         // Extract Input Items Here
         $inputItems = array();

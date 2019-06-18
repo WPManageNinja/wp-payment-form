@@ -61,12 +61,6 @@ if (!defined('WPPAYFORM_VERSION_LITE')) {
 
         public function adminHooks()
         {
-//            $sub = wpPayFormDB()->table('wpf_subscriptions')
-//                ->where('id', 1)
-//                ->first();
-//            print_r(maybe_unserialize($sub->vendor_response));
-//            die();
-
             // Init The Classes
             // Register Post Type
             new \WPPayForm\Classes\PostType();

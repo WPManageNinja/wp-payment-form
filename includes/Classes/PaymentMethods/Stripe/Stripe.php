@@ -119,9 +119,10 @@ class Stripe
             $subscribedItems = $this->handleSubscriptions($stripeCustomerId, $submission, $form);
         }
 
-        $paymentArgs['source'] = $token;
         if ($stripeCustomerId) {
             $paymentArgs['customer'] = $stripeCustomerId;
+        } else {
+            $paymentArgs['source'] = $token;
         }
 
         $charge = false;
@@ -264,7 +265,7 @@ class Stripe
         wp_send_json_error(array(
             'message'       => $message,
             'payment_error' => true,
-            'type' => $type,
+            'type'          => $type,
             ''
         ), 423);
     }
@@ -381,6 +382,7 @@ class Stripe
         AccessControl::checkAndPresponseError('get_payment_settings', 'global');
         wp_send_json_success(array(
             'settings'       => $this->getStripeSettings(),
+            'webhook_url'     => site_url() . '?wpf_stripe_listener=1',
             'is_key_defined' => $this->isStripeKeysDefined()
         ), 200);
     }
@@ -503,7 +505,7 @@ class Stripe
         $subscriptionTransactionModel = new SubscriptionTransaction();
         $subscriptions = $subscriptionModel->getSubscriptions($submission->id);
 
-        if(!$subscriptions) {
+        if (!$subscriptions) {
             return false;
         }
 
@@ -545,7 +547,8 @@ class Stripe
                     $transactionItem = [
                         'form_id'          => $submission->form_id,
                         'user_id'          => $submission->user_id,
-                        'submission_id'    => $subscriptionItem->id,
+                        'submission_id'    => $submission->id,
+                        'subscription_id'    => $subscriptionItem->id,
                         'transaction_type' => 'subscription',
                         'payment_method'   => 'stripe',
                         'charge_id'        => $latestInvoice->charge,
@@ -578,14 +581,13 @@ class Stripe
         return $subscriptionModel->getSubscriptions($submission->id);
     }
 
-
     public function maybeSignupFeeToPaymentItems($paymentItems, $formattedElements, $form_data, $subscriptionItems)
     {
         if (!$subscriptionItems) {
             return $paymentItems;
         }
         foreach ($subscriptionItems as $subscriptionItem) {
-            if ($subscriptionItem['signup_fee']) {
+            if ($subscriptionItem['initial_amount']) {
                 $signupLabel = __('Signup Fee for', 'wppayform');
                 $signupLabel .= ' ' . $subscriptionItem['item_name'];
                 $signupLabel = apply_filters('wppayform/signup_fee_label', $signupLabel, $subscriptionItem, $form_data);
@@ -594,8 +596,8 @@ class Stripe
                     'parent_holder' => $subscriptionItem['element_id'],
                     'item_name'     => $signupLabel,
                     'quantity'      => 1,
-                    'item_price'    => wpPayFormConverToCents($subscriptionItem['signup_fee']),
-                    'line_total'    => wpPayFormConverToCents($subscriptionItem['signup_fee']),
+                    'item_price'    => $subscriptionItem['initial_amount'],
+                    'line_total'    => $subscriptionItem['initial_amount'],
                     'created_at'    => gmdate('Y-m-d H:i:s'),
                     'updated_at'    => gmdate('Y-m-d H:i:s'),
                 );
