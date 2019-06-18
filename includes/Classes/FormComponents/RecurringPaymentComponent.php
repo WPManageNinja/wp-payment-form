@@ -14,7 +14,6 @@ class RecurringPaymentComponent extends BaseComponent
     public function __construct()
     {
         parent::__construct('recurring_payment_item', 1);
-        //add_filter('wppayform/validate_component_on_save_payment_item', array($this, 'validateOnSave'), 1, 3);
     }
 
     public function component()
@@ -271,70 +270,6 @@ class RecurringPaymentComponent extends BaseComponent
         </div>
         <?php
     }
-
-    private function chooseMultipleChoice($prices = array(), $element, $form)
-    {
-        $fieldOptions = ArrayHelper::get($element, 'field_options', false);
-        if (!$fieldOptions) {
-            return;
-        }
-        $currenySettings = Forms::getCurrencyAndLocale($form->ID);
-        $controlClass = $this->elementControlClass($element);
-        $inputId = 'wpf_input_' . $form->ID . '_' . $this->elementName;
-        $defaultValue = ArrayHelper::get($fieldOptions, 'default_value');
-        $defaultValues = explode(',', $defaultValue);
-
-        $controlAttributes = array(
-            'data-element_type' => $this->elementName,
-            'class'             => $controlClass
-        );
-        ?>
-        <div <?php echo $this->builtAttributes($controlAttributes); ?>>
-            <?php $this->buildLabel($fieldOptions, $form, array('for' => $inputId)); ?>
-
-            <?php
-            $itemParentAtrributes = array(
-                'class'                   => 'wpf_multi_form_controls wpf_input_content',
-                'data-item_required'      => ArrayHelper::get($fieldOptions, 'required'),
-                'data-item_selector'      => 'checkbox',
-                'data-has_multiple_input' => 'yes'
-            );
-            ?>
-
-            <div <?php echo $this->builtAttributes($itemParentAtrributes); ?>>
-                <?php foreach ($prices as $index => $option): ?>
-                    <?php
-                    $optionId = $element['id'] . '_' . $index . '_' . $form->ID;
-                    $attributes = array(
-                        'class'         => 'form-check-input wpf_payment_item',
-                        'type'          => 'checkbox',
-                        'data-price'    => wpPayFormConverToCents($option['value']),
-                        'name'          => $element['id'] . '[' . $index . ']',
-                        'id'            => $optionId,
-                        'data-group_id' => $element['id'],
-                        'value'         => $option['label']
-                    );
-                    if (in_array($option['value'], $defaultValues)) {
-                        $attributes['checked'] = 'true';
-                    }
-                    ?>
-                    <div class="form-check">
-                        <input <?php echo $this->builtAttributes($attributes); ?>>
-                        <label class="form-check-label" for="<?php echo $optionId; ?>">
-                        <span class="wpf_price_option_name"
-                              itemprop="description"><?php echo $option['label']; ?></span>
-                            <span class="wpf_price_option_sep">&nbsp;–&nbsp;</span>
-                            <span
-                                class="wpf_price_option_price"><?php echo wpPayFormFormattedMoney(wpPayFormConverToCents($option['value']), $currenySettings); ?></span>
-                            <meta itemprop="price" content="<?php echo $option['value']; ?>"/>
-                        </label>
-                    </div>
-                <?php endforeach; ?>
-            </div>
-        </div>
-        <?php
-    }
-
 
     private function getPaymentSummaryText($plan, $element, $form, $currenySettings)
     {
