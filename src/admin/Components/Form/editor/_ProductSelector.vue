@@ -14,7 +14,7 @@
             productElements() {
                 let paymentFields = [];
                 each(this.all_elements, (element) => {
-                    if(element.is_payment_field) {
+                    if(element.is_payment_field && element.type != 'tabular_products') {
                         paymentFields.push({
                             id: element.id,
                             label: element.field_options.label || element.id
