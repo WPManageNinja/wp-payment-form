@@ -15,11 +15,11 @@ new \WPPayForm\Classes\FormComponents\DateComponent();
 new \WPPayForm\Classes\FormComponents\CustomAmountComponent();
 new \WPPayForm\Classes\FormComponents\ChoosePaymentMethodComponent();
 new \WPPayForm\Classes\FormComponents\HiddenInputComponent();
-new \WPPayForm\Classes\FormComponents\RecurringPaymentComponent();
 
 if(!defined('WPPAYFORM_PRO_INSTALLED')) {
     new \WPPayForm\Classes\FormComponents\DemoFileUploadComponent();
     new \WPPayForm\Classes\FormComponents\DemoTaxItemComponent();
     new \WPPayForm\Classes\FormComponents\DemoPayPalElement();
     new \WPPayForm\Classes\FormComponents\DemoTabularProductsComponent();
+    new \WPPayForm\Classes\FormComponents\DemoRecurringPaymentComponent();
 }

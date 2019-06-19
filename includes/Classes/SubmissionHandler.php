@@ -346,6 +346,11 @@ class SubmissionHandler
 
     private function getSubscriptionLine($payment, $paymentId, $quantity, $formData, $formId)
     {
+
+        if(!defined('WPPAYFORM_PRO_INSTALLED')) {
+            return [];
+        }
+
         if ($payment['type'] != 'recurring_payment_item') {
             return array();
         }

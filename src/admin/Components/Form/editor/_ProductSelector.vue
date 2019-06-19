@@ -18,7 +18,7 @@
                         paymentFields.push({
                             id: element.id,
                             label: element.field_options.label || element.id
-                        })
+                        });
                     }
                 });
                 return paymentFields;
