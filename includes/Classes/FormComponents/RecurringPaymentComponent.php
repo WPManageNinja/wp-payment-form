@@ -23,6 +23,8 @@ class RecurringPaymentComponent extends BaseComponent
             'editor_title'     => __('Recurring Payment Item', 'wppayform'),
             'group'            => 'payment',
             'postion_group'    => 'payment',
+            'disabled' => !defined('WPPAYFORM_PRO_INSTALLED'),
+            'disabled_message' => 'Recurring Subscription Payment requires Pro Pro version of WPPayForm. Please install Pro version to make it work.',
             'editor_elements'  => array(
                 'label'                     => array(
                     'label' => 'Recurring Payment Item Name',
@@ -81,7 +83,8 @@ class RecurringPaymentComponent extends BaseComponent
                             'has_signup_fee'      => 'no',
                             'signup_fee'          => 0,
                             'subscription_amount' => '9.99',
-                            'is_default'          => 'yes'
+                            'is_default'          => 'yes',
+                            'plan_features' => []
                         ]
                     ]
                 )

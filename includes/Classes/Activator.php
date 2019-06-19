@@ -12,6 +12,8 @@ if (!defined('ABSPATH')) {
  */
 class Activator
 {
+    public $wpfDbVersion = WPPAYFORM_DB_VERSION;
+
     public function migrateDatabases($network_wide = false)
     {
         global $wpdb;
@@ -33,15 +35,39 @@ class Activator
         }
     }
 
+    public function maybeUpgradeDB()
+    {
+        if(get_option('WPF_DB_VERSION') < $this->wpfDbVersion) {
+            // We need to upgrade the database
+            $this->forceUpgradeDB();
+        }
+    }
+
+    public function forceUpgradeDB()
+    {
+        // We are upgrading the DB forcely
+        $this->createTransactionsTable(true);
+        $this->createMetaTable(true);
+        $this->createSubscriptionTable(true);
+        update_option('WPF_DB_VERSION', $this->wpfDbVersion, false);
+    }
+
     public function migrate()
     {
         $this->createSubmissionsTable();
         $this->createOrderItemsTable();
-        $this->createTransactionsTable();
+        $isTransactionsTable = $this->createTransactionsTable(); // Altered in version 1.2.0
         $this->createSubmissionActivitiesTable();
-        $this->createMetaTable();
-        $this->createSubscriptionTable();
+        $isMetaTable = $this->createMetaTable(); // added in version 1.2.0
+        $isSubscriptionsTable = $this->createSubscriptionTable(); // added in version 1.2.0
         $this->createPages();
+
+        if(!$isTransactionsTable || !$isMetaTable || !$isSubscriptionsTable) {
+            $this->maybeUpgradeDB();
+        } else {
+            // we are good. It's a new installation
+            update_option('WPF_DB_VERSION', $this->wpfDbVersion, false);
+        }
     }
 
     public function createSubmissionsTable()
@@ -49,6 +75,7 @@ class Activator
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
         $table_name = $wpdb->prefix . 'wpf_submissions';
+
         $sql = "CREATE TABLE $table_name (
 				id int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 				form_id int(11) NOT NULL,
@@ -74,7 +101,7 @@ class Activator
 				updated_at timestamp NULL
 			) $charset_collate;";
 
-        $this->runSQL($sql, $table_name);
+        return $this->runSQL($sql, $table_name);
     }
 
     public function createOrderItemsTable()
@@ -96,10 +123,10 @@ class Activator
 				created_at timestamp NULL,
 				updated_at timestamp NULL
 			) $charset_collate;";
-        $this->runSQL($sql, $table_name);
+        return $this->runSQL($sql, $table_name);
     }
 
-    public function createTransactionsTable()
+    public function createTransactionsTable($forced = false)
     {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
@@ -124,10 +151,13 @@ class Activator
 				created_at timestamp NULL,
 				updated_at timestamp NULL
 			) $charset_collate;";
-        $this->runSQL($sql, $table_name);
+        if($forced) {
+            return $this->runForceSQL($sql, $table_name);
+        }
+        return $this->runSQL($sql, $table_name);
     }
 
-    public function createSubmissionActivitiesTable()
+    public function createSubmissionActivitiesTable($forced = false)
     {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
@@ -145,10 +175,14 @@ class Activator
 				created_at timestamp NULL,
 				updated_at timestamp NULL
 			) $charset_collate;";
-        $this->runSQL($sql, $table_name);
+
+        if($forced) {
+            return $this->runForceSQL($sql, $table_name);
+        }
+        return $this->runSQL($sql, $table_name);
     }
 
-    public function createMetaTable()
+    public function createMetaTable($forced = false)
     {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
@@ -163,10 +197,13 @@ class Activator
 				created_at timestamp NULL,
 				updated_at timestamp NULL
 			) $charset_collate;";
-        $this->runSQL($sql, $table_name);
+        if($forced) {
+            return $this->runForceSQL($sql, $table_name);
+        }
+        return $this->runSQL($sql, $table_name);
     }
 
-    public function createSubscriptionTable()
+    public function createSubscriptionTable($forced = false)
     {
         global $wpdb;
         $charset_collate = $wpdb->get_charset_collate();
@@ -180,17 +217,17 @@ class Activator
 				item_name varchar(255),
 				plan_name varchar(255),
 				parent_transaction_id int(11),
-				billing_interval varchar (50), /* possible values day, week, month or year. */
+				billing_interval varchar (50),
 				trial_days int(11),
 				initial_amount int(11),
 				quantity int(11) DEFAULT 1,
 				recurring_amount int(11),
-				bill_times int(11), /* 0 means untill cancel */
+				bill_times int(11),
 				bill_count int(11) DEFAULT 0,
 				vendor_customer_id varchar(255),
 				vendor_subscriptipn_id varchar(255),
 				vendor_plan_id varchar(255),
-				status varchar(255) DEFAULT 'pending', /* possible values pending, cancelled, active, trialling, completed*/
+				status varchar(255) DEFAULT 'pending',
 				inital_tax_label varchar(255),
 				inital_tax int(11),
 				recurring_tax_label varchar(255),
@@ -203,7 +240,10 @@ class Activator
 				created_at timestamp NULL,
 				updated_at timestamp NULL
 			) $charset_collate;";
-        $this->runSQL($sql, $table_name);
+        if($forced) {
+            return $this->runForceSQL($sql, $table_name);
+        }
+        return $this->runSQL($sql, $table_name);
     }
 
     private function runSQL($sql, $tableName)
@@ -212,7 +252,16 @@ class Activator
         if ($wpdb->get_var("SHOW TABLES LIKE '$tableName'") != $tableName) {
             require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
             dbDelta($sql);
+            return true;
         }
+        return false;
+    }
+
+    private function runForceSQL($sql, $tableName)
+    {
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        dbDelta($sql);
+        return true;
     }
 
     /**

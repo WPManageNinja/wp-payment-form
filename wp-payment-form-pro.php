@@ -35,6 +35,7 @@ define( 'WPPAYFORM_PRO_INSTALLED', true );
 
 if (!defined('WPPAYFORM_VERSION_LITE')) {
     define('WPPAYFORM_VERSION', '1.1.6');
+    define('WPPAYFORM_DB_VERSION', 120);
     // Stripe API version should be in 'YYYY-MM-DD' format.
     define('WPPAYFORM_STRIPE_API_VERSION', '2018-10-31');
     define('WPPAYFORM_MAIN_FILE', __FILE__);

@@ -27,7 +27,6 @@ class SubmissionHandler
 
     public function handeSubmission()
     {
-
         parse_str($_REQUEST['form_data'], $form_data);
         // Now Validate the form please
         $formId = absint($_REQUEST['form_id']);
@@ -75,8 +74,9 @@ class SubmissionHandler
          *  from $subscriptionItems
          * Some PaymentGateway like stripe may add signup fee as one time fee
          */
-        $paymentItems = apply_filters('wppayform/submitted_payment_items_'.$paymentMethod, $paymentItems, $formattedElements, $form_data, $subscriptionItems);
-
+        if($subscriptionItems) {
+            $paymentItems = apply_filters('wppayform/submitted_payment_items_'.$paymentMethod, $paymentItems, $formattedElements, $form_data, $subscriptionItems);
+        }
 
         // Extract Input Items Here
         $inputItems = array();

@@ -39,6 +39,11 @@ class AdminAjaxHandler
             'duplicate_form'             => 'duplicateForm'
         );
 
+        if(WPPAYFORM_DB_VERSION > intval(get_option('WPF_DB_VERSION'))) {
+            $activator = new Activator();
+            $activator->maybeUpgradeDB();
+        }
+
         if (isset($validRoutes[$route])) {
             AccessControl::checkAndPresponseError($route, 'forms');
             do_action('wppayform/doing_ajax_forms_' . $route);

@@ -2,6 +2,8 @@
 
 namespace WPPayForm\Classes;
 
+use WPPayForm\Classes\Models\Transaction;
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -63,6 +65,16 @@ class GlobalSettingsHandler
         );
         update_option('wppayform_global_currency_settings', $data);
         update_option('wppayform_ip_logging_status', sanitize_text_field($_REQUEST['ip_logging_status']), false);
+
+        // We will forecfully try to upgrade the DB and later we will remove this after 1-2 version
+        $firstTransaction = wpFluent()->table('wpf_order_transactions')
+            ->first();
+       if(!$firstTransaction || !property_exists($firstTransaction, 'subscription_id')) {
+            $activator = new Activator();
+           $activator->forceUpgradeDB();
+       }
+       // end upgrade DB
+
         wp_send_json_success(array(
             'message' => __('Settings successfully updated', 'wppayform')
         ), 200);

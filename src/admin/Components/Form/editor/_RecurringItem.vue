@@ -12,7 +12,8 @@
             </el-radio-group>
         </el-form-item>
 
-        <el-form-item v-if="product_settings.choice_type == 'choose_single'" class="wpf_line_radios" label="Plan Selection Type">
+        <el-form-item v-if="product_settings.choice_type == 'choose_single'" class="wpf_line_radios"
+                      label="Plan Selection Type">
             <el-radio-group v-model="product_settings.selection_type">
                 <el-radio
                     v-for="(label, type) in item.selection_types"
@@ -42,7 +43,9 @@
                             </el-switch>
                         </template>
 
-                        <el-button @click="deleteItem(index)" size="mini" v-show="product_settings.pricing_options.length > 1" type="danger" icon="el-icon-delete"></el-button>
+                        <el-button @click="deleteItem(index)" size="mini"
+                                   v-show="product_settings.pricing_options.length > 1" type="danger"
+                                   icon="el-icon-delete"></el-button>
                     </div>
                 </div>
                 <div class="plan_body">
@@ -73,7 +76,8 @@
                                 :disabled="item.has_trial_days == 'yes'"
                                 inactive-value="no">
                             </el-switch>
-                            <el-input-number placeholder="Signup Fee" v-if="item.has_signup_fee == 'yes'" size="mini" v-model="item.signup_fee" :min="0"></el-input-number>
+                            <el-input-number placeholder="Signup Fee" v-if="item.has_signup_fee == 'yes'" size="mini"
+                                             v-model="item.signup_fee" :min="0"></el-input-number>
                         </el-form-item>
 
                         <el-form-item label="Has Trial Days? (in days)">
@@ -83,11 +87,13 @@
                                 active-value="yes"
                                 inactive-value="no">
                             </el-switch>
-                            <el-input-number v-if="item.has_trial_days == 'yes'" placeholder="Trial Days" size="mini" v-model="item.trial_days" :min="0"></el-input-number>
+                            <el-input-number v-if="item.has_trial_days == 'yes'" placeholder="Trial Days" size="mini"
+                                             v-model="item.trial_days" :min="0"></el-input-number>
                         </el-form-item>
 
                         <el-form-item label="Total Billing times">
-                            <el-input-number placeholder="Trial Days" size="mini" v-model="item.bill_times" :min="0"></el-input-number>
+                            <el-input-number placeholder="Trial Days" size="mini" v-model="item.bill_times"
+                                             :min="0"></el-input-number>
                             <p>Keep blank or 0 for billing unlimited period of times</p>
                         </el-form-item>
                     </div>
@@ -106,18 +112,19 @@
 
 <script type="text/babel">
     import each from 'lodash/each';
+
     export default {
         name: 'recurring_product_template',
         props: ['item', 'product_settings'],
         data() {
-          return {
-              interval_options: {
-                  daily: 'Daily',
-                  week: 'Weekly',
-                  month: 'Monthly',
-                  year: 'Yearly'
-              }
-          }
+            return {
+                interval_options: {
+                    daily: 'Daily',
+                    week: 'Weekly',
+                    month: 'Monthly',
+                    year: 'Yearly'
+                }
+            }
         },
         methods: {
             deleteItem(index) {
@@ -133,19 +140,20 @@
                     bill_times: 0,
                     has_signup_fee: 'no',
                     signup_fee: 0,
-                    subscription_amount: '19.99'
+                    subscription_amount: '19.99',
+                    plan_features: []
                 });
             },
             getAdvancedText(item) {
                 let text = `Bill <b>${item.subscription_amount}/${item.billing_interval}</b> `;
 
-                if(item.has_trial_days == 'yes') {
+                if (item.has_trial_days == 'yes') {
                     text += `with ${item.trial_days} trial days `;
                 }
-                if(item.has_signup_fee == 'yes') {
+                if (item.has_signup_fee == 'yes') {
                     text += `and Inital <b>Signup Fee ${item.signup_fee}</b> `;
                 }
-                if(parseInt(item.bill_times)) {
+                if (parseInt(item.bill_times)) {
                     text += `and Total <b>Billing times ${item.bill_times}</b> `;
                 } else {
                     text += `and will be billed untill cancel`;
@@ -154,13 +162,13 @@
             },
             changeDefaultItem(index) {
                 each(this.product_settings.pricing_options, (option, itemIndex) => {
-                    if(itemIndex != index) {
+                    if (itemIndex != index) {
                         option.is_default = 'no';
                     }
                 });
             },
             checkPricingPlans() {
-                if(this.product_settings.choice_type == 'simple' && this.product_settings.pricing_options.length > 1) {
+                if (this.product_settings.choice_type == 'simple' && this.product_settings.pricing_options.length > 1) {
                     this.product_settings.pricing_options = [this.product_settings.pricing_options[0]];
                 }
             }
@@ -218,8 +226,6 @@
             }
         }
     }
-
-
 
 
 </style>
