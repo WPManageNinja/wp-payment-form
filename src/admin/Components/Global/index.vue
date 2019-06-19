@@ -8,6 +8,7 @@
             <a
                 v-if="!has_pro"
                 style="float: right;"
+                target="_blank"
                 class="el-button payform_action el-button--danger el-button--small"
                 :href="pro_purchase_url">
                     Upgrade To Pro

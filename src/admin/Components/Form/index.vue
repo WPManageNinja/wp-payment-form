@@ -22,6 +22,7 @@
                 </a>
                 <a
                     v-if="!has_pro"
+                    target="_blank"
                     class="el-button payform_action el-button--danger el-button--mini"
                     :href="pro_purchase_url">
                     Upgrade To Pro

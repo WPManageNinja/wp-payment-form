@@ -109,6 +109,20 @@
                         :item="item"
                         :product_settings="element.field_options[itemName]" />
                 </template>
+                <template v-else-if="item.type == 'confirm_email_switch'">
+                    <el-form-item :label="item.label">
+                        <el-switch
+                            v-model="element.field_options[itemName]"
+                            active-value="yes"
+                            inactive-value="no">
+                        </el-switch>
+                        <p v-if="item.info" v-html="item.info"></p>
+                    </el-form-item>
+                    <el-form-item v-if="element.field_options[itemName] == 'yes'" label="Confirm Email Label">
+                        <el-input placeholder="Confirm Email Label" size="mini"
+                                  v-model="element.field_options.confirm_email_label"></el-input>
+                    </el-form-item>
+                </template>
             </div>
             <el-form-item label="Field ID">
                 {{ element.id }}

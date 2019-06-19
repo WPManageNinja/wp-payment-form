@@ -39,6 +39,11 @@ class CustomerEmailComponent extends BaseComponent
                     'type'  => 'switch',
                     'group' => 'general'
                 ),
+                'confirm_email'      => array(
+                    'label' => 'Enable Confirm Email Field',
+                    'type'  => 'confirm_email_switch',
+                    'group' => 'general'
+                ),
                 'default_value' => array(
                     'label' => 'Default Value',
                     'type'  => 'text',
@@ -49,6 +54,8 @@ class CustomerEmailComponent extends BaseComponent
                 'label' => 'Email Address',
                 'placeholder' => 'Email Address',
                 'required' => 'yes',
+                'confirm_email' => 'no',
+                'confirm_email_label' => 'Confirm Email',
                 'default_value' => ''
             )
         );
@@ -67,6 +74,15 @@ class CustomerEmailComponent extends BaseComponent
                 return __('Valid email address is required for field:', 'wppayform').' '.ArrayHelper::get($element, 'label');
             }
         }
+
+        // check if confirm email exists and need to validate
+        if(ArrayHelper::get($element, 'options.confirm_email') == 'yes') {
+            $confirmEmailvalue = ArrayHelper::get($data, '__confirm_'.$elementId);
+            if($confirmEmailvalue != $value) {
+                return ArrayHelper::get($element, 'label') .' & '.ArrayHelper::get($element, 'options.confirm_email_label') .__(' does not match', 'wppayform');
+            }
+        }
+
         return $error;
     }
 
@@ -77,5 +93,15 @@ class CustomerEmailComponent extends BaseComponent
         $defaultValue = apply_filters('wppayform/input_default_value', ArrayHelper::get($element['field_options'], 'default_value'), $element, $form);
         $element['field_options']['default_value'] = $defaultValue;
         $this->renderNormalInput($element, $form);
+        if(ArrayHelper::get($element, 'field_options.confirm_email') == 'yes') {
+            $element['field_options']['extra_data_atts'] = array(
+                'data-parent_confirm_name' =>  $element['id']
+            );
+            $element['extra_input_class'] = 'wpf_confirm_email';
+            $element['id'] = '__confirm_'.$element['id'];
+            $element['field_options']['placeholder'] = ArrayHelper::get($element, 'field_options.confirm_email_label', 'Confirm Email');
+            $element['field_options']['label'] = ArrayHelper::get($element, 'field_options.confirm_email_label', 'Confirm Email');
+            $this->renderNormalInput($element, $form);
+        }
     }
 }

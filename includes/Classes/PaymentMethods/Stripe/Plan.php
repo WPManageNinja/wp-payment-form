@@ -66,6 +66,10 @@ class Plan
 
     public static function getOrCreatePlan($subscription, $submission)
     {
+        if (GeneralSettings::isZeroDecimal($submission->currency)) {
+            $subscription->recurring_amount = intval($subscription->recurring_amount / 100);
+        }
+
         // Generate The subscription ID Here
         $subscriptionId = self::getGeneratedSubscriptionId($subscription, $submission->currency);
         $stripePlan = self::retirive($subscriptionId);

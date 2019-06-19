@@ -187,6 +187,7 @@ class Forms
         $defaultSettings = array(
             'confirmation_type'    => 'custom',
             'redirectTo'           => 'samePage',
+            'customUrl' => '',
             'messageToShow'        => __('Form has been successfully submitted', 'wppayform'),
             'samePageFormBehavior' => 'hide_form',
         );

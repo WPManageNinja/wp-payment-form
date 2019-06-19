@@ -73,6 +73,12 @@ abstract class BaseComponent
             $attributes['required'] = true;
         }
 
+        if($extraAtts = ArrayHelper::get($fieldOptions, 'extra_data_atts')) {
+            if(is_array($extraAtts)) {
+                $attributes = wp_parse_args($extraAtts, $attributes);
+            }
+        }
+
         ?>
         <div data-element_type="<?php echo $this->elementName; ?>"
              class="<?php echo $controlClass; ?>">

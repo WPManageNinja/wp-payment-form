@@ -22,7 +22,8 @@
                             <el-button readonly size="mini" disabled type="plain">{{submission.id}}</el-button>
                             <el-button size="mini" @click="handleNavClick('prev')" type="info">Next <i
                                 class="el-icon-d-arrow-right el-icon-right"></i></el-button>
-                            <el-dropdown v-if="submission.order_items && parseInt(submission.order_items.length)" @command="handleActionCommand">
+                            <el-dropdown v-if="submission.order_items && parseInt(submission.order_items.length)"
+                                         @command="handleActionCommand">
                                 <el-button size="mini" type="primary">
                                     Actions <i class="el-icon-arrow-down el-icon--right"></i>
                                 </el-button>
@@ -37,19 +38,23 @@
                 </div>
 
                 <div class="payment_header">
-                    <div v-if="parseInt(submission.order_items.length) || submission.subscription_payment_total" class="payment_head_top">
+                    <div v-if="parseInt(submission.order_items.length) || submission.subscription_payment_total"
+                         class="payment_head_top">
                         <div class="payment_header_left">
                             <p class="head_small_title">Payment</p>
                             <div class="head_payment_amount">
                                 <template v-if="parseInt(submission.payment_total)">
-                                    <span class="pay_amount" v-html="getFormattedMoney(submission.payment_total)"></span>
+                                    <span class="pay_amount"
+                                          v-html="getFormattedMoney(submission.payment_total)"></span>
                                     <span class="payment_currency">{{submission.currency}}</span>
                                     <span :class="'wpf_paystatus_badge wpf_pay_status_'+submission.payment_status">
                                     <i :class="getPaymentStatusIcon(submission.payment_status)"></i> {{submission.payment_status}}
                                 </span>
                                 </template>
                                 <template v-if="submission.subscription_payment_total">
-                                    <span><span v-show="parseInt(submission.payment_total)"> & </span><span class="pay_amount" v-html="getFormattedMoney(submission.subscription_payment_total)"></span> (From Subscriptions)</span>
+                                    <span><span v-show="parseInt(submission.payment_total)"> & </span><span
+                                        class="pay_amount"
+                                        v-html="getFormattedMoney(submission.subscription_payment_total)"></span> (From Subscriptions)</span>
                                 </template>
                             </div>
                         </div>
@@ -104,171 +109,237 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="entry_info_box entry_input_data">
-                    <div class="entry_info_header">
-                        <div class="info_box_header">Form Entry Data</div>
-                        <div class="info_box_header_actions">
-                            <el-checkbox true-label="yes" false-label="no" v-model="show_empty">Show empty fields
-                            </el-checkbox>
-                        </div>
-                    </div>
-                    <div class="entry_info_body">
-                        <div class="wpf_entry_details">
-                            <div v-for="(entry, entry_id) in entry_items" v-show="show_empty == 'yes' || entry.value"
-                                 :key="entry_id" class="wpf_each_entry">
-                                <div class="wpf_entry_label">
-                                    {{entry.label}}
+                <div class="wpf_submisson_body" :class="(hide_sidebar == 'yes') ? 'wpf_hide_sidebar' : ''">
+                    <div class="wpf_submission_details">
+                        <div class="entry_info_box entry_input_data">
+                            <div class="entry_info_header">
+                                <div class="info_box_header">Form Entry Data</div>
+                                <div class="info_box_header_actions">
+                                    <el-checkbox true-label="yes" false-label="no" v-model="show_empty">Show empty fields
+                                    </el-checkbox>
                                 </div>
-                                <div class="wpf_entry_value" v-html="entry.value"></div>
+                            </div>
+                            <div class="entry_info_body">
+                                <div class="wpf_entry_details">
+                                    <div v-for="(entry, entry_id) in entry_items"
+                                         v-show="show_empty == 'yes' || entry.value"
+                                         :key="entry_id" class="wpf_each_entry">
+                                        <div class="wpf_entry_label">
+                                            {{entry.label}}
+                                        </div>
+                                        <div class="wpf_entry_value" v-html="entry.value"></div>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <div v-if="parseInt(submission.order_items.length)" class="entry_info_box entry_order_items">
-                    <div class="entry_info_header">
-                        <div class="info_box_header">Order Items</div>
-                    </div>
-                    <div class="entry_info_body">
-                        <div class="wpf_entry_order_items">
-                            <table class="wp-list-table widefat table table-bordered striped">
-                                <thead>
-                                <tr>
-                                    <th>Item Name</th>
-                                    <th>Quantity</th>
-                                    <th>Item Price</th>
-                                    <th>Line Total</th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr v-for="item in submission.order_items">
-                                    <td>{{item.item_name}}</td>
-                                    <td>{{item.quantity}}</td>
-                                    <td v-html="getFormattedMoney(item.item_price)"></td>
-                                    <td v-html="getFormattedMoney(item.line_total)"></td>
-                                </tr>
-                                </tbody>
-                                <tfoot>
-                                <tr>
-                                    <th style="text-align: right" colspan="3">Sub Total:</th>
-                                    <th v-html="getFormattedMoney(subTotal)"></th>
-                                </tr>
-                                <template v-if="submission.tax_items.length">
-                                    <tr v-for="taxItem in submission.tax_items">
-                                        <td style="text-align: right" colspan="3">
-                                            {{taxItem.item_name}} <span class="wpf_tax_value">({{taxItem.taxRate}}%)</span>:
-                                        </td>
-                                        <td v-html="getFormattedMoney(taxItem.line_total)"></td>
-                                    </tr>
-                                </template>
-                                <tr>
-                                    <th style="text-align: right" colspan="3">Total:</th>
-                                    <th v-html="getFormattedMoney(orderTotal)"></th>
-                                </tr>
-                                </tfoot>
-                            </table>
+                        <div v-if="parseInt(submission.order_items.length)" class="entry_info_box entry_order_items">
+                            <div class="entry_info_header">
+                                <div class="info_box_header">Order Items</div>
+                            </div>
+                            <div class="entry_info_body">
+                                <div class="wpf_entry_order_items">
+                                    <table class="wp-list-table widefat table table-bordered striped">
+                                        <thead>
+                                        <tr>
+                                            <th>Item Name</th>
+                                            <th>Quantity</th>
+                                            <th>Item Price</th>
+                                            <th>Line Total</th>
+                                        </tr>
+                                        </thead>
+                                        <tbody>
+                                        <tr v-for="item in submission.order_items">
+                                            <td>{{item.item_name}}</td>
+                                            <td>{{item.quantity}}</td>
+                                            <td v-html="getFormattedMoney(item.item_price)"></td>
+                                            <td v-html="getFormattedMoney(item.line_total)"></td>
+                                        </tr>
+                                        </tbody>
+                                        <tfoot>
+                                        <tr>
+                                            <th style="text-align: right" colspan="3">Sub Total:</th>
+                                            <th v-html="getFormattedMoney(subTotal)"></th>
+                                        </tr>
+                                        <template v-if="submission.tax_items.length">
+                                            <tr v-for="taxItem in submission.tax_items">
+                                                <td style="text-align: right" colspan="3">
+                                                    {{taxItem.item_name}} <span
+                                                    class="wpf_tax_value">({{taxItem.taxRate}}%)</span>:
+                                                </td>
+                                                <td v-html="getFormattedMoney(taxItem.line_total)"></td>
+                                            </tr>
+                                        </template>
+                                        <tr>
+                                            <th style="text-align: right" colspan="3">Total:</th>
+                                            <th v-html="getFormattedMoney(orderTotal)"></th>
+                                        </tr>
+                                        </tfoot>
+                                    </table>
+                                </div>
+                            </div>
                         </div>
-                    </div>
-                </div>
 
-                <subscription-payments
-                    :payment_method="submission.payment_method"
-                    :payment_mode="submission.payment_mode"
-                    :currencySetting="submission.currencySetting"
-                    :subscriptions="submission.subscriptions" />
+                        <subscription-payments
+                            :payment_method="submission.payment_method"
+                            :payment_mode="submission.payment_mode"
+                            :currencySetting="submission.currencySetting"
+                            :subscriptions="submission.subscriptions"/>
 
-                <div v-if="parseInt(submission.order_items.length)" class="entry_info_box entry_transactions">
-                    <div class="entry_info_header">
-                        <div class="info_box_header">Transaction Details</div>
-                    </div>
-                    <div class="entry_info_body">
-                        <div class="wpf_entry_transactions">
-                            <div v-for="(transaction,index) in submission.transactions" class="wpf_entry_transaction">
-                                <h4 v-show="submission.transactions.length > 1">Transaction #{{ index+1 }}</h4>
-                                <ul class="wpf_list_items">
-                                    <li>
-                                        <div class="wpf_list_header">Transaction ID</div>
-                                        <div class="wpf_list_value">{{ transaction.id }}</div>
-                                    </li>
-                                    <li>
-                                        <div class="wpf_list_header">Payment Method</div>
-                                        <div class="wpf_list_value">
+                        <div v-if="parseInt(submission.order_items.length)" class="entry_info_box entry_transactions">
+                            <div class="entry_info_header">
+                                <div class="info_box_header">Transaction Details</div>
+                            </div>
+                            <div class="entry_info_body">
+                                <div class="wpf_entry_transactions">
+                                    <div v-for="(transaction,index) in submission.transactions"
+                                         class="wpf_entry_transaction">
+                                        <h4 v-show="submission.transactions.length > 1">Transaction #{{ index+1 }}</h4>
+                                        <ul class="wpf_list_items">
+                                            <li>
+                                                <div class="wpf_list_header">Transaction ID</div>
+                                                <div class="wpf_list_value">{{ transaction.id }}</div>
+                                            </li>
+                                            <li>
+                                                <div class="wpf_list_header">Payment Method</div>
+                                                <div class="wpf_list_value">
                                             <span
                                                 v-if="transaction.payment_method">{{ transaction.payment_method }}</span>
-                                            <span v-else>n/a</span>
-                                        </div>
-                                    </li>
-                                    <li v-if="transaction.charge_id">
-                                        <div class="wpf_list_header">Transaction ID</div>
-                                        <div class="wpf_list_value">
+                                                    <span v-else>n/a</span>
+                                                </div>
+                                            </li>
+                                            <li v-if="transaction.charge_id">
+                                                <div class="wpf_list_header">Transaction ID</div>
+                                                <div class="wpf_list_value">
 
-                                            <a v-if="transaction.transaction_url" target="_blank"
-                                               :href="transaction.transaction_url">{{ transaction.charge_id }}</a>
-                                            <span v-else>{{ transaction.charge_id }}</span>
+                                                    <a v-if="transaction.transaction_url" target="_blank"
+                                                       :href="transaction.transaction_url">{{ transaction.charge_id }}</a>
+                                                    <span v-else>{{ transaction.charge_id }}</span>
 
-                                        </div>
-                                    </li>
-                                    <li v-show="transaction.card_last_4">
-                                        <div class="wpf_list_header">Card Last 4</div>
-                                        <div class="wpf_list_value"><span
-                                            class="wpf_card_badge">{{ transaction.card_brand }}</span> <i
-                                            class="el-icon-more"></i> {{ transaction.card_last_4 }}
-                                        </div>
-                                    </li>
-                                    <li>
-                                        <div class="wpf_list_header">Payment Total</div>
-                                        <div class="wpf_list_value"
-                                             v-html="getFormattedMoney(transaction.payment_total)"></div>
-                                    </li>
-                                    <li>
-                                        <div class="wpf_list_header">Payment Status</div>
-                                        <div class="wpf_list_value">{{ transaction.status }}</div>
-                                    </li>
-                                    <li>
-                                        <div class="wpf_list_header">Date</div>
-                                        <div class="wpf_list_value">{{ transaction.created_at }}</div>
-                                    </li>
-                                </ul>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-
-                <div class="entry_info_box entry_submission_activity">
-                    <div class="entry_info_header">
-                        <div class="info_box_header">Submission Activity Events</div>
-                        <div class="info_box_header_actions">
-                            <el-button @click="add_note_box = !add_note_box" size="mini" type="info">Add Note
-                            </el-button>
-                        </div>
-                    </div>
-                    <div class="entry_info_body">
-                        <div class="wpf_entry_details">
-                            <div v-if="add_note_box" class="wpf_add_note_box">
-                                <el-input
-                                    type="textarea"
-                                    :autosize="{ minRows: 3}"
-                                    placeholder="Please Provide Note Content"
-                                    v-model="new_note_content">
-                                </el-input>
-                                <el-button @click="submitNote()" size="small" type="success">Submit Note</el-button>
-                            </div>
-                            <template v-if="submission.activities && submission.activities.length">
-                                <div v-for="activity in submission.activities" :key="activity.id"
-                                     class="wpf_each_entry">
-                                    <div class="wpf_entry_label">
-                                        {{activity.created_by}} - {{ activity.created_at }}
+                                                </div>
+                                            </li>
+                                            <li v-show="transaction.card_last_4">
+                                                <div class="wpf_list_header">Card Last 4</div>
+                                                <div class="wpf_list_value"><span
+                                                    class="wpf_card_badge">{{ transaction.card_brand }}</span> <i
+                                                    class="el-icon-more"></i> {{ transaction.card_last_4 }}
+                                                </div>
+                                            </li>
+                                            <li>
+                                                <div class="wpf_list_header">Payment Total</div>
+                                                <div class="wpf_list_value"
+                                                     v-html="getFormattedMoney(transaction.payment_total)"></div>
+                                            </li>
+                                            <li>
+                                                <div class="wpf_list_header">Payment Status</div>
+                                                <div class="wpf_list_value">{{ transaction.status }}</div>
+                                            </li>
+                                            <li>
+                                                <div class="wpf_list_header">Date</div>
+                                                <div class="wpf_list_value">{{ transaction.created_at }}</div>
+                                            </li>
+                                        </ul>
                                     </div>
-                                    <div class="wpf_entry_value" v-html="activity.content"></div>
                                 </div>
-                            </template>
-
-                            <div class="wpf_each_entry text-center" v-else>
-                                <p>No Activity found</p>
                             </div>
                         </div>
+
+                        <div class="entry_info_box entry_submission_activity">
+                            <div class="entry_info_header">
+                                <div class="info_box_header">Submission Activity Events</div>
+                                <div class="info_box_header_actions">
+                                    <el-button @click="add_note_box = !add_note_box" size="mini" type="info">Add Note
+                                    </el-button>
+                                </div>
+                            </div>
+                            <div class="entry_info_body">
+                                <div class="wpf_entry_details">
+                                    <div v-if="add_note_box" class="wpf_add_note_box">
+                                        <el-input
+                                            type="textarea"
+                                            :autosize="{ minRows: 3}"
+                                            placeholder="Please Provide Note Content"
+                                            v-model="new_note_content">
+                                        </el-input>
+                                        <el-button @click="submitNote()" size="small" type="success">Submit Note</el-button>
+                                    </div>
+                                    <template v-if="submission.activities && submission.activities.length">
+                                        <div v-for="activity in submission.activities" :key="activity.id"
+                                             class="wpf_each_entry">
+                                            <div class="wpf_entry_label">
+                                                {{activity.created_by}} - {{ activity.created_at }}
+                                            </div>
+                                            <div class="wpf_entry_value" v-html="activity.content"></div>
+                                        </div>
+                                    </template>
+
+                                    <div class="wpf_each_entry text-center" v-else>
+                                        <p>No Activity found</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="wpf_submission_sidebar">
+                        <template v-if="has_pro">
+                            <div class="entry_info_box">
+                                <div class="entry_info_header">
+                                    <div class="info_box_header">Meta Info</div>
+                                </div>
+                                <div class="entry_info_body wpf_meta_info">
+                                    <ul>
+                                        <li>User Browser: {{submission.browser}}</li>
+                                        <li>Platform: {{submission.device}}</li>
+                                        <li>IP Address: <a target="_blank" rel="noopener" :href="'https://ipinfo.io/'+submission.ip_address">{{submission.ip_address}}</a></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            <el-button @click="hide_sidebar = 'yes'" size="mini">Hide Sidebar Info</el-button>
+                        </template>
+                        <template v-else>
+                            <div v-if="submission.order_items && parseInt(submission.order_items.length)" class="entry_info_box">
+                                <div class="entry_info_header">
+                                    <div class="info_box_header">WPPayForm Pro Features</div>
+                                </div>
+                                <div class="entry_info_body wpf_meta_info">
+                                    <p>Upgrade to WPPayForm Pro and get more information about your submission, Plus you will get the following features</p>
+                                    <ul class="wpf_no_style">
+                                        <li><i class="el-icon-circle-check"></i> Accept Subscription/Recurring Payments</li>
+                                        <li><i class="el-icon-circle-check"></i> Accept Payment via PayPal</li>
+                                        <li><i class="el-icon-circle-check"></i> Collect Tax with Payment Items</li>
+                                        <li><i class="el-icon-circle-check"></i> Tabular Product Order Field</li>
+                                        <li><i class="el-icon-circle-check"></i> Get Email Notification on Form Submission</li>
+                                        <li><i class="el-icon-circle-check"></i> Send Customized Email to form submitter</li>
+                                        <li><i class="el-icon-circle-check"></i> Poweful Email Notification System</li>
+                                        <li><i class="el-icon-circle-check"></i> File Upload Field</li>
+                                        <li><i class="el-icon-circle-check"></i> Export and Print Your Data (Excel/CSV/JSON)</li>
+                                        <li><i class="el-icon-circle-check"></i> Form Scheduling and Subsmission Restriction Module</li>
+                                        <li><i class="el-icon-circle-check"></i> Get Powerful reporting features</li>
+                                    </ul>
+                                    <a target="_blank" href="https://wpmanageninja.com/wppayform-pro-wordpress-payments-form-builder/?utm_source=upgrade&amp;utm_medium=url&amp;utm_campaign=wppayform_upgrade" class="el-button payform_action el-button--danger el-button--mini">
+                                        Upgrade To Pro
+                                    </a>
+                                </div>
+                            </div>
+
+                            <div class="entry_info_box">
+                                <div class="entry_info_header">
+                                    <div class="info_box_header">Recommended Plugins</div>
+                                </div>
+                                <div class="entry_info_body wpf_meta_info">
+                                    <p>We have developed few awesome plugin that you can give a try too</p>
+                                    <ul class="support_items">
+                                        <li>
+                                            <b><a target="_blank" href="https://wpmanageninja.com/downloads/ninja-tables-pro-add-on/">Ninja Tables Pro</a></b> - The Fastest and Most Diverse WordPress Table Plugin
+                                        </li>
+                                        <li>
+                                            <b><a target="_blank" href="https://wpmanageninja.com/wp-fluent-form/">WP Fluent Form</a></b> - Make Effortless Contact Forms In Minutes!
+                                        </li>
+                                    </ul>
+                                </div>
+                            </div>
+
+                        </template>
                     </div>
                 </div>
             </template>
@@ -289,6 +360,9 @@
                         <el-checkbox label="print_hide_order_items">Hide Order Items</el-checkbox>
                     </el-checkbox-group>
                 </div>
+
+                <el-button v-if="hide_sidebar == 'yes'" @click="hide_sidebar = 'no'" size="mini">Show Meta Info</el-button>
+
             </div>
             <!--Edit Payment Status Modal-->
             <el-dialog
@@ -317,7 +391,6 @@
                 <el-button type="primary" @click="changePaymentStatus()">Confirm</el-button>
             </span>
             </el-dialog>
-
             <el-dialog
                 :visible.sync="show_print_pro"
                 width="60%">
@@ -330,7 +403,6 @@
                     </div>
                 </div>
             </el-dialog>
-
         </div>
     </div>
 </template>
@@ -368,12 +440,16 @@
                     'print_hide_activities'
                 ],
                 show_print_settings: false,
-                show_print_pro: false
+                show_print_pro: false,
+                hide_sidebar: 'no'
             }
         },
         watch: {
             show_empty() {
                 this.setStoreData('show_empty_entry_field', this.show_empty);
+            },
+            hide_sidebar() {
+                this.setStoreData('entry_sidebar_status', this.hide_sidebar);
             }
         },
         computed: {
@@ -564,6 +640,8 @@
             }
             this.getEntry();
             this.show_empty = this.getFromStore('show_empty_entry_field', false);
+
+            this.hide_sidebar = this.getFromStore('entry_sidebar_status', 'no');
         }
     }
 </script>

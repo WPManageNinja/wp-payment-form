@@ -511,7 +511,9 @@ class Stripe
 
         $isOneSucceed = false;
         foreach ($subscriptions as $subscriptionItem) {
+
             $subscription = PlanSubscription::create($subscriptionItem, $customer, $submission);
+
             if (!$subscription || is_wp_error($subscription)) {
                 $subscriptionModel->update($subscriptionItem->id, [
                     'status' => 'failed',
@@ -532,8 +534,13 @@ class Stripe
 
             $isOneSucceed = true;
 
+            $subscriptionStatus = 'active';
+            if($subscriptionItem->trial_days) {
+                $subscriptionStatus = 'trialling';
+            }
+
             $subscriptionModel->update($subscriptionItem->id, [
-                'status'                 => 'active',
+                'status'                 => $subscriptionStatus,
                 'vendor_customer_id'     => $subscription->customer,
                 'vendor_subscriptipn_id' => $subscription->id,
                 'vendor_plan_id'         => $subscription->plan->id,
@@ -544,6 +551,12 @@ class Stripe
                 // Let's create the Subscription Transaction
                 $latestInvoice = $subscription->latest_invoice;
                 if ($latestInvoice->total) {
+
+                    $totalAmount = $latestInvoice->total;
+                    if (GeneralSettings::isZeroDecimal($submission->currency)) {
+                        $totalAmount = intval($latestInvoice->total * 100);
+                    }
+
                     $transactionItem = [
                         'form_id'          => $submission->form_id,
                         'user_id'          => $submission->user_id,
@@ -552,7 +565,7 @@ class Stripe
                         'transaction_type' => 'subscription',
                         'payment_method'   => 'stripe',
                         'charge_id'        => $latestInvoice->charge,
-                        'payment_total'    => $latestInvoice->total,
+                        'payment_total'    => $totalAmount,
                         'status'           => $latestInvoice->status,
                         'currency'         => $latestInvoice->currency,
                         'payment_mode'     => ($latestInvoice->livemode) ? 'live' : 'test',
@@ -570,7 +583,7 @@ class Stripe
             'submission_id' => $submission->id,
             'type'          => 'activity',
             'created_by'    => 'PayForm BOT',
-            'content'       => __('Stripe recurring payment subscription successfully initiated', 'wppayform')
+            'content'       => __('Stripe recurring subscription successfully initiated', 'wppayform')
         ));
 
         $submissionModel = new Submission();

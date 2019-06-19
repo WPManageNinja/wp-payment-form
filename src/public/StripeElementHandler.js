@@ -40,7 +40,7 @@ let cardElementHandler = {
         });
         config.form.on('stripe_payment_submit', function (event) {
             event.preventDefault();
-            if(!config.form.data('payment_total')) {
+            if(!config.form.data('payment_total')  && !config.form.data('subscription_total')) {
                 callback();
                 return;
             }

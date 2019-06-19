@@ -23,6 +23,30 @@
                 </div>
             </el-col>
             <el-col :xs="24" :md="12">
+                <div v-if="!has_pro" class="wpf_support_block">
+                    <div class="support_block_header">
+                        <h3>WPPayForm Pro Features</h3>
+                    </div>
+                    <div class="support_block_body">
+                        <p>Upgrade to WPPayForm Pro and get more information about your submission, Plus you will get the following features</p>
+                        <ul class="wpf_no_style">
+                            <li><i class="el-icon-circle-check"></i> Accept Subscription/Recurring Payments</li>
+                            <li><i class="el-icon-circle-check"></i> Accept Payment via PayPal</li>
+                            <li><i class="el-icon-circle-check"></i> Collect Tax with Payment Items</li>
+                            <li><i class="el-icon-circle-check"></i> Tabular Product Order Field</li>
+                            <li><i class="el-icon-circle-check"></i> Get Email Notification on Form Submission</li>
+                            <li><i class="el-icon-circle-check"></i> Send Customized Email to form submitter</li>
+                            <li><i class="el-icon-circle-check"></i> Poweful Email Notification System</li>
+                            <li><i class="el-icon-circle-check"></i> File Upload Field</li>
+                            <li><i class="el-icon-circle-check"></i> Export and Print Your Data (Excel/CSV/JSON)</li>
+                            <li><i class="el-icon-circle-check"></i> Form Scheduling and Subsmission Restriction Module</li>
+                            <li><i class="el-icon-circle-check"></i> Get Powerful reporting features</li>
+                        </ul>
+                        <a target="_blank" href="https://wpmanageninja.com/wppayform-pro-wordpress-payments-form-builder/?utm_source=upgrade&amp;utm_medium=url&amp;utm_campaign=wppayform_upgrade" class="el-button payform_action el-button--danger el-button--mini">
+                            Upgrade To Pro
+                        </a>
+                    </div>
+                </div>
                 <div class="wpf_support_block">
                     <div class="support_block_header">
                         <h3>Feedback and Support us</h3>
@@ -66,7 +90,6 @@
                 </div>
             </el-col>
         </el-row>
-
     </div>
 </template>
 

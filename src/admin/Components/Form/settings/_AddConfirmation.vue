@@ -156,6 +156,9 @@
                     customUrl: 'To a Custom URL',
                 }
             }
+        },
+        mounted() {
+           
         }
     }
 </script>

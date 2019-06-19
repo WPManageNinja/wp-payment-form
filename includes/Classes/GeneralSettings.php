@@ -443,6 +443,7 @@ class GeneralSettings
 
     public static function isZeroDecimal($currencyCode)
     {
+        $currencyCode = strtoupper($currencyCode);
         $zeroDecimals = self::zeroDecimalCurrencies();
         return isset($zeroDecimals[$currencyCode]);
     }

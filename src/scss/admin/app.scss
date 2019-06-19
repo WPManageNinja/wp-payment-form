@@ -1148,3 +1148,39 @@ span.table_payment_amount {
     }
   }
 }
+
+
+.wpf_submisson_body:not(.wpf_hide_sidebar) {
+  display: block;
+  overflow: hidden;
+  box-sizing: border-box;
+  .wpf_submission_details {
+    width: 75%;
+    float: left;
+    padding-right: 20px;
+  }
+  .wpf_submission_sidebar {
+    display: block;
+    width: 25%;
+    float: left;
+  }
+}
+
+.wpf_hide_sidebar .wpf_submission_sidebar {
+  display: none;
+}
+
+.wpf_meta_info {
+  ul {
+    list-style: disc;
+    margin-left: 20px;
+  }
+}
+
+ul.wpf_no_style {
+  list-style: none;
+  margin-left: 0;
+  i {
+    color: #0a73e0;
+  }
+}

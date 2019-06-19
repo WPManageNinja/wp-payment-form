@@ -76,3 +76,12 @@ body .wpf_payment_view .entry_info_box {
   margin: 0;
   padding: 0;
 }
+
+.wpf_submisson_body {
+  .wpf_submission_sidebar {
+    display: none;
+  }
+  .wpf_submission_details {
+    width: 100% !important;
+  }
+}

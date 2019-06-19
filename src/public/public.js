@@ -17,12 +17,10 @@ var wpPayformApp = {};
                 body.trigger('wpPayFormProcessFormElements', [form]);
             });
             this.initDatePiker();
-            this.initNumericInputs();
 
             $('.wpf_form').on('keypress', function (e) {
                 return e.which !== 13;
             });
-
         },
         initForm(form) {
             let that = this;
@@ -111,6 +109,21 @@ var wpPayformApp = {};
                 form_data: $(form).serialize()
             })
                 .then(response => {
+                    if(!response || !response.data || !response.data.confirmation) {
+                        let $errorDiv = form.parent().find('.wpf_form_errors');
+                        $errorDiv.html('<p class="wpf_form_error_heading">Something is wrong when submitting the form</p>').show();
+                        $errorDiv.append('<div class="wpf_error_items">Server Response: ');
+                        $errorDiv.append('<p>'+response+'</p>');
+                        $errorDiv.append('</div>');
+                        form.parent().addClass('wpf_form_has_errors');
+                        form.trigger('wpf_form_fail_submission', response);
+                        form.removeClass('wpf_submitting_form');
+
+                        form.removeClass('wpf_submitting_form');
+                        form.find('button.wpf_submit_button').removeAttr('disabled');
+                        return;
+                    }
+
                     let confirmation = response.data.confirmation;
                     form.parent().addClass('wpf_form_submitted');
                     form.trigger('wpf_form_submitted', response.data);
@@ -160,14 +173,20 @@ var wpPayformApp = {};
             let elements = form.find('.wpf_payment_item');
             let itemTotalValue = {};
 
+            let subscriptonAmountTotal = 0;
+
             elements.each(function (index, elem) {
                 let elementType = elem.type;
                 let $elem = $(elem);
                 let elementName = $elem.attr('name');
                 if (elementType == 'radio') {
-                    let itemValue = form.find('input[name=' + elementName + ']:checked').data('price');
+                    let $element = form.find('input[name=' + elementName + ']:checked');
+                    let itemValue = $element.data('price');
                     if (itemValue) {
                         itemTotalValue[elementName] = parseInt(itemValue);
+                    }
+                    if($element.data['subscription_amount']) {
+                        subscriptonAmountTotal += parseInt($element.data['subscription_amount']);
                     }
                 }
                 else if (elementType == 'hidden') {
@@ -175,6 +194,12 @@ var wpPayformApp = {};
                     if (itemValue) {
                         itemTotalValue[elementName] = parseInt(itemValue);
                     }
+                    if($elem.attr('data-subscription_amount')) {
+                        subscriptonAmountTotal += parseInt($elem.attr('data-subscription_amount'));
+                    }
+
+                    console.log(subscriptonAmountTotal);
+
                 } else if ($elem.data('is_custom_price') == 'yes') {
                     let itemValue = $(this).val();
                     if (itemValue) {
@@ -193,9 +218,14 @@ var wpPayformApp = {};
                     itemTotalValue[groupId] = groupTotal;
                 }
                 else if (elementType == 'select-one') {
-                    let itemValue = form.find('select[name=' + elementName + '] option:selected').data('price');
+                    let $element = form.find('select[name=' + elementName + '] option:selected');
+                    let itemValue = $element.data('price');
                     if (itemValue) {
                         itemTotalValue[elementName] = parseInt(itemValue);
+                    }
+
+                    if($element.attr('data-subscription_amount')) {
+                        subscriptonAmountTotal += parseInt($element.attr('data-subscription_amount'));
                     }
                 }
             });
@@ -232,6 +262,7 @@ var wpPayformApp = {};
             form.find('.wpf_calc_sub_total').html(formatPrice(subTotal, formSettings.currency_settings));
             form.find('.wpf_calc_payment_total').html(formatPrice(allTotalAmount, formSettings.currency_settings));
             form.data('payment_total', allTotalAmount);
+            form.data('subscription_total', subscriptonAmountTotal);
         },
         calCulateTaxAmount(form, itemizedValue, formSettings) {
             if (!form.hasClass('wpf_has_tax_item')) {
@@ -290,9 +321,6 @@ var wpPayformApp = {};
                     flatpickr(dateField, config);
                 });
             }
-        },
-        initNumericInputs() {
-
         },
         handlePaymentMethodChange(form, value) {
             form.data('selected_payment_method', value);
