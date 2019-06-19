@@ -214,6 +214,14 @@ You are most welcome. You can do the following:
 
 ##### Changelog
 
+= 1.2.0 - June 19, 2019 =
+- Fix Zero Decimal Currecncy for other elements
+- Added Confirm email field
+- Performance Improvement
+- Added more developer hooks
+- UI Upgrades for Admin Panel
+- Added Meta Tables
+
 = 1.1.6 - June 02, 2019 =
 - Fix Zero Decimal Currecncy charges
 - Added Dashboard Widget
