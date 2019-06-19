@@ -1,13 +1,13 @@
-=== Stripe Payments Processing - WPPayForm Plugin for WordPress with Contact Form Functionalities ===
+=== Stripe WordPress Payments - WPPayForm Plugin for WordPress with Contact Form Functionalities ===
 Contributors: techjewel, wpmanageninja
-Tags: Stripe, Event Registration Form, stripe form, accept payment, stripe payments, secure payment form, form, payment form, payments, credit card, stripe checkout, Accept PayPal Payments, credit card payments, checkout.js
+Tags: Stripe, stripe wordpress, stripe integrations, stripe wordpress plugin, wordpress stripe, stripe for wordpress, stripe pay, pay with stripe, Event Registration Form, stripe form, accept payment, stripe payments, secure payment form, form, payment form, payments, credit card, stripe checkout, Accept PayPal Payments, credit card payments, checkout.js, payment for stripe
 Requires at least: 4.5
-Tested up to: 5.2.1
+Tested up to: 5.2.2
 Stable tag: 1.1.6
 Requires PHP: 5.4
 License: GPLv2 or later
 
-Secure Optimized Payment Form Builder with Integrated Stripe Payment Method.
+Easily Accept Payments in WordPress with Stripe (PayPal also supported) with Form Builder Capability.
 
 == Description ==
 
@@ -74,11 +74,11 @@ With built-in submission management system, you can see the total view of your s
 In individual submission page, you can see the complete data, order items as payment table, payment, and activity. You can also change the payment status easily. The submissions can have their own notes too.
 
 == Event Registration Form with Built-in Payment Processing ==
-With **Stripe Payments Processing - WPPayForm Plugin**, You can easily design a form for your next awesome event/webinar and start recieving payments along with the register information. You can see the data in your dashboard as well as you can send automatted emails to your register or yourself.
+With **Stripe WordPress Payments - WPPayForm Plugin**, You can easily design a form for your next awesome event/webinar and start recieving payments along with the register information. You can see the data in your dashboard as well as you can send automatted emails to your register or yourself.
 With the built-in reporting module, You can track the failed/success/pending payments and use the data for your business.
 
 == Built-in Stripe Payment Gateway ==
-**Stripe Payments Processing - WPPayForm Plugin** offers Stripe payment gateway, Where you can just connect your stripe account and start accepting payments securely. We added both stripe checkout.js and stripe element for checkout experience. We have implemented all the best practices as stripe.com recommends. You can also collect billing and shipping information with stripe checkout.js.
+**Stripe WordPress Payments - WPPayForm Plugin** offers Stripe payment gateway, Where you can just connect your stripe account and start accepting payments securely. We added both stripe checkout.js and stripe element for checkout experience. We have implemented all the best practices as stripe.com recommends. You can also collect billing and shipping information with stripe checkout.js.
 
 == High Conversion Stripe Payment Forms in WordPress ==
 Design a high conversion Payment form is hard. This plugin make it easy for you. In few minutes, You can build a high conversion form and start accpeting payments with stripe right way. With the pro version, You can also accept payments using paypal.
@@ -131,6 +131,7 @@ This is a super fast form builder and it's only loads css and js if you add the 
 </ul>
 
 = WPPayform Pro Features =
+- Accept recurring/subscription payments
 - Accept payment using PayPal too
 - Let your users choose from the available payment method
 - Form scheduling
@@ -144,14 +145,18 @@ This is a super fast form builder and it's only loads css and js if you add the 
 - Tax Calculated Amount
 - Custom Email send on form/payment submission
 
+== Accept Recurring or Subscription payments with Stripe / PayPal (Pro) ==
+Sometimes, You need to accept subscription payments like $9.99/month. You can do that easily with WPPayForm Pro. You can setup your recurring payments details and start accepting the payments via card payments (Stripe) / PayPal. Your users don't need to create an account to make payments.
+It's easy, convenient and most importantly, It will increase your conversion rate.
+
 
 = Features Tracker =
 - Payment Receipt Page *(DONE)*
 - Submission Activity and custom notes *(DONE)*
 - Email Notifications *(Done)*
 - Export Data as CSV/Excel/JSON *(Done)
+- Accept Subscription Payments *(Done)*
 - Send bulk emails to the submitters and filter by payment statuses (On development)
-- Accept Subscription Payments
 
 This plugin is a very planned project, and we have a long term development plan for this. We already invested around 200 human working hours (+coffees) on it, and we have the intention to spend much more on it. Please let us know what features you want, and we are happy to add that in our development sprint.
 

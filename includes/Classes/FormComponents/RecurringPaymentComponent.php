@@ -183,7 +183,6 @@ class RecurringPaymentComponent extends BaseComponent
         );
 
         $type = ArrayHelper::get($fieldOptions, 'recurring_payment_options.selection_type', 'radio');
-        $type = 'select';
         ?>
         <div <?php echo $this->builtAttributes($controlAttributes); ?>>
             <?php if (ArrayHelper::get($fieldOptions, 'show_main_label') == 'yes'): ?>

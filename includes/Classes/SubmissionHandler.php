@@ -24,7 +24,6 @@ class SubmissionHandler
     private $customerEmail = '';
     private $selectedPaymentMethod = '';
 
-
     public function handeSubmission()
     {
         parse_str($_REQUEST['form_data'], $form_data);
