@@ -72,6 +72,10 @@ class PaymentReceipt
 
         $header = '<h4>'.__('Items Details', 'wppayform').'</h4>';
         $html = $this->loadView('elements/order_items_table', array('submission' => $submission));
+
+        if(!$html) {
+            return '';
+        }
         return $header.$html;
     }
 
@@ -105,7 +109,7 @@ class PaymentReceipt
         return $this->loadView('receipt/custom_css', array('submission' => $submission));
     }
 
-    private function loadView($fileName, $data)
+    public function loadView($fileName, $data)
     {
         // normalize the filename
         $fileName = str_replace(array('../', './'), '', $fileName);

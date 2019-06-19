@@ -8,22 +8,35 @@ function wpPayFormDB()
     return wpFluent();
 }
 
+function wpPayFormFormatMoney($amountInCents, $formId = false)
+{
+    if(!$formId) {
+        $currencySettings = \WPPayForm\Classes\GeneralSettings::getGlobalCurrencySettings();
+    } else {
+        $currencySettings = \WPPayForm\Classes\Models\Forms::getCurrencySettings($formId);
+    }
+    if(empty($currencySettings['currency_sign'])) {
+        $currencySettings['currency_sign'] = \WPPayForm\Classes\GeneralSettings::getCurrencySymbol( $currencySettings['currency']);
+    }
+    return wpPayFormFormattedMoney($amountInCents, $currencySettings);
+}
+
 function wpPayFormFormattedMoney($amountInCents, $currencySettings)
 {
     $symbol = $currencySettings['currency_sign'];
     $position = $currencySettings['currency_sign_position'];
     $decmalSeparator = '.';
     $thousandSeparator = ',';
-    if($currencySettings['currency_separator'] != 'dot_comma') {
+    if ($currencySettings['currency_separator'] != 'dot_comma') {
         $decmalSeparator = ',';
         $thousandSeparator = '.';
     }
     $decimalPoints = 2;
-    if($amountInCents % 100 == 0 && $currencySettings['decimal_points'] == 0) {
+    if ($amountInCents % 100 == 0 && $currencySettings['decimal_points'] == 0) {
         $decimalPoints = 0;
     }
 
-    $amount = number_format(  $amountInCents / 100, $decimalPoints, $decmalSeparator, $thousandSeparator );
+    $amount = number_format($amountInCents / 100, $decimalPoints, $decmalSeparator, $thousandSeparator);
 
     if ('left' === $position) {
         return $symbol . $amount;
@@ -39,7 +52,7 @@ function wpPayFormFormattedMoney($amountInCents, $currencySettings)
 
 function wpPayFormConverToCents($amount)
 {
-    if(!$amount) {
+    if (!$amount) {
         return 0;
     }
     $amount = floatval($amount);

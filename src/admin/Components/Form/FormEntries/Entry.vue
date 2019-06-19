@@ -291,6 +291,7 @@
                                         <li>User Browser: {{submission.browser}}</li>
                                         <li>Platform: {{submission.device}}</li>
                                         <li>IP Address: <a target="_blank" rel="noopener" :href="'https://ipinfo.io/'+submission.ip_address">{{submission.ip_address}}</a></li>
+                                        <li v-if="submission.user">User: <a target="_blank" rel="noopener" :href="submission.user.profile_url">{{submission.user.display_name}}</a></li>
                                     </ul>
                                 </div>
                             </div>

@@ -102,6 +102,16 @@ class SubmissionView
         $currencySetting['currency_sign'] = GeneralSettings::getCurrencySymbol($submission->currency);
         $submission->currencySetting = $currencySetting;
 
+        if ($submission->user_id) {
+            $user = get_user_by('ID', $submission->user_id);
+            if ($user) {
+                $submission->user = [
+                    'display_name' => $user->display_name,
+                    'profile_url' => get_edit_user_link($user->ID)
+                ];
+            }
+        }
+
         $submission = apply_filters('wppayform/form_entry', $submission);
 
         $parsedEntry = (object)$submissionModel->getParsedSubmission($submission);
@@ -252,24 +262,23 @@ class SubmissionView
         $submissionModel = new Submission();
         $reports = [];
         $reports[''] = [
-            'label' => 'All',
+            'label'            => 'All',
             'submission_count' => $submissionModel->getTotalCount($formId),
-            'payment_total' => $submissionModel->paymentTotal($formId)
+            'payment_total'    => $submissionModel->paymentTotal($formId)
         ];
 
-        foreach ($paymentStatuses as $status => $statusName)
-        {
+        foreach ($paymentStatuses as $status => $statusName) {
             $reports[$status] = [
-                'label' => $statusName,
+                'label'            => $statusName,
                 'submission_count' => $submissionModel->getTotalCount($formId, $status),
-                'payment_total' => $submissionModel->paymentTotal($formId, $status)
+                'payment_total'    => $submissionModel->paymentTotal($formId, $status)
             ];
         }
 
         wp_send_json_success([
-            'reports' => $reports,
+            'reports'          => $reports,
             'currencySettings' => Forms::getCurrencyAndLocale($formId),
-            'is_payment_form' => Forms::hasPaymentFields($formId)
+            'is_payment_form'  => Forms::hasPaymentFields($formId)
         ], 200);
     }
 }

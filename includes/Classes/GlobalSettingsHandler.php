@@ -2,8 +2,6 @@
 
 namespace WPPayForm\Classes;
 
-use WPPayForm\Classes\Models\Transaction;
-
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -34,7 +32,6 @@ class GlobalSettingsHandler
             return;
         }
     }
-
 
     protected function getGlobalCurrencySettings()
     {

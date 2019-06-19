@@ -104,10 +104,8 @@ class Submission
         }
 
         if (in_array('subscriptions', $with)) {
-            if(class_exists('\WPPayForm\Pro\Classes\RecurringInfo')) {
-                $recurringPayment = new \WPPayForm\Pro\Classes\RecurringInfo();
-                $result = $recurringPayment->getSubscriptions($result);
-            }
+            $subscriptionModel = new Subscription();
+            $result->subscriptions = $subscriptionModel->getSubscriptions($result->id);
         }
         return $result;
     }
@@ -118,7 +116,7 @@ class Submission
         if ($formId) {
             $query = $query->where('form_id', $formId);
         }
-        if($paymentStatus) {
+        if ($paymentStatus) {
             $query = $query->where('payment_status', $paymentStatus);
         }
         return $query->count();
@@ -132,22 +130,23 @@ class Submission
         if ($formId) {
             $query = $query->where('form_id', $formId);
         }
-        if($paymentStatus) {
+        if ($paymentStatus) {
             $query->where('payment_status', $paymentStatus);
         }
-        $result =  $query->first();
-        if($result && $result->payment_total) {
+        $result = $query->first();
+        if ($result && $result->payment_total) {
             $paymentTotal = $result->payment_total;
         }
 
-        if(!$paymentStatus || $paymentStatus == 'paid') {
+        if (!$paymentStatus || $paymentStatus == 'paid') {
             $paymentTotal += $this->getSubscriptionPaymentTotal($formId);
         }
 
         return $paymentTotal;
     }
 
-    public function getSubscriptionPaymentTotal($formId, $submissionId = false) {
+    public function getSubscriptionPaymentTotal($formId, $submissionId = false)
+    {
         $paymentTotal = 0;
         // Calculate from subscriptions
         $query = wpPayFormDB()->table('wpf_subscriptions')
@@ -156,12 +155,12 @@ class Submission
             $query = $query->where('form_id', $formId);
         }
 
-        if($submissionId) {
+        if ($submissionId) {
             $query = $query->where('submission_id', $submissionId);
         }
 
-        $result =  $query->first();
-        if($result && $result->payment_total) {
+        $result = $query->first();
+        if ($result && $result->payment_total) {
             $paymentTotal = $result->payment_total;
         }
         return $paymentTotal;
