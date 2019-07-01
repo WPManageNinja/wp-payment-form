@@ -1,4 +1,4 @@
-=== Stripe WordPress Payments - WPPayForm Plugin for WordPress with Contact Form Functionalities ===
+=== WPPayForm for Stripe WordPress Payments Plugin ===
 Contributors: techjewel, wpmanageninja
 Tags: Stripe, stripe wordpress, stripe integrations, stripe wordpress plugin, wordpress stripe, stripe for wordpress, stripe pay, pay with stripe, Event Registration Form, stripe form, accept payment, stripe payments, secure payment form, form, payment form, payments, credit card, stripe checkout, Accept PayPal Payments, credit card payments, checkout.js, payment for stripe
 Requires at least: 4.5
@@ -160,6 +160,8 @@ It's easy, convenient and most importantly, It will increase your conversion rat
 
 This plugin is a very planned project, and we have a long term development plan for this. We already invested around 200 human working hours (+coffees) on it, and we have the intention to spend much more on it. Please let us know what features you want, and we are happy to add that in our development sprint.
 
+The full source code is available on <a href="https://github.com/WPManageNinja/wp-payment-form">Github</a>.
+
 == Installation ==
 
 This section describes how to install the plugin and get it working.
@@ -246,6 +248,8 @@ You are most welcome. You can do the following:
 = 1.2.1 - July 01, 2019 =
 - Fix PayPal Payments for Taxable Items
 - Fix Stripe Trial Period Amounts
+- Rename The plugin
+- Added source vue files
 
 = 1.2.0 - June 19, 2019 =
 - Fix Zero Decimal Currecncy for other elements
