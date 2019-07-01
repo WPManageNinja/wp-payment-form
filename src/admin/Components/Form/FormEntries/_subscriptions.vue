@@ -129,7 +129,7 @@
                     if(this.payment_mode == 'test') {
                         return 'https://dashboard.stripe.com/test/subscriptions/' + subscription.vendor_subscriptipn_id;
                     }
-                    return 'https://dashboard.stripe.com/payments/' + subscription.vendor_subscriptipn_id;
+                    return 'https://dashboard.stripe.com/subscriptions/' + subscription.vendor_subscriptipn_id;
                 }
             },
             subscriptionHumanText(plan) {

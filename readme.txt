@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja
 Tags: Stripe, stripe wordpress, stripe integrations, stripe wordpress plugin, wordpress stripe, stripe for wordpress, stripe pay, pay with stripe, Event Registration Form, stripe form, accept payment, stripe payments, secure payment form, form, payment form, payments, credit card, stripe checkout, Accept PayPal Payments, credit card payments, checkout.js, payment for stripe
 Requires at least: 4.5
 Tested up to: 5.2.2
-Stable tag: 1.2.0
+Stable tag: 1.2.1
 Requires PHP: 5.4
 License: GPLv2 or later
 
@@ -242,6 +242,10 @@ You are most welcome. You can do the following:
 12. Submission Details (2nd Part)
 
 == Changelog ==
+
+= 1.2.1 - July 01, 2019 =
+- Fix PayPal Payments for Taxable Items
+- Fix Stripe Trial Period Amounts
 
 = 1.2.0 - June 19, 2019 =
 - Fix Zero Decimal Currecncy for other elements

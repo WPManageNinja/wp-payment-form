@@ -198,8 +198,6 @@ var wpPayformApp = {};
                         subscriptonAmountTotal += parseInt($elem.attr('data-subscription_amount'));
                     }
 
-                    console.log(subscriptonAmountTotal);
-
                 } else if ($elem.data('is_custom_price') == 'yes') {
                     let itemValue = $(this).val();
                     if (itemValue) {

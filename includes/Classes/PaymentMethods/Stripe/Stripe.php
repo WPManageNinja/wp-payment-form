@@ -155,7 +155,6 @@ class Stripe
 
     }
 
-
     public function handleOnetimePayment($submission, $transaction, $form, $tokenArgs)
     {
         $paymentArgs = array(

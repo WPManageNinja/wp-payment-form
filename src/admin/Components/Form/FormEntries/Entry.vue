@@ -164,8 +164,7 @@
                                         <template v-if="submission.tax_items.length">
                                             <tr v-for="taxItem in submission.tax_items">
                                                 <td style="text-align: right" colspan="3">
-                                                    {{taxItem.item_name}} <span
-                                                    class="wpf_tax_value">({{taxItem.taxRate}}%)</span>:
+                                                    {{taxItem.item_name}}:
                                                 </td>
                                                 <td v-html="getFormattedMoney(taxItem.line_total)"></td>
                                             </tr>

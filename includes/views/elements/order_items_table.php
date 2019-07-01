@@ -33,7 +33,7 @@ $currencySetting['currency_sign'] = \WPPayForm\Classes\GeneralSettings::getCurre
         </tr>
         <?php foreach ($submission->tax_items as $tax_item): ?>
             <tr class="wpf_sub_total_row">
-                <td style="text-align: right" colspan="3"><?php echo $tax_item->item_name ?> <span class="wpf_tax_value">(<?php echo $tax_item->taxRate; ?>%)</span></td>
+                <td style="text-align: right" colspan="3"><?php echo $tax_item->item_name ?></td>
                 <td><?php echo wpPayFormFormattedMoney($tax_item->line_total, $currencySetting); ?></td>
             </tr>
         <?php endforeach; ?>

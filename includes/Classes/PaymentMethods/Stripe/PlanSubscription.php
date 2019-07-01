@@ -43,6 +43,11 @@ class PlanSubscription
                 'latest_invoice',
             ]
         );
+
+        if($subscription->trial_days) {
+            $subscriptionArgs['trial_end'] = time() + $subscription->trial_days * 86400;
+        }
+
         return self::subscribe($subscriptionArgs);
     }
 
