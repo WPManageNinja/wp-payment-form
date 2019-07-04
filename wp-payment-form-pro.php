@@ -1,7 +1,7 @@
 <?php
 /**
- * Plugin Name: WPPayForm
- * Plugin URI:  https://wpmanageninja.com/downloads/wppayform-pro-wordpress-payments-form-builder/
+ * Plugin Name: WPPayForm Pro
+ * Plugin URI:  https://wppayform.wpmanageninja.com/
  * Description: Create and Accept Payments in minutes with Stripe, PayPal with built-in form builder
  * Author: WPManageNinja LLC
  * Author URI:  https://wpmanageninja.com
@@ -31,8 +31,9 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-if (!defined('WPPAYFORM_VERSION')) {
-    define('WPPAYFORM_VERSION_LITE', true);
+define( 'WPPAYFORM_PRO_INSTALLED', true );
+
+if (!defined('WPPAYFORM_VERSION_LITE')) {
     define('WPPAYFORM_VERSION', '1.1.6');
     // Stripe API version should be in 'YYYY-MM-DD' format.
     define('WPPAYFORM_STRIPE_API_VERSION', '2018-10-31');
@@ -52,10 +53,20 @@ if (!defined('WPPAYFORM_VERSION')) {
             $this->commonActions();
             $this->registerShortcodes();
             $this->loadComponents();
+
+            add_filter('wppayform/paypal_ipn_url', function ($url) {
+                return 'http://c63eaeb5.ngrok.io' . '?wpf_paypal_ipn=1';
+            });
         }
 
         public function adminHooks()
         {
+//            $sub = wpPayFormDB()->table('wpf_subscriptions')
+//                ->where('id', 1)
+//                ->first();
+//            print_r(maybe_unserialize($sub->vendor_response));
+//            die();
+
             // Init The Classes
             // Register Post Type
             new \WPPayForm\Classes\PostType();
@@ -164,16 +175,12 @@ if (!defined('WPPAYFORM_VERSION')) {
         public function loadDependecies()
         {
             require_once(WPPAYFORM_DIR . 'includes/autoload.php');
+            require_once WPPAYFORM_DIR . 'includes/Pro/init.php';
         }
     }
-
+    require_once WPPAYFORM_DIR . 'includes/Pro/libs/updater/wppayform_pro_updater.php';
     add_action('plugins_loaded', function () {
-        // Let's check again if Pro version is available or not
-        if (defined('WPPAYFORM_PRO_INSTALLED')) {
-            deactivate_plugins(plugin_basename(__FILE__));
-        } else {
-            (new WPPayForm())->boot();
-        }
+        (new WPPayForm())->boot();
     });
     register_activation_hook(__FILE__, function ($newWorkWide) {
         require_once(WPPAYFORM_DIR . 'includes/Classes/Activator.php');
@@ -190,7 +197,9 @@ if (!defined('WPPAYFORM_VERSION')) {
     } );
 
 } else {
-    add_action('admin_init', function () {
-        deactivate_plugins(plugin_basename(__FILE__));
+    add_action( 'admin_notices', function () {
+        $class = 'notice notice-error';
+        $message =  'Please deactivate WPPayForm Free version';
+        printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
     });
 }

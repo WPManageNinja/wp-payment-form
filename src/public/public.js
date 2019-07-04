@@ -1,17 +1,19 @@
 import StripeElementHandler from './StripeElementHandler';
 import StripeCheckoutHandler from './StripeCheckoutHandler';
 import formatPrice from '../common/formatPrice';
+import Payment from './Payment';
 
 (function ($, generalSettings) {
 
     const wpPayformApp = {
         forms: {},
-        formData: {},
         general: generalSettings,
         init() {
             const body = $(document.body);
             
-            this.forms = body.find('.wpf_form').each((i, form) => {
+            this.forms = body.find('.wpf_form');
+
+            this.forms.each((i, form) => {
                 let $form = $(form);
                 this.initForm($form);
                 body.trigger('wpPayFormProcessFormElements', [$form]);
@@ -19,28 +21,27 @@ import formatPrice from '../common/formatPrice';
 
             this.initDatePiker();
 
-            this.initNumericInputs();
-
             $('.wpf_form').on('keypress', e => e.which !== 13);
         },
         initForm(form) {
-            
             this.calculatePayments(form);
 
-            if (parseInt(form.find('input[name=__wpf_valid_payment_methods_count]').val(), 10) > 1) {
-                let defaultSelected = form.find('input[name=__wpf_selected_payment_method]:checked').val();
+            const payment = new Payment(form);
+
+            if (payment.isMultiple()) {
+                let paymentMethod = payment.getMultiplePayment();
                 
-                this.handlePaymentMethodChange(form, defaultSelected);
-                
-                form.find('input[name=__wpf_selected_payment_method]').on({
-                    change: (e) => form.trigger('payment_method_changed', $(e.target).val()),
-                    payment_method_changed: (e, value) => this.handlePaymentMethodChange(form, value)
+                form.on('payment_method_changed', (e, paymentMethod) => {
+                    payment.handlePaymentMethodChange(paymentMethod);
+                })
+                .trigger('payment_method_changed', paymentMethod)
+                .find('input[name=__wpf_selected_payment_method]').on('change', (e) => {
+                    form.trigger('payment_method_changed', e.target.value);
                 });
 
             } else {
-                // We have to check if any hidden / single payment method exists or not
-                let paymentMethod = form.find('[data-wpf_payment_method]').data('wpf_payment_method');
-                
+                let paymentMethod = payment.getSinglePayment();
+
                 if (paymentMethod) {
                     form.data('selected_payment_method', paymentMethod);
                 }
@@ -56,9 +57,9 @@ import formatPrice from '../common/formatPrice';
             
             form.on('submit', (e) => {
                 e.preventDefault();
-
-                let selectedPaymentMethod = form.data('selected_payment_method');
                 
+                let selectedPaymentMethod = payment.getSelectedMethod();
+
                 if (selectedPaymentMethod == 'stripe') {
                     // We have the selected payment method! So, we are triggering that
                     form.trigger(selectedPaymentMethod + '_payment_submit');
@@ -96,8 +97,10 @@ import formatPrice from '../common/formatPrice';
                 StripeCheckoutHandler.init(checkoutSettings, () => this.submitForm(form));
             }
 
-            jQuery(document.body).trigger('wpfFormInitialized', [form]);
+            this.maybeSubscriptionSetup(form);
 
+            $(document.body).trigger('wpfFormInitialized', [form]);
+            $(document.body).trigger('wpfFormInitialized_' + form.data('wpf_form_id'), [form]);
             form.addClass('wpf_form_initialized');
         },
         submitForm(form) {
@@ -306,20 +309,44 @@ import formatPrice from '../common/formatPrice';
                 });
             }
         },
-        initNumericInputs() {
-            // ...
-        },
-        handlePaymentMethodChange(form, value) {
-            form.data('selected_payment_method', value);
-            
-            if (!value) {
-                form.find('.wpf_all_payment_methods_wrapper').hide();
-                return;
+        maybeSubscriptionSetup(form) {
+            // Handle Radio Button Select
+            function checkForRadio(element) {
+                let elementName = $(element).attr('name');
+                let selectedIndex = $(element).val();
+                $(element).closest('.wpf_subscription_controls_radio').find('.wpf_subscription_plan_summary_item').hide();
+                $(element).closest('.wpf_subscription_controls_radio').find('.wpf_subscription_plan_summary_'+elementName+' .wpf_subscription_plan_index_'+selectedIndex).show();
             }
 
-            form.find('.wpf_all_payment_methods_wrapper').show();
-            form.find('.wpf_all_payment_methods_wrapper .wpf_payment_method_element').hide();
-            form.find('.wpf_all_payment_methods_wrapper .wpf_payment_method_element_' + value).show();
+            $.each(form.find('.wpf_subscription_controls_radio input:checked'), function (index, element) {
+                checkForRadio(element);
+            });
+
+            form.find('.wpf_subscription_controls_radio input').on('change', function () {
+                checkForRadio(this);
+            });
+
+            // Handle Selection Button Select
+
+            function checkForSelections(element) {
+                let elementName = $(element).attr('id');
+                let selectedIndex = $(element).val();
+                form.find('.wpf_subscription_plan_summary_'+elementName +' .wpf_subscription_plan_summary_item').hide();
+                form.find('.wpf_subscription_plan_summary_'+elementName +' .wpf_subscription_plan_index_'+selectedIndex).show();
+
+            }
+
+            $.each(form.find('.wpf_subscrion_plans_select option:selected'), function (index, element) {
+                if($(element).attr('value') != '') {
+                    checkForSelections($(element).parent());
+                }
+            });
+
+            form.find('.wpf_subscrion_plans_select select').on('change', function () {
+                checkForSelections(this);
+            });
+
+
         }
     };
 

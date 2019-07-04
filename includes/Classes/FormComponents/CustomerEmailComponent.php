@@ -76,17 +76,6 @@ class CustomerEmailComponent extends BaseComponent
         $element['extra_input_class'] = 'wpf_customer_email';
         $defaultValue = apply_filters('wppayform/input_default_value', ArrayHelper::get($element['field_options'], 'default_value'), $element, $form);
         $element['field_options']['default_value'] = $defaultValue;
-
-        if($defaultValue && strpos($defaultValue, '{current_user.user_email}') !== false) {
-            $currentUserId = get_current_user_id();
-            $replaceValue = '';
-            if($currentUserId) {
-                $currentUser = get_user_by('ID', $currentUserId);
-                $replaceValue = $currentUser->user_email;
-            }
-            $element['field_options']['default_value'] = str_replace('{current_user.user_email}', $replaceValue, $defaultValue);
-        }
-
         $this->renderNormalInput($element, $form);
     }
 }

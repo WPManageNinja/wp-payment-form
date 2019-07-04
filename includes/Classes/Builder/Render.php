@@ -196,13 +196,18 @@ class Render
                 'nextMonth'        => __('Next Month', 'wppayform'),
                 'months'           => [
                     'sorthand' => [
-                        'Sun' => __('Sun', 'wppayform'),
-                        'Mon' => __('Mon', 'wppayform'),
-                        'Tue' => __('Tue', 'wppayform'),
-                        'Wed' => __('Wed', 'wppayform'),
-                        'Thu' => __('Thu', 'wppayform'),
-                        'Fri' => __('Fri', 'wppayform'),
-                        'Sat' => __('Sat', 'wppayform')
+                        __('Jan', 'wppayform'),
+                        __('Feb', 'wppayform'),
+                        __('Mar', 'wppayform'),
+                        __('Apr', 'wppayform'),
+                        __('May', 'wppayform'),
+                        __('Jun', 'wppayform'),
+                        __('Jul', 'wppayform'),
+                        __('Aug', 'wppayform'),
+                        __('Sep', 'wppayform'),
+                        __('Oct', 'wppayform'),
+                        __('Nov', 'wppayform'),
+                        __('Dec', 'wppayform')
                     ],
                     'longhand' => [
                         __('January', 'wppayform'),

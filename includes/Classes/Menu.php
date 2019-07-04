@@ -42,8 +42,8 @@ class Menu
             $this->getIcon(),
             25
         );
-        
-        if(defined('WPPAYFORMHASPRO')) {
+
+        if(defined('WPPAYFORM_PRO_INSTALLED')) {
             $license = get_option('_wppayform_pro_license_status');
             if ($license != 'valid') {
                 $submenu['wppayform.php']['activate_license'] = array(
@@ -71,6 +71,14 @@ class Menu
             $menuPermission,
             'admin.php?page=wppayform.php#/settings/general-settings',
         );
+        if(!defined('WPPAYFORM_PRO_INSTALLED')) {
+            $submenu['wppayform.php']['upgrade_to_pro'] = array(
+                '<span style="color: #f9e112;">Upgrade To Pro</span>',
+                $menuPermission,
+                'https://wpmanageninja.com/downloads/wppayform-pro-wordpress-payments-form-builder/?utm_source=plugin&utm_medium=menu&utm_campaign=upgrade',
+            );
+        }
+
         $submenu['wppayform.php']['support'] = array(
             __('Support', 'wppayform'),
             $menuPermission,
@@ -94,7 +102,7 @@ class Menu
             wp_enqueue_script('wppayform_admin_app', WPPAYFORM_URL.'assets/js/payforms-admin.js', array('wppayform_boot'), WPPAYFORM_VERSION, true);
             wp_enqueue_style('wppayform_admin_app', WPPAYFORM_URL.'assets/css/payforms-admin.css', array(), WPPAYFORM_VERSION);
 
-            wp_localize_script('wppayform_boot', 'wpPayFormsAdmin', array(
+            $payformAdminVars = apply_filters('wppayform/admin_app_vars',array(
                 'i18n' => array(
                     'All Payment Forms' => __('All Payment Forms', 'wppayform')
                 ),
@@ -108,6 +116,8 @@ class Menu
                 'printStyles' => apply_filters('wppayform/print_styles', []),
                 'ace_path_url' => WPPAYFORM_URL.'assets/libs/ace'
             ));
+
+            wp_localize_script('wppayform_boot', 'wpPayFormsAdmin', $payformAdminVars);
         }
     }
 

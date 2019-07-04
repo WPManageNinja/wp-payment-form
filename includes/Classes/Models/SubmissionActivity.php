@@ -29,8 +29,8 @@ class SubmissionActivity
 
     public static function createActivity($data)
     {
-        $data['created_at'] = date('Y-m-d H:i:s');
-        $data['updated_at'] = date('Y-m-d H:i:s');
+        $data['created_at'] = gmdate('Y-m-d H:i:s');
+        $data['updated_at'] = gmdate('Y-m-d H:i:s');
 
         return wpPayFormDB()->table('wpf_submission_activities')
             ->insert($data);

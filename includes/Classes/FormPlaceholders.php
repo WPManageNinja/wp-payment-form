@@ -137,6 +137,53 @@ class FormPlaceholders
         return apply_filters('wppayform/wp_merge_tags', $mergeTags);
     }
 
+    public static function getUserPlaceholders()
+    {
+        $mergeTags = array(
+            'user_id'      => array(
+                'id'    => 'ID',
+                'tag'   => '{user:ID}',
+                'label' => __('User ID', 'wppayform')
+            ),
+            'first_name'   => array(
+                'id'    => 'first_name',
+                'tag'   => '{user:first_name}',
+                'label' => __('First name', 'wppayform')
+            ),
+            'last_name'    => array(
+                'id'    => 'last_name',
+                'tag'   => '{user:last_name}',
+                'label' => __('Last name', 'wppayform')
+            ),
+            'display_name' => array(
+                'id'    => 'display_name',
+                'tag'   => '{user:display_name}',
+                'label' => __('Display name', 'wppayform')
+            ),
+            'user_email' => array(
+                'id'    => 'user_email',
+                'tag'   => '{user:user_email}',
+                'label' => __('User Email', 'wppayform')
+            ),
+            'user_url' => array(
+                'id'    => 'user_url',
+                'tag'   => '{user:user_url}',
+                'label' => __('User URL', 'wppayform')
+            ),
+            'description' => array(
+                'id'    => 'description',
+                'tag'   => '{user:description}',
+                'label' => __('User Description', 'wppayform')
+            ),
+            'roles' => array(
+                'id'    => 'roles',
+                'tag'   => '{user:roles}',
+                'label' => __('User Role', 'wppayform')
+            )
+        );
+        return apply_filters('wppayform/user_merge_tags', $mergeTags);
+    }
+
     public static function getOtherPlaceholders()
     {
         $mergeTags = array(

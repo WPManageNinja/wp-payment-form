@@ -221,6 +221,8 @@ class Forms
             $settings = $globalSettings;
         }
         $settings['currency_sign'] = GeneralSettings::getCurrencySymbol($settings['currency']);
+
+        $settings['is_zero_decimal'] = GeneralSettings::isZeroDecimal($settings['currency']);
         return $settings;
     }
 
@@ -330,6 +332,10 @@ class Forms
             ->where('form_id', $formID)
             ->delete();
 
+        wpPayFormDB()->table('wpf_subscriptions')
+            ->where('form_id', $formID)
+            ->delete();
+
         return true;
     }
 
@@ -379,7 +385,7 @@ class Forms
             ),
             'scheduleForm'             => array(
                 'status'               => 'no',
-                'start_date'           => date('Y-m-d H:i:s'),
+                'start_date'           => gmdate('Y-m-d H:i:s'),
                 'end_date'             => '',
                 'before_start_message' => __('Form submission time schedule is not started yet. Please check back later', 'wppayform'),
                 'expire_message'       => __('Form submission time has been expired.')

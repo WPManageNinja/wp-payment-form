@@ -15,13 +15,20 @@ class Transaction
 {
     public function create($item)
     {
-        return wpPayFormDB()->table('wpf_order_transactions')->insert($item);
+        if(!isset($item['transaction_type'])) {
+            $item['transaction_type'] = 'one_time';
+        }
+
+        return wpPayFormDB()
+            ->table('wpf_order_transactions')
+            ->insert($item);
     }
 
     public function getTransactions($submissionId)
     {
         $transactions = wpPayFormDB()->table('wpf_order_transactions')
                             ->where('submission_id', $submissionId)
+                            ->where('transaction_type', 'one_time')
                             ->get();
 
         return apply_filters('wppayform/entry_transactions', $transactions, $submissionId);
@@ -29,12 +36,15 @@ class Transaction
 
     public function getTransaction($transactionId)
     {
-        return wpPayFormDB()->table('wpf_order_transactions')->where('id', $transactionId)->first();
+        return wpPayFormDB()->table('wpf_order_transactions')
+            ->where('id', $transactionId)
+            ->where('transaction_type', 'one_time')
+            ->first();
     }
 
     public function update($transactionId, $data)
     {
-        $data['updated_at'] = date('Y-m-d H:i:s');
+        $data['updated_at'] = gmdate('Y-m-d H:i:s');
         return wpPayFormDB()->table('wpf_order_transactions')->where('id', $transactionId)->update($data);
     }
 }

@@ -1071,3 +1071,80 @@ label.el-form-item__label {
 .el-notification__content {
   text-align: left;
 }
+
+.el-dialog__wrapper {
+  .el-dialog {
+    background: transparent;
+  }
+  .el-dialog__header {
+    display: block;
+    overflow: hidden;
+    background: #F5F5F5;
+    border: 1px solid #DDDDDD;
+    padding: 10px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    .el-dialog__headerbtn {
+      top: 12px;
+    }
+  }
+  .el-dialog__footer {
+    background: #F5F5F5;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+  }
+  .el-dialog__body {
+    padding: 20px;
+    background: white;
+    border-radius: 0;
+    .dialog-footer {
+      padding: 10px 20px 20px;
+      text-align: right;
+      box-sizing: border-box;
+      background: #F5F5F5;
+      border-bottom-left-radius: 5px;
+      border-bottom-right-radius: 5px;
+      width: auto;
+      display: block;
+      margin: 0px -20px -20px;
+    }
+  }
+}
+
+.wpf_default_value_modal {
+  text-align: center;
+  img {
+    max-width: 260px;
+  }
+}
+
+.payment_header.subscripton_item {
+  margin: -15px -20px 20px;
+  background-color: #f7fafc;
+  &:last-child {
+    margin-bottom: -15px;
+  }
+  .payment_head_bottom {
+    background-color: white;
+  }
+
+  .payment_head_top {
+    background-color: #f7fafc;
+  }
+}
+span.table_payment_amount {
+  font-size: 16px;
+}
+.space_left_15 {
+  margin-left: 15px;
+}
+
+.wpf_line_radios {
+  .el-radio {
+    display: block;
+    margin-bottom: 10px;
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+}

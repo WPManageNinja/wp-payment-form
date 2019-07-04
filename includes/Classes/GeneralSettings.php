@@ -372,26 +372,29 @@ class GeneralSettings
     {
         $settings = get_option('wppayform_global_currency_settings', array());
         $defaults = array(
-            'currency' => 'USD',
-            'locale' => 'auto',
+            'currency'               => 'USD',
+            'locale'                 => 'auto',
             'currency_sign_position' => 'left',
-            'currency_separator' => 'dot_comma',
-            'decimal_points' => 0,
-            'settings_type' => 'global'
+            'currency_separator'     => 'dot_comma',
+            'decimal_points'         => 0,
+            'settings_type'          => 'global'
         );
 
         $settings = wp_parse_args($settings, $defaults);
         $settings = apply_filters('wppayform/global_currency_setting', $settings);
+
+        $settings['is_zero_decimal'] = self::isZeroDecimal($defaults['currency']);
+
         return $settings;
     }
 
     public static function ipLoggingStatus($bool = false)
     {
         $status = get_option('wppayform_ip_logging_status');
-        if(!$status) {
+        if (!$status) {
             $status = 'yes';
         }
-        if($bool) {
+        if ($bool) {
             $status == 'yes';
         }
         return apply_filters('wppayform/ip_logging_status', $status);
@@ -400,7 +403,7 @@ class GeneralSettings
     public static function getConfirmationPageSettings()
     {
         $settings = get_option('wppayform_confirmation_pages');
-        if(is_array($settings)) {
+        if (is_array($settings)) {
             return $settings;
         }
         return array();
@@ -409,11 +412,39 @@ class GeneralSettings
     public static function getPaymentStatuses()
     {
         return apply_filters('wppayform/available_payment_statuses', array(
-            'paid' => __('Paid', 'wppayform'),
+            'paid'       => __('Paid', 'wppayform'),
             'processing' => __('Processing', 'wppayform'),
-            'pending' => __('Pending', 'wppayform'),
-            'failed' => __('Failed', 'wppayform'),
-            'refunded' => __('Refunded', 'wppayform')
+            'pending'    => __('Pending', 'wppayform'),
+            'failed'     => __('Failed', 'wppayform'),
+            'refunded'   => __('Refunded', 'wppayform')
         ));
     }
+
+    public static function zeroDecimalCurrencies()
+    {
+        return apply_filters('swppayform/zero_decimal_currencies', array(
+            'BIF' => esc_html__('Burundian Franc', 'wppayform'),
+            'CLP' => esc_html__('Chilean Peso', 'wppayform'),
+            'DJF' => esc_html__('Djiboutian Franc', 'wppayform'),
+            'GNF' => esc_html__('Guinean Franc', 'wppayform'),
+            'JPY' => esc_html__('Japanese Yen', 'wppayform'),
+            'KMF' => esc_html__('Comorian Franc', 'wppayform'),
+            'KRW' => esc_html__('South Korean Won', 'wppayform'),
+            'MGA' => esc_html__('Malagasy Ariary', 'wppayform'),
+            'PYG' => esc_html__('Paraguayan Guaraní', 'wppayform'),
+            'RWF' => esc_html__('Rwandan Franc', 'wppayform'),
+            'VND' => esc_html__('Vietnamese Dong', 'wppayform'),
+            'VUV' => esc_html__('Vanuatu Vatu', 'wppayform'),
+            'XAF' => esc_html__('Central African Cfa Franc', 'wppayform'),
+            'XOF' => esc_html__('West African Cfa Franc', 'wppayform'),
+            'XPF' => esc_html__('Cfp Franc', 'wppayform'),
+        ));
+    }
+
+    public static function isZeroDecimal($currencyCode)
+    {
+        $zeroDecimals = self::zeroDecimalCurrencies();
+        return isset($zeroDecimals[$currencyCode]);
+    }
+
 }
