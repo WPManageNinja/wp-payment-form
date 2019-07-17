@@ -37,11 +37,17 @@ class TextAreaComponent extends BaseComponent
                     'label' => 'Default Value',
                     'type'  => 'textarea',
                     'group' => 'general'
+                ),
+                'min_height' => array(
+                    'label' => 'Minimum Height',
+                    'type'  => 'number',
+                    'group' => 'general'
                 )
             ),
             'field_options'   => array(
                 'label' => 'Textarea Field',
                 'placeholder' => '',
+                'min_height' => '',
                 'required' => 'no'
             )
         );
@@ -63,6 +69,10 @@ class TextAreaComponent extends BaseComponent
             'placeholder' => ArrayHelper::get($fieldOptions, 'placeholder'),
             'class' => $inputClass
         );
+
+        if($minHeight = ArrayHelper::get($fieldOptions, 'min_height')) {
+            $attributes['style'] = 'min-height: '.$minHeight.'px;';
+        }
 
         if (ArrayHelper::get($fieldOptions, 'required') == 'yes') {
             $attributes['required'] = true;

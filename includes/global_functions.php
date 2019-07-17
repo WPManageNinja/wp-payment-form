@@ -1,5 +1,9 @@
 <?php
 
+if(!function_exists('wpFluent')) {
+    include WPPAYFORM_DIR . 'includes/libs/wp-fluent/wp-fluent.php';
+}
+
 function wpPayFormDB()
 {
     if (!function_exists('wpFluent')) {
@@ -7,6 +11,7 @@ function wpPayFormDB()
     }
     return wpFluent();
 }
+
 
 function wpPayFormFormatMoney($amountInCents, $formId = false)
 {
