@@ -1,15 +1,34 @@
 <template>
     <div class="tabular_products_wrapper">
-        <h4 style="margin:0">{{item.label}}</h4>
+        <div class="tablular_headings">
+            <h4 class="tabular_title" style="margin:0">{{item.label}}</h4>
+            <div class="tabular_actions">
+                <el-switch
+                    v-model="field_options.enable_image"
+                    active-value="yes"
+                    inactive-value="no"
+                    active-text="Enable Image"
+                />
+                <el-switch
+                    :disabled="field_options.enable_image != 'yes'"
+                    v-model="field_options.enable_lightbox"
+                    active-value="yes"
+                    inactive-value="no"
+                    active-text="Enable Lightbox"
+                />
+            </div>
+        </div>
+
         <div style="margin: 10px 0px 20px;" class="tabular_product_pair_table_wrapper">
             <table class="ninja_filter_table">
                 <thead>
                 <tr>
                     <th style="width: 40px;"></th>
+                    <th v-if="field_options.enable_image == 'yes'" style="width: 70px;">Photo</th>
                     <th>Item Name</th>
-                    <th style="width: 100px;">Item Price</th>
-                    <th style="width: 100px;">Default Quantity</th>
-                    <th style="width: 100px;">Minimum Quantity</th>
+                    <th style="width: 90px;">Item Price</th>
+                    <th style="width: 90px;">Default Quantity</th>
+                    <th style="width: 90px;">Minimum Quantity</th>
                     <th style="width: 120px;"></th>
                 </tr>
                 </thead>
@@ -21,6 +40,9 @@
                     <tr v-for="(item, index) in product_settings">
                         <td>
                             <span style="margin-top: 10px" class="dashicons dashicons-editor-justify handle"></span>
+                        </td>
+                        <td v-if="field_options.enable_image == 'yes'">
+                            <photo-widget :product="item" />
                         </td>
                         <td>
                             <el-input placeholder="Item Name" size="mini" v-model="item.product_name"
@@ -50,10 +72,11 @@
 
 <script type="text/babel">
     import draggable from 'vuedraggable'
+    import PhotoWidget from './_photo_widget';
     export default {
         name: 'tabular_products',
-        components: { draggable },
-        props: ['item', 'product_settings'],
+        components: { draggable, PhotoWidget },
+        props: ['item', 'product_settings', 'field_options'],
         methods: {
             deleteItem(index) {
                 this.product_settings.splice(index, 1);

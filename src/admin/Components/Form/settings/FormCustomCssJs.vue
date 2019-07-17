@@ -28,7 +28,7 @@
                                 current form only.</p>
                         </div>
                         <hr/>
-                        <div class="sub_section_body">
+                        <div v-if="app_ready" class="sub_section_body">
                             <p>You may add <code>.wpf_form_wrapper_{{form_id}} </code> as your css selector prefix to
                                 target this specific form</p>
                             <ace-editor-css editor_id="wpf_custom_css" mode="css" v-model="custom_css"/>
@@ -44,7 +44,7 @@
                                 javascript code. Invalid JS code may break the Form.</p>
                         </div>
                         <hr/>
-                        <div class="sub_section_body">
+                        <div v-if="app_ready" class="sub_section_body">
                             <div class="js_instruction">
                                 The Following JavaScrip variables are available that you can use: <br/>
                                 <b>$form</b> : The Javascript DOM object of the Form
@@ -77,7 +77,8 @@
                 fetching: false,
                 saving: false,
                 custom_css: '',
-                custom_js: ''
+                custom_js: '',
+                app_ready: false
             }
         },
         methods: {
@@ -98,6 +99,7 @@
                     })
                     .always(() => {
                         this.fetching = false;
+                        this.app_ready = true;
                     });
             },
             saveSettings() {
@@ -123,6 +125,8 @@
         mounted() {
             if(this.has_pro) {
                 this.fetchSettings();
+            } else {
+                this.app_ready = true;
             }
         }
     }

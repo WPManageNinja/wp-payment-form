@@ -76,14 +76,4 @@
 </script>
 
 <style lang="scss">
-    table.ninja_filter_table {
-        width: 100%;
-        text-align: left;
-        border-collapse: collapse;
-
-        tr, td, th {
-            border: 1px solid #eaeaea;
-            padding: 2px 10px;
-        }
-    }
 </style>

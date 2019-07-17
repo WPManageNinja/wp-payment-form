@@ -101,6 +101,7 @@
                 </template>
                 <template v-else-if="item.type == 'tabular_products'">
                     <tabular-products :item="item"
+                                      :field_options="element.field_options"
                                       :product_settings="element.field_options[itemName]">
                     </tabular-products>
                 </template>

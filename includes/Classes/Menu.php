@@ -95,7 +95,12 @@ class Menu
         if(isset($_GET['page']) && $_GET['page'] == 'wppayform.php') {
             if (function_exists('wp_enqueue_editor')) {
                 wp_enqueue_editor();
+                wp_enqueue_script('thickbox');
             }
+            if (function_exists('wp_enqueue_media')) {
+                wp_enqueue_media();
+            }
+
             wp_enqueue_script('wppayform_boot', WPPAYFORM_URL.'assets/js/payforms-boot.js', array('jquery'), WPPAYFORM_VERSION, true);
             // 3rd party developers can now add their scripts here
             do_action('wppayform/booting_admin_app');

@@ -18,9 +18,15 @@ var recaptchInstances = {};
                 body.trigger('wpPayFormProcessFormElements', [form]);
             });
             this.initDatePiker();
+            this.initLightBox();
             $('.wpf_form input').on('keypress', function (e) {
                 return e.which !== 13;
             });
+        },
+        initLightBox() {
+            if($('.wpf_form .wpf_lightbox').length) {
+                $('.wpf_form .wpf_lightbox').on('click', lity);
+            }
         },
         initForm(form) {
             let that = this;

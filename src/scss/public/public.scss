@@ -45,6 +45,52 @@
   .StripeElement--webkit-autofill {
     background-color: #fefde5 !important;
   }
+
+
+  .wpf_regular_table {
+    empty-cells: show;
+    font-size: 14px;
+    border: 1px solid #cbcbcb;
+    td,th {
+      border-left: 1px solid #cbcbcb;
+      border-width: 0 0 0 1px;
+      font-size: inherit;
+      margin: 0;
+      overflow: visible;
+      padding: .5em 1em
+    }
+    td:first-child,th:first-child {
+      border-left-width: 0
+    }
+    thead {
+      background-color: #e3e8ee;
+      color: #000;
+      text-align: left;
+      vertical-align: bottom
+    }
+    td {
+      background-color: transparent;
+      border-bottom: 1px solid #cbcbcb;
+    }
+    tfoot {
+      border-top: 1px solid #cbcbcb;
+    }
+    .wpf_tabular_qty,.wpf_tabular_price {
+      width: 130px;
+    }
+    th.wpf_subtotal_th {
+      text-align: right;
+    }
+
+    .wpf_tabular_product_photo {
+      width: 80px;
+      padding: 10px !important;
+      img {
+        max-width: 100%;
+      }
+    }
+  }
+
 }
 
 .wpf_form_wrapper {

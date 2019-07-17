@@ -1184,3 +1184,46 @@ ul.wpf_no_style {
     color: #0a73e0;
   }
 }
+
+
+.wpf_photo_holder {
+  button {
+    margin: 0px;
+    padding: 0px;
+  }
+  img {
+    max-width: 64px;
+    border: 1px dashed white;
+    box-shadow: 1px 1px 2px 2px #d4d4d4;
+  }
+}
+
+
+
+.tablular_headings {
+  display: block;
+  width: 100%;
+  margin-bottom: 20px;
+  h4.tabular_title {
+    display: inline-block;
+  }
+
+  .tabular_actions {
+    display: inline-block;
+    float: right;
+  }
+}
+
+table.ninja_filter_table {
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+
+  tr, td, th {
+    border: 1px solid #eaeaea;
+    padding: 2px 10px;
+  }
+  th {
+    padding: 10px 10px;
+  }
+}
