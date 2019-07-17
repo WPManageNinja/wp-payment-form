@@ -309,11 +309,14 @@ abstract class BaseComponent
         $xtra_left = '';
         $xtra_right = '';
         $astPosition = $form->asteriskPosition;
-        if ($astPosition == 'left') {
-            $xtra_left = '<span class="wpf_required_sign wpf_required_sign_left">*</span> ';
-        } else if ($astPosition == 'right') {
-            $xtra_right = ' <span class="wpf_required_sign wpf_required_sign_left">*</span>';
+        if(ArrayHelper::get($fieldOptions, 'required') == 'yes') {
+            if ($astPosition == 'left') {
+                $xtra_left = '<span class="wpf_required_sign wpf_required_sign_left">*</span> ';
+            } else if ($astPosition == 'right') {
+                $xtra_right = ' <span class="wpf_required_sign wpf_required_sign_left">*</span>';
+            }
         }
+
         if ($label): ?>
             <div class="wpf_input_label">
                 <label <?php echo $this->builtAttributes($attributes); ?>><?php echo $xtra_left . $label . $xtra_right; ?></label>
