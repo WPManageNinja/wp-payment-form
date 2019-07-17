@@ -3,6 +3,7 @@ import StripeCheckoutHandler from './StripeCheckoutHandler';
 import formatPrice from '../common/formatPrice';
 
 var wpPayformApp = {};
+var recaptchInstances = {};
 (function ($) {
     wpPayformApp = {
         forms: {},
@@ -17,8 +18,7 @@ var wpPayformApp = {};
                 body.trigger('wpPayFormProcessFormElements', [form]);
             });
             this.initDatePiker();
-
-            $('.wpf_form').on('keypress', function (e) {
+            $('.wpf_form input').on('keypress', function (e) {
                 return e.which !== 13;
             });
         },
@@ -53,6 +53,22 @@ var wpPayformApp = {};
             let cardEleementStyle = $cardElementDiv.data('checkout_style');
             form.on('submit', function (e) {
                 e.preventDefault();
+
+                // Version 2 verfication
+                if(form.attr('data-recaptcha_version') == 'v2') {
+                    let recaptchInstance = recaptchInstances['form_'+form.data('wpf_form_id')];
+                    if(recaptchInstance != undefined) {
+                        let response = grecaptcha.getResponse(recaptchInstance);
+                        let $errorDiv = form.parent().find('.wpf_form_errors');
+                        if(!response) {
+                            $errorDiv.html('<p class="wpf_form_error_heading">Please verify recaptcha first</p>').show();
+                            return false;
+                        } else {
+                            $errorDiv.html('').hide();
+                        }
+                    }
+                }
+
                 let selectedPaymentMethod = form.data('selected_payment_method');
                 if (selectedPaymentMethod == 'stripe') {
                     // we have the selected payment method! So, we are triggering that
@@ -118,7 +134,6 @@ var wpPayformApp = {};
                         form.parent().addClass('wpf_form_has_errors');
                         form.trigger('wpf_form_fail_submission', response);
                         form.removeClass('wpf_submitting_form');
-
                         form.removeClass('wpf_submitting_form');
                         form.find('button.wpf_submit_button').removeAttr('disabled');
                         return;
@@ -163,10 +178,20 @@ var wpPayformApp = {};
 
                     form.removeClass('wpf_submitting_form');
                     form.find('button.wpf_submit_button').removeAttr('disabled');
+
+                    form.trigger('server_error', [error]);
+
                 })
                 .always(() => {
                     form.find('input[name=stripeToken]').remove();
-                })
+                    if(form.attr('data-recaptcha_version') == 'v2') {
+                        let recaptchInstance = recaptchInstances['form_'+form.data('wpf_form_id')];
+                        if(recaptchInstance != undefined) {
+                            grecaptcha.reset(recaptchInstance)
+                        }
+                    }
+                    form.trigger('form_server_always',);
+                });
         },
 
         calculatePayments(form) {
@@ -377,3 +402,31 @@ var wpPayformApp = {};
     });
 
 }(jQuery));
+
+window.wpfOnloadRecaptchaCallback = function () {
+    jQuery(document).ready(function ($) {
+        var $forms = $('.wpf_has_recaptcha');
+        $.each($forms, (index, form) => {
+            var $form = $(form);
+            let formId = $form.attr('data-wpf_form_id');
+            let key = $form.attr('data-recaptcha_site_key');
+            var recaptchaVersion = $form.attr('data-recaptcha_version');
+            if(recaptchaVersion == 'v2') {
+                recaptchInstances['form_'+formId] = grecaptcha.render('wpf_recaptcha_'+formId, {
+                    'sitekey' : key
+                });
+            } else {
+                grecaptcha.execute(key, { action: 'payform/'+formId }).then(function(token) {
+                    $form.find('#wpf_recaptcha_'+formId).html('<input type="hidden" name="g-recaptcha-response" value="'+token+'" />')
+                });
+
+                $form.on('form_server_always', function () {
+                    grecaptcha.execute(key, { action: 'payform/'+formId }).then(function(token) {
+                        $form.find('#wpf_recaptcha_'+formId).html('<input type="hidden" name="g-recaptcha-response" value="'+token+'" />')
+                    });
+                });
+
+            }
+        });
+    });
+}

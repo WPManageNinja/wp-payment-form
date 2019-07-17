@@ -40,6 +40,15 @@ class Render
         $elements = Forms::getBuilderSettings($formId);
         $form->designSettings = Forms::getDesignSettings($formId);
         $form->asteriskPosition = $form->designSettings['asteriskPlacement'];
+
+        $form->recaptchaType = Forms::recaptchaType($form->ID);
+
+        if($form->recaptchaType) {
+            $recaptchaSettings = GeneralSettings::getRecaptchaSettings();
+            $form->recaptcha_site_key = $recaptchaSettings['site_key'];
+        }
+
+
         $this->addAssets($form);
         ob_start();
         if ($elements):
@@ -79,6 +88,11 @@ class Render
             'wpf_asterisk_' . $form->asteriskPosition,
             'wpf_submit_button_pos_' . $btnPosition
         );
+
+        if($form->recaptchaType) {
+            $css_classes[] = 'wpf_has_recaptcha wpf_recaptcha_'.$form->recaptchaType;
+        }
+
         $css_classes = array_merge($css_classes, $extraCssClasses);
 
         if ($labelPlacement != 'top') {
@@ -94,6 +108,16 @@ class Render
             'action'           => site_url(),
             'id'               => "wpf_form_id_" . $form->ID
         );
+
+        if($form->recaptchaType) {
+            $formAttributes['data-recaptcha_site_key'] = $form->recaptcha_site_key;
+            if($form->recaptchaType == 'v2_visible') {
+                $formAttributes['data-recaptcha_version'] = 'v2';
+            } else {
+                $formAttributes['data-recaptcha_version'] = 'v3';
+            }
+        }
+
         $formAttributes = apply_filters('wppayform/form_attributes', $formAttributes, $form);
         $formWrapperClasses = apply_filters('wppayform/form_wrapper_css_classes', array(
             'wpf_form_wrapper',
@@ -140,6 +164,13 @@ class Render
         ), $form);
         ?>
         <?php do_action('wppayform/form_render_before_submit_button', $form); ?>
+
+        <?php if($form->recaptchaType): ?>
+            <div class="wpf_form_group wpf_form_recaptcha">
+                <div id="wpf_recaptcha_<?php echo $form->ID; ?>"></div>
+            </div>
+        <?php endif; ?>
+
         <div class="wpf_form_group wpf_form_submissions">
             <button <?php echo $this->builtAttributes($buttonAttributes); ?>>
                 <span class="wpf_txt_normal"><?php echo $this->parseText($button_text, $form->ID); ?></span>
@@ -167,7 +198,25 @@ class Render
         <?php do_action('wppayform/form_render_after', $form); ?>
         <?php do_action('wppayform/form_render_after_' . $form->ID, $form); ?>
         </div>
+
         <?php
+            if($form->recaptchaType) {
+                if(!did_action('wpf_added_recaptcha_script')) {
+
+                    if($form->recaptchaType == 'v3_invisible') {
+                        $key = $form->recaptcha_site_key;
+                        $src = 'https://www.google.com/recaptcha/api.js?render='.$key.'&onload=wpfOnloadRecaptchaCallback';
+                    } else {
+                        $src = 'https://www.google.com/recaptcha/api.js?onload=wpfOnloadRecaptchaCallback&render=explicit';
+                    }
+
+                    add_action('wp_footer', function () use ($src) {
+                    ?>
+                        <script src="<?php echo $src; ?>" async defer>
+                     <?php }, 999);
+                     do_action('wpf_added_recaptcha_script');
+                }
+            }
     }
 
     private function addAssets($form)

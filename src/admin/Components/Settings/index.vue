@@ -71,6 +71,11 @@
                         route: 'tools',
                         title: 'Tools',
                         icon: 'el-icon-s-cooperation'
+                    },
+                    {
+                        route: 'recaptcha',
+                        title: 'reCAPTCHA Settings',
+                        icon: 'el-icon-help'
                     }
                 ];
 

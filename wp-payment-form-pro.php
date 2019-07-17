@@ -5,7 +5,7 @@
  * Description: Create and Accept Payments in minutes with Stripe, PayPal with built-in form builder
  * Author: WPManageNinja LLC
  * Author URI:  https://wpmanageninja.com
- * Version: 1.2.1
+ * Version: 1.2.2
  * Text Domain: wppayform
  */
 
@@ -34,7 +34,7 @@ if (!defined('ABSPATH')) {
 define( 'WPPAYFORM_PRO_INSTALLED', true );
 
 if (!defined('WPPAYFORM_VERSION_LITE')) {
-    define('WPPAYFORM_VERSION', '1.2.1');
+    define('WPPAYFORM_VERSION', '1.2.2');
     define('WPPAYFORM_DB_VERSION', 120);
     // Stripe API version should be in 'YYYY-MM-DD' format.
     define('WPPAYFORM_STRIPE_API_VERSION', '2018-10-31');
@@ -54,10 +54,6 @@ if (!defined('WPPAYFORM_VERSION_LITE')) {
             $this->commonActions();
             $this->registerShortcodes();
             $this->loadComponents();
-
-            add_filter('wppayform/paypal_ipn_url', function ($url) {
-                return 'http://c63eaeb5.ngrok.io' . '?wpf_paypal_ipn=1';
-            });
         }
 
         public function adminHooks()

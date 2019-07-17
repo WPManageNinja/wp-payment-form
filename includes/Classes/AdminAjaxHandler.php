@@ -162,7 +162,9 @@ class AdminAjaxHandler
             'editor_shortcodes'     => FormPlaceholders::getAllPlaceholders($formId),
             'currencies'            => GeneralSettings::getCurrencies(),
             'locales'               => GeneralSettings::getLocales(),
-            'pages'                 => $allPages
+            'pages'                 => $allPages,
+            'recaptcha_settings'    => GeneralSettings::getRecaptchaSettings(),
+            'form_recaptcha_status' => get_post_meta($formId, '_recaptcha_status', true)
         ), 200);
     }
 
@@ -176,6 +178,10 @@ class AdminAjaxHandler
         if (isset($_REQUEST['currency_settings'])) {
             $currency_settings = wp_unslash($_REQUEST['currency_settings']);
             update_post_meta($formId, 'wppayform_paymentform_currency_settings', $currency_settings);
+        }
+
+        if(isset($_REQUEST['form_recaptcha_status'])) {
+            update_post_meta($formId, '_recaptcha_status', sanitize_text_field($_REQUEST['form_recaptcha_status']));
         }
 
         wp_send_json_success(array(

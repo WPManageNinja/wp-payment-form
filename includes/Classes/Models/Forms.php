@@ -187,7 +187,7 @@ class Forms
         $defaultSettings = array(
             'confirmation_type'    => 'custom',
             'redirectTo'           => 'samePage',
-            'customUrl' => '',
+            'customUrl'            => '',
             'messageToShow'        => __('Form has been successfully submitted', 'wppayform'),
             'samePageFormBehavior' => 'hide_form',
         );
@@ -411,5 +411,26 @@ class Forms
     public static function hasRecurring($formId)
     {
         return get_post_meta($formId, 'wpf_has_recurring_field', true) == 'yes';
+    }
+
+    public static function recaptchaType($formId)
+    {
+        $globalSettings = GeneralSettings::getRecaptchaSettings();
+        $type = ArrayHelper::get($globalSettings, 'recaptcha_version');
+        if($type == 'none') {
+            return false;
+        }
+
+        if(ArrayHelper::get($globalSettings, 'all_forms') == 'yes') {
+            return $type; // enabled for all the forms
+        }
+
+        $recaptchaStatus = get_post_meta($formId, '_recaptcha_status', true);
+
+        if($recaptchaStatus == 'yes') {
+            return $type;
+        }
+        return false;
+
     }
 }

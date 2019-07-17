@@ -21,6 +21,18 @@
                                 :confirmation="confirmation_settings">
                             </confirmation-settings>
                         </el-form>
+
+                        <div class="recaptcha_settings wpf_settings_section">
+                            <p v-if="recaptcha_settings.all_forms == 'yes'">
+                                reCaptcha is enabled globally. This form will have recaptcha
+                            </p>
+                            <p v-else-if="recaptcha_settings.recaptcha_version == 'none'">
+                                reCaptach has not been configured yet! Please configure recaptcha from Settings -> reCaptcha Settings
+                            </p>
+                            <div v-else>
+                                <el-checkbox true-label="yes" false-label="no" v-model="form_recaptcha_status">Enable reCaptcha for this form</el-checkbox>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -44,7 +56,9 @@
                 editorShortcodes: [],
                 confirmation_settings: {},
                 app_ready: false,
-                labelPosition: 'right'
+                labelPosition: 'right',
+                recaptcha_settings: {},
+                form_recaptcha_status: 'yes'
             }
         },
         methods: {
@@ -58,6 +72,8 @@
                         this.confirmation_settings = response.data.confirmation_settings;
                         this.editorShortcodes = Object.values(response.data.editor_shortcodes);
                         this.pages = response.data.pages;
+                        this.recaptcha_settings = response.data.recaptcha_settings;
+                        this.form_recaptcha_status = response.data.form_recaptcha_status;
                     })
                     .fail(error => {
 
@@ -72,7 +88,8 @@
                 this.$adminPost({
                     form_id: this.form_id,
                     confirmation_settings: this.confirmation_settings,
-                    route: 'save_form_settings'
+                    route: 'save_form_settings',
+                    form_recaptcha_status: this.form_recaptcha_status
                 })
                     .then(response => {
                         this.$message({

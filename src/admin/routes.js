@@ -22,6 +22,7 @@ import GeneralSettings from './Components/Settings/GeneralSettings'
 import FormDesignSettings from './Components/Form/settings/FormDesignSettings'
 import Licensing from './Components/Settings/License'
 import GlobalTools from './Components/Settings/GlobalTools'
+import ReCaptchaSettings from './Components/Settings/ReCaptchaSettings'
 
 
 const globalSettingsViewChilderRoutes = window.WPPayForms.applyFilters('wpf_global_settings_childern_routes', [
@@ -44,6 +45,11 @@ const globalSettingsViewChilderRoutes = window.WPPayForms.applyFilters('wpf_glob
         name: 'tools',
         path: 'tools',
         component: GlobalTools
+    },
+    {
+        name: 'recaptcha',
+        path: 'recaptcha',
+        component: ReCaptchaSettings
     },
     {
         name: 'licensing',

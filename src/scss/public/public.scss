@@ -286,7 +286,7 @@ form.wpf_default_form_styles {
       transition: border-color .15s ease-in-out, box-shadow .15s ease-in-out;
     }
     select {
-      height: calc(2.25rem + 2px);
+      height: auto;
     }
     textarea {
       display: block;

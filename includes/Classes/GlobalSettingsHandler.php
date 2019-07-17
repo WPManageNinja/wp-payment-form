@@ -22,12 +22,14 @@ class GlobalSettingsHandler
         $routes = array(
             'get_global_currency_settings'    => 'getGlobalCurrencySettings',
             'update_global_currency_settings' => 'updateGlobalCurrencySettings',
-            'wpf_upload_image'                => 'handleFileUpload'
+            'wpf_upload_image'                => 'handleFileUpload',
+            'get_recaptcha_settings'          => 'getRecaprchaSettings',
+            'save_recaptcha_settings'         => 'saveRecaptchaSettings'
         );
         $route = sanitize_text_field($_REQUEST['route']);
         if (isset($routes[$route])) {
             AccessControl::checkAndPresponseError($route, 'global');
-            do_action('wppayform/doing_ajax_global_'.$route);
+            do_action('wppayform/doing_ajax_global_' . $route);
             $this->{$routes[$route]}();
             return;
         }
@@ -66,11 +68,11 @@ class GlobalSettingsHandler
         // We will forecfully try to upgrade the DB and later we will remove this after 1-2 version
         $firstTransaction = wpFluent()->table('wpf_order_transactions')
             ->first();
-       if(!$firstTransaction || !property_exists($firstTransaction, 'subscription_id')) {
+        if (!$firstTransaction || !property_exists($firstTransaction, 'subscription_id')) {
             $activator = new Activator();
-           $activator->forceUpgradeDB();
-       }
-       // end upgrade DB
+            $activator->forceUpgradeDB();
+        }
+        // end upgrade DB
 
         wp_send_json_success(array(
             'message' => __('Settings successfully updated', 'wppayform')
@@ -102,5 +104,35 @@ class GlobalSettingsHandler
         } else {
             wp_send_json(__('Something is wrong when uploading the file', 'wppayform'), 423);
         }
+    }
+
+    public function getRecaprchaSettings()
+    {
+        wp_send_json_success([
+            'settings' => GeneralSettings::getRecaptchaSettings()
+        ]);
+    }
+
+    public function saveRecaptchaSettings()
+    {
+        $settings = $_REQUEST['settings'];
+        $sanitizedSettings = [];
+        foreach ($settings as $settingKey => $setting) {
+            $sanitizedSettings[$settingKey] = sanitize_text_field($setting);
+        }
+
+        if($sanitizedSettings['recaptcha_version'] != 'none') {
+            if(empty($sanitizedSettings['site_key']) || empty($sanitizedSettings['secret_key'])) {
+                wp_send_json_error([
+                    'message' => 'Please provide site key and secret key for enable recaptcha'
+                ], 423);
+            }
+        }
+
+        update_option('wppayform_recaptcha_settings', $sanitizedSettings);
+
+        wp_send_json_success([
+            'message' => 'Settings successfully updated'
+        ], 200);
     }
 }

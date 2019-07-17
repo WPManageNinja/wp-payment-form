@@ -264,8 +264,24 @@ class SubmissionHandler
             }
         }
 
+        // Maybe validate recatcha
+        if(!$errors) {
+            $recaptchaType = Forms::recaptchaType($formId);
+            if($recaptchaType == 'v2_visible' || $recaptchaType == 'v3_invisible') {
+                // let's validate recaptcha here
+                $recaptchaSettings = GeneralSettings::getRecaptchaSettings();
+                $ip_address = $this->getIp();
+                $response = wp_remote_get( add_query_arg( array(
+                    'secret'   => $recaptchaSettings['secret_key'],
+                    'response' => isset( $form_data['g-recaptcha-response'] ) ? $form_data['g-recaptcha-response'] : '',
+                    'remoteip' => $ip_address
+                ), 'https://www.google.com/recaptcha/api/siteverify' ) );
+                if ( is_wp_error( $response ) || empty( $response['body'] ) || ! ( $json = json_decode( $response['body'] ) ) || ! $json->success ) {
+                    $errors['g-recaptcha-response'] = __('reCaptcha validation failed. Please try again.', 'wppayform');
+                }
+            }
+        }
         $errors = apply_filters('wppayform/form_submission_validation_errors', $errors, $formId, $formattedElements);
-
         if ($errors) {
             wp_send_json_error(array(
                 'message' => __('Form Validation failed', 'wppayform'),
@@ -277,6 +293,16 @@ class SubmissionHandler
         $this->customerEmail = $customerEmail;
 
         return;
+    }
+
+    private function getIp()
+    {
+        if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
+            return $_SERVER['HTTP_CLIENT_IP'];
+        } elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
+            return $_SERVER['HTTP_X_FORWARDED_FOR'];
+        }
+        return $_SERVER['REMOTE_ADDR'];
     }
 
     private function getItemQuantity($quantityElements, $tragetItemId, $formData)

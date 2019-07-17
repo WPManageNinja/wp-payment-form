@@ -448,4 +448,17 @@ class GeneralSettings
         return isset($zeroDecimals[$currencyCode]);
     }
 
+    public static function getRecaptchaSettings()
+    {
+        $settings = get_option('wppayform_recaptcha_settings', array());
+        $defaults = array(
+            'recaptcha_version' => 'none',
+            'site_key'          => '',
+            'secret_key'        => '',
+            'all_forms'        => 'no'
+        );
+        $settings = wp_parse_args($settings, $defaults);
+        $settings = apply_filters('wppayform/recaptcha_setting', $settings);
+        return $settings;
+    }
 }
