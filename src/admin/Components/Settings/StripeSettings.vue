@@ -69,6 +69,14 @@
                         </el-form-item>
                     </div>
 
+                    <div class="wpf_settings_section">
+                        <el-form-item label="Stripe Meta Data">
+                            <el-checkbox :disabled="!has_pro" true-label="yes" false-label="no" v-model="settings.send_meta_data">Send Form input data to stripe metadata</el-checkbox>
+                            <p>If you enable this then, Your form input data will be send to stripe as meta data</p>
+                            <p v-if="!has_pro">This is a pro feature. Please upgrade to pro to enable this feature</p>
+                        </el-form-item>
+                    </div>
+
                     <div v-if="has_pro" class="wpf_settings_section">
                         <h3>Stripe Webhook (For Recurring Payments)</h3>
                         <p>In order for Stripe to function completely for subscription/recurring payments, you must configure your Stripe webhooks. Visit

@@ -1227,3 +1227,15 @@ table.ninja_filter_table {
     padding: 10px 10px;
   }
 }
+
+.el-form-item.inline_two_item > .el-form-item__content > label {
+  width: 47%;
+  display: inline-block;
+  margin-right: 2%;
+  &:last-child {
+    margin-right: 0%;
+  }
+  .el-input-number.el-input-number--mini {
+    width: 100% !important;
+  }
+}

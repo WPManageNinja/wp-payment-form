@@ -113,6 +113,7 @@ var recaptchInstances = {};
             }
 
             this.maybeSubscriptionSetup(form);
+            this.maybeCustomSubscriptionItemSetup(form);
 
             jQuery(document.body).trigger('wpfFormInitialized', [form]);
             jQuery(document.body).trigger('wpfFormInitialized_' + form.data('wpf_form_id'), [form]);
@@ -228,7 +229,6 @@ var recaptchInstances = {};
                     if($elem.attr('data-subscription_amount')) {
                         subscriptonAmountTotal += parseInt($elem.attr('data-subscription_amount'));
                     }
-
                 } else if ($elem.data('is_custom_price') == 'yes') {
                     let itemValue = $(this).val();
                     if (itemValue) {
@@ -263,6 +263,7 @@ var recaptchInstances = {};
 
             itemTotalValue = this.calculateTabularTotal(form, itemTotalValue, formSettings);
 
+
             // Get The Total Now
             jQuery.each(itemTotalValue, (itemName, itemValue) => {
                 if (itemValue) {
@@ -292,6 +293,10 @@ var recaptchInstances = {};
             form.find('.wpf_calc_payment_total').html(formatPrice(allTotalAmount, formSettings.currency_settings));
             form.data('payment_total', allTotalAmount);
             form.data('subscription_total', subscriptonAmountTotal);
+
+
+            // Detect change of subscription custom amount
+
         },
         calCulateTaxAmount(form, itemizedValue, formSettings) {
             if (!form.hasClass('wpf_has_tax_item')) {
@@ -309,8 +314,6 @@ var recaptchInstances = {};
                     taxLineAmount = itemizedValue[targetItem] * (taxPercent / 100);
                     taxTotal += taxLineAmount;
                 } else {
-                    console.log(lineItem);
-                    console.log(itemizedValue);
                 }
                 jQuery('span[data-target_tax=' + taxId + ']').html(formatPrice(taxLineAmount, formSettings.currency_settings));
             });
@@ -324,7 +327,6 @@ var recaptchInstances = {};
                 let productId = $productTable.data('produt_id');
                 // find the total product cost
                 let productLines = $productTable.find('tbody tr');
-                console.log(productLines);
                 let tableTotal = 0;
                 $.each(productLines, (index, productLine) => {
                     let price = $(productLine).find('input.wpf_tabular_price').data('price');
@@ -367,15 +369,19 @@ var recaptchInstances = {};
             function checkForRadio(element) {
                 let elementName = $(element).attr('name');
                 let selectedIndex = $(element).val();
-                $(element).closest('.wpf_subscription_controls_radio').find('.wpf_subscription_plan_summary_item').hide();
-                $(element).closest('.wpf_subscription_controls_radio').find('.wpf_subscription_plan_summary_'+elementName+' .wpf_subscription_plan_index_'+selectedIndex).show();
+                let $wrapper = $(element).closest('.wpf_subscription_controls_radio');
+                $wrapper.find('.wpf_subscription_plan_summary_item').hide();
+                $wrapper.find('.wpf_subscription_plan_summary_'+elementName+' .wpf_subscription_plan_index_'+selectedIndex).show();
+
+                $wrapper.find('.subscription_radio_custom').hide();
+                $wrapper.find('.subscription_radio_custom_'+selectedIndex).show();
             }
 
             $.each(form.find('.wpf_subscription_controls_radio input:checked'), function (index, element) {
                 checkForRadio(element);
             });
 
-            form.find('.wpf_subscription_controls_radio input').on('change', function () {
+            form.find('.wpf_subscription_controls_radio input[type=radio]').on('change', function () {
                 checkForRadio(this);
             });
 
@@ -386,7 +392,6 @@ var recaptchInstances = {};
                 let selectedIndex = $(element).val();
                 form.find('.wpf_subscription_plan_summary_'+elementName +' .wpf_subscription_plan_summary_item').hide();
                 form.find('.wpf_subscription_plan_summary_'+elementName +' .wpf_subscription_plan_index_'+selectedIndex).show();
-
             }
 
             $.each(form.find('.wpf_subscrion_plans_select option:selected'), function (index, element) {
@@ -398,7 +403,59 @@ var recaptchInstances = {};
             form.find('.wpf_subscrion_plans_select select').on('change', function () {
                 checkForSelections(this);
             });
+        },
+        maybeCustomSubscriptionItemSetup: function(form) {
+            var that = this;
+            let formSettings = window['wp_payform_' + form.data('wpf_form_id')];
+            form.find('.wpf_custom_subscription_input').on('keyup', function () {
+                var $el = $(this);
+                var value = parseInt($el.val() * 100);
+                var $hiddenEl = $el.parent().find('.wpf_payment_item');
+                $hiddenEl.data('subscription_amount', value);
 
+                var totalAmount = value + parseInt($el.data('initial_amount'));
+                $hiddenEl.data('price', totalAmount);
+
+                $el.closest('.wpf_form_group').find('.wpf_dynamic_input_amount').html(formatPrice(value, formSettings.currency_settings))
+                $hiddenEl.trigger('change');
+            });
+
+            form.find('.wpf_custom_subscription_amount').on('change', function () {
+                let $el = $(this);
+                let index = $el.data('plan_index');
+                let value = parseInt($el.val() * 100);
+                let $parent = $el.closest('.wpf_multi_form_controls');
+                $parent.find('.wpf_subscription_plan_summary')
+                    .find('.wpf_subscription_plan_index_'+index)
+                    .find('.wpf_dynamic_input_amount')
+                    .html(formatPrice(value, formSettings.currency_settings));
+
+                var $input = $parent.find('.wpf_payment_item').find('.wpf_option_custom_'+index);
+                var totalAmount = value + parseInt($input.data('initial_amount'));
+                $input
+                    .data('subscription_amount', value)
+                    .data('price', totalAmount);
+
+                $parent.find('select').trigger('change');
+            });
+
+            form.find('.wpf_custom_subscription_amount_radio').on('change', function () {
+                let $el = $(this);
+                let index = $el.data('plan_index');
+                let value = parseInt($el.val() * 100);
+                let $parent = $el.closest('.wpf_multi_form_controls');
+                $parent.find('.wpf_subscription_plan_summary')
+                    .find('.wpf_subscription_plan_index_'+index)
+                    .find('.wpf_dynamic_input_amount')
+                    .html(formatPrice(value, formSettings.currency_settings));
+                var $input = $parent.find('.wpf_option_custom_'+index);
+                var totalAmount = value + parseInt($input.data('initial_amount'));
+                $input
+                    .data('subscription_amount', value)
+                    .data('price', totalAmount);
+
+                $parent.find('input[type=radio]').trigger('change');
+            });
 
         }
     };

@@ -79,6 +79,13 @@
                         <p v-if="item.info" v-html="item.info"></p>
                     </el-form-item>
                 </template>
+                <template v-else-if="item.type == 'all_product_selector'">
+                    <el-form-item :label="item.label">
+                        <all-item-selector :all_elements="all_elements" :item_name="itemName"
+                                       :field_options="element.field_options"/>
+                        <p v-if="item.info" v-html="item.info"></p>
+                    </el-form-item>
+                </template>
                 <template v-else-if="item.type == 'select_option'">
                     <el-form-item :label="item.label">
                         <el-select :allow-create="item.creatable == 'yes'" filterable default-first-option
@@ -152,6 +159,7 @@
     import KeyPairOptions from './_key_pair_options';
     import PaymentOptionsSettings from './_PaymentOptions'
     import ItemSelector from './_ProductSelector';
+    import AllItemSelector from './_AllProductSelector';
     import CheckoutDisplayOption from './_StripeCheckoutSettings';
     import PaymentMethodChoice from './_payment_method_settings';
     import TabularProducts from './_tabular_products'
@@ -168,7 +176,8 @@
             PaymentMethodChoice,
             TabularProducts,
             popover,
-            RecurringItem
+            RecurringItem,
+            AllItemSelector
         },
         props: ['element', 'all_elements'],
         comments: {

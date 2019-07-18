@@ -206,6 +206,35 @@ class Submission
         return apply_filters('wppayform/parsed_entry', $parsedSubmission, $submission);
     }
 
+    public function getUnParsedSubmission($submission)
+    {
+        $elements = get_post_meta($submission->form_id, 'wppayform_paymentform_builder_settings', true);
+        if (!$elements) {
+            return array();
+        }
+        $parsedSubmission = array();
+
+        $inputValues = $submission->form_data_formatted;
+
+        foreach ($elements as $element) {
+            if ($element['group'] == 'input') {
+                $elementId = ArrayHelper::get($element, 'id');
+                $elementValue = ArrayHelper::get($inputValues, $elementId);
+
+                if (is_array($elementValue)) {
+                    $elementValue = implode(', ', $elementValue);
+                }
+                $parsedSubmission[$elementId] = array(
+                    'label' => $this->getLabel($element),
+                    'value' => $elementValue,
+                    'type'  => $element['type']
+                );
+            }
+        }
+
+        return apply_filters('wppayform/unparsed_entry', $parsedSubmission, $submission);
+    }
+
     private function getLabel($element)
     {
         $elementId = ArrayHelper::get($element, 'id');

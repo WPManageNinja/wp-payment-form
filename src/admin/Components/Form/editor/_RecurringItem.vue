@@ -55,8 +55,25 @@
                                       type="text"></el-input>
                         </el-form-item>
                         <el-form-item label="Price/Billing Interval">
-                            <el-input-number size="small" v-model="item.subscription_amount" :min="0"></el-input-number>
+                            <el-input-number :disabled="item.user_input == 'yes'" size="small" v-model="item.subscription_amount" :min="0"></el-input-number>
+                            <el-checkbox true-label="yes" false-label="no" v-model="item.user_input">Enable User Input Amount</el-checkbox>
                         </el-form-item>
+
+                        <template v-if="item.user_input == 'yes'">
+                            <el-form-item label="User Input Amount label">
+                                <el-input placeholder="ex: Please Provide amount/interval" size="mini" v-model="item.user_input_label"
+                                          type="text"></el-input>
+                            </el-form-item>
+                            <el-form-item class="inline_two_item">
+                                <label>Minimum Amount
+                                    <el-input-number size="mini" v-model="item.user_input_min_value"></el-input-number>
+                                </label>
+                                <label>Default Value Amount
+                                    <el-input-number size="mini" v-model="item.user_input_default_value"></el-input-number>
+                                </label>
+                            </el-form-item>
+                        </template>
+
                         <el-form-item label="Billing Interval">
                             <el-select size="mini" v-model="item.billing_interval" placeholder="Select">
                                 <el-option
@@ -145,7 +162,14 @@
                 });
             },
             getAdvancedText(item) {
-                let text = `Bill <b>${item.subscription_amount}/${item.billing_interval}</b> `;
+
+                let billAmount = item.subscription_amount;
+
+                if(item.user_input == 'yes') {
+                    billAmount = 'USER_INPUT_AMOUNT';
+                }
+
+                let text = `Bill <b>${billAmount}/${item.billing_interval}</b> `;
 
                 if (item.has_trial_days == 'yes') {
                     text += `with ${item.trial_days} trial days `;

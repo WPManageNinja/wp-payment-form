@@ -42,7 +42,7 @@ class DemoTaxItemComponent extends BaseComponent
                 ),
                 'target_product' => array(
                     'label' => 'Target Product Item',
-                    'type'  => 'product_selector',
+                    'type'  => 'all_product_selector',
                     'group' => 'general',
                     'info'  => 'Please select the product in where this tax percentage will be applied'
                 )

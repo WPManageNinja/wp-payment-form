@@ -68,6 +68,7 @@ class SubmissionHandler
         $paymentItems = apply_filters('wppayform/submitted_payment_items', $paymentItems, $formattedElements, $form_data);
         $subscriptionItems = apply_filters('wppayform/submitted_subscription_items', $subscriptionItems, $formattedElements, $form_data);
 
+
         /*
          * providing filter hook for payment method to push some payment data
          *  from $subscriptionItems
@@ -388,12 +389,17 @@ class SubmissionHandler
             $label = $paymentId;
         }
 
-
         $pricings = ArrayHelper::get($payment, 'options.recurring_payment_options.pricing_options');
-        $plan = $pricings[$formData[$paymentId]];
+
+        $paymentIndex = $formData[$paymentId];
+        $plan = $pricings[$paymentIndex];
 
         if (!$plan) {
             return array();
+        }
+
+        if(ArrayHelper::get($plan, 'user_input') == 'yes') {
+            $plan['subscription_amount'] = ArrayHelper::get($formData, $paymentId.'__'.$paymentIndex);
         }
 
         $daysToExpiration = absint($plan['billing_days_period']);

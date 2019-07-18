@@ -85,7 +85,6 @@ class Stripe
 
         $hasTransaction = $transaction && $transaction->payment_total;
 
-
         if (!$hasTransaction && !$hasSubscriptions) {
             return;
         }
@@ -94,6 +93,7 @@ class Stripe
         $submission = $submissionModel->getSubmission($submissionId);
         $token = $form_data['stripeToken'];
         $currentUserId = get_current_user_id();
+
         $metadata = array(
             'form_id'        => $form->ID,
             'user_id'        => $currentUserId,
@@ -101,6 +101,8 @@ class Stripe
             'wppayform_tid'  => $transactionId,
             'wp_plugin_slug' => 'wppayform'
         );
+
+
 
         $stripeCustomerId = false;
         $isCreateCustomer = $this->needToCreateCustomer($submission);
@@ -165,6 +167,11 @@ class Stripe
         );
         $paymentArgs = wp_parse_args($paymentArgs, $tokenArgs);
 
+        $metadata = [
+            'Submission ID' => $submission->id,
+            'Form ID' => $submission->form_id,
+            'Details URL' => admin_url('admin.php?page=wppayform.php#/edit-form/'.$submission->form_id.'/entries/'.$submission->id.'/view'),
+        ];
         if ($submission->customer_email) {
             $paymentArgs['receipt_email'] = $submission->customer_email;
             $metadata['customer_email'] = $submission->customer_email;
@@ -172,6 +179,9 @@ class Stripe
         if ($submission->customer_name) {
             $metadata['customer_name'] = $submission->customer_name;
         }
+
+        $metadata = apply_filters('wppayform/stripe_onetime_payment_metadata', $metadata, $submission);
+
         $paymentArgs['metadata'] = $metadata;
 
         if (GeneralSettings::isZeroDecimal($paymentArgs['currency'])) {
@@ -364,9 +374,14 @@ class Stripe
             'live_secret_key' => sanitize_text_field($settings['live_secret_key']),
             'test_pub_key'    => sanitize_text_field($settings['test_pub_key']),
             'test_secret_key' => sanitize_text_field($settings['test_secret_key']),
-            'company_name'    => sanitize_text_field($settings['company_name']),
-            'checkout_logo'   => sanitize_text_field($settings['checkout_logo'])
+            'company_name'    => wp_unslash($settings['company_name']),
+            'checkout_logo'   => sanitize_text_field($settings['checkout_logo']),
         );
+
+        if(isset($settings['send_meta_data'])) {
+            $data['send_meta_data'] = sanitize_text_field($settings['send_meta_data']);
+        }
+
         do_action('wppayform/before_save_stripe_settings', $data);
         update_option('wppayform_stripe_payment_settings', $data, false);
         do_action('wppayform/after_save_stripe_settings', $data);
@@ -381,7 +396,7 @@ class Stripe
         AccessControl::checkAndPresponseError('get_payment_settings', 'global');
         wp_send_json_success(array(
             'settings'       => $this->getStripeSettings(),
-            'webhook_url'     => site_url() . '?wpf_stripe_listener=1',
+            'webhook_url'    => site_url() . '?wpf_stripe_listener=1',
             'is_key_defined' => $this->isStripeKeysDefined()
         ), 200);
     }
@@ -403,7 +418,8 @@ class Stripe
             'test_pub_key'    => '',
             'test_secret_key' => '',
             'company_name'    => get_bloginfo('name'),
-            'checkout_logo'   => ''
+            'checkout_logo'   => '',
+            'send_meta_data' => 'no'
         );
         return wp_parse_args($settings, $defaults);
     }
@@ -534,7 +550,7 @@ class Stripe
             $isOneSucceed = true;
 
             $subscriptionStatus = 'active';
-            if($subscriptionItem->trial_days) {
+            if ($subscriptionItem->trial_days) {
                 $subscriptionStatus = 'trialling';
             }
 
@@ -560,7 +576,7 @@ class Stripe
                         'form_id'          => $submission->form_id,
                         'user_id'          => $submission->user_id,
                         'submission_id'    => $submission->id,
-                        'subscription_id'    => $subscriptionItem->id,
+                        'subscription_id'  => $subscriptionItem->id,
                         'transaction_type' => 'subscription',
                         'payment_method'   => 'stripe',
                         'charge_id'        => $latestInvoice->charge,
