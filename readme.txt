@@ -1,9 +1,9 @@
 === WPPayForm for Stripe WordPress Payments Plugin ===
 Contributors: techjewel, wpmanageninja
-Tags: Stripe, stripe wordpress, stripe integrations, stripe wordpress plugin, wordpress stripe, stripe for wordpress, stripe pay, pay with stripe, Event Registration Form, stripe form, accept payment, stripe payments, secure payment form, form, payment form, payments, credit card, stripe checkout, Accept PayPal Payments, credit card payments, checkout.js, payment for stripe
+Tags: Stripe, stripe wordpress, payform, paymentform, stripe integrations, stripe wordpress plugin, wordpress stripe, stripe for wordpress, stripe pay, pay with stripe, Event Registration Form, stripe form, accept payment, stripe payments, secure payment form, form, payment form, payments, credit card, stripe checkout, Accept PayPal Payments, credit card payments, checkout.js, payment for stripe
 Requires at least: 4.5
 Tested up to: 5.2.2
-Stable tag: 1.2.1
+Stable tag: 1.2.5
 Requires PHP: 5.4
 License: GPLv2 or later
 
@@ -18,7 +18,7 @@ Easily Accept Payments in WordPress with Stripe (PayPal also supported) with For
 With Stripe checkout as well as built-in form builder functionalities, you can build any forms ranging from single payment amount/multiple payment items. Or, you can allow users to pay custom amounts if needed.
 
 == Intro Video ==
-[youtube https://www.youtube.com/watch?v=zVjNnKb4bHs]
+[youtube https://www.youtube.com/watch?v=oZaBS1EiAJc]
 
 Building beautiful and customizable payment forms has never been easier; and with Stripe integration, you can accept payments on form submission.
 
@@ -156,6 +156,7 @@ It's easy, convenient and most importantly, It will increase your conversion rat
 - Email Notifications *(Done)*
 - Export Data as CSV/Excel/JSON *(Done)
 - Accept Subscription Payments *(Done)*
+- Added security fields reCaptcha *(Done)*
 - Send bulk emails to the submitters and filter by payment statuses (On development)
 
 This plugin is a very planned project, and we have a long term development plan for this. We already invested around 200 human working hours (+coffees) on it, and we have the intention to spend much more on it. Please let us know what features you want, and we are happy to add that in our development sprint.
@@ -244,6 +245,12 @@ You are most welcome. You can do the following:
 12. Submission Details (2nd Part)
 
 == Changelog ==
+
+= 1.2.5 - July 18, 2019 =
+- Added Google reCaptcha version 2 and 3
+- Fix Asterics sign
+- Fix function undefined error
+- Fix issues on various types.
 
 = 1.2.1 - July 01, 2019 =
 - Fix PayPal Payments for Taxable Items
