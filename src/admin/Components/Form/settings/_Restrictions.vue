@@ -78,10 +78,11 @@
                             <el-date-picker
                                     class="el-fluid"
                                     style="width: 100%;"
+                                    value-format="yyyy-MM-dd HH:mm:ss"
                                     v-model="form.scheduleForm.start_date"
                                     type="datetime"
                                     placeholder="Select date and time"
-                            >
+                                    :picker-options="datePickerOptions">
                             </el-date-picker>
                         </el-form-item>
                     </el-col>
@@ -91,6 +92,7 @@
                             <el-date-picker
                                 class="el-fluid"
                                 style="width: 100%;"
+                                value-format="yyyy-MM-dd HH:mm:ss"
                                 v-model="form.scheduleForm.end_date"
                                 type="datetime"
                                 placeholder="Select date and time"
@@ -212,6 +214,14 @@
                             }
                         },
                         {
+                            text: 'Tomorrow',
+                            onClick(picker) {
+                                const date = new Date();
+                                date.setTime(date.getTime() + 3600 * 1000 * 24);
+                                picker.$emit('pick', date);
+                            }
+                        },
+                        {
                             text: 'Yesterday',
                             onClick(picker) {
                                 const date = new Date();
@@ -220,10 +230,10 @@
                             }
                         },
                         {
-                            text: 'A week ago',
+                            text: 'A week after',
                             onClick(picker) {
                                 const date = new Date();
-                                date.setTime(date.getTime() - 3600 * 1000 * 24 * 7);
+                                date.setTime(date.getTime() + 3600 * 1000 * 24 * 7);
                                 picker.$emit('pick', date);
                             }
                         }

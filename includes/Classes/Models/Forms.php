@@ -421,9 +421,11 @@ class Forms
             return false;
         }
 
+
         if(ArrayHelper::get($globalSettings, 'all_forms') == 'yes') {
             return $type; // enabled for all the forms
         }
+
 
         $recaptchaStatus = get_post_meta($formId, '_recaptcha_status', true);
 
