@@ -44,13 +44,17 @@ let cardElementHandler = {
                 callback();
                 return;
             }
-            stripe.createToken(card).then(function (result) {
+
+            stripe.createPaymentMethod(
+                'card',
+                card
+            ).then(function(result) {
                 if (result.error) {
                     // Inform the user if there was an error.
                     config.form.find('.wpf_card-errors').html(result.error.message);
                 } else {
-                    // Send the token to your server.
-                    that.stripeTokenHandler(config, callback, result.token);
+                    // Send paymentMethod.id to server
+                    that.addPaymentMethodId(config, paymentMethod, callback);
                 }
             });
         });
@@ -63,6 +67,14 @@ let cardElementHandler = {
         hiddenInput.setAttribute('type', 'hidden');
         hiddenInput.setAttribute('name', 'stripeToken');
         hiddenInput.setAttribute('value', token.id);
+        config.form.append(hiddenInput);
+        callback();
+    },
+    addPaymentMethodId(config, paymentMethod, callback) {
+        var hiddenInput = document.createElement('input');
+        hiddenInput.setAttribute('type', 'hidden');
+        hiddenInput.setAttribute('name', 'stripe_payment_method_id');
+        hiddenInput.setAttribute('value', paymentMethod.id);
         config.form.append(hiddenInput);
         callback();
     }
