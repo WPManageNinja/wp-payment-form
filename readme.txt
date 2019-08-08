@@ -1,9 +1,9 @@
 === WPPayForm for Stripe WordPress Payments Plugin ===
 Contributors: techjewel, wpmanageninja
-Tags: Stripe, stripe wordpress, payform, paymentform, stripe integrations, stripe wordpress plugin, wordpress stripe, stripe for wordpress, stripe pay, pay with stripe, Event Registration Form, stripe form, accept payment, stripe payments, secure payment form, form, payment form, payments, credit card, stripe checkout, Accept PayPal Payments, credit card payments, checkout.js, payment for stripe
+Tags: Stripe, Easy Payment Form, stripe wordpress, payform, paymentform, stripe integrations, stripe wordpress plugin, wordpress stripe, stripe for wordpress, stripe pay, pay with stripe, Event Registration Form, stripe form, accept payment, stripe payments, secure payment form, form, payment form, payments, credit card, stripe checkout, Accept PayPal Payments, credit card payments, checkout.js, payment for stripe
 Requires at least: 4.5
 Tested up to: 5.2.2
-Stable tag: 1.2.5
+Stable tag: 1.2.6
 Requires PHP: 5.4
 License: GPLv2 or later
 
@@ -245,6 +245,12 @@ You are most welcome. You can do the following:
 12. Submission Details (2nd Part)
 
 == Changelog ==
+
+= 1.2.6 - August 08, 2019 =
+- Fix Stripe webhook
+- Addded Advanced settings in editor
+- Added payment method on placeholders.
+- Improve performance
 
 = 1.2.5 - July 18, 2019 =
 - Added Google reCaptcha version 2 and 3

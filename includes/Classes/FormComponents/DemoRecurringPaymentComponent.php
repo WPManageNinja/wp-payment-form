@@ -62,7 +62,22 @@ class DemoRecurringPaymentComponent extends BaseComponent
                         'radio' => __('Radio input field', 'wppayform'),
                         'select' => __('Select input field', 'wppayform')
                     )
-                )
+                ),
+                'admin_label' => array(
+                    'label' => 'Admin Label',
+                    'type'  => 'text',
+                    'group' => 'advanced'
+                ),
+                'wrapper_class' => array(
+                    'label' => 'Field Wrapper CSS Class',
+                    'type'  => 'text',
+                    'group' => 'advanced'
+                ),
+                'element_class' => array(
+                    'label' => 'Input element CSS Class',
+                    'type'  => 'text',
+                    'group' => 'advanced'
+                ),
             ),
             'is_system_field'  => true,
             'is_payment_field' => true,

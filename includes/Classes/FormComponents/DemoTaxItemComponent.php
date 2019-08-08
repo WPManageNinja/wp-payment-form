@@ -45,7 +45,22 @@ class DemoTaxItemComponent extends BaseComponent
                     'type'  => 'all_product_selector',
                     'group' => 'general',
                     'info'  => 'Please select the product in where this tax percentage will be applied'
-                )
+                ),
+                'admin_label' => array(
+                    'label' => 'Admin Label',
+                    'type'  => 'text',
+                    'group' => 'advanced'
+                ),
+                'wrapper_class' => array(
+                    'label' => 'Field Wrapper CSS Class',
+                    'type'  => 'text',
+                    'group' => 'advanced'
+                ),
+                'element_class' => array(
+                    'label' => 'Input element CSS Class',
+                    'type'  => 'text',
+                    'group' => 'advanced'
+                ),
             ),
             'field_options'   => array(
                 'label' => 'Tax Amount:',

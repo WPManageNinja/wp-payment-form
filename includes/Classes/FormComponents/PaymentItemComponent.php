@@ -49,6 +49,16 @@ class PaymentItemComponent extends BaseComponent
                         'choose_single'   => 'Chose One From Multiple Item',
                         'choose_multiple' => 'Choose Multiple Items'
                     )
+                ),
+                'admin_label' => array(
+                    'label' => 'Admin Label',
+                    'type'  => 'text',
+                    'group' => 'advanced'
+                ),
+                'wrapper_class' => array(
+                    'label' => 'Field Wrapper CSS Class',
+                    'type'  => 'text',
+                    'group' => 'advanced'
                 )
             ),
             'is_system_field'  => true,

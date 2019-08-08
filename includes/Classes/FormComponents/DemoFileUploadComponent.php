@@ -56,7 +56,22 @@ class DemoFileUploadComponent extends BaseComponent
                     'type'          => 'checkbox',
                     'wrapper_class' => 'checkbox_new_lined',
                     'options'       => $this->getFileTypes('label')
-                )
+                ),
+                'admin_label' => array(
+                    'label' => 'Admin Label',
+                    'type'  => 'text',
+                    'group' => 'advanced'
+                ),
+                'wrapper_class' => array(
+                    'label' => 'Field Wrapper CSS Class',
+                    'type'  => 'text',
+                    'group' => 'advanced'
+                ),
+                'element_class' => array(
+                    'label' => 'Input element CSS Class',
+                    'type'  => 'text',
+                    'group' => 'advanced'
+                ),
             ),
             'field_options'   => array(
                 'label'             => 'Upload Your File',

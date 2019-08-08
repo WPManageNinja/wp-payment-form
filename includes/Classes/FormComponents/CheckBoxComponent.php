@@ -40,7 +40,22 @@ class CheckBoxComponent extends BaseComponent
                     'label' => 'Field Options',
                     'type'  => 'key_pair',
                     'group' => 'general'
-                )
+                ),
+                'admin_label' => array(
+                    'label' => 'Admin Label',
+                    'type'  => 'text',
+                    'group' => 'advanced'
+                ),
+                'wrapper_class' => array(
+                    'label' => 'Field Wrapper CSS Class',
+                    'type'  => 'text',
+                    'group' => 'advanced'
+                ),
+                'element_class' => array(
+                    'label' => 'Input element CSS Class',
+                    'type'  => 'text',
+                    'group' => 'advanced'
+                ),
             ),
             'field_options'   => array(
                 'label' => 'Checkboxes',

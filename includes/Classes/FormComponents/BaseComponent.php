@@ -73,12 +73,11 @@ abstract class BaseComponent
             $attributes['required'] = true;
         }
 
-        if($extraAtts = ArrayHelper::get($fieldOptions, 'extra_data_atts')) {
-            if(is_array($extraAtts)) {
+        if ($extraAtts = ArrayHelper::get($fieldOptions, 'extra_data_atts')) {
+            if (is_array($extraAtts)) {
                 $attributes = wp_parse_args($extraAtts, $attributes);
             }
         }
-
         ?>
         <div data-element_type="<?php echo $this->elementName; ?>"
              class="<?php echo $controlClass; ?>">
@@ -170,7 +169,7 @@ abstract class BaseComponent
                     <?php
                     $optionId = $element['id'] . '_' . $index . '_' . $form->ID;
                     $attributes = array(
-                        'class' => 'form-check-input',
+                        'class' => 'form-check-input '. $inputClass,
                         'type'  => 'radio',
                         'name'  => $element['id'],
                         'id'    => $optionId,
@@ -218,6 +217,7 @@ abstract class BaseComponent
         if (ArrayHelper::get($fieldOptions, 'required') == 'yes') {
             $controlAttributes['data-checkbox_required'] = 'yes';
         }
+
         ?>
         <div <?php echo $this->builtAttributes($controlAttributes); ?>>
             <?php $this->buildLabel($fieldOptions, $form, array('for' => $inputId)); ?>
@@ -226,7 +226,7 @@ abstract class BaseComponent
                     <?php
                     $optionId = $element['id'] . '_' . $index . '_' . $form->ID;
                     $attributes = array(
-                        'class' => 'form-check-input',
+                        'class' => 'form-check-input '.$inputClass,
                         'type'  => 'checkbox',
                         'name'  => $element['id'] . '[]',
                         'id'    => $optionId,
@@ -250,8 +250,12 @@ abstract class BaseComponent
 
     public function renderHtmlContent($element, $form)
     {
+        $wrapperClass = 'wpf_html_content_wrapper';
+        if($userClass = ArrayHelper::get($element, 'field_options.wrapper_class')) {
+            $wrapperClass .= ' '.$userClass;
+        }
         ?>
-        <div class="wpf_html_content_wrapper">
+        <div class="<?php echo $wrapperClass; ?>">
             <?php
             $text = ArrayHelper::get($element, 'field_options.custom_html');
             echo $this->parseText($text, $form->ID);
@@ -274,7 +278,11 @@ abstract class BaseComponent
 
     public function elementControlClass($element)
     {
-        return apply_filters('wppayfrom/element_control_class', 'wpf_form_group wpf_item_' . $element['type'], $element);
+        $class = 'wpf_form_group wpf_item_' . $element['type'];
+        if ($wrapperCssClass = ArrayHelper::get($element, 'field_options.wrapper_class')) {
+            $class .= ' ' . $wrapperCssClass;
+        }
+        return apply_filters('wppayfrom/element_control_class', $class, $element);
     }
 
     public function elementInputClass($element)
@@ -283,6 +291,11 @@ abstract class BaseComponent
         if (isset($element['extra_input_class'])) {
             $extraClasses = ' ' . $element['extra_input_class'];
         }
+
+        if($inputClass = ArrayHelper::get($element, 'field_options.element_class')) {
+            $extraClasses .= ' '.$inputClass;
+        }
+
         return apply_filters('wppayfrom/element_input_class', 'wpf_form_control' . $extraClasses, $element);
     }
 
@@ -309,7 +322,7 @@ abstract class BaseComponent
         $xtra_left = '';
         $xtra_right = '';
         $astPosition = $form->asteriskPosition;
-        if(ArrayHelper::get($fieldOptions, 'required') == 'yes') {
+        if (ArrayHelper::get($fieldOptions, 'required') == 'yes') {
             if ($astPosition == 'left') {
                 $xtra_left = '<span class="wpf_required_sign wpf_required_sign_left">*</span> ';
             } else if ($astPosition == 'right') {
