@@ -44,7 +44,6 @@ let cardElementHandler = {
                 callback();
                 return;
             }
-
             stripe.createPaymentMethod(
                 'card',
                 card

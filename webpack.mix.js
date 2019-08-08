@@ -6,6 +6,7 @@ mix
     .js('src/admin/Boot.js', 'assets/js/payforms-boot.js')
     .js('src/admin/main.js', 'assets/js/payforms-admin.js')
     .js('src/public/public.js', 'assets/js/payforms-public.js')
+    .js('src/public/publicv2.js', 'assets/js/payforms-publicv2.js')
     .js('src/public/fileupload.js', 'assets/js/fileupload.js')
     .js('src/integrations/tinymce.js', 'assets/js/tinymce.js')
     .sass('src/scss/admin/app.scss', 'assets/css/payforms-admin.css')

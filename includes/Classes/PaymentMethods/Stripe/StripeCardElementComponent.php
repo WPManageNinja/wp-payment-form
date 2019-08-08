@@ -89,54 +89,10 @@ class StripeCardElementComponent extends BaseComponent
                 gateway from <b>WPPayFroms->Settings->Stripe Settings</b> to start accepting payments</p>
             <?php return;
         }
-
-        $fieldOptions = ArrayHelper::get($element, 'field_options', false);
-        if (!$fieldOptions) {
-            return;
+        wp_enqueue_script('stripe_elements', 'https://js.stripe.com/v3/', array('jquery'), '3.0', true);
+        if ($stripe->getMode() == 'test') {
+            echo '<p class="wpf_test_mode_message" style="margin: 10px 0px;padding: 0;font-style: italic;">Stripe test mode activated</p>';
         }
-        $checkOutStyle = ArrayHelper::get($fieldOptions, 'checkout_display_style.style', 'stripe_checkout');
-        if ($checkOutStyle == 'stripe_checkout') {
-            wp_enqueue_script('stripe_checkout', 'https://checkout.stripe.com/checkout.js', array('jquery'), '3.0', true);
-            $atrributes = array(
-                'data-checkout_style'        => $checkOutStyle,
-                'data-wpf_payment_method'    => 'stripe',
-                'class'                      => 'wpf_stripe_card_element',
-                'data-verify_zip'            => ArrayHelper::get($fieldOptions, 'verify_zip'),
-                'data-require_billing_info'  => ArrayHelper::get($fieldOptions, 'checkout_display_style.require_billing_info'),
-                'data-require_shipping_info' => ArrayHelper::get($fieldOptions, 'checkout_display_style.require_shipping_info')
-            );
-            echo '
-        <div style="display:none !important; visibility: hidden !important;" ' . $this->builtAttributes($atrributes) . ' class="wpf_stripe_checkout"></div>';
-            return;
-        } else {
-            wp_enqueue_script('stripe_elements', 'https://js.stripe.com/v3/', array('jquery'), '3.0', true);
-        }
-        $inputClass = $this->elementInputClass($element);
-        $inputId = 'wpf_input_' . $form->ID . '_' . $this->elementName;
-        $label = ArrayHelper::get($fieldOptions, 'label');
-        $attributes = array(
-            'data-checkout_style'     => $checkOutStyle,
-            'data-wpf_payment_method' => 'stripe',
-            'name'                    => $element['id'],
-            'class'                   => 'wpf_stripe_card_element ' . $inputClass,
-            'data-verify_zip'         => ArrayHelper::get($fieldOptions, 'verify_zip'),
-            'id'                      => $inputId
-        );
-        ?>
-        <div class="wpf_form_group wpf_item_<?php echo $element['id']; ?>>">
-            <?php if ($label): ?>
-                <label for="<?php echo $inputId; ?>">
-                    <?php echo $label; ?>
-                </label>
-            <?php endif; ?>
-            <div <?php echo $this->builtAttributes($attributes); ?>></div>
-            <div class="wpf_card-errors" role="alert"></div>
-            <?php if ($stripe->getMode() == 'test') { ?>
-                <p class="wpf_test_mode_message" style="margin: 0;padding: 0;font-style: italic;">Stripe test mode
-                    activated</p>
-            <?php } ?>
-        </div>
-        <?php
     }
 
     public function renderForMultiple($paymentSettings, $form, $elements)

@@ -32,7 +32,10 @@ class Stripe
         add_action('wppayform/form_submission_make_payment_stripe', array($this, 'makeFormPayment'), 10, 5);
         add_filter('wppayform/entry_transactions', array($this, 'addTransactionUrl'), 10, 2);
         add_filter('wppayform/choose_payment_method_for_submission', array($this, 'choosePaymentMethod'), 10, 4);
-        add_action('wppayform/wpf_before_submission_data_insert_stripe', array($this, 'validateStripeToken'), 10, 2);
+        // add_action('wppayform/wpf_before_submission_data_insert_stripe', array($this, 'validateStripeToken'), 10, 2);
+
+        //add_action('wppayform/wpf_before_submission_data_insert_stripe', array($this, 'validateStripePaymentId'), 10, 4);
+
 
         // ajax endpoints
         add_action('wp_ajax_wpf_save_stripe_settings', array($this, 'savePaymentSettings'));
@@ -53,9 +56,27 @@ class Stripe
         return $vars;
     }
 
+
+    public function validateStripePaymentId($submission, $form_data, $paymentItems, $subscriptionItems)
+    {
+        $paymentMethodId = $form_data['__stripePaymentMethodId'];
+        $args = [
+            'payment_method' => $paymentMethodId,
+            'amount' => $submission['payment_total'],
+            'currency' => $submission['currency'],
+            'confirmation_method' => 'manual',
+            'confirm' => 'true'
+        ];
+
+        $intent = SCA::createPaymentIntent($args);
+
+        print_r($intent);
+        die();
+    }
+
     public function validateStripeToken($submission, $form_data)
     {
-        if ($submission['payment_total'] && empty($form_data['stripeToken'])) {
+        if ($submission['payment_total'] && empty($form_data['__stripePaymentMethodId'])) {
             wp_send_json_error(array(
                 'message' => __('Stripe payment token is missing. Please input your card details', 'wppayform'),
                 'errors'  => array()
@@ -101,8 +122,6 @@ class Stripe
             'wppayform_tid'  => $transactionId,
             'wp_plugin_slug' => 'wppayform'
         );
-
-
 
         $stripeCustomerId = false;
         $isCreateCustomer = $this->needToCreateCustomer($submission);

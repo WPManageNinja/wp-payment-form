@@ -227,7 +227,7 @@ class Render
         wp_register_script('flatpickr', WPPAYFORM_URL . 'assets/libs/flatpickr/flatpickr.min.js', array(), '4.5.7', true);
         wp_register_style('flatpickr', WPPAYFORM_URL . 'assets/libs/flatpickr/flatpickr.min.css', array(), '4.5.7', 'all');
 
-        wp_enqueue_script('wppayform_public', WPPAYFORM_URL . 'assets/js/payforms-public.js', array('jquery'), WPPAYFORM_VERSION, true);
+        wp_enqueue_script('wppayform_public', WPPAYFORM_URL . 'assets/js/payforms-publicv2.js', array('jquery'), WPPAYFORM_VERSION, true);
         wp_enqueue_style('wppayform_public', WPPAYFORM_URL . 'assets/css/payforms-public.css', array(), WPPAYFORM_VERSION);
 
         wp_localize_script('wppayform_public', 'wp_payform_' . $form->ID, apply_filters('wppayform/checkout_vars', array(
