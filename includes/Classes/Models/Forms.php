@@ -267,6 +267,7 @@ class Forms
                 '{submission.submission_hash}' => __('Submission Hash ID', 'wppayform'),
                 '{submission.customer_name}'   => __('Customer Name', 'wppayform'),
                 '{submission.customer_email}'  => __('Customer Email', 'wppayform'),
+                '{submission.payment_method}'  => __('Payment Method', 'wppayform'),
             )
         );
         if ($hasPayment) {

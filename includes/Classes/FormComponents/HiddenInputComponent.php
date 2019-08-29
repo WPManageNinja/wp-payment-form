@@ -33,7 +33,17 @@ class HiddenInputComponent extends BaseComponent
                     'label' => 'Input Value',
                     'type'  => 'text',
                     'group' => 'general'
-                )
+                ),
+                'admin_label' => array(
+                    'label' => 'Admin Label',
+                    'type'  => 'text',
+                    'group' => 'advanced'
+                ),
+                'element_class' => array(
+                    'label' => 'Input element CSS Class',
+                    'type'  => 'text',
+                    'group' => 'advanced'
+                ),
             ),
             'field_options'   => array(
                 'label'         => 'Hidden Value',
@@ -66,6 +76,11 @@ class HiddenInputComponent extends BaseComponent
             'type'  => 'hidden',
             'id'    => $inputId
         );
+
+        if($userClass = ArrayHelper::get($fieldOptions, 'element_class')) {
+            $attributes['class'] = $userClass;
+        }
+
         ?>
         <input <?php echo $this->builtAttributes($attributes); ?> />
         <?php

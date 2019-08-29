@@ -43,7 +43,22 @@ class DemoPayPalElement extends BaseComponent
                 'require_shipping_address' => array(
                     'label' => 'Require Shipping Address',
                     'type'  => 'switch'
-                )
+                ),
+                'admin_label' => array(
+                    'label' => 'Admin Label',
+                    'type'  => 'text',
+                    'group' => 'advanced'
+                ),
+                'wrapper_class' => array(
+                    'label' => 'Field Wrapper CSS Class',
+                    'type'  => 'text',
+                    'group' => 'advanced'
+                ),
+                'element_class' => array(
+                    'label' => 'Input element CSS Class',
+                    'type'  => 'text',
+                    'group' => 'advanced'
+                ),
             ),
             'field_options'   => array(
                 'label'                    => __('PayPal Payment Gateway', 'wppayform'),

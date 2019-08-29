@@ -26,6 +26,11 @@ class HtmlComponent extends BaseComponent
                     'type' => 'html',
                     'group' => 'general',
                     'info' => 'You can use the following dynamic placeholder on your HTML <span>{payment_total}</span> <span>{sub_total}</span> <span>{tax_total}</span>'
+                ),
+                'wrapper_class' => array(
+                    'label' => 'Field Wrapper CSS Class',
+                    'type'  => 'text',
+                    'group' => 'advanced'
                 )
             )
         );

@@ -1239,3 +1239,55 @@ table.ninja_filter_table {
     width: 100% !important;
   }
 }
+
+.wpf_editor_tabs {
+  .wpf_tabs_header {
+    display: block;
+    width: 100%;
+    background: white;
+    border: 1px solid gray;
+    border-bottom: 0px;
+    /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#eeeeee+0,cccccc+100;Gren+3D */
+    background: rgb(238,238,238); /* Old browsers */
+    background: -moz-linear-gradient(top,  rgba(238,238,238,1) 0%, rgba(204,204,204,1) 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top,  rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom,  rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', endColorstr='#cccccc',GradientType=0 ); /* IE6-9 */
+    border-top-left-radius: 7px;
+    border-top-right-radius: 7px;
+    .wpf_tab {
+      display: inline-block;
+      padding: 15px 20px;
+      cursor: pointer;
+      &:first-child {
+        border-top-left-radius: 8px;
+      }
+      &.wpf_tab_active {
+        font-weight: bold;
+        border-bottom: 2px solid #0073aa;
+        background: white;
+      }
+    }
+  }
+  .wpf_tab_body {
+    border: 1px solid gray;
+    border-top: 0;
+    padding: 20px;
+    background: #f6fbfd;
+    border-bottom-left-radius: 7px;
+    border-bottom-right-radius: 7px;
+    .wpf_showing_general {
+      .wpf_item_group_advanced {
+        display: none;
+      }
+    }
+    .wpf_showing_advanced {
+      .wpf_item_group_general {
+        display: none;
+      }
+    }
+  }
+}
+
+
+

@@ -74,7 +74,17 @@ class ChoosePaymentMethodComponent extends BaseComponent
                     'type'              => 'choose_payment_method',
                     'available_methods' => $available_methods,
                     'group'             => 'general'
-                )
+                ),
+                'admin_label' => array(
+                    'label' => 'Admin Label',
+                    'type'  => 'text',
+                    'group' => 'advanced'
+                ),
+                'wrapper_class' => array(
+                    'label' => 'Field Wrapper CSS Class',
+                    'type'  => 'text',
+                    'group' => 'advanced'
+                ),
             ),
             'field_options'   => array(
                 'label'           => __('Select Payment Method', 'wppayform'),
