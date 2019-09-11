@@ -12,8 +12,11 @@ if (!defined('ABSPATH')) {
  * Manage Submission
  * @since 1.0.0
  */
-class Submission
+class Submission extends Model
 {
+
+    public $metaGroup = 'wpf_submissions';
+
     public function create($submission)
     {
         return wpPayFormDB()->table('wpf_submissions')
@@ -108,6 +111,19 @@ class Submission
             $result->subscriptions = $subscriptionModel->getSubscriptions($result->id);
         }
         return $result;
+    }
+
+    public function getSubmissionByHash($submissionHash, $with = array())
+    {
+        $submission = wpPayFormDB()->table('wpf_submissions')
+                        ->where('submission_hash', $submissionHash)
+                        ->orderBy('id', 'DESC')
+                        ->first();
+
+        if($submission) {
+            return $this->getSubmission($submission->id, $with);
+        }
+        return false;
     }
 
     public function getTotalCount($formId = false, $paymentStatus = false)
@@ -297,4 +313,5 @@ class Submission
 
         return $query->count();
     }
+
 }

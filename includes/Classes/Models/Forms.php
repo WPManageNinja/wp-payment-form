@@ -156,6 +156,12 @@ class Forms
         return false;
     }
 
+    public static function getPaymentMethodElements($formId)
+    {
+        $elements = self::getFormattedElements($formId);
+        return $elements['payment_method_element'];
+    }
+
     public static function getFormInputLabels($formId)
     {
         $elements = get_post_meta($formId, 'wppayform_paymentform_builder_settings', true);

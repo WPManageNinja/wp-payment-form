@@ -6,13 +6,14 @@
         <div class="entry_info_body">
 
             <div v-for="(subscription, subscriptionIndex) in subscriptions" class="payment_header subscripton_item">
+
                 <div class="payment_head_top">
                     <div class="payment_header_left">
                         <p class="head_small_title">{{subscription.plan_name}} <span class="mini_title">({{subscription.item_name}})</span></p>
 
                         <div class="head_payment_amount">
                             <span class="pay_amount" v-html="getFormattedMoney(subscription.recurring_amount)"></span>
-                            <span>/month</span>
+                            <span>/{{subscription.billing_interval}}</span>
                             <span :class="'wpf_paystatus_badge wpf_pay_status_'+subscription.status">
                                 <i :class="getPaymentStatusIcon(subscription.status)"></i> {{subscription.status}}
                             </span>
@@ -31,37 +32,31 @@
                     </div>
                 </div>
                 <div class="payment_head_bottom wpf_entry_order_items">
-                    <h3>Payments</h3>
+                    <h3>Related Payments</h3>
                     <table v-if="subscription.related_payments.length" class="wp-list-table widefat table table-bordered striped">
                         <thead>
                         <tr>
                             <th>Amount</th>
-                            <th>Description</th>
                             <th>Date (GMT)</th>
                             <th></th>
                         </tr>
                         </thead>
                         <tbody>
-                        <template v-for="payment in subscription.related_payments">
-                            <tr v-for="lineItem in payment.items">
+                            <tr v-for="payment in subscription.related_payments">
                                 <td>
-                                    <span class="table_payment_amount" v-html="getFormattedMoney(lineItem.payment_total)"></span>
+                                    <span class="table_payment_amount" v-html="getFormattedMoney(payment.payment_total)"></span>
                                     <span class="payment_currency">{{payment.currency}}</span>
-                                    <span class="wpf_paystatus_badge wpf_pay_status_active">{{lineItem.status}}</span>
-                                </td>
-                                <td>
-                                    {{lineItem.item_name}}
+                                    <span class="wpf_paystatus_badge wpf_pay_status_active">{{payment.status}}</span>
                                 </td>
                                 <td>
                                     {{payment.created_at | dateFormat('MMM DD, YYYY h:mm:ss a') }}
                                 </td>
                                 <td>
-                                    <a class="el-button el-button--primary el-button--mini" v-if="lineItem.view_url" target="_blank" rel="noopener" :href="lineItem.view_url">
+                                    <a class="el-button el-button--mini" v-if="payment.view_url" target="_blank" rel="noopener" :href="payment.view_url">
                                         <i class="el-icon-view"></i>
                                     </a>
                                 </td>
                             </tr>
-                        </template>
                         </tbody>
                     </table>
                     <div v-else>

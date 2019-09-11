@@ -33,7 +33,6 @@ class Stripe
         add_filter('wppayform/entry_transactions', array($this, 'addTransactionUrl'), 10, 2);
         add_filter('wppayform/choose_payment_method_for_submission', array($this, 'choosePaymentMethod'), 10, 4);
         // add_action('wppayform/wpf_before_submission_data_insert_stripe', array($this, 'validateStripeToken'), 10, 2);
-
         //add_action('wppayform/wpf_before_submission_data_insert_stripe', array($this, 'validateStripePaymentId'), 10, 4);
 
 
@@ -56,16 +55,15 @@ class Stripe
         return $vars;
     }
 
-
     public function validateStripePaymentId($submission, $form_data, $paymentItems, $subscriptionItems)
     {
         $paymentMethodId = $form_data['__stripePaymentMethodId'];
         $args = [
-            'payment_method' => $paymentMethodId,
-            'amount' => $submission['payment_total'],
-            'currency' => $submission['currency'],
+            'payment_method'      => $paymentMethodId,
+            'amount'              => $submission['payment_total'],
+            'currency'            => $submission['currency'],
             'confirmation_method' => 'manual',
-            'confirm' => 'true'
+            'confirm'             => 'true'
         ];
 
         $intent = SCA::createPaymentIntent($args);
@@ -93,7 +91,11 @@ class Stripe
         // Now We have to analyze the elements and return our payment method
         foreach ($elements as $element) {
             if (isset($element['type']) && $element['type'] == 'stripe_card_element') {
-                return 'stripe';
+                if (ArrayHelper::get($element, 'options.checkout_display_style.style') == 'embeded_form') {
+                    return 'stripe_inline';
+                } else {
+                    return 'stripe_hosted';
+                }
             }
         }
         return $paymentMethod;
@@ -188,8 +190,8 @@ class Stripe
 
         $metadata = [
             'Submission ID' => $submission->id,
-            'Form ID' => $submission->form_id,
-            'Details URL' => admin_url('admin.php?page=wppayform.php#/edit-form/'.$submission->form_id.'/entries/'.$submission->id.'/view'),
+            'Form ID'       => $submission->form_id,
+            'Details URL'   => admin_url('admin.php?page=wppayform.php#/edit-form/' . $submission->form_id . '/entries/' . $submission->id . '/view'),
         ];
         if ($submission->customer_email) {
             $paymentArgs['receipt_email'] = $submission->customer_email;
@@ -293,8 +295,7 @@ class Stripe
         wp_send_json_error(array(
             'message'       => $message,
             'payment_error' => true,
-            'type'          => $type,
-            ''
+            'type'          => $type
         ), 423);
     }
 
@@ -397,7 +398,7 @@ class Stripe
             'checkout_logo'   => sanitize_text_field($settings['checkout_logo']),
         );
 
-        if(isset($settings['send_meta_data'])) {
+        if (isset($settings['send_meta_data'])) {
             $data['send_meta_data'] = sanitize_text_field($settings['send_meta_data']);
         }
 
@@ -438,7 +439,7 @@ class Stripe
             'test_secret_key' => '',
             'company_name'    => get_bloginfo('name'),
             'checkout_logo'   => '',
-            'send_meta_data' => 'no'
+            'send_meta_data'  => 'no'
         );
         return wp_parse_args($settings, $defaults);
     }
@@ -533,7 +534,7 @@ class Stripe
         return $customer;
     }
 
-    private function handleSubscriptions($customer, $submission, $form)
+    public function handleSubscriptions($customer, $submission, $form)
     {
         $subscriptionModel = new Subscription();
         $subscriptionTransactionModel = new SubscriptionTransaction();
@@ -544,15 +545,13 @@ class Stripe
         }
 
         $isOneSucceed = false;
-        foreach ($subscriptions as $subscriptionItem) {
-
+        foreach ($subscriptions as $subscriptionItem)
+        {
             $subscription = PlanSubscription::create($subscriptionItem, $customer, $submission);
-
             if (!$subscription || is_wp_error($subscription)) {
                 $subscriptionModel->update($subscriptionItem->id, [
                     'status' => 'failed',
                 ]);
-
                 if ($isOneSucceed) {
                     $message = __('Stripe error when creating subscription plan for you. Your card might be charged for atleast one subscription. Please contact site admin to resolve the issue', 'wppayform');
                 } else {
@@ -567,7 +566,6 @@ class Stripe
             }
 
             $isOneSucceed = true;
-
             $subscriptionStatus = 'active';
             if ($subscriptionItem->trial_days) {
                 $subscriptionStatus = 'trialling';
@@ -585,12 +583,10 @@ class Stripe
                 // Let's create the Subscription Transaction
                 $latestInvoice = $subscription->latest_invoice;
                 if ($latestInvoice->total) {
-
                     $totalAmount = $latestInvoice->total;
                     if (GeneralSettings::isZeroDecimal($submission->currency)) {
                         $totalAmount = intval($latestInvoice->total * 100);
                     }
-
                     $transactionItem = [
                         'form_id'          => $submission->form_id,
                         'user_id'          => $submission->user_id,

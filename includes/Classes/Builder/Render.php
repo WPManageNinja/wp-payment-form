@@ -48,8 +48,6 @@ class Render
             $form->recaptcha_site_key = $recaptchaSettings['site_key'];
         }
 
-
-        $this->addAssets($form);
         ob_start();
         if ($elements):
             foreach ($elements as $element) {
@@ -64,6 +62,9 @@ class Render
         ob_start();
         $this->renderFormFooter($form);
         $formFooter = ob_get_clean();
+
+        $this->addAssets($form);
+
         $html = $header_html . $form_body . $formFooter;
 
         return apply_filters('wppayform/rendered_form_html', $html, $form);

@@ -47,4 +47,25 @@ class Transaction
         $data['updated_at'] = gmdate('Y-m-d H:i:s');
         return wpPayFormDB()->table('wpf_order_transactions')->where('id', $transactionId)->update($data);
     }
+
+
+    public function getLatestTransaction($submissionId)
+    {
+        return wpPayFormDB()->table('wpf_order_transactions')
+            ->where('submission_id', $submissionId)
+            ->where('transaction_type', 'one_time')
+            ->orderBy('id', 'DESC')
+            ->first();
+    }
+
+    public function getLatestIntentedTransaction($submissionId)
+    {
+        return wpPayFormDB()->table('wpf_order_transactions')
+            ->where('submission_id', $submissionId)
+            ->where('status', 'intented')
+            ->where('transaction_type', 'one_time')
+            ->orderBy('id', 'DESC')
+            ->first();
+    }
+
 }

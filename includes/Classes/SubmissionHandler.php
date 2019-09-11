@@ -27,6 +27,7 @@ class SubmissionHandler
     public function handeSubmission()
     {
         parse_str($_REQUEST['form_data'], $form_data);
+
         // Now Validate the form please
         $formId = absint($_REQUEST['form_id']);
         // Get Original Form Elements Now
@@ -67,7 +68,6 @@ class SubmissionHandler
 
         $paymentItems = apply_filters('wppayform/submitted_payment_items', $paymentItems, $formattedElements, $form_data);
         $subscriptionItems = apply_filters('wppayform/submitted_subscription_items', $subscriptionItems, $formattedElements, $form_data);
-
 
         /*
          * providing filter hook for payment method to push some payment data
@@ -113,17 +113,6 @@ class SubmissionHandler
         $currency = $currencySetting['currency'];
         $inputItems = apply_filters('wppayform/submission_data_formatted', $inputItems, $form_data, $formId);
 
-        if (isset($form_data['__stripe_billing_address_json'])) {
-            $address = json_decode($form_data['__stripe_billing_address_json'], true);
-            if (!$this->customerName && isset($address['name'])) {
-                $this->customerName = $address['name'];
-            }
-        }
-
-        if (!$this->customerEmail && isset($form_data['__stripe_user_email'])) {
-            $this->customerEmail = $address['__stripe_user_email'];
-        }
-
         $submission = array(
             'form_id'             => $formId,
             'user_id'             => $currentUserId,
@@ -132,7 +121,7 @@ class SubmissionHandler
             'form_data_raw'       => maybe_serialize($form_data),
             'form_data_formatted' => maybe_serialize(wp_unslash($inputItems)),
             'currency'            => $currency,
-            'payment_method'      => $paymentMethod,
+            'payment_method'      => ($paymentMethod == 'stripe_inline' || $paymentMethod == 'stripe_v3') ? 'stripe' : $paymentMethod,
             'payment_status'      => 'pending',
             'submission_hash'     => $this->getHash(),
             'payment_total'       => $paymentTotal,
@@ -151,6 +140,7 @@ class SubmissionHandler
         }
 
         $submission = apply_filters('wppayform/create_submission_data', $submission, $formId, $form_data);
+
 
         do_action('wppayform/wpf_before_submission_data_insert_' . $paymentMethod, $submission, $form_data, $paymentItems, $subscriptionItems);
         do_action('wppayform/wpf_before_submission_data_insert', $submission, $form_data, $paymentItems, $subscriptionItems);
@@ -214,13 +204,17 @@ class SubmissionHandler
             }
         }
 
+        $this->sendSubmissionConfirmation($submission, $formId);
+    }
+
+    public function sendSubmissionConfirmation($submission, $formId)
+    {
+        $confirmation = $this->getFormConfirmation($formId, $submission);
         do_action('wppayform/after_form_submission_complete', $submission, $formId);
-        $confirmation = Forms::getConfirmationSettings($formId);
-        $confirmation = $this->parseConfirmation($confirmation, $submission);
-        $confirmation = apply_filters('wppayform/form_confirmation', $confirmation, $submissionId, $formId);
+
         wp_send_json_success(array(
             'message'       => __('Form is successfully submitted', 'wppayform'),
-            'submission_id' => $submissionId,
+            'submission_id' => $submission->id,
             'confirmation'  => $confirmation
         ), 200);
     }
@@ -488,5 +482,12 @@ class SubmissionHandler
         $uid .= mt_rand(1, 999);
         $uid = str_replace(array("'", '/', '?', '#', "\\"), '', $uid);
         return $uid;
+    }
+
+    public function getFormConfirmation($formId, $submission)
+    {
+        $confirmation = Forms::getConfirmationSettings($formId);
+        $confirmation = $this->parseConfirmation($confirmation, $submission);
+        return apply_filters('wppayform/form_confirmation', $confirmation, $submission->id, $formId);
     }
 }

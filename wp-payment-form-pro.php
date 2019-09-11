@@ -147,10 +147,21 @@ if (!defined('WPPAYFORM_VERSION_LITE')) {
             $stripe = new \WPPayForm\Classes\PaymentMethods\Stripe\Stripe();
             $stripe->registerHooks();
 
+            // Stripe Inline Handler
+            $stripeInlineHandler = new \WPPayForm\Classes\PaymentMethods\Stripe\StripeInlineHandler();
+            $stripeInlineHandler->registerHooks();
+
+            // Stripe Hosted Checkout Handler
+            $stripeHostedHandler = new \WPPayForm\Classes\PaymentMethods\Stripe\StripeHostedHandler();
+            $stripeHostedHandler->registerHooks();
+
             // Handle Extorior Pages
             add_action('init', function () {
-                $demoPage = new \WPPayForm\Classes\ProcessDemoPage();
+                $demoPage = new \WPPayForm\Classes\Extorior\ProcessDemoPage();
                 $demoPage->handleExteriorPages();
+
+                $frameLessPage = new \WPPayForm\Classes\Extorior\FramelessProcessor();
+                $frameLessPage->init();
             });
         }
 

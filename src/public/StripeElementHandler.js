@@ -26,7 +26,7 @@ let cardElementHandler = {
         // Create an instance of the card Element.
         var card = elements.create('card', {
             style: this.style,
-            hidePostalCode: ! jQuery(elementId).data('verify_zip') == 'yes'
+            hidePostalCode: jQuery(elementId).data('verify_zip') != 'yes'
         });
         // Add an instance of the card Element into the `card-element` <div>.
         card.mount(elementId);
@@ -38,6 +38,7 @@ let cardElementHandler = {
                 config.form.find('.wpf_card-errors').html('');
             }
         });
+
         config.form.on('stripe_payment_submit', function (event) {
             event.preventDefault();
             if(!config.form.data('payment_total')  && !config.form.data('subscription_total')) {
@@ -79,4 +80,3 @@ let cardElementHandler = {
     }
 }
 export default cardElementHandler;
-
