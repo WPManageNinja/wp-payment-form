@@ -121,7 +121,7 @@ class SubmissionHandler
             'form_data_raw'       => maybe_serialize($form_data),
             'form_data_formatted' => maybe_serialize(wp_unslash($inputItems)),
             'currency'            => $currency,
-            'payment_method'      => ($paymentMethod == 'stripe_inline' || $paymentMethod == 'stripe_v3') ? 'stripe' : $paymentMethod,
+            'payment_method'      => $paymentMethod,
             'payment_status'      => 'pending',
             'submission_hash'     => $this->getHash(),
             'payment_total'       => $paymentTotal,
@@ -149,6 +149,15 @@ class SubmissionHandler
         $submissionModel = new Submission();
         $submissionId = $submissionModel->create($submission);
         do_action('wppayform/after_submission_data_insert', $submissionId, $formId);
+
+        /*
+         * Dear Payment method developers,
+         * Please do't use this hook to process the payment
+         * The order items is not porcessed yet!
+         */
+        do_action('wppayform/after_submission_data_insert_'.$paymentMethod, $submissionId, $formId, $formattedElements['payment_method_element']);
+
+
         $submission = $submissionModel->getSubmission($submissionId);
 
         if ($paymentItems || $subscriptionItems) {

@@ -11,7 +11,7 @@ class Model
 
     public $metaGroup = '';
 
-    public function getMeta($submissionId, $metaKey)
+    public function getMeta($submissionId, $metaKey, $default = '')
     {
         $exist = wpPayFormDB()->table('wpf_meta')
             ->where('meta_group', $this->metaGroup)
@@ -19,10 +19,13 @@ class Model
             ->where('meta_key', $metaKey)
             ->first();
         if($exist) {
-            return maybe_unserialize($exist->meta_value);
+            $value =  maybe_unserialize($exist->meta_value);
+            if($value) {
+                return $value;
+            }
         }
 
-        return false;
+        return $default;
     }
 
     public function updateMeta($submissionId, $metaKey, $metaValue)

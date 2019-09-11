@@ -29,19 +29,26 @@ class Stripe
         // Register The Action and Filters
         add_filter('wppayform/parsed_entry', array($this, 'addAddressToView'), 10, 2);
         add_filter('wppayform/submission_data_formatted', array($this, 'pushAddressToInput'), 10, 3);
-        add_action('wppayform/form_submission_make_payment_stripe', array($this, 'makeFormPayment'), 10, 5);
+
         add_filter('wppayform/entry_transactions', array($this, 'addTransactionUrl'), 10, 2);
         add_filter('wppayform/choose_payment_method_for_submission', array($this, 'choosePaymentMethod'), 10, 4);
-        // add_action('wppayform/wpf_before_submission_data_insert_stripe', array($this, 'validateStripeToken'), 10, 2);
-        //add_action('wppayform/wpf_before_submission_data_insert_stripe', array($this, 'validateStripePaymentId'), 10, 4);
 
 
-        // ajax endpoints
+        /*
+         * This is rquired
+         */
+        add_action('wppayform/after_submission_data_insert_stripe', array($this, 'addPaymentMethodStyle'), 10, 3);
+        add_action('wppayform/form_submission_make_payment_stripe', array($this, 'routePaymentHandler'), 10, 5);
+
+        // ajax endpoints for admin
         add_action('wp_ajax_wpf_save_stripe_settings', array($this, 'savePaymentSettings'));
         add_action('wp_ajax_wpf_get_stripe_settings', array($this, 'getPaymentSettings'));
 
         add_filter('wppayform/checkout_vars', array($this, 'addLocalizeVars'));
 
+        /*
+         * Push signup fees to single payment item
+         */
         add_filter('wppayform/submitted_payment_items_stripe', array($this, 'maybeSignupFeeToPaymentItems'), 10, 4);
 
     }
@@ -91,14 +98,29 @@ class Stripe
         // Now We have to analyze the elements and return our payment method
         foreach ($elements as $element) {
             if (isset($element['type']) && $element['type'] == 'stripe_card_element') {
-                if (ArrayHelper::get($element, 'options.checkout_display_style.style') == 'embeded_form') {
-                    return 'stripe_inline';
-                } else {
-                    return 'stripe_hosted';
-                }
+                return 'stripe';
             }
         }
         return $paymentMethod;
+    }
+
+    public function addPaymentMethodStyle($submissionId, $formId, $paymentMethodElement)
+    {
+        $style = 'stripe_hosted';
+        if (ArrayHelper::get($paymentMethodElement, 'stripe_card_element.options.checkout_display_style.style') == 'embeded_form') {
+            $style = 'stripe_inline';
+        }
+
+        $submissionModel = new Submission();
+        $submissionModel->updateMeta($submissionId, 'stripe_payment_style', $style);
+    }
+
+    public function routePaymentHandler($transactionId, $submissionId, $form_data, $form, $hasSubscriptions)
+    {
+        $submissionModel = new Submission();
+        $handler = $submissionModel->getMeta($submissionId, 'stripe_payment_style', 'stripe_hosted');
+
+        do_action( 'wppayform/form_submission_make_payment_' . $handler, $transactionId, $submissionId, $form_data, $form, $hasSubscriptions );
     }
 
     public function makeFormPayment($transactionId, $submissionId, $form_data, $form, $hasSubscriptions)
@@ -532,96 +554,6 @@ class Stripe
         ));
 
         return $customer;
-    }
-
-    public function handleSubscriptions($customer, $submission, $form)
-    {
-        $subscriptionModel = new Subscription();
-        $subscriptionTransactionModel = new SubscriptionTransaction();
-        $subscriptions = $subscriptionModel->getSubscriptions($submission->id);
-
-        if (!$subscriptions) {
-            return false;
-        }
-
-        $isOneSucceed = false;
-        foreach ($subscriptions as $subscriptionItem)
-        {
-            $subscription = PlanSubscription::create($subscriptionItem, $customer, $submission);
-            if (!$subscription || is_wp_error($subscription)) {
-                $subscriptionModel->update($subscriptionItem->id, [
-                    'status' => 'failed',
-                ]);
-                if ($isOneSucceed) {
-                    $message = __('Stripe error when creating subscription plan for you. Your card might be charged for atleast one subscription. Please contact site admin to resolve the issue', 'wppayform');
-                } else {
-                    $message = __('Stripe error when creating subscription plan for you. Please contact site admin', 'wppayform');
-                }
-                $errorCode = 400;
-                if (is_wp_error($subscription)) {
-                    $errorCode = $subscription->get_error_code();
-                    $message = $subscription->get_error_message($errorCode);
-                }
-                return new \WP_Error($errorCode, $message, $subscription);
-            }
-
-            $isOneSucceed = true;
-            $subscriptionStatus = 'active';
-            if ($subscriptionItem->trial_days) {
-                $subscriptionStatus = 'trialling';
-            }
-
-            $subscriptionModel->update($subscriptionItem->id, [
-                'status'                 => $subscriptionStatus,
-                'vendor_customer_id'     => $subscription->customer,
-                'vendor_subscriptipn_id' => $subscription->id,
-                'vendor_plan_id'         => $subscription->plan->id,
-                'vendor_response'        => maybe_serialize($subscription),
-            ]);
-
-            if (!$subscriptionItem->trial_days) {
-                // Let's create the Subscription Transaction
-                $latestInvoice = $subscription->latest_invoice;
-                if ($latestInvoice->total) {
-                    $totalAmount = $latestInvoice->total;
-                    if (GeneralSettings::isZeroDecimal($submission->currency)) {
-                        $totalAmount = intval($latestInvoice->total * 100);
-                    }
-                    $transactionItem = [
-                        'form_id'          => $submission->form_id,
-                        'user_id'          => $submission->user_id,
-                        'submission_id'    => $submission->id,
-                        'subscription_id'  => $subscriptionItem->id,
-                        'transaction_type' => 'subscription',
-                        'payment_method'   => 'stripe',
-                        'charge_id'        => $latestInvoice->charge,
-                        'payment_total'    => $totalAmount,
-                        'status'           => $latestInvoice->status,
-                        'currency'         => $latestInvoice->currency,
-                        'payment_mode'     => ($latestInvoice->livemode) ? 'live' : 'test',
-                        'payment_note'     => maybe_serialize($latestInvoice),
-                        'created_at'       => gmdate('Y-m-d H:i:s', $latestInvoice->created),
-                        'updated_at'       => gmdate('Y-m-d H:i:s', $latestInvoice->created)
-                    ];
-                    $subscriptionTransactionModel->maybeInsertCharge($transactionItem);
-                }
-            }
-        }
-
-        SubmissionActivity::createActivity(array(
-            'form_id'       => $form->ID,
-            'submission_id' => $submission->id,
-            'type'          => 'activity',
-            'created_by'    => 'PayForm BOT',
-            'content'       => __('Stripe recurring subscription successfully initiated', 'wppayform')
-        ));
-
-        $submissionModel = new Submission();
-        $submissionModel->update($submission->id, [
-            'payment_status' => 'paid'
-        ]);
-
-        return $subscriptionModel->getSubscriptions($submission->id);
     }
 
     public function maybeSignupFeeToPaymentItems($paymentItems, $formattedElements, $form_data, $subscriptionItems)

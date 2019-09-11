@@ -65,11 +65,6 @@ class PayFormHandler {
                                 return;
                             }
 
-                            if (response.data.stripe_requires_action) {
-                                this.initStripeSCAModal(response.data);
-                                return;
-                            }
-
                             this.handlePaymentSuccess(response.data);
                         })
                         .fail(error => {
@@ -96,14 +91,14 @@ class PayFormHandler {
 
     // This is for mainly subscription payment
     async stripeSetupItent(data) {
-        console.log(data);
         this.showMessages(data.message, 'info', '');
         const {setupIntent, errorAction} = await this.stripe.handleCardSetup(
             data.client_secret, this.stripeCard,
             {
                 payment_method_data: {
                     billing_details: {
-                        name: 'MD Shahjahan'
+                        name: data.customer_name,
+                        email: data.customer_email,
                     }
                 }
             }
