@@ -50,12 +50,12 @@ class PaymentItemComponent extends BaseComponent
                         'choose_multiple' => 'Choose Multiple Items'
                     )
                 ),
-                'admin_label' => array(
+                'admin_label'     => array(
                     'label' => 'Admin Label',
                     'type'  => 'text',
                     'group' => 'advanced'
                 ),
-                'wrapper_class' => array(
+                'wrapper_class'   => array(
                     'label' => 'Field Wrapper CSS Class',
                     'type'  => 'text',
                     'group' => 'advanced'
@@ -141,7 +141,8 @@ class PaymentItemComponent extends BaseComponent
             ?>
             <div <?php echo $this->builtAttributes($controlAttributes); ?>>
                 <div class="wpf_input_label wpf_single_amount_label">
-                    <?php echo $title ?>: <span class="wpf_single_amount"><?php echo wpPayFormFormattedMoney(wpPayFormConverToCents($amount), $currenySettings); ?></span>
+                    <?php echo $title ?>: <span
+                        class="wpf_single_amount"><?php echo wpPayFormFormattedMoney(wpPayFormConverToCents($amount), $currenySettings); ?></span>
                 </div>
             </div>
             <?php
@@ -154,14 +155,16 @@ class PaymentItemComponent extends BaseComponent
         if (!$type || !$prices) {
             return;
         }
-
+        $fieldOptions = ArrayHelper::get($element, 'field_options', false);
         $currenySettings = Forms::getCurrencyAndLocale($form->ID);
         $elementId = 'wpf_' . $element['id'];
         $controlAttributes = array(
-            'data-element_type' => $this->elementName,
-            'class'             => $this->elementControlClass($element)
+            'data-element_type'     => $this->elementName,
+            'data-required_element' => $type,
+            'data-required'         => ArrayHelper::get($fieldOptions, 'required'),
+            'data-target_element'   => $element['id'],
+            'class'                 => $this->elementControlClass($element)
         );
-        $fieldOptions = ArrayHelper::get($element, 'field_options', false);
         $defaultValue = ArrayHelper::get($fieldOptions, 'default_value');
         ?>
         <div <?php echo $this->builtAttributes($controlAttributes); ?>>
@@ -172,6 +175,7 @@ class PaymentItemComponent extends BaseComponent
                 $inputId = 'wpf_input_' . $form->ID . '_' . $this->elementName;
                 $inputAttributes = array(
                     'data-required' => ArrayHelper::get($fieldOptions, 'required'),
+                    'data-type'     => 'select',
                     'name'          => $element['id'],
                     'class'         => $this->elementInputClass($element) . ' wpf_payment_item',
                     'id'            => $inputId
@@ -248,8 +252,11 @@ class PaymentItemComponent extends BaseComponent
         $defaultValues = explode(',', $defaultValue);
 
         $controlAttributes = array(
-            'data-element_type' => $this->elementName,
-            'class'             => $controlClass
+            'data-element_type'      => $this->elementName,
+            'class'                  => $controlClass,
+            'data-checkbox_required' => ArrayHelper::get($fieldOptions, 'required'),
+            'data-element_type'      => 'checkbox',
+            'data-target_element'    => $element['id']
         );
         ?>
         <div <?php echo $this->builtAttributes($controlAttributes); ?>>
@@ -284,9 +291,11 @@ class PaymentItemComponent extends BaseComponent
                     <div class="form-check">
                         <input <?php echo $this->builtAttributes($attributes); ?>>
                         <label class="form-check-label" for="<?php echo $optionId; ?>">
-                            <span class="wpf_price_option_name" itemprop="description"><?php echo $option['label']; ?></span>
+                            <span class="wpf_price_option_name"
+                                  itemprop="description"><?php echo $option['label']; ?></span>
                             <span class="wpf_price_option_sep">&nbsp;–&nbsp;</span>
-                            <span class="wpf_price_option_price"><?php echo wpPayFormFormattedMoney(wpPayFormConverToCents($option['value']), $currenySettings); ?></span>
+                            <span
+                                class="wpf_price_option_price"><?php echo wpPayFormFormattedMoney(wpPayFormConverToCents($option['value']), $currenySettings); ?></span>
                             <meta itemprop="price" content="<?php echo $option['value']; ?>"/>
                         </label>
                     </div>

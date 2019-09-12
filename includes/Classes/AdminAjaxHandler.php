@@ -192,12 +192,14 @@ class AdminAjaxHandler
     protected function saveFormBuilderSettings()
     {
         $data = file_get_contents("php://input");
-        if(!$data) {
-            $data = $_REQUEST;
+        if($data) {
+            parse_str($data, $form_data);
+            $builderSettings = json_decode($form_data['builder_settings'], true);
+        } else {
+            // failsafe
+            $builderSettings = wp_unslash($_REQUEST['builder_settings']);
+            $builderSettings = json_decode($builderSettings, true);
         }
-        parse_str($data, $form_data);
-        $builderSettings = json_decode($form_data['builder_settings'], true);
-
 
         $formId = absint($_REQUEST['form_id']);
 

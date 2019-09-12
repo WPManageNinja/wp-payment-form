@@ -26,7 +26,7 @@ class DateComponent extends BaseComponent
             'M/d/Y'       => 'M/d/Y - (Ex: Apr/28/2018)',
             'y/m/d'       => 'y/m/d - (Ex: 18/04/28)',
             'Y-m-d'       => 'Y-m-d - (Ex: 2018-04-28)',
-            'd-M-y'      => 'd-M-y - (Ex: 28-Apr-18)',
+            'd-M-y'       => 'd-M-y - (Ex: 28-Apr-18)',
             'm/d/Y h:i K' => 'm/d/Y h:i K - (Ex: 04/28/2018 08:55 PM)', // USA
             'm/d/Y H:i'   => 'm/d/Y H:i - (Ex: 04/28/2018 20:55)', // USA
             'd/m/Y h:i K' => 'd/m/Y h:i K - (Ex: 28/04/2018 08:55 PM)', // Canada, UK
@@ -64,14 +64,14 @@ class DateComponent extends BaseComponent
                     'options'   => $dateFormats,
                     'group'     => 'general',
                     'creatable' => 'yes',
-                    'info' => 'To create your own format check this <a target="_blank" href="https://wpmanageninja.com/docs/wppayform/frequently-asked-question-for-wppayform/date-formats-customization/">documentation</a>'
+                    'info'      => 'To create your own format check this <a target="_blank" href="https://wpmanageninja.com/docs/wppayform/frequently-asked-question-for-wppayform/date-formats-customization/">documentation</a>'
                 ),
                 'default_value' => array(
                     'label' => 'Default Value',
                     'type'  => 'text',
                     'group' => 'general'
                 ),
-                'admin_label' => array(
+                'admin_label'   => array(
                     'label' => 'Admin Label',
                     'type'  => 'text',
                     'group' => 'advanced'
@@ -112,6 +112,7 @@ class DateComponent extends BaseComponent
         $inputId = 'wpf_input_' . $form->ID . '_' . $element['id'];
         $attributes = array(
             'data-required'    => ArrayHelper::get($fieldOptions, 'required'),
+            'data-type'        => 'input',
             'name'             => $element['id'],
             'placeholder'      => ArrayHelper::get($fieldOptions, 'placeholder'),
             'value'            => $defaultValue,
@@ -142,7 +143,7 @@ class DateComponent extends BaseComponent
         $fieldOptions['date_format'] = $this->convertDateFormat($fieldOptions['date_format']);
         $dateFormat = ArrayHelper::get($fieldOptions, 'date_format');
 
-        if(!$dateFormat) {
+        if (!$dateFormat) {
             $dateFormat = 'm/d/Y';
         }
 

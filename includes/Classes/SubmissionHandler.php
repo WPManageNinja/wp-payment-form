@@ -26,6 +26,8 @@ class SubmissionHandler
 
     public function handeSubmission()
     {
+        sleep(3);
+
         parse_str($_REQUEST['form_data'], $form_data);
 
         // Now Validate the form please
@@ -269,6 +271,7 @@ class SubmissionHandler
         }
 
         // Maybe validate recatcha
+        $formEvents = [];
         if(!$errors) {
             $recaptchaType = Forms::recaptchaType($formId);
             if($recaptchaType == 'v2_visible' || $recaptchaType == 'v3_invisible') {
@@ -280,16 +283,20 @@ class SubmissionHandler
                     'response' => isset( $form_data['g-recaptcha-response'] ) ? $form_data['g-recaptcha-response'] : '',
                     'remoteip' => $ip_address
                 ), 'https://www.google.com/recaptcha/api/siteverify' ) );
+
                 if ( is_wp_error( $response ) || empty( $response['body'] ) || ! ( $json = json_decode( $response['body'] ) ) || ! $json->success ) {
                     $errors['g-recaptcha-response'] = __('reCaptcha validation failed. Please try again.', 'wppayform');
+                    $formEvents[] = 'refresh_recaptcha';
                 }
+
             }
         }
         $errors = apply_filters('wppayform/form_submission_validation_errors', $errors, $formId, $formattedElements);
         if ($errors) {
             wp_send_json_error(array(
                 'message' => __('Form Validation failed', 'wppayform'),
-                'errors'  => $errors
+                'errors'  => $errors,
+                'form_events' => $formEvents
             ), 423);
         }
 

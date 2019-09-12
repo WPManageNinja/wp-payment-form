@@ -1,4 +1,5 @@
 import formatPrice from "../common/formatPrice";
+import isEmpty from 'lodash/isEmpty';
 
 class PayFormHandler {
     constructor(form, config) {
@@ -6,7 +7,14 @@ class PayFormHandler {
         this.config = config;
         this.formId = config.form_id;
         this.generalConfig = window.wp_payform_general;
+        this.$formNoticeWrapper = form.parent().find('.wpf_form_notices');
+    }
 
+    $t(stringKey) {
+        if(this.generalConfig.i18n[stringKey]) {
+            return this.generalConfig.i18n[stringKey];
+        }
+        return '';
     }
 
     initForm() {
@@ -17,7 +25,6 @@ class PayFormHandler {
         });
         this.initPaymentMethodChange();
 
-        console.log(this.config);
         if (this.config.stripe_checkout_style == 'embeded_form') {
             this.stripe = Stripe(this.config.stripe_pub_key);
             this.initStripeElement();
@@ -27,12 +34,15 @@ class PayFormHandler {
 
         this.form.on('submit', (e) => {
             e.preventDefault();
+            console.log('submitting');
             this.handleFormSubmit();
         });
 
+        this.showMessages(['Mesage Item 1', 'Message Item 2'], 'info', 'My Info Title');
     }
 
     handleFormSubmit() {
+        this.resetMessages();
         const instance =
             this.validateData() // step 1
                 .then(response => {
@@ -43,11 +53,7 @@ class PayFormHandler {
                 }) // step 3
                 .then(response => {
                     // Before send ajax request
-                    this.resetMessages();
-                    this.form.find('button.wpf_submit_button').attr('disabled', true);
-                    this.form.addClass('wpf_submitting_form');
-                    this.form.trigger('wpf_form_submitting', this.formId);
-
+                    this.buttonState('submitting_form', 'Submitting Data...', true, response);
                     jQuery.post(this.generalConfig.ajax_url, {
                         action: 'wpf_submit_form',
                         form_id: this.formId,
@@ -80,11 +86,14 @@ class PayFormHandler {
                             this.form.find('button.wpf_submit_button').removeAttr('disabled');
                             this.form.removeClass('wpf_submitting_form');
                         })
-                        .always(() => {
-
+                        .always((response) => {
+                            if(response && response.responseJSON && response.responseJSON.data && response.responseJSON.data.form_events) {
+                                this.fireFormEvents(response.responseJSON.data.form_events, response.responseJSON.data);
+                            }
                         });
                 })
                 .catch((error) => {
+                    this.buttonState('state_normal', '', false, error);
                     console.error(error);
                 });
     }
@@ -92,7 +101,8 @@ class PayFormHandler {
     // This is for mainly subscription payment
     async stripeSetupItent(data) {
         this.showMessages(data.message, 'info', '');
-        const {setupIntent, errorAction} = await this.stripe.handleCardSetup(
+        this.buttonState('validating_form', 'Validating Card Info', true, data);
+        const { setupIntent, errorAction } = await this.stripe.handleCardSetup(
             data.client_secret, this.stripeCard,
             {
                 payment_method_data: {
@@ -106,10 +116,7 @@ class PayFormHandler {
 
         if (errorAction) {
             this.showMessages(errorAction.message, 'error', '');
-            this.form.find('button.wpf_submit_button').removeAttr('disabled');
-            this.form.removeClass('wpf_showing_stripe_sca_modal');
-            this.form.trigger('wpf_form_sca_declined', this.formId);
-            this.form.removeClass('wpf_submitting_form');
+            this.buttonState('sca_declined', '', false, errorAction);
             return;
         }
 
@@ -127,10 +134,9 @@ class PayFormHandler {
 
     // This is for one time payment
     async initStripeSCAModal(data) {
-        this.resetMessages();
-        this.form.find('button.wpf_submit_button').attr('disabled', true);
-        this.form.addClass('wpf_showing_stripe_sca_modal');
-        this.form.trigger('wpf_form_showing_sca', this.formId);
+
+        this.buttonState('authenticating_sca', 'Authenticating Payment', true, data);
+
         this.showMessages(data.message, 'info', '');
 
         const {
@@ -141,11 +147,9 @@ class PayFormHandler {
         );
 
         if (errorAction) {
+            console.log(errorAction.message);
             this.showMessages(errorAction.message, 'error', '');
-            this.form.find('button.wpf_submit_button').removeAttr('disabled');
-            this.form.removeClass('wpf_showing_stripe_sca_modal');
-            this.form.trigger('wpf_form_sca_declined', this.formId);
-            this.form.removeClass('wpf_submitting_form');
+            this.buttonState('sca_declined', '', false, errorAction);
             return;
         }
 
@@ -160,6 +164,10 @@ class PayFormHandler {
     }
 
     handleStripePaymentConfirm(data) {
+
+        this.showMessages('Confirming Payment. Please wait a little bit...', 'info')
+        this.buttonState('confirming_payment', 'Confirming Payment', true, data);
+
         jQuery.post(this.generalConfig.ajax_url, data)
             .then(response => {
                 if (!response || !response.data || typeof response == 'string') {
@@ -169,19 +177,13 @@ class PayFormHandler {
                 this.handlePaymentSuccess(response.data);
             })
             .fail(error => {
-
                 if (typeof error == 'string' || !error.responseJSON.data) {
                     this.handleServerUnexpectedError(response);
                 } else {
                     this.showMessages(error.responseJSON.data.errors, 'error', error.responseJSON.data.message);
                 }
 
-                this.form.trigger('wpf_form_fail_submission', error.responseJSON.data);
-                this.form.trigger('server_error', [error]);
-
-                this.form.removeClass('wpf_submitting_form');
-                this.form.find('button.wpf_submit_button').removeAttr('disabled');
-                this.form.removeClass('wpf_submitting_form');
+                this.buttonState('payment_failed', '', false, error);
             })
             .always(() => {
 
@@ -206,7 +208,7 @@ class PayFormHandler {
             if (confirmation.samePageFormBehavior == 'hide_form') {
                 this.form.hide();
                 jQuery([document.documentElement, document.body]).animate({
-                    scrollTop: this.form.parent().find('.wpf_form_success').offset().top - 100
+                    scrollTop: this.$formNoticeWrapper.offset().top - 100
                 }, 200);
             }
             jQuery('#wpf_form_id_' + this.formId)[0].reset();
@@ -221,8 +223,92 @@ class PayFormHandler {
     }
 
     // Step 1
-    validateData() {
-        return new Promise(function (resolve, reject) {
+    validateData($range) {
+        var that = this;
+        if(!$range) {
+            $range = this.form;
+        }
+        return new Promise(function(resolve, reject) {
+            function getLabel($input) {
+                let errorLabel = $input.closest('.wpf_form_group').find('label').text();
+                if(!errorLabel) {
+                    let placeholder = $input.attr('placeholder');
+                    if(placeholder) {
+                        errorLabel = placeholder;
+                    } else {
+                        errorLabel = errorId;
+                    }
+                }
+                return errorLabel;
+            }
+            let errors = {};
+            // Validate the normal inputs
+            let $inputTypes = $range.find('input[data-required="yes"][data-type="input"],textarea[data-required="yes"],select[data-required="yes"]');
+            if($inputTypes.length) {
+                jQuery.each($inputTypes, (index, inputType) => {
+                    let $input = jQuery(inputType);
+                    if(!$input.val()) {
+                        $input.addClass('wpf_has_error');
+                        let errorId = $input.attr('name');
+                        let label = getLabel($input);
+                        errors[errorId] = label +' '+that.$t('is_required');
+                    }
+                });
+            }
+
+            // Validate File Upload
+            let $fileUploads = $range.find('input[data-required="yes"][data-type="file_upload"]');
+            if($fileUploads.length) {
+                jQuery.each($fileUploads, (index, fileUpload) => {
+                    let $upload = jQuery(fileUpload);
+                    let associateKey = $upload.val();
+                    // check if that associate key has any value or not
+                    if(!$range.find('input[name^='+associateKey+']').val()) {
+                        let errorId = $upload.attr('name');
+                        let label = getLabel($upload);
+                        errors[errorId] = label +' '+that.$t('is_required');
+                    }
+                });
+            }
+
+            // Validate radio items
+            let $radioFields = $range.find('div[data-required="yes"][data-element_type="radio"],div[data-required="yes"][data-required_element="radio"]');
+
+            if($radioFields.length) {
+                jQuery.each($radioFields, (index, radioField) => {
+                    let $radioField = jQuery(radioField);
+                    if(!$radioField.find('input').is(':checked')) {
+                        let errorId = $radioField.attr('data-target_element');
+                        let errorLabel = $radioField.find('.wpf_input_label label').text();
+                        if(!errorLabel) {
+                            errorLabel = errorId;
+                        }
+                        errors[errorId] = errorLabel+ ' '+ that.$t('is_required');
+                    }
+                });
+            }
+
+            // Validate select items
+            let $sectionFields = $range.find('div[data-checkbox_required="yes"][data-element_type="checkbox"]');
+            if($sectionFields.length) {
+                jQuery.each($sectionFields, (index, selectField) => {
+                    let $selectField = jQuery(selectField);
+                    if(!$selectField.find('input').is(':checked')) {
+                        let errorId = $selectField.attr('data-target_element');
+                        let errorLabel = $selectField.find('.wpf_input_label label').text();
+                        if(!errorLabel) {
+                            errorLabel = errorId;
+                        }
+                        errors[errorId] = errorLabel+ ' '+ that.$t('is_required');
+                    }
+                });
+            }
+
+            if(!isEmpty(errors)) {
+                that.showMessages(errors, 'error', that.$t('validation_failed'));
+                reject('validation_failed');
+                return;
+            }
             resolve(true);
         });
     }
@@ -236,7 +322,7 @@ class PayFormHandler {
                 if (recaptchInstance != undefined) {
                     let response = grecaptcha.getResponse(recaptchInstance);
                     if (!response) {
-                        that.showMessages('', 'error', 'Please verify recaptcha first');
+                        that.showMessages('', 'error', that.$t('verify_recapthca'));
                         reject('recaptca validation error');
                     } else {
                         resolve(response);
@@ -256,6 +342,9 @@ class PayFormHandler {
                 resolve(true);
                 return;
             }
+
+            that.buttonState('validating_form', 'Validating...', true);
+
             that.stripe.createPaymentMethod(
                 'card',
                 that.stripeCard
@@ -579,9 +668,10 @@ class PayFormHandler {
                 iconColor: "#fa755a"
             }
         };
+
         var card = elements.create("card", {
             style: style,
-            hidePostalCode: !this.config.stripe_verify_zip == 'yes'
+            hidePostalCode: this.config.stripe_verify_zip != 'yes'
         });
         // Add an instance of the card Element into the `card-element` <div>.
         card.mount("#" + this.config.stripe_element_id);
@@ -602,18 +692,12 @@ class PayFormHandler {
     }
 
     // Error and Success Messages
-
     handleServerUnexpectedError(response) {
-        this.showMessages(response, 'error', 'Something is wrong when submitting the form');
+        this.showMessages(response, 'error', this.$t('submission_error'));
     }
-
 
     showMessages(messages, type, heading) {
         this.resetMessages();
-        let $container = this.form.parent().find('.wpf_form_errors');
-        if (type == 'success') {
-            $container = this.form.parent().find('.wpf_form_success');
-        }
 
         let html = '';
         if (heading) {
@@ -621,7 +705,7 @@ class PayFormHandler {
         }
 
         if (typeof messages == 'string' && messages) {
-            html += '<p class="wpf_alert_item">' + messages + '</p>';
+            html += messages;
         }
 
         if (typeof messages == 'object' && messages) {
@@ -632,7 +716,8 @@ class PayFormHandler {
             html += '</ul>';
         }
         if (html) {
-            $container.html(html).show();
+            this.$formNoticeWrapper.addClass('wpf_form_notice_'+type);
+            this.$formNoticeWrapper.html(html).show();
             if (type == 'error') {
                 this.form.parent().addClass('wpf_form_has_errors');
             }
@@ -641,8 +726,43 @@ class PayFormHandler {
 
     resetMessages() {
         this.form.removeClass('wpf_form_has_errors');
-        this.form.parent().find('.wpf_form_errors').html('').hide();
-        this.form.parent().find('.wpf_form_success').html('').hide();
+        this.$formNoticeWrapper.removeClass('wpf_form_notice_error wpf_form_notice_success wpf_form_notice_info')
+        this.$formNoticeWrapper.html('').hide();
+    }
+
+    fireFormEvents(events, dataOrEvent) {
+        if(typeof events == 'object') {
+            jQuery.each(events, (index, eventName) => {
+                this.form.trigger(eventName, [dataOrEvent]);
+            });
+        }
+    }
+
+    buttonState(state, loadingText, isDisabled, data) {
+
+        console.log(state);
+
+        let knownStates = 'wpf_submitting wpf_validating_form wpf_submitting_form wpf_authenticating_sca wpf_sca_declined wpf_confirming_payment';
+        this.form.removeClass(knownStates);
+
+        if(loadingText) {
+            this.form.find('button.wpf_submit_button .wpf_txt_normal').hide();
+            this.form.find('button.wpf_submit_button .wpf_txt_loading').text(loadingText).show();
+        } else {
+            this.form.find('button.wpf_submit_button .wpf_txt_loading').hide();
+            this.form.find('button.wpf_submit_button .wpf_txt_normal').show();
+        }
+
+        if(isDisabled) {
+            this.form.addClass('wpf_has_disabled_btn');
+            this.form.find('button.wpf_submit_button').attr('disabled', true);
+        } else {
+            this.form.removeClass('wpf_has_disabled_btn');
+            this.form.find('button.wpf_submit_button').attr('disabled', false);
+        }
+
+        this.form.addClass('wpf_'+state);
+        this.form.trigger('wpf_'+state, [this.formId, data]);
     }
 }
 

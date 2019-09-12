@@ -121,6 +121,7 @@ class StripeInlineHandler extends StripeHandler
      */
     public function confirmScaPayment()
     {
+        sleep(10);
         $submissionId = intval($_REQUEST['submission_id']);
         $paymentMethod = sanitize_text_field($_REQUEST['payment_method']);
         $submissionModel = new Submission();
@@ -138,18 +139,9 @@ class StripeInlineHandler extends StripeHandler
         if (!$confirmation->error && $confirmation->status == 'succeeded') {
             $this->handlePaymentSuccess($confirmation, $transaction, $submission, 'confirmation');
         } else {
-            SubmissionActivity::createActivity(array(
-                'form_id'       => $submission->form_id,
-                'submission_id' => $submission->id,
-                'type'          => 'activity',
-                'created_by'    => 'PayForm BOT',
-                'content'       => __('Payment confirmation failed. Stripe Error: ', 'wppayform') . $confirmation->error->message
-            ));
-            wp_send_json_error([
-                'message'         => $confirmation->error->message,
-                'vendor_response' => $confirmation,
-                'payment_error'   => true
-            ], 423);
+            $form = Forms::getForm($submission->form_id);
+            $message = 'Payment has been failed. '.$confirmation->error->message;
+            return $this->handlePaymentChargeError($message, $submission, $form, $confirmation, 'payment_error');
         }
 
         $submissionModel = new Submission();
@@ -236,6 +228,7 @@ class StripeInlineHandler extends StripeHandler
      */
     public function handlePaymentSuccess($intend, $transaction, $submission, $type = 'intend')
     {
+        sleep(5);
         $paymentMode = $this->getMode();
         $transactionModel = new Transaction();
         $transactionModel->update($transaction->id, array(

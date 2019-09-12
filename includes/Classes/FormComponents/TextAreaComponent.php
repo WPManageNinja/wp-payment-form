@@ -80,6 +80,7 @@ class TextAreaComponent extends BaseComponent
 
         $attributes = array(
             'data-required' => ArrayHelper::get($fieldOptions, 'required'),
+            'data-type' => 'textarea',
             'name' => $element['id'],
             'placeholder' => ArrayHelper::get($fieldOptions, 'placeholder'),
             'class' => $inputClass,

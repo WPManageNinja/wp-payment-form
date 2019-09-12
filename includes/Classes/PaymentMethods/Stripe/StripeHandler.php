@@ -141,7 +141,7 @@ class StripeHandler
             'submission_id' => $submission->id,
             'type'          => 'activity',
             'created_by'    => 'PayForm BOT',
-            'content'       => __('Subscription status changed to : ', 'wppayform').$subscriptionStatus
+            'content'       => __('Subscription status changed to : ', 'wppayform') . $subscriptionStatus
         ));
 
         return $subscriptionModel->getSubscriptions($submission->id);
@@ -156,7 +156,7 @@ class StripeHandler
 
         $submissionModel = new Submission();
 
-        if($transaction) {
+        if ($transaction) {
             $transactionModel = new Transaction();
             $transactionModel->update($transaction->id, array(
                 'status'         => 'failed',
@@ -193,7 +193,10 @@ class StripeHandler
         wp_send_json_error(array(
             'message'       => $message,
             'payment_error' => true,
-            'type'          => $type
+            'type'          => $type,
+            'form_events'   => [
+                'payment_failed'
+            ]
         ), 423);
     }
 

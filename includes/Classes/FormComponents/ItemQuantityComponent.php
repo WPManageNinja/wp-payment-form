@@ -60,17 +60,17 @@ class ItemQuantityComponent extends BaseComponent
                     'type'  => 'number',
                     'group' => 'general'
                 ),
-                'admin_label' => array(
+                'admin_label'    => array(
                     'label' => 'Admin Label',
                     'type'  => 'text',
                     'group' => 'advanced'
                 ),
-                'wrapper_class' => array(
+                'wrapper_class'  => array(
                     'label' => 'Field Wrapper CSS Class',
                     'type'  => 'text',
                     'group' => 'advanced'
                 ),
-                'element_class' => array(
+                'element_class'  => array(
                     'label' => 'Input element CSS Class',
                     'type'  => 'text',
                     'group' => 'advanced'
@@ -105,14 +105,15 @@ class ItemQuantityComponent extends BaseComponent
         $inputId = 'wpf_input_' . $form->ID . '_' . $element['id'];
 
         $defaultValue = '';
-        if(isset($fieldOptions['default_value'])) {
+        if (isset($fieldOptions['default_value'])) {
             $defaultValue = $fieldOptions['default_value'];
         }
-        
+
         $defaultValue = apply_filters('wppayform/input_default_value', $defaultValue, $element, $form);
 
         $attributes = array(
             'data-required'       => ArrayHelper::get($fieldOptions, 'required'),
+            'data-type'           => 'input',
             'name'                => $element['id'],
             'placeholder'         => ArrayHelper::get($fieldOptions, 'placeholder'),
             'value'               => $defaultValue,
@@ -123,6 +124,11 @@ class ItemQuantityComponent extends BaseComponent
             'data-target_product' => ArrayHelper::get($fieldOptions, 'target_product'),
             'id'                  => $inputId
         );
+
+        if (ArrayHelper::get($fieldOptions, 'required') == 'yes') {
+            $attributes['required'] = true;
+        }
+
         ?>
         <div data-element_type="<?php echo $this->elementName; ?>"
              class="<?php echo $controlClass; ?>">

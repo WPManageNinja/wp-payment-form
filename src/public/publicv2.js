@@ -3,7 +3,7 @@ import StripeCheckoutHandler from './StripeCheckoutHandler';
 import PayFormHandler from './FormHandler';
 
 var wpPayformApp = {};
-var recaptchInstances = {};
+window.recaptchInstances = {};
 
 (function ($) {
     wpPayformApp = {
@@ -20,8 +20,6 @@ var recaptchInstances = {};
 
                 let formHandler = new PayFormHandler(form, formSettings);
                 formHandler.initForm();
-
-
                 body.trigger('wpPayFormProcessFormElements', [form, formSettings]);
                 body.trigger('wp_payform_inited_'+formId, [form, formSettings]);
             });
@@ -30,6 +28,14 @@ var recaptchInstances = {};
             this.initLightBox();
             $('.wpf_form input').on('keypress', function (e) {
                 return e.which !== 13;
+            });
+
+            let $inputs = $('.wpf_form').find('input[data-required="yes"][data-type="input"],textarea[data-required="yes"],select[data-required="yes"]');
+
+            $inputs.on('keypress blur', function (e) {
+                if ($(this).val()) {
+                    $(this).removeClass('wpf_has_error');
+                }
             });
         },
 
@@ -221,7 +227,8 @@ var recaptchInstances = {};
 
 }(jQuery));
 
-window.wpfOnloadRecaptchaCallback = function () {
+window.wpf_onload_recaptcha_callback = function () {
+    console.log('fine');
     jQuery(document).ready(function ($) {
         var $forms = $('.wpf_has_recaptcha');
         $.each($forms, (index, form) => {
@@ -230,20 +237,22 @@ window.wpfOnloadRecaptchaCallback = function () {
             let key = $form.attr('data-recaptcha_site_key');
             var recaptchaVersion = $form.attr('data-recaptcha_version');
             if (recaptchaVersion == 'v2') {
-                recaptchInstances['form_' + formId] = grecaptcha.render('wpf_recaptcha_' + formId, {
+                let recaptchaIstanceId = grecaptcha.render('wpf_recaptcha_' + formId, {
                     'sitekey': key
                 });
+                recaptchInstances['form_' + formId] = recaptchaIstanceId;
+                $form.on('refresh_recaptcha', function () {
+                    grecaptcha.reset(recaptchaIstanceId);
+                });
             } else {
-                grecaptcha.execute(key, {action: 'payform/' + formId}).then(function (token) {
+                grecaptcha.execute(key, { action: 'payform/' + formId }).then(function (token) {
                     $form.find('#wpf_recaptcha_' + formId).html('<input type="hidden" name="g-recaptcha-response" value="' + token + '" />')
                 });
-
-                $form.on('form_server_always', function () {
+                $form.on('refresh_recaptcha', function () {
                     grecaptcha.execute(key, {action: 'payform/' + formId}).then(function (token) {
                         $form.find('#wpf_recaptcha_' + formId).html('<input type="hidden" name="g-recaptcha-response" value="' + token + '" />')
                     });
                 });
-
             }
         });
     });

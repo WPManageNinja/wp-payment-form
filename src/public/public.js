@@ -200,7 +200,6 @@ var recaptchInstances = {};
                     form.trigger('form_server_always',);
                 });
         },
-
         calculatePayments(form) {
             let elements = form.find('.wpf_payment_item');
             let itemTotalValue = {};
@@ -488,7 +487,6 @@ window.wpfOnloadRecaptchaCallback = function () {
                         $form.find('#wpf_recaptcha_'+formId).html('<input type="hidden" name="g-recaptcha-response" value="'+token+'" />')
                     });
                 });
-
             }
         });
     });

@@ -10,7 +10,9 @@ class ProcessDemoPage
     public function handleExteriorPages()
     {
         if (isset($_GET['wp_paymentform_preview']) && $_GET['wp_paymentform_preview']) {
-            if(AccessControl::hasTopLevelMenuPermission()) {
+            $hasDemoAccess = AccessControl::hasTopLevelMenuPermission();
+            $hasDemoAccess = apply_filters('wppayform/can_see_demo_form', $hasDemoAccess);
+            if($hasDemoAccess) {
                 $formId = intval($_GET['wp_paymentform_preview']);
                 $this->loadDefaultPageTemplate();
                 $this->renderPreview($formId);

@@ -53,6 +53,7 @@ abstract class BaseComponent
 
         $attributes = array(
             'data-required' => ArrayHelper::get($fieldOptions, 'required'),
+            'data-type'     => 'input',
             'name'          => $element['id'],
             'placeholder'   => ArrayHelper::get($fieldOptions, 'placeholder'),
             'value'         => $defaultValue,
@@ -145,6 +146,7 @@ abstract class BaseComponent
     public function renderRadioInput($element, $form)
     {
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
+
         if (!$fieldOptions) {
             return;
         }
@@ -158,8 +160,10 @@ abstract class BaseComponent
         $options = ArrayHelper::get($fieldOptions, 'options', array());
 
         $controlAttributes = array(
-            'data-element_type' => $this->elementName,
-            'class'             => $controlClass
+            'data-element_type'   => $this->elementName,
+            'class'               => $controlClass,
+            'data-required'       => ArrayHelper::get($fieldOptions, 'required'),
+            'data-target_element' => $element['id']
         );
         ?>
         <div <?php echo $this->builtAttributes($controlAttributes); ?>>
@@ -169,11 +173,12 @@ abstract class BaseComponent
                     <?php
                     $optionId = $element['id'] . '_' . $index . '_' . $form->ID;
                     $attributes = array(
-                        'class' => 'form-check-input '. $inputClass,
-                        'type'  => 'radio',
-                        'name'  => $element['id'],
-                        'id'    => $optionId,
-                        'value' => $option['value']
+                        'class'     => 'form-check-input ' . $inputClass,
+                        'data-type' => 'radio',
+                        'type'      => 'radio',
+                        'name'      => $element['id'],
+                        'id'        => $optionId,
+                        'value'     => $option['value']
                     );
                     if ($option['value'] == $defaultValue) {
                         $attributes['checked'] = 'true';
@@ -212,7 +217,8 @@ abstract class BaseComponent
 
         $controlAttributes = array(
             'data-element_type' => $this->elementName,
-            'class'             => $controlClass
+            'class'             => $controlClass,
+            'data-target_element' => $element['id']
         );
         if (ArrayHelper::get($fieldOptions, 'required') == 'yes') {
             $controlAttributes['data-checkbox_required'] = 'yes';
@@ -226,7 +232,7 @@ abstract class BaseComponent
                     <?php
                     $optionId = $element['id'] . '_' . $index . '_' . $form->ID;
                     $attributes = array(
-                        'class' => 'form-check-input '.$inputClass,
+                        'class' => 'form-check-input ' . $inputClass,
                         'type'  => 'checkbox',
                         'name'  => $element['id'] . '[]',
                         'id'    => $optionId,
@@ -251,8 +257,8 @@ abstract class BaseComponent
     public function renderHtmlContent($element, $form)
     {
         $wrapperClass = 'wpf_html_content_wrapper';
-        if($userClass = ArrayHelper::get($element, 'field_options.wrapper_class')) {
-            $wrapperClass .= ' '.$userClass;
+        if ($userClass = ArrayHelper::get($element, 'field_options.wrapper_class')) {
+            $wrapperClass .= ' ' . $userClass;
         }
         ?>
         <div class="<?php echo $wrapperClass; ?>">
@@ -292,8 +298,8 @@ abstract class BaseComponent
             $extraClasses = ' ' . $element['extra_input_class'];
         }
 
-        if($inputClass = ArrayHelper::get($element, 'field_options.element_class')) {
-            $extraClasses .= ' '.$inputClass;
+        if ($inputClass = ArrayHelper::get($element, 'field_options.element_class')) {
+            $extraClasses .= ' ' . $inputClass;
         }
 
         return apply_filters('wppayfrom/element_input_class', 'wpf_form_control' . $extraClasses, $element);
