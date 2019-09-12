@@ -32,6 +32,12 @@ class StripeHostedHandler extends StripeHandler
         add_action('wppayform/frameless_body_stripe_hosted_success', array($this, 'showSuccessMessage'), 10, 1);
     }
 
+    /*
+     * This payment method is bit easy than inline stripe
+     * As Stripe handle all the things. We have to just feed the right data and
+     * make the redirection. Then we will be done here.
+     *
+     */
     public function redirectToStripe($transactionId, $submissionId, $form_data, $form, $hasSubscriptions)
     {
         $submissionModel = new Submission();
@@ -104,8 +110,7 @@ class StripeHostedHandler extends StripeHandler
         wp_send_json_success([
             'message'          => __('Please wait... You are redirecting to Secure Payment page powered by Stripe', 'wppayform'),
             'call_next_method' => 'stripeRedirectToCheckout',
-            'session_id'       => $checkoutSession->id,
-            'session'          => $checkoutSession
+            'session_id'       => $checkoutSession->id
         ], 200);
 
     }
@@ -205,7 +210,7 @@ class StripeHostedHandler extends StripeHandler
 
 
         if (!$session || !$session->customer) {
-            // For failed payment custom will not exist
+            // For failed payment customer will not exist
             return;
         }
 

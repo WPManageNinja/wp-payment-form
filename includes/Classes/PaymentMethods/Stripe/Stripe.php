@@ -291,5 +291,4 @@ class Stripe
     {
         return defined('WP_PAY_FORM_STRIPE_SECRET_KEY') && defined('WP_PAY_FORM_STRIPE_PUB_KEY');
     }
-
 }

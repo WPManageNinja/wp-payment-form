@@ -191,8 +191,16 @@ class AdminAjaxHandler
 
     protected function saveFormBuilderSettings()
     {
+        $data = file_get_contents("php://input");
+        if(!$data) {
+            $data = $_REQUEST;
+        }
+        parse_str($data, $form_data);
+        $builderSettings = json_decode($form_data['builder_settings'], true);
+
+
         $formId = absint($_REQUEST['form_id']);
-        $builderSettings = wp_unslash($_REQUEST['builder_settings']);
+
         if (!$formId || !$builderSettings) {
             wp_send_json_error(array(
                 'message' => __('Validation Error, Please try again', 'wppayform'),

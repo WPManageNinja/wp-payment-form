@@ -104,7 +104,12 @@ class ItemQuantityComponent extends BaseComponent
         $inputClass = $this->elementInputClass($element);
         $inputId = 'wpf_input_' . $form->ID . '_' . $element['id'];
 
-        $defaultValue = apply_filters('wppayform/input_default_value', ArrayHelper::get($fieldOptions, 'default_value'), $element, $form);
+        $defaultValue = '';
+        if(isset($fieldOptions['default_value'])) {
+            $defaultValue = $fieldOptions['default_value'];
+        }
+        
+        $defaultValue = apply_filters('wppayform/input_default_value', $defaultValue, $element, $form);
 
         $attributes = array(
             'data-required'       => ArrayHelper::get($fieldOptions, 'required'),
@@ -112,7 +117,7 @@ class ItemQuantityComponent extends BaseComponent
             'placeholder'         => ArrayHelper::get($fieldOptions, 'placeholder'),
             'value'               => $defaultValue,
             'type'                => 'number',
-            'min'                 => ArrayHelper::get($fieldOptions, 'min_value'),
+            'min'                 => ArrayHelper::get($fieldOptions, 'min_value', '0'),
             'max'                 => ArrayHelper::get($fieldOptions, 'max_value'),
             'class'               => $inputClass . ' wpf_item_qty',
             'data-target_product' => ArrayHelper::get($fieldOptions, 'target_product'),
