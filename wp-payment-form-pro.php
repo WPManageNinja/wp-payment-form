@@ -118,21 +118,34 @@ if (!defined('WPPAYFORM_VERSION_LITE')) {
                 $builder = new \WPPayForm\Classes\Builder\Render();
                 return $builder->render($args['id'], $args['show_title'], $args['show_description']);
             });
-            add_shortcode('wppayform_reciept', function () {
-                if (isset($_REQUEST['wpf_submission']) && $_REQUEST['wpf_submission']) {
-                    $submissionHash = sanitize_text_field($_REQUEST['wpf_submission']);
+            add_shortcode('wppayform_reciept', function ($atts) {
+
+                $args = shortcode_atts( array(
+                    'hash' => ''
+                ), $atts, 'wppayform_reciept' );
+
+                if(!$args['hash']) {
+                    $hash = \WPPayForm\Classes\ArrayHelper::get($_REQUEST, 'wpf_submission');
+                    if(!$hash) {
+                        $hash = \WPPayForm\Classes\ArrayHelper::get($_REQUEST, 'wpf_hash');
+                    }
+                } else {
+                    $hash = $args['hash'];
+                }
+
+                if ($hash) {
                     $submission = wpPayFormDB()->table('wpf_submissions')
-                        ->where('submission_hash', '=', $submissionHash)
+                        ->where('submission_hash', '=', $hash)
                         ->first();
+
                     if ($submission) {
                         $receiptHandler = new \WPPayForm\Classes\Builder\PaymentReceipt();
                         return $receiptHandler->render($submission->id);
-                    } else {
-                        return '<p class="wpf_no_recipt_found">' . __('Sorry, no submission receipt found, Please check your receipt URL', 'wppayform') . '</p>';
                     }
-                } else {
-                    return '<p class="wpf_no_recipt_found">' . __('Sorry, no submission receipt found, Please check your receipt URL', 'wppayform') . '</p>';
                 }
+
+                return '<p class="wpf_no_recipt_found">' . __('Sorry, no submission receipt found, Please check your receipt URL', 'wppayform') . '</p>';
+
             });
         }
 

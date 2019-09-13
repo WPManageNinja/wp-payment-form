@@ -200,6 +200,38 @@ class Forms
         return wp_parse_args($confirmationSettings, $defaultSettings);
     }
 
+    public static function getReceiptSettings($formId)
+    {
+        $receptSettings = get_post_meta($formId, 'wppapyform_receipt_settings', true);
+        if (!$receptSettings) {
+            $receptSettings = array();
+        } else {
+            if(isset($receptSettings['receipt_header'])) {
+                if(strpos($receptSettings['receipt_header'], '[wppayform_reciept]') !== false || strpos($receptSettings['receipt_header'], '{submission.payment_receipt}') !== false) {
+                    $receptSettings['receipt_header'] = str_replace(['[wppayform_reciept]', '{submission.payment_receipt}'], '', $receptSettings['receipt_header']);
+                }
+            }
+
+            if(isset($receptSettings['receipt_footer'])) {
+                if(strpos($receptSettings['receipt_footer'], '[wppayform_reciept]') !== false || strpos($receptSettings['receipt_footer'], '{submission.payment_receipt}') !== false) {
+                    $receptSettings['receipt_footer'] = str_replace(['[wppayform_reciept]', '{submission.payment_receipt}'], '', $receptSettings['receipt_footer']);
+                }
+            }
+        }
+
+        $defaultSettings = array(
+            'receipt_header'  => __('Thanks for your submission. Here are the details of your submission:', 'wppayform'),
+            'receipt_footer'  => '',
+            'info_modules' => [
+                'input_details' => 'yes',
+                'payment_info' => 'yes'
+            ],
+        );
+
+        return wp_parse_args($receptSettings, $defaultSettings);
+    }
+
+
     public static function getCurrencySettings($formId)
     {
         $currencySettings = get_post_meta($formId, 'wppayform_paymentform_currency_settings', true);
@@ -236,6 +268,7 @@ class Forms
     public static function getEditorShortCodes($formId, $html = true)
     {
         $builderSettings = get_post_meta($formId, 'wppayform_paymentform_builder_settings', true);
+
         if (!$builderSettings) {
             return array();
         }
@@ -273,7 +306,7 @@ class Forms
                 '{submission.submission_hash}' => __('Submission Hash ID', 'wppayform'),
                 '{submission.customer_name}'   => __('Customer Name', 'wppayform'),
                 '{submission.customer_email}'  => __('Customer Email', 'wppayform'),
-                '{submission.payment_method}'  => __('Payment Method', 'wppayform'),
+                '{submission.payment_method}'  => __('Payment Method', 'wppayform')
             )
         );
         if ($hasPayment) {
@@ -291,6 +324,8 @@ class Forms
             if ($hasRecurringField) {
                 $submissionItem['shortcodes']['{submission.subscription_details_table_html}'] = __('Subscription details table html ', 'wppayform');
             }
+
+            $submissionItem['shortcodes']['{submission.payment_receipt}'] = __('Payment Receipt', 'wppayform');
 
         }
 
@@ -424,13 +459,13 @@ class Forms
     {
         $globalSettings = GeneralSettings::getRecaptchaSettings();
         $type = ArrayHelper::get($globalSettings, 'recaptcha_version');
-        if($type == 'none') {
+        if ($type == 'none') {
             return false;
         }
 
         $recaptchaStatus = get_post_meta($formId, '_recaptcha_status', true);
 
-        if($recaptchaStatus == 'yes') {
+        if ($recaptchaStatus == 'yes') {
             return $type;
         }
         return false;

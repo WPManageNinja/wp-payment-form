@@ -53,6 +53,7 @@ class StripeHostedHandler extends StripeHandler
         $checkoutArgs = [
             'cancel_url'                 => $cancelUrl,
             'success_url'                => $successUrl,
+            'locale'                     => 'auto',
             'payment_method_types'       => ['card'],
             'client_reference_id'        => $submissionId,
             'billing_address_collection' => 'required'
@@ -214,9 +215,18 @@ class StripeHostedHandler extends StripeHandler
             return;
         }
 
+        $this->handleCheckoutSessionSuccess($submission, $session);
+    }
+
+
+    public function handleCheckoutSessionSuccess($submission, $session)
+    {
+
+        $submissionModel = new Submission();
+
         // Check If the hooks already fired and data updated
         if ($submissionModel->getMeta($submission->id, 'stripe_checkout_hooked_fired') == 'yes') {
-              return;
+            return;
         }
 
         // Collect the Onetime not-paid transation and intented transactions
@@ -262,6 +272,7 @@ class StripeHostedHandler extends StripeHandler
             do_action('wppayform/form_recurring_subscribed', $submission, $subscriptions, $submission->form_id);
         }
     }
+
 
     /*
      * This method will be called if stripe hosted checkout page made a payment
@@ -346,7 +357,7 @@ class StripeHostedHandler extends StripeHandler
                 'vendor_response'        => maybe_serialize($stripeResponse),
             ]);
 
-            if($subscriptionStatus == 'trialling') {
+            if ($subscriptionStatus == 'trialling') {
                 continue;
             }
 
@@ -385,6 +396,7 @@ class StripeHostedHandler extends StripeHandler
     public function showSuccessMessage($action)
     {
         $submissionHash = sanitize_text_field($_REQUEST['wpf_hash']);
+
         $submissionModel = new Submission();
         $submission = $submissionModel->getSubmissionByHash($submissionHash);
 
@@ -403,7 +415,7 @@ class StripeHostedHandler extends StripeHandler
 
         $paymentHeader = apply_filters('wppayform/payment_success_title', $title, $submission);
         echo '<div class="frameless_body_header">' . $paymentHeader . '</div>';
-        echo $confirmation['messageToShow'];
+        echo do_shortcode($confirmation['messageToShow']);
         return;
     }
 

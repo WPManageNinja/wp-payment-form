@@ -121,7 +121,6 @@ class StripeInlineHandler extends StripeHandler
      */
     public function confirmScaPayment()
     {
-        sleep(10);
         $submissionId = intval($_REQUEST['submission_id']);
         $paymentMethod = sanitize_text_field($_REQUEST['payment_method']);
         $submissionModel = new Submission();
@@ -228,12 +227,13 @@ class StripeInlineHandler extends StripeHandler
      */
     public function handlePaymentSuccess($intend, $transaction, $submission, $type = 'intend')
     {
-        sleep(5);
+        $charge = $intend->charges->data[0];
+
         $paymentMode = $this->getMode();
         $transactionModel = new Transaction();
         $transactionModel->update($transaction->id, array(
             'status'         => 'paid',
-            'charge_id'      => $intend->id,
+            'charge_id'      => $charge->id,
             'payment_method' => $this->getMode(),
             'payment_mode'   => $paymentMode,
         ));
@@ -251,7 +251,7 @@ class StripeInlineHandler extends StripeHandler
             'submission_id' => $submission->id,
             'type'          => 'activity',
             'created_by'    => 'PayForm BOT',
-            'content'       => __('One time Payment Successfully made via stripe. Paymeny Intend ID: ', 'wppayform') . $intend->id
+            'content'       => __('One time Payment Successfully made via stripe. Charge ID: ', 'wppayform') . $charge->id
         ));
 
         SubmissionActivity::createActivity(array(

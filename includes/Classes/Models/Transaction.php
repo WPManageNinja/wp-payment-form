@@ -48,7 +48,6 @@ class Transaction
         return wpPayFormDB()->table('wpf_order_transactions')->where('id', $transactionId)->update($data);
     }
 
-
     public function getLatestTransaction($submissionId)
     {
         return wpPayFormDB()->table('wpf_order_transactions')

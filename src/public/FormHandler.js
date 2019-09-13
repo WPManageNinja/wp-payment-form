@@ -37,8 +37,6 @@ class PayFormHandler {
             console.log('submitting');
             this.handleFormSubmit();
         });
-
-        this.showMessages(['Mesage Item 1', 'Message Item 2'], 'info', 'My Info Title');
     }
 
     handleFormSubmit() {

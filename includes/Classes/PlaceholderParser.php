@@ -55,10 +55,14 @@ class PlaceholderParser
 
         $entry = new Entry($submission);
 
+
         $sunmissionPlaceholders = ArrayHelper::only($formattedParsables, array(
             'input', 'quantity', 'payment_item', 'submission'
         ));
+
+
         $submissionParseItems = self::parseInpuFields($sunmissionPlaceholders, $entry);
+
 
         $wpPlaceholders = ArrayHelper::only($formattedParsables, array(
             'wp', 'post_meta', 'user_meta', 'querystring', 'other'
@@ -100,7 +104,6 @@ class PlaceholderParser
         }
         return $parsedData;
     }
-
 
     public static function parseWPFields($placeHolders, $entry)
     {

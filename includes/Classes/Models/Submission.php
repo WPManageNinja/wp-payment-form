@@ -110,6 +110,18 @@ class Submission extends Model
             $subscriptionModel = new Subscription();
             $result->subscriptions = $subscriptionModel->getSubscriptions($result->id);
         }
+        if(in_array('refunds', $with)) {
+            $refundModel = new Refund();
+            $result->refunds = $refundModel->getRefunds($result->id);
+            $refundTotal = 0;
+            if($result->refunds) {
+                foreach ($result->refunds as $refund) {
+                    $refundTotal += $refund->payment_total;
+                }
+            }
+            $result->refundTotal = $refundTotal;
+        }
+
         return $result;
     }
 

@@ -26,8 +26,6 @@ class SubmissionHandler
 
     public function handeSubmission()
     {
-        sleep(3);
-
         parse_str($_REQUEST['form_data'], $form_data);
 
         // Now Validate the form please
@@ -485,6 +483,13 @@ class SubmissionHandler
         } else if ($confirmation['redirectTo'] == 'samePage') {
             do_action('wppayform/require_entry_html');
             $confirmation['messageToShow'] = PlaceholderParser::parse($confirmation['messageToShow'], $submission);
+
+            if(strpos($confirmation['messageToShow'], '[wppayform_reciept]') !== false) {
+                $modifiedShortcode = '[wppayform_reciept hash="'.$submission->submission_hash.'"]';
+                $confirmation['messageToShow'] = str_replace('[wppayform_reciept]', $modifiedShortcode, $confirmation['messageToShow']);
+            }
+
+            $confirmation['messageToShow'] = do_shortcode($confirmation['messageToShow']);
             do_action('wppayform/require_entry_html_done');
         }
         return $confirmation;

@@ -204,6 +204,11 @@ class Entry
             return number_format($this->submission->payment_total / 100, 2);
         }
 
+        if ($name == 'payment_receipt') {
+            $receiptHandler = new \WPPayForm\Classes\Builder\PaymentReceipt();
+            return $receiptHandler->render($this->submissionId);
+        }
+
         if (property_exists($this->submission, $name)) {
             if ($name == 'payment_total') {
                 return $this->paymentTotal();

@@ -185,7 +185,7 @@
                             :currencySetting="submission.currencySetting"
                             :subscriptions="submission.subscriptions"/>
 
-                        <div v-if="parseInt(submission.order_items.length)" class="entry_info_box entry_transactions">
+                        <div v-if="parseInt(submission.transactions.length)" class="entry_info_box entry_transactions">
                             <div class="entry_info_header">
                                 <div class="info_box_header">Transaction Details</div>
                             </div>
@@ -196,7 +196,7 @@
                                         <h4 v-show="submission.transactions.length > 1">Transaction #{{ index+1 }}</h4>
                                         <ul class="wpf_list_items">
                                             <li>
-                                                <div class="wpf_list_header">Transaction ID</div>
+                                                <div class="wpf_list_header">ID</div>
                                                 <div class="wpf_list_value">{{ transaction.id }}</div>
                                             </li>
                                             <li>
@@ -238,6 +238,29 @@
                                                 <div class="wpf_list_value">{{ transaction.created_at }}</div>
                                             </li>
                                         </ul>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+
+                        <div v-if="parseInt(submission.refunds.length)" class="entry_info_box entry_refunds">
+                            <div class="entry_info_header">
+                                <div class="info_box_header">Refunds</div>
+                                <div class="info_box_header_actions">
+                                    Total: <span v-html="getFormattedMoney(submission.refundTotal)"></span>
+                                </div>
+                            </div>
+                            <div class="entry_info_body">
+                                <div class="wpf_entry_transactions">
+                                    <div v-for="refund in submission.refunds" :key="refund.id"
+                                         class="wpf_each_entry">
+                                        <div class="wpf_entry_label">
+                                            <span v-html="getFormattedMoney(refund.payment_total)"></span> refunded due to {{refund.payment_note}} at  <span>{{refund.created_at}}</span>
+                                        </div>
+                                        <div class="wpf_entry_value">
+                                            <span>Refund ID: {{ refund.charge_id }}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
