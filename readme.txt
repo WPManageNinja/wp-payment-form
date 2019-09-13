@@ -1,13 +1,13 @@
 === WPPayForm for Stripe WordPress Payments Plugin ===
 Contributors: techjewel, wpmanageninja
-Tags: Stripe, Easy Payment Form, stripe wordpress, payform, paymentform, stripe integrations, stripe wordpress plugin, wordpress stripe, stripe for wordpress, stripe pay, pay with stripe, Event Registration Form, stripe form, accept payment, stripe payments, secure payment form, form, payment form, payments, credit card, stripe checkout, Accept PayPal Payments, credit card payments, checkout.js, payment for stripe
+Tags: Stripe, Easy Payment Form, stripe wordpress, sca ready payment, payform, paymentform, stripe integrations, stripe wordpress plugin, wordpress stripe, stripe for wordpress, stripe pay, pay with stripe, Event Registration Form, Accept PayPal Payments, payment for stripe
 Requires at least: 4.5
-Tested up to: 5.2.2
+Tested up to: 5.2.3
 Stable tag: 1.2.6
 Requires PHP: 5.4
 License: GPLv2 or later
 
-Easily Accept Payments in WordPress with Stripe (PayPal also supported) with Form Builder Capability.
+Easily Accept Payments in WordPress with Stripe (PayPal also supported) with Form Builder Capability - SCA READY.
 
 == Description ==
 
@@ -16,6 +16,9 @@ Easily Accept Payments in WordPress with Stripe (PayPal also supported) with For
 <b>Do you want to accept payments along with user inputs in WordPress?</b> Then WPPayForm is the perfect plugin for you.
 
 With Stripe checkout as well as built-in form builder functionalities, you can build any forms ranging from single payment amount/multiple payment items. Or, you can allow users to pay custom amounts if needed.
+
+== SCA READY for EUROPE ==
+Strong Customer Authentication (SCA), a new rule coming into effect on September 14, 2019, as part of PSD2 regulation in Europe, will require changes to how your European customers authenticate online payments. WPPayForm is compeltely compitable with SCA.
 
 == Intro Video ==
 [youtube https://www.youtube.com/watch?v=oZaBS1EiAJc]
