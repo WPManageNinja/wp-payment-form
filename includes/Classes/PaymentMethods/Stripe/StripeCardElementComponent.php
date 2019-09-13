@@ -148,4 +148,12 @@ class StripeCardElementComponent extends BaseComponent
         </div>
         <?php
     }
+
+    public function renderForMultiple($paymentSettings, $form, $elements)
+    {
+        $component = $this->component();
+        $component['id'] = 'stripe_card_element';
+        $component['field_options'] = $paymentSettings;
+        $this->render($component, $form, $elements);
+    }
 }
