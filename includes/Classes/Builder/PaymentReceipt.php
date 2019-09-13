@@ -33,7 +33,6 @@ class PaymentReceipt
 
         $submission->parsedData = $submissionModel->getParsedSubmission($submission);
 
-
         $html = $this->beforePaymentReceipt($submission, $receiptSettings);
         $html .= $this->paymentReceptHeader($submission, $receiptSettings);
         $html .= $this->paymentInfo($submission, $receiptSettings);

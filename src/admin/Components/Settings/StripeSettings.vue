@@ -92,6 +92,7 @@
                                 <li><code>invoice.payment_succeeded</code></li>
                                 <li><code>charge.refunded</code></li>
                                 <li><code>customer.subscription.deleted</code></li>
+                                <li><code>checkout.session.completed</code></li>
                             </ul>
                         </div>
 

@@ -23,7 +23,7 @@ class FramelessProcessor
         if (!$action) {
             return;
         }
-
+        status_header(200);
         do_action('wppayform/frameless_pre_render_page', $action);
         do_action('wppayform/frameless_pre_render_page_' . $action, $action);
 
@@ -54,7 +54,6 @@ class FramelessProcessor
         ];
 
         $cssFiles = apply_filters('wppayform/frameless_header_css_files', $cssFiles, $action);
-
 
         return View::make('frameless.header', [
             'css_files' => $cssFiles,

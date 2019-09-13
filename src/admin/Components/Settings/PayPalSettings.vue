@@ -13,7 +13,6 @@
                 </div>
             </div>
             <div class="payform_section_body">
-
                 <div v-if="!has_pro" class="payform_pro_message">
                     <h3>Paypal payment is a pro version feature.</h3>
                     <p>Please upgrade to pro to unlock this feature. WP Payform Pro comes with lots of feature which will increase the flexebility and conversion rate</p>
@@ -78,6 +77,13 @@
                         <el-button @click="saveSettings()" type="primary" size="small">Save PayPal Settings</el-button>
                     </div>
                 </el-form>
+
+                <div style="margin-top: 20px">
+                    If you use paypal for recurring payments please set the notification URL in paypal as bellow:
+                    <pre>{{ipn_url}}</pre>
+                    <p>Check the <a target="_blank" href="https://developer.paypal.com/docs/classic/ipn/integration-guide/IPNSetup/#setting-up-ipn-notifications-on-paypal">official documentation</a> </p>
+                    <p>If you don't setup the IPN notification then it will still work for single payments but recurring payments will not be marked as paid for paypal subscription payments.</p>
+                </div>
             </div>
         </div>
     </div>
@@ -93,6 +99,7 @@
                 fetching: false,
                 is_key_defined: false,
                 pages: [],
+                ipn_url: window.wpPayFormsAdmin.ipn_url,
                 confirmation_pages: {},
                 labelPosition: 'right'
             }
