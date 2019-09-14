@@ -1,4 +1,6 @@
+//import formatMoney from "accounting-js/lib/formatMoney";
 import formatMoney from "./formatMoneyCore";
+
 console.log('formatMoney');
 // Total amount is in cents
 function formatPrice(allTotalAmount, currency_settings)

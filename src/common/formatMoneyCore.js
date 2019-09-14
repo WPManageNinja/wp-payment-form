@@ -32,10 +32,7 @@ import formatNumber from './formatNumber';
  * @param {Object} [opts={}] - Object containing all the options of the method
  * @return {String} - Given number properly formatted as money
  */
-function formatMoney(amount, opts) {
-    if(!opts) {
-        opts = {};
-    }
+function formatMoney(amount, opts = {}) {
     // Resursively format arrays
     if (Array.isArray(amount)) {
         return amount.map((value) => formatMoney(value, opts));

@@ -21,10 +21,7 @@ import toFixed from 'accounting-js/lib/toFixed';
  * @param {Object}        [opts={}] Object containing all the options of the method.
  * @return {String} The given number properly formatted.
  */
-function formatNumber(number, opts) {
-    if(!opts) {
-        opts = {};
-    }
+function formatNumber(number, opts = {}) {
     // Resursively format arrays:
     if (Array.isArray(number)) {
         return number.map((val) => formatNumber(val, opts));
