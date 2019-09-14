@@ -2,6 +2,9 @@ let mix = require('laravel-mix');
 mix.setPublicPath('assets');
 mix.setResourceRoot('../');
 
+require('laravel-mix-polyfill');
+
+
 mix
     .js('src/admin/Boot.js', 'assets/js/payforms-boot.js')
     .js('src/admin/main.js', 'assets/js/payforms-admin.js')
@@ -15,4 +18,9 @@ mix
     .sass('src/scss/public/frameless.scss', 'assets/css/frameless.css')
     .copy('src/images', 'assets/images')
     .copy('src/integrations/tinymce_icon.png', 'assets/js/tinymce_icon.png')
-    .copy('src/libs', 'assets/libs');
+    .copy('src/libs', 'assets/libs')
+    .polyfill({
+        enabled: true,
+        useBuiltIns: "usage",
+        targets: {"firefox": "50", "ie": 11}
+    });
