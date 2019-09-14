@@ -58,7 +58,7 @@ if (!defined('WPPAYFORM_VERSION_LITE')) {
             $this->registerShortcodes();
             $this->loadComponents();
         }
-
+        
         public function adminHooks()
         {
             // Init The Classes

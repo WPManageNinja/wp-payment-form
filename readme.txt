@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja
 Tags: Stripe, Easy Payment Form, stripe wordpress, sca ready payment, payform, paymentform, stripe integrations, stripe wordpress plugin, wordpress stripe, stripe for wordpress, stripe pay, pay with stripe, Event Registration Form, Accept PayPal Payments, payment for stripe
 Requires at least: 4.5
 Tested up to: 5.2.3
-Stable tag: 1.2.6
+Stable tag: 1.9.0
 Requires PHP: 5.4
 License: GPLv2 or later
 
@@ -248,6 +248,15 @@ You are most welcome. You can do the following:
 12. Submission Details (2nd Part)
 
 == Changelog ==
+
+= 1.9.0 - September 13, 2019 =
+- SCA integration
+- Added Stripe Checkout version 3
+- Fix Date Picker Bug
+- Frontend Notification Fix
+- Frontend Validation
+- Fully re-write the frontend JS. It's more faster now
+- Design improvment
 
 = 1.2.6 - August 08, 2019 =
 - Fix Stripe webhook
