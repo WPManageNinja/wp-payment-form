@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WPPayForm\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2019-09-13 13:40+0000\n"
+"POT-Creation-Date: 2019-09-15 00:44+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -58,7 +58,7 @@ msgstr ""
 #: includes/Classes/AdminAjaxHandler.php:249
 #: includes/Classes/AdminAjaxHandler.php:290
 #: includes/Classes/GlobalSettingsHandler.php:78
-#: includes/Classes/PaymentMethods/Stripe/Stripe.php:227
+#: includes/Classes/PaymentMethods/Stripe/Stripe.php:258
 msgid "Settings successfully updated"
 msgstr ""
 
@@ -330,23 +330,27 @@ msgstr ""
 msgid "Invalid request. Please try again"
 msgstr ""
 
-#: includes/Classes/SubmissionHandler.php:107
+#: includes/Classes/SubmissionHandler.php:116
 msgid "Validation failed, because selected payment method could not be found"
 msgstr ""
 
-#: includes/Classes/SubmissionHandler.php:225
+#: includes/Classes/SubmissionHandler.php:129
+msgid "Validation failed, Please fill up card details"
+msgstr ""
+
+#: includes/Classes/SubmissionHandler.php:249
 msgid "Form is successfully submitted"
 msgstr ""
 
-#: includes/Classes/SubmissionHandler.php:286
+#: includes/Classes/SubmissionHandler.php:310
 msgid "reCaptcha validation failed. Please try again."
 msgstr ""
 
-#: includes/Classes/SubmissionHandler.php:295
+#: includes/Classes/SubmissionHandler.php:319
 msgid "Form Validation failed"
 msgstr ""
 
-#: includes/Classes/SubmissionHandler.php:464
+#: includes/Classes/SubmissionHandler.php:510
 msgid " is required"
 msgstr ""
 
@@ -583,7 +587,7 @@ msgstr ""
 msgid "Validation failed, please fill-up required fields"
 msgstr ""
 
-#: includes/Classes/Extorior/FramelessProcessor.php:41
+#: includes/Classes/Extorior/FramelessProcessor.php:45
 msgid "Payment Success"
 msgstr ""
 
@@ -685,56 +689,56 @@ msgstr ""
 msgid "Thanks for your submission. Here are the details of your submission:"
 msgstr ""
 
-#: includes/Classes/Models/Forms.php:305
+#: includes/Classes/Models/Forms.php:307
 msgid "Submission ID"
 msgstr ""
 
-#: includes/Classes/Models/Forms.php:306
+#: includes/Classes/Models/Forms.php:308
 msgid "Submission Hash ID"
 msgstr ""
 
-#: includes/Classes/Models/Forms.php:307
+#: includes/Classes/Models/Forms.php:309
 msgid "Customer Name"
 msgstr ""
 
-#: includes/Classes/Models/Forms.php:308
+#: includes/Classes/Models/Forms.php:310
 msgid "Customer Email"
 msgstr ""
 
-#: includes/Classes/Models/Forms.php:309
+#: includes/Classes/Models/Forms.php:311
 msgid "Payment Method"
 msgstr ""
 
-#: includes/Classes/Models/Forms.php:313
+#: includes/Classes/Models/Forms.php:315
 msgid "Payment Total"
 msgstr ""
 
-#: includes/Classes/Models/Forms.php:317
+#: includes/Classes/Models/Forms.php:319
 msgid "All input field html"
 msgstr ""
 
-#: includes/Classes/Models/Forms.php:319
+#: includes/Classes/Models/Forms.php:321
 msgid "Order items table html"
 msgstr ""
 
-#: includes/Classes/Models/Forms.php:325
+#: includes/Classes/Models/Forms.php:327
 msgid "Subscription details table html "
 msgstr ""
 
-#: includes/Classes/Models/Forms.php:328
+#: includes/Classes/Models/Forms.php:330
 msgid "Payment Receipt"
 msgstr ""
 
-#: includes/Classes/Models/Forms.php:435
+#: includes/Classes/Models/Forms.php:437
 msgid "Number of entry has been exceeds, Please check back later"
 msgstr ""
 
-#: includes/Classes/Models/Forms.php:441
+#: includes/Classes/Models/Forms.php:443
 msgid ""
 "Form submission time schedule is not started yet. Please check back later"
 msgstr ""
 
-#: includes/Classes/Models/Forms.php:446
+#: includes/Classes/Models/Forms.php:448
 msgid "You need to login to submit this form"
 msgstr ""
 
@@ -840,15 +844,27 @@ msgstr ""
 msgid "Stripe token/payment_method is required"
 msgstr ""
 
-#: includes/Classes/PaymentMethods/Stripe/Stripe.php:101
+#: includes/Classes/PaymentMethods/Stripe/Stripe.php:99
 msgid "Signup Fee for"
 msgstr ""
 
-#: includes/Classes/PaymentMethods/Stripe/Stripe.php:194
+#: includes/Classes/PaymentMethods/Stripe/Stripe.php:153
+msgid "Billing Address (From Stripe)"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Stripe.php:170
+msgid "Phone (From Stripe)"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Stripe.php:179
+msgid "Name on Card (From Stripe)"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Stripe.php:225
 msgid "Please provide Test Publishable key and Test Secret Key"
 msgstr ""
 
-#: includes/Classes/PaymentMethods/Stripe/Stripe.php:202
+#: includes/Classes/PaymentMethods/Stripe/Stripe.php:233
 msgid "Please provide Live Publishable key and Live Secret Key"
 msgstr ""
 
@@ -870,7 +886,7 @@ msgid ""
 msgstr ""
 
 #: includes/Classes/PaymentMethods/Stripe/StripeHandler.php:129
-#: includes/Classes/PaymentMethods/Stripe/StripeHostedHandler.php:392
+#: includes/Classes/PaymentMethods/Stripe/StripeHostedHandler.php:429
 msgid "Stripe recurring subscription successfully initiated"
 msgstr ""
 
@@ -882,20 +898,24 @@ msgstr ""
 msgid "Payment Failed via stripe. Status changed from Pending to Failed."
 msgstr ""
 
-#: includes/Classes/PaymentMethods/Stripe/StripeHostedHandler.php:112
+#: includes/Classes/PaymentMethods/Stripe/StripeHostedHandler.php:116
 msgid ""
 "Please wait... You are redirecting to Secure Payment page powered by Stripe"
 msgstr ""
 
-#: includes/Classes/PaymentMethods/Stripe/StripeHostedHandler.php:333
+#: includes/Classes/PaymentMethods/Stripe/StripeHostedHandler.php:331
 msgid "Stripe One time payment has marked as paid."
 msgstr ""
 
-#: includes/Classes/PaymentMethods/Stripe/StripeHostedHandler.php:404
+#: includes/Classes/PaymentMethods/Stripe/StripeHostedHandler.php:368
+msgid "Billing address from stripe has been logged in the submission data"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/StripeHostedHandler.php:446
 msgid "Sorry! no associate submission found"
 msgstr ""
 
-#: includes/Classes/PaymentMethods/Stripe/StripeHostedHandler.php:414
+#: includes/Classes/PaymentMethods/Stripe/StripeHostedHandler.php:456
 msgid "Payment has been successfully completed"
 msgstr ""
 
