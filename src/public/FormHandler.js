@@ -74,7 +74,6 @@ class PayFormHandler {
                                 this[response.data.call_next_method](response.data);
                                 return;
                             }
-
                             this.handlePaymentSuccess(response.data);
                         })
                         .fail(error => {
@@ -150,7 +149,6 @@ class PayFormHandler {
         );
 
         if (errorAction) {
-            console.log(errorAction.message);
             this.showMessages(errorAction.message, 'error', '');
             this.buttonState('sca_declined', '', false, errorAction);
             return;
@@ -197,6 +195,7 @@ class PayFormHandler {
         let confirmation = data.confirmation;
         this.form.parent().addClass('wpf_form_submitted');
         this.form.trigger('wpf_form_submitted', data);
+        this.form.trigger('wpf_form_sucess', data);
 
         this.form.removeClass('wpf_submitting_form');
         this.form.find('button.wpf_submit_button').removeAttr('disabled');
@@ -382,7 +381,7 @@ class PayFormHandler {
         this.stripe.redirectToCheckout({
             sessionId: data.session_id
         }).then((result) => {
-            console.log(result);
+
         });
     }
 

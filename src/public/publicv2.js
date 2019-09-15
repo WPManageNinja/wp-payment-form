@@ -60,7 +60,6 @@ window.recaptchInstances = {};
 }(jQuery));
 
 window.wpf_onload_recaptcha_callback = function () {
-    console.log('fine');
     jQuery(document).ready(function ($) {
         var $forms = $('.wpf_has_recaptcha');
         $.each($forms, (index, form) => {
