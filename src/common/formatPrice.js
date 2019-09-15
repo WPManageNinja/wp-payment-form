@@ -42,7 +42,6 @@ function formatPrice(allTotalAmount, currency_settings)
     if(currency_settings.currency_sign_position == 'right') {
         return money+''+symbol;
     } else if(currency_settings.currency_sign_position == 'left_space') {
-        format =  "%s %v";
         return symbol+' '+money;
     } else if(currency_settings.currency_sign_position == 'right_space') {
         return money+' '+symbol;

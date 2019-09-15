@@ -39,6 +39,7 @@
         border: 1px solid #cbcbcb;
         text-align: left;
         width: 50%;
+        white-space: pre;
     }
 
     .wpf_payment_info {

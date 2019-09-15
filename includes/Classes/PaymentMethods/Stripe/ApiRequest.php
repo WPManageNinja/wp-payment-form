@@ -17,7 +17,7 @@ class ApiRequest
      * Stripe API Endpoint
      */
     const ENDPOINT = 'https://api.stripe.com/v1/';
-    const STRIPE_API_VERSION = '2018-09-24';
+    const STRIPE_API_VERSION = WPPAYFORM_STRIPE_API_VERSION;
     /**
      * Secret API Key.
      * @var string
@@ -58,7 +58,7 @@ class ApiRequest
         $app_info = array(
             'name'    => 'WP PayForm',
             'version' => WPPAYFORM_VERSION,
-            'url'     => 'https://wpmanageninja.com/wp-payment-form/',
+            'url'     => 'https://wpmanageninja.com/downloads/wppayform-pro-wordpress-payments-form-builder/',
         );
         return array(
             'lang'         => 'php',

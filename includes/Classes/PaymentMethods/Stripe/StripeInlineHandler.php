@@ -127,7 +127,7 @@ class StripeInlineHandler extends StripeHandler
         $submission = $submissionModel->getSubmission($submissionId);
         $transactionModel = new Transaction();
         $paymentIntentId = sanitize_text_field($_REQUEST['payment_intent_id']);
-        $transaction = $transactionModel->getLatestIntentedTransaction($submissionId);
+        $transaction = $transactionModel->getLatestTransaction($submissionId);
 
         do_action('wppayform/form_submission_activity_start', $submission->form_id);
 
@@ -160,7 +160,7 @@ class StripeInlineHandler extends StripeHandler
      *
      * Steps:
      *     1. Create createPaymentIntent for SCA
-     *     2. if requires 'requires_source_action' then response to client to open initStripeSCAModal
+     *     2. if requires 'requires_action' then response to client to open initStripeSCAModal
      *     3. if payment success then call handlePaymentSuccess to make the payment as paid
      *     4. If failed to createPaymentIntent then send error response
      */
@@ -172,7 +172,7 @@ class StripeInlineHandler extends StripeHandler
 
         $intent = SCA::createPaymentIntent($intentArgs);
 
-        if ($intent->status == 'requires_source_action' &&
+        if ($intent->status == 'requires_action' &&
             $intent->next_action->type == 'use_stripe_sdk') {
             # Tell the client to handle the action
             $transactionModel = new Transaction();

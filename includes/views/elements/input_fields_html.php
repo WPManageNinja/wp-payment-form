@@ -5,14 +5,12 @@
             <?php if (isset($item['value']) && isset($item['label'])): ?>
                 <tr>
                     <th><?php echo $item['label']; ?></th>
-                    <td>
-                        <?php
+                    <td><?php
                         if (is_array($item['value'])) {
                             echo implode(', ', $item['value']);
                         } else {
                             echo $item['value'];
-                        } ; ?>
-                    </td>
+                        } ; ?></td>
                 </tr>
             <?php endif; ?>
         <?php endforeach; ?>

@@ -434,10 +434,6 @@ class SubmissionHandler
             $plan['subscription_amount'] = ArrayHelper::get($formData, $paymentId . '__' . $paymentIndex);
         }
 
-        $daysToExpiration = absint($plan['billing_days_period']);
-        if ($plan['trial_days']) {
-            $daysToExpiration = absint($daysToExpiration);
-        }
 
         if ($plan['bill_times'] == 1) {
             // We can convert this as one time payment
@@ -461,8 +457,6 @@ class SubmissionHandler
             }
         }
 
-        $expirationDate = gmdate('Y-m-d H:i:s', time() + $daysToExpiration * 86400);
-
         $subscription = array(
             'element_id'       => $paymentId,
             'item_name'        => $label,
@@ -475,17 +469,18 @@ class SubmissionHandler
             'initial_amount'   => 0,
             'status'           => 'pending',
             'original_plan'    => maybe_serialize($plan),
-            'expiration_at'    => $expirationDate,
             'created_at'       => gmdate('Y-m-d H:i:s'),
             'updated_at'       => gmdate('Y-m-d H:i:s'),
         );
 
-        if ($plan['has_signup_fee'] == 'yes' && $plan['signup_fee']) {
+        if (ArrayHelper::get($plan, 'has_signup_fee') == 'yes' && ArrayHelper::get($plan, 'signup_fee')) {
             $subscription['initial_amount'] = wpPayFormConverToCents($plan['signup_fee']);
         }
 
-        if ($plan['has_trial_days'] == 'yes' && $plan['trial_days']) {
+        if (ArrayHelper::get($plan, 'has_trial_days') == 'yes' && ArrayHelper::get($plan, 'trial_days')) {
             $subscription['trial_days'] = $plan['trial_days'];
+            $expirationDate = gmdate('Y-m-d H:i:s', time() + absint($plan['trial_days']) * 86400);
+            $subscription['expiration_at'] = $expirationDate;
         }
 
         $allSubscriptions = [$subscription];

@@ -6,6 +6,7 @@ namespace WPPayForm\Classes\Entry;
 use WPPayForm\Classes\ArrayHelper;
 use WPPayForm\Classes\Models\Forms;
 use WPPayForm\Classes\Models\OrderItem;
+use WPPayForm\Classes\Models\Submission;
 use WPPayForm\Classes\Models\Subscription;
 use WPPayForm\Classes\View;
 
@@ -25,6 +26,7 @@ class Entry
     protected $formattedInput;
     protected $rawInput;
     protected $formattedFields;
+    protected $patsedItems;
     protected $instance;
     public $default = false;
 
@@ -80,7 +82,7 @@ class Entry
     public function getInputFieldsHtmlTable()
     {
         return View::make('elements.input_fields_html', array(
-            'items' => $this->parsedData
+            'items' => $this->getParsedItems()
         ));
     }
 
@@ -222,5 +224,17 @@ class Entry
             $this->formattedFields = Forms::getFormattedElements($this->formId);
         }
         return $this->formattedFields;
+    }
+
+    public function getParsedItems()
+    {
+        if($this->patsedItems) {
+            return $this->patsedItems;
+        }
+
+        $submissionModel = new Submission();
+        $parsedItems = $submissionModel->getParsedSubmission($this->submission);
+        $this->patsedItems = $parsedItems;
+        return $this->patsedItems;
     }
 }

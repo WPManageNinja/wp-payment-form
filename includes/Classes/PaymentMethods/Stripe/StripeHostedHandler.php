@@ -95,7 +95,7 @@ class StripeHostedHandler extends StripeHandler
         $checkoutArgs = apply_filters('wppayform/stripe_checkout_session_args', $checkoutArgs, $submission);
         $checkoutSession = CheckoutSession::create($checkoutArgs);
 
-        if ($checkoutSession->error) {
+        if (!empty($checkoutSession->error)) {
             wp_send_json_error([
                 'message'       => $checkoutSession->error->message,
                 'payment_error' => true
@@ -231,6 +231,7 @@ class StripeHostedHandler extends StripeHandler
 
     public function handleCheckoutSessionSuccess($submission, $session)
     {
+        do_action('wppayform/form_submission_activity_start', $submission->form_id);
 
         $submissionModel = new Submission();
 
@@ -272,17 +273,26 @@ class StripeHostedHandler extends StripeHandler
 
         $submissionModel->updateMeta($submission->id, 'stripe_checkout_hooked_fired', 'yes');
 
+        $paymentSuccessFired = false;
         if ($intentedOneTimeTransaction) {
             $transaction = $transactionModel->getTransaction($intentedOneTimeTransaction->id);
             do_action('wppayform/form_payment_success_stripe', $submission, $transaction, $submission->form_id, $session);
             do_action('wppayform/form_payment_success', $submission, $transaction, $submission->form_id, $session);
+            $paymentSuccessFired = true;
         }
 
         if ($intentedSubscriptions) {
             $subscriptions = $subscriptionModel->getSubscriptions($submission->id);
             do_action('wppayform/form_recurring_subscribed_stripe', $submission, $subscriptions, $submission->form_id);
             do_action('wppayform/form_recurring_subscribed', $submission, $subscriptions, $submission->form_id);
+
+            if(!$paymentSuccessFired) {
+                do_action('wppayform/form_payment_success_stripe', $submission, false, $submission->form_id, $session);
+                do_action('wppayform/form_payment_success', $submission, false, $submission->form_id, $session);
+            }
         }
+
+        do_action('wppayform/after_form_submission_complete', $submission, $submission->form_id);
     }
 
 
