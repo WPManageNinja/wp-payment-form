@@ -14,7 +14,7 @@ body {
   max-width: 600px;
   margin: 0 auto;
   background: white;
-  margin-top: 100px;
+  margin-top: 30px;
   padding: 10px 20px;
   border-radius: 12px;
   box-shadow: 2px 1px 8px 8px #f1f1f1;
@@ -32,5 +32,21 @@ body {
     tbody tr:last-child td {
       border-bottom: 1px solid #cbcbcb;
     }
+  }
+}
+
+.wppayform_header_logo {
+  width: 100%;
+  margin: 30px 0px 0px;
+  text-align: center;
+  a.wppayform_site_name {
+    text-decoration: none;
+    color: black;
+    font-size: 26px;
+  }
+
+  a.wppayform_site_logo img {
+    max-height: 80px;
+    width: auto;
   }
 }

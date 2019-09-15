@@ -79,31 +79,8 @@ class Entry
 
     public function getInputFieldsHtmlTable()
     {
-        // We have to make the items as label and value pair first
-        $inputItems = $this->formattedInput;
-        $labels = (array)Forms::getFormInputLabels($this->formId);
-        $items = array();
-        foreach ($inputItems as $itemKey => $item) {
-            $label = $itemKey;
-            if (!empty($labels[$itemKey])) {
-                $label = $labels[$itemKey];
-            }
-
-            if (is_array($item)) {
-                $item = $this->maybeNeedToConverHtml($item, $itemKey);
-                if (is_array($item)) {
-                    $item = implode(', ', $item);
-                }
-            }
-
-            $items[] = array(
-                'label' => $label,
-                'value' => $item
-            );
-        }
-
         return View::make('elements.input_fields_html', array(
-            'items' => $items
+            'items' => $this->parsedData
         ));
     }
 

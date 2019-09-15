@@ -2,7 +2,7 @@
 
 namespace WPPayForm\Classes\Extorior;
 
-use WPPayForm\Classes\Models\Forms;
+use WPPayForm\Classes\ArrayHelper;
 use WPPayForm\Classes\View;
 
 class FramelessProcessor
@@ -27,9 +27,13 @@ class FramelessProcessor
         do_action('wppayform/frameless_pre_render_page', $action);
         do_action('wppayform/frameless_pre_render_page_' . $action, $action);
 
-        echo $this->getHeader($action);
+
+        ob_start();
         do_action('wppayform/frameless_body', $action);
-        do_action('wppayform/frameless_body_'.$action, $action);
+        do_action('wppayform/frameless_body_' . $action, $action);
+        $body = ob_get_clean();
+        echo $this->getHeader($action);
+        echo $body;
         echo $this->getFooter($action);
         exit(200);
     }
@@ -53,12 +57,26 @@ class FramelessProcessor
             WPPAYFORM_URL . 'assets/css/frameless.css'
         ];
 
+
+        $stripeSettings = get_option('wppayform_stripe_payment_settings', array());
+
+        $companyName = ArrayHelper::get($stripeSettings, 'company_name');
+        $checkoutLogo = ArrayHelper::get($stripeSettings, 'checkout_logo');
+
+        if(!$companyName) {
+            $companyName = get_bloginfo('name');
+        }
+
+
         $cssFiles = apply_filters('wppayform/frameless_header_css_files', $cssFiles, $action);
 
         return View::make('frameless.header', [
             'css_files' => $cssFiles,
             'js_files'  => $headerJsFiles,
-            'title'     => $title
+            'title'     => $title,
+            'action'    => $action,
+            'site_logo' => $checkoutLogo,
+            'company_name' => $companyName
         ]);
 
     }
@@ -69,8 +87,8 @@ class FramelessProcessor
         $footerJsFiles = apply_filters('wppayform/frameless_header_scripts', $footerJsFiles, $action);
 
         return View::make('frameless.footer', [
-            'js_files'  => $footerJsFiles,
-            'action' => $action
+            'js_files' => $footerJsFiles,
+            'action'   => $action
         ]);
 
     }

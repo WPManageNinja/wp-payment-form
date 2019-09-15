@@ -229,7 +229,7 @@ class Render
                 'previousMonth'    => __('Previous Month', 'wppayform'),
                 'nextMonth'        => __('Next Month', 'wppayform'),
                 'months'           => [
-                    'sorthand' => [
+                    'shorthand' => [
                         __('Jan', 'wppayform'),
                         __('Feb', 'wppayform'),
                         __('Mar', 'wppayform'),

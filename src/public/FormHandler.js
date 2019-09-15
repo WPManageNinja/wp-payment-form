@@ -6,6 +6,7 @@ class PayFormHandler {
         this.form = form;
         this.config = config;
         this.formId = config.form_id;
+        this.paymentMethod = '';
         this.generalConfig = window.wp_payform_general;
         this.$formNoticeWrapper = form.parent().find('.wpf_form_notices');
     }
@@ -26,17 +27,22 @@ class PayFormHandler {
         this.initPaymentMethodChange();
 
         if (this.config.stripe_checkout_style == 'embeded_form') {
+            this.paymentMethod = 'stripe';
             this.stripe = Stripe(this.config.stripe_pub_key);
             this.initStripeElement();
         } else if (this.config.stripe_checkout_style == 'stripe_checkout') {
+            this.paymentMethod = 'stripe';
             this.stripe = Stripe(this.config.stripe_pub_key);
         }
 
         this.form.on('submit', (e) => {
             e.preventDefault();
-            console.log('submitting');
             this.handleFormSubmit();
         });
+
+        // Subscription Setup
+        this.maybeSubscriptionSetup();
+        this.maybeCustomSubscriptionItemSetup();
     }
 
     handleFormSubmit() {
@@ -79,10 +85,9 @@ class PayFormHandler {
                             }
                             this.form.trigger('wpf_form_fail_submission', error.responseJSON.data);
                             this.form.trigger('server_error', [error]);
-
                             this.form.removeClass('wpf_submitting_form');
                             this.form.find('button.wpf_submit_button').removeAttr('disabled');
-                            this.form.removeClass('wpf_submitting_form');
+                            this.buttonState('normal', '', false);
                         })
                         .always((response) => {
                             if(response && response.responseJSON && response.responseJSON.data && response.responseJSON.data.form_events) {
@@ -336,6 +341,12 @@ class PayFormHandler {
     stripeElementPaymentToken() {
         var that = this;
         return new Promise(function (resolve, reject) {
+
+            if(that.paymentMethod != 'stripe') {
+                resolve(true);
+                return;
+            }
+
             if (!that.stripeCard) {
                 resolve(true);
                 return;
@@ -640,9 +651,11 @@ class PayFormHandler {
     handlePaymentMethodChange(paymentMethod) {
         this.form.data('selected_payment_method', paymentMethod);
         if (!paymentMethod) {
+            this.paymentMethod = '';
             this.form.find('.wpf_all_payment_methods_wrapper').hide();
             return;
         }
+        this.paymentMethod = paymentMethod;
         this.form.find('.wpf_all_payment_methods_wrapper').show();
         this.form.find('.wpf_all_payment_methods_wrapper .wpf_payment_method_element').hide();
         this.form.find('.wpf_all_payment_methods_wrapper .wpf_payment_method_element_' + paymentMethod).show();
@@ -692,6 +705,7 @@ class PayFormHandler {
     // Error and Success Messages
     handleServerUnexpectedError(response) {
         this.showMessages(response, 'error', this.$t('submission_error'));
+        this.buttonState('normal', '', false);
     }
 
     showMessages(messages, type, heading) {
@@ -738,8 +752,6 @@ class PayFormHandler {
 
     buttonState(state, loadingText, isDisabled, data) {
 
-        console.log(state);
-
         let knownStates = 'wpf_submitting wpf_validating_form wpf_submitting_form wpf_authenticating_sca wpf_sca_declined wpf_confirming_payment';
         this.form.removeClass(knownStates);
 
@@ -762,6 +774,106 @@ class PayFormHandler {
         this.form.addClass('wpf_'+state);
         this.form.trigger('wpf_'+state, [this.formId, data]);
     }
+
+    /*
+    * Subscription related functions
+     */
+    maybeSubscriptionSetup() {
+        // Handle Radio Button Select
+        let form = this.form;
+        let that = this;
+
+        function checkForRadio(element) {
+            let elementName = jQuery(element).attr('name');
+            let selectedIndex = jQuery(element).val();
+            let $wrapper = jQuery(element).closest('.wpf_subscription_controls_radio');
+            $wrapper.find('.wpf_subscription_plan_summary_item').hide();
+            $wrapper.find('.wpf_subscription_plan_summary_'+elementName+' .wpf_subscription_plan_index_'+selectedIndex).show();
+
+            $wrapper.find('.subscription_radio_custom').hide();
+            $wrapper.find('.subscription_radio_custom_'+selectedIndex).show();
+        }
+
+        jQuery.each(form.find('.wpf_subscription_controls_radio input:checked'), function (index, element) {
+            checkForRadio(element);
+        });
+
+        form.find('.wpf_subscription_controls_radio input[type=radio]').on('change', function () {
+            checkForRadio(this);
+        });
+
+        // Handle Selection Button Select
+
+        function checkForSelections(element) {
+            let elementName = jQuery(element).attr('id');
+            let selectedIndex = jQuery(element).val();
+            form.find('.wpf_subscription_plan_summary_'+elementName +' .wpf_subscription_plan_summary_item').hide();
+            form.find('.wpf_subscription_plan_summary_'+elementName +' .wpf_subscription_plan_index_'+selectedIndex).show();
+        }
+
+        jQuery.each(form.find('.wpf_subscrion_plans_select option:selected'), function (index, element) {
+            if(jQuery(element).attr('value') != '') {
+                checkForSelections(jQuery(element).parent());
+            }
+        });
+
+        form.find('.wpf_subscrion_plans_select select').on('change', function () {
+            checkForSelections(this);
+        });
+    }
+    maybeCustomSubscriptionItemSetup() {
+        let that = this;
+        let form = this.form;
+        let formSettings = this.config;
+        form.find('.wpf_custom_subscription_input').on('keyup', function () {
+            var $el = jQuery(this);
+            var value = parseInt($el.val() * 100);
+            var $hiddenEl = $el.parent().find('.wpf_payment_item');
+            $hiddenEl.data('subscription_amount', value);
+
+            var totalAmount = value + parseInt($el.data('initial_amount'));
+            $hiddenEl.data('price', totalAmount);
+
+            $el.closest('.wpf_form_group').find('.wpf_dynamic_input_amount').html(formatPrice(value, formSettings.currency_settings))
+            $hiddenEl.trigger('change');
+        });
+        form.find('.wpf_custom_subscription_amount').on('change', function () {
+            let $el = jQuery(this);
+            let index = $el.data('plan_index');
+            let value = parseInt($el.val() * 100);
+            let $parent = $el.closest('.wpf_multi_form_controls');
+            $parent.find('.wpf_subscription_plan_summary')
+                .find('.wpf_subscription_plan_index_'+index)
+                .find('.wpf_dynamic_input_amount')
+                .html(formatPrice(value, formSettings.currency_settings));
+
+            var $input = $parent.find('.wpf_payment_item').find('.wpf_option_custom_'+index);
+            var totalAmount = value + parseInt($input.data('initial_amount'));
+            $input
+                .data('subscription_amount', value)
+                .data('price', totalAmount);
+
+            $parent.find('select').trigger('change');
+        });
+        form.find('.wpf_custom_subscription_amount_radio').on('change', function () {
+            let $el = jQuery(this);
+            let index = $el.data('plan_index');
+            let value = parseInt($el.val() * 100);
+            let $parent = $el.closest('.wpf_multi_form_controls');
+            $parent.find('.wpf_subscription_plan_summary')
+                .find('.wpf_subscription_plan_index_'+index)
+                .find('.wpf_dynamic_input_amount')
+                .html(formatPrice(value, formSettings.currency_settings));
+            var $input = $parent.find('.wpf_option_custom_'+index);
+            var totalAmount = value + parseInt($input.data('initial_amount'));
+            $input
+                .data('subscription_amount', value)
+                .data('price', totalAmount);
+
+            $parent.find('input[type=radio]').trigger('change');
+        });
+    }
+
 }
 
 export default PayFormHandler;

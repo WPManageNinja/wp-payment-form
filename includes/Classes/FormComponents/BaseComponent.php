@@ -66,7 +66,7 @@ abstract class BaseComponent
             $attributes['min'] = $fieldOptions['min_value'];
         }
 
-        if (isset($fieldOptions['min_value'])) {
+        if (isset($fieldOptions['max_value'])) {
             $attributes['max'] = $fieldOptions['max_value'];
         }
 

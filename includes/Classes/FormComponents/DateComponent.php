@@ -122,7 +122,6 @@ class DateComponent extends BaseComponent
             'data-date_config' => $this->getDateFormatConfigJSON($fieldOptions, $form),
         );
 
-
         if (ArrayHelper::get($fieldOptions, 'required') == 'yes') {
             $attributes['required'] = true;
         }

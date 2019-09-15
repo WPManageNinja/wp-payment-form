@@ -235,11 +235,13 @@ class Forms
     public static function getCurrencySettings($formId)
     {
         $currencySettings = get_post_meta($formId, 'wppayform_paymentform_currency_settings', true);
+        $globalSettings = GeneralSettings::getGlobalCurrencySettings();
         if (!$currencySettings) {
             $currencySettings = array();
+        } else if($currencySettings['settings_type'] == 'global') {
+            return $globalSettings;
         }
-        $defaultSettings = GeneralSettings::getGlobalCurrencySettings();
-        return wp_parse_args($currencySettings, $defaultSettings);
+        return wp_parse_args($currencySettings, $globalSettings);
     }
 
     public static function getCurrencyAndLocale($formId)

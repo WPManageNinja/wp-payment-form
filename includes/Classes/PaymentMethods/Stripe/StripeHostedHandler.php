@@ -80,7 +80,11 @@ class StripeHostedHandler extends StripeHandler
             }
         }
 
-        if (!isset($checkoutArgs['subscription_data'])) {
+        if(empty($checkoutArgs['line_items']) && empty($checkoutArgs['subscription_data'])) {
+            return;
+        }
+
+        if (empty($checkoutArgs['subscription_data'])) {
             $checkoutArgs['submit_type'] = 'auto';
             $checkoutArgs['payment_intent_data'] = [
                 'capture_method' => 'automatic',
@@ -123,6 +127,9 @@ class StripeHostedHandler extends StripeHandler
         $formattedItems = [];
         foreach ($items as $item) {
             $price = $item->item_price;
+            if(!$price) {
+                continue;
+            }
             if (GeneralSettings::isZeroDecimal($submission->currency)) {
                 $price = intval($price / 100);
             }
@@ -147,10 +154,13 @@ class StripeHostedHandler extends StripeHandler
         }
 
         $subscriptionItems = [];
-
         $maxTrialDays = 0;
 
         foreach ($subscriptions as $subscriptionItem) {
+            if(!$subscriptionItem->recurring_amount) {
+                continue;
+            }
+
             if ($subscriptionItem->trial_days && $maxTrialDays < $subscriptionItem->trial_days) {
                 $maxTrialDays = $subscriptionItem->trial_days;
                 $subscriptionItem->trial_days = 0;
@@ -166,6 +176,7 @@ class StripeHostedHandler extends StripeHandler
                 'vendor_response' => maybe_serialize($subscription),
             ]);
         }
+
 
         $args = [];
         if ($subscriptionItems) {
@@ -204,11 +215,10 @@ class StripeHostedHandler extends StripeHandler
 
         $session = CheckoutSession::retrive($sessionId, [
             'expand' => [
-                'subscription.latest_invoice',
+                'subscription.latest_invoice.payment_intent',
                 'payment_intent'
             ]
         ]);
-
 
         if (!$session || !$session->customer) {
             // For failed payment customer will not exist
@@ -250,7 +260,6 @@ class StripeHostedHandler extends StripeHandler
             $this->processSubscriptionsItentSuccess($intentedSubscriptions, $session->subscription, $submission);
         }
 
-        $submissionModel->updateMeta($submission->id, 'stripe_checkout_hooked_fired', 'yes');
         // Fire Action Hooks to make the payment
         $submissionModel->update($submission->id, [
             'payment_status' => 'paid',
@@ -259,6 +268,9 @@ class StripeHostedHandler extends StripeHandler
         ]);
 
         $submission = $submissionModel->getSubmission($submission->id);
+
+
+        $submissionModel->updateMeta($submission->id, 'stripe_checkout_hooked_fired', 'yes');
 
         if ($intentedOneTimeTransaction) {
             $transaction = $transactionModel->getTransaction($intentedOneTimeTransaction->id);
@@ -296,21 +308,7 @@ class StripeHostedHandler extends StripeHandler
                     $updateDate['card_last_4'] = $card->last4;
                 }
                 if (!empty($charge->billing_details->address)) {
-                    $billingDetails = $charge->billing_details;
-
-                    $formDataFormatted = $submission->form_data_formatted;
-                    $formDataFormatted['__stripe_address'] = $billingDetails->address;
-                    $submissionUpdateData = [
-                        'form_data_formatted' => maybe_serialize($formDataFormatted)
-                    ];
-                    if (!$submission->customer_name && $billingDetails->name) {
-                        $submissionUpdateData['customer_name'] = $billingDetails->name;
-                    }
-                    if (!$submission->customer_email && $billingDetails->email) {
-                        $submissionUpdateData['customer_email'] = $billingDetails->email;
-                    }
-                    $submissionModel = new Submission();
-                    $submissionModel->update($submission->id, $submissionUpdateData);
+                    $this->recoredStripeBillingAddress($charge, $submission);
                 }
 
             } else {
@@ -334,12 +332,51 @@ class StripeHostedHandler extends StripeHandler
         ));
     }
 
+    private function recoredStripeBillingAddress($charge, $submission)
+    {
+        $formDataFormatted = $submission->form_data_formatted;
+        if(isset($formDataFormatted['__checkout_billing_address_details'])) {
+            return;
+        }
+
+        if(empty($charge->billing_details)) {
+            return;
+        }
+
+        $billingDetails = $charge->billing_details;
+        $formDataFormatted['__checkout_billing_address_details'] = $billingDetails->address;
+        $formDataFormatted['__stripe_phone'] = $billingDetails->phone;
+        $formDataFormatted['__stripe_name'] = $billingDetails->name;
+        $formDataFormatted['__stripe_email'] = $billingDetails->email;
+        $submissionUpdateData = [
+            'form_data_formatted' => maybe_serialize($formDataFormatted)
+        ];
+        if (!$submission->customer_name && $billingDetails->name) {
+            $submissionUpdateData['customer_name'] = $billingDetails->name;
+        }
+        if (!$submission->customer_email && $billingDetails->email) {
+            $submissionUpdateData['customer_email'] = $billingDetails->email;
+        }
+        $submissionModel = new Submission();
+        $submissionModel->update($submission->id, $submissionUpdateData);
+
+        SubmissionActivity::createActivity(array(
+            'form_id'       => $submission->form_id,
+            'submission_id' => $submission->id,
+            'type'          => 'activity',
+            'created_by'    => 'PayForm BOT',
+            'content'       => __('Billing address from stripe has been logged in the submission data', 'wppayform')
+        ));
+    }
+
     /*
      * This method will be called if stripe hosted checkout
      * has subscription payment
    */
     public function processSubscriptionsItentSuccess($subscriptions, $stripeResponse, $submission)
     {
+
+
         $subscriptionModel = new Subscription();
         $subscriptionTransactionModel = new SubscriptionTransaction();
 
@@ -391,6 +428,11 @@ class StripeHostedHandler extends StripeHandler
             'created_by'    => 'PayForm BOT',
             'content'       => __('Stripe recurring subscription successfully initiated', 'wppayform')
         ));
+
+        if(!empty($stripeResponse->latest_invoice->payment_intent->charges->data[0])) {
+            $charge = $stripeResponse->latest_invoice->payment_intent->charges->data[0];
+            $this->recoredStripeBillingAddress($charge, $submission);
+        }
     }
 
     public function showSuccessMessage($action)
@@ -408,8 +450,8 @@ class StripeHostedHandler extends StripeHandler
         $confirmation = $submissionHandler->getFormConfirmation($submission->form_id, $submission);
 
         if ($confirmation['redirectTo'] == 'customUrl' && $confirmation['customUrl']) {
-            echo '<script type="text/javascript">window.location.href = "' . $confirmation['customUrl'] . '";</script>';
-            return;
+            wp_redirect($confirmation['customUrl']);
+            exit();
         }
         $title = __('Payment has been successfully completed', 'wppayform');
 

@@ -59,10 +59,13 @@ class Stripe
 
     public function choosePaymentMethod($paymentMethod, $elements, $formId, $form_data)
     {
+
+
         if ($paymentMethod) {
             // Already someone choose that it's their payment method
             return $paymentMethod;
         }
+
         // Now We have to analyze the elements and return our payment method
         foreach ($elements as $element) {
             if (isset($element['type']) && $element['type'] == 'stripe_card_element') {
@@ -74,11 +77,7 @@ class Stripe
 
     public function addPaymentMethodStyle($submissionId, $formId, $paymentMethodElement)
     {
-        $style = 'stripe_hosted';
-        if (ArrayHelper::get($paymentMethodElement, 'stripe_card_element.options.checkout_display_style.style') == 'embeded_form') {
-            $style = 'stripe_inline';
-        }
-
+        $style = $this->getStripePaymentMethodByElement($paymentMethodElement);
         $submissionModel = new Submission();
         $submissionModel->updateMeta($submissionId, 'stripe_payment_style', $style);
     }
@@ -87,8 +86,7 @@ class Stripe
     {
         $submissionModel = new Submission();
         $handler = $submissionModel->getMeta($submissionId, 'stripe_payment_style', 'stripe_hosted');
-
-        do_action( 'wppayform/form_submission_make_payment_' . $handler, $transactionId, $submissionId, $form_data, $form, $hasSubscriptions );
+        do_action('wppayform/form_submission_make_payment_' . $handler, $transactionId, $submissionId, $form_data, $form, $hasSubscriptions);
     }
 
     public function maybeSignupFeeToPaymentItems($paymentItems, $formattedElements, $form_data, $subscriptionItems)
@@ -152,9 +150,9 @@ class Stripe
         if (isset($fomattedData['__checkout_billing_address_details'])) {
             $address = $fomattedData['__checkout_billing_address_details'];
             $parsed['__checkout_billing_address_details'] = array(
-                'label' => 'Billing Address',
+                'label' => __('Billing Address (From Stripe)', 'wppayform'),
                 'value' => $this->formatAddress($address),
-                'type'  => '__checkout_address_details'
+                'type'  => '__checkout_billing_address_details'
             );
         }
 
@@ -167,18 +165,51 @@ class Stripe
             );
         }
 
+        if (!empty($fomattedData['__stripe_phone'])) {
+            $parsed['__stripe_phone'] = array(
+                'label' => __('Phone (From Stripe)', 'wppayform'),
+                'value' => $fomattedData['__stripe_phone'],
+                'type'  => '__stripe_phone'
+            );
+        }
+
+
+        if (!empty($fomattedData['__stripe_name'])) {
+            $parsed['__stripe_name'] = array(
+                'label' => __('Name on Card (From Stripe)', 'wppayform'),
+                'value' => $fomattedData['__stripe_name'],
+                'type'  => '__stripe_name'
+            );
+        }
+
+
         return $parsed;
     }
 
     private function formatAddress($address)
     {
-        $validValues = array();
-        foreach ($address as $addressLine) {
-            if ($addressLine) {
-                $validValues[] = $addressLine;
+        $addressSerials = [
+            'line1',
+            'line2',
+            'city',
+            'state',
+            'postal_code',
+            'country'
+        ];
+        $formattedAddress = [];
+        $address = (array)$address;
+
+        foreach ($addressSerials as $addressSerial) {
+            if (!empty($address[$addressSerial])) {
+                $formattedAddress[] = $address[$addressSerial];
             }
         }
-        return implode(', ', $validValues);
+
+        if ($formattedAddress) {
+            return implode(', ', $formattedAddress);
+        }
+
+        return implode(', ', array_filter($address));
     }
 
     public function savePaymentSettings()
@@ -290,5 +321,17 @@ class Stripe
     public function isStripeKeysDefined()
     {
         return defined('WP_PAY_FORM_STRIPE_SECRET_KEY') && defined('WP_PAY_FORM_STRIPE_PUB_KEY');
+    }
+
+    public function getStripePaymentMethodByElement($paymentMethodElement)
+    {
+        $method = ArrayHelper::get($paymentMethodElement, 'stripe_card_element.options.checkout_display_style.style');
+        if (!$method) {
+            $method = ArrayHelper::get($paymentMethodElement, 'choose_payment_method.options.method_settings.payment_settings.stripe.checkout_display_style.style');
+        }
+        if ($method == 'embeded_form') {
+            return 'stripe_inline';
+        }
+        return 'stripe_hosted';
     }
 }
