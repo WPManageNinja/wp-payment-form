@@ -1,9 +1,9 @@
-=== WPPayForm for Stripe WordPress Payments Plugin ===
+=== WPPayForm for Stripe WordPress Payments Plugin - SCA Ready Payments ===
 Contributors: techjewel, wpmanageninja
 Tags: Stripe, Easy Payment Form, stripe wordpress, sca ready payment, payform, paymentform, stripe integrations, stripe wordpress plugin, wordpress stripe, stripe for wordpress, stripe pay, pay with stripe, Event Registration Form, Accept PayPal Payments, payment for stripe
 Requires at least: 4.5
 Tested up to: 5.2.3
-Stable tag: 1.9.0
+Stable tag: 1.9.2
 Requires PHP: 5.4
 License: GPLv2 or later
 
@@ -160,6 +160,8 @@ It's easy, convenient and most importantly, It will increase your conversion rat
 - Export Data as CSV/Excel/JSON *(Done)
 - Accept Subscription Payments *(Done)*
 - Added security fields reCaptcha *(Done)*
+- Implenting Stripe Checkout Version 3 *(Done)*
+- Better Recurring Payment Management (On Development)
 - Send bulk emails to the submitters and filter by payment statuses (On development)
 
 This plugin is a very planned project, and we have a long term development plan for this. We already invested around 200 human working hours (+coffees) on it, and we have the intention to spend much more on it. Please let us know what features you want, and we are happy to add that in our development sprint.
@@ -248,6 +250,15 @@ You are most welcome. You can do the following:
 12. Submission Details (2nd Part)
 
 == Changelog ==
+
+= 1.9.2 - September 15, 2019 =
+- Improved Stripe Thank you page
+- 0 Quantity product bug fix
+- Validation Bug fix
+- Better asset management
+- Date Field bug fix
+- Internet explorer error fix
+- PHP improvemt
 
 = 1.9.0 - September 13, 2019 =
 - SCA integration
