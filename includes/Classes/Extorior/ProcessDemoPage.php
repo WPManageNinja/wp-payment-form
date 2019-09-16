@@ -1,7 +1,8 @@
 <?php
 
-namespace WPPayForm\Classes;
+namespace WPPayForm\Classes\Extorior;
 
+use WPPayForm\Classes\AccessControl;
 use WPPayForm\Classes\Models\Forms;
 
 class ProcessDemoPage
@@ -9,7 +10,9 @@ class ProcessDemoPage
     public function handleExteriorPages()
     {
         if (isset($_GET['wp_paymentform_preview']) && $_GET['wp_paymentform_preview']) {
-            if(AccessControl::hasTopLevelMenuPermission()) {
+            $hasDemoAccess = AccessControl::hasTopLevelMenuPermission();
+            $hasDemoAccess = apply_filters('wppayform/can_see_demo_form', $hasDemoAccess);
+            if($hasDemoAccess) {
                 $formId = intval($_GET['wp_paymentform_preview']);
                 $this->loadDefaultPageTemplate();
                 $this->renderPreview($formId);
@@ -23,7 +26,7 @@ class ProcessDemoPage
         if ($form) {
             add_action('pre_get_posts', array($this, 'pre_get_posts'), 100, 1);
             add_filter('post_thumbnail_html', '__return_empty_string');
-            add_filter('get_the_excerpt', function ($content) {
+            add_filter('get_the_excerpt', function ($content) use ($form) {
                 if (in_the_loop()) {
                     $content = '<div style="text-align: center" class="demo"><h4>WP PayForm Demo Preview ( From ID: ' . $form->ID . ' )</h4></div><hr />';
                     $content .= do_shortcode('[wppayform id="' . $form->ID . '"]');

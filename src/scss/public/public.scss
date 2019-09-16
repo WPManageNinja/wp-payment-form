@@ -1,28 +1,48 @@
 @import '../../../node_modules/pikaday/css/pikaday.css';
 @import "dropzone";
+
 .wpf_form_notices {
   padding: 10px 20px;
   margin-top: 20px;
+  border-radius: 5px;
 
   p, ul {
     padding: 0;
     margin: 0;
   }
+  .wpf_alert_heading {
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  ul.wpf_alert_ietms {
+    margin-left: 30px;
+    list-style: disc;
+  }
 
-  &.wpf_form_errors {
+  &.wpf_form_notice_error {
     color: rgb(114, 28, 36);
     background-color: rgb(248, 215, 218);
     border-color: rgb(245, 198, 203);
   }
 
-  &.wpf_form_success {
+  &.wpf_form_notice_success {
     color: rgb(21, 87, 36);
     background-color: rgb(212, 237, 218);
     border-color: rgb(195, 230, 203);
   }
+  &.wpf_form_notice_info {
+    color: #0c5460;
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+  }
 }
 
 .wpf_strip_default_style {
+
+  .wpf_card-errors {
+    color: #fa755a;
+  }
+
   .StripeElement {
     background-color: white;
     height: 40px;
@@ -46,12 +66,11 @@
     background-color: #fefde5 !important;
   }
 
-
   .wpf_regular_table {
     empty-cells: show;
     font-size: 14px;
     border: 1px solid #cbcbcb;
-    td,th {
+    td, th {
       border-left: 1px solid #cbcbcb;
       border-width: 0 0 0 1px;
       font-size: inherit;
@@ -59,7 +78,7 @@
       overflow: visible;
       padding: .5em 1em
     }
-    td:first-child,th:first-child {
+    td:first-child, th:first-child {
       border-left-width: 0
     }
     thead {
@@ -75,7 +94,7 @@
     tfoot {
       border-top: 1px solid #cbcbcb;
     }
-    .wpf_tabular_qty,.wpf_tabular_price {
+    .wpf_tabular_qty, .wpf_tabular_price {
       width: 130px;
     }
     th.wpf_subtotal_th {
@@ -198,6 +217,16 @@
     margin-bottom: 20px;
     * {
       box-sizing: border-box;
+    }
+    .wpf_has_error {
+      border-color: #f5c6cb !important;
+    }
+
+    .form-check {
+      .wpf_form_control.form-check-input {
+        display: inline-block;
+        width: auto;
+      }
     }
   }
 

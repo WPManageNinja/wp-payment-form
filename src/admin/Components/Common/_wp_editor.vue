@@ -6,12 +6,9 @@
             :class="{'popover-wrapper-plaintext': !hasWpEditor}"
             :data="editorShortcodes"
             @command="handleCommand"></popover>
-        <textarea v-if="hasWpEditor" class="wp_vue_editor" :id="editor_id">{{value}}</textarea>
-        <textarea v-else
-                  class="wp_vue_editor wp_vue_editor_plain"
-                  v-model="plain_content"
-                  @click="updateCursorPos">
-        </textarea>
+        <textarea v-if="hasWpEditor && !no_tiny_mce" class="wp_vue_editor" :id="editor_id">{{value}}</textarea>
+
+        <el-input :rows="4" class="wp_vue_editor wp_vue_editor_plain" v-else type="textarea" v-model="plain_content" />
     </div>
 </template>
 
@@ -48,19 +45,24 @@
             return {
                 hasWpEditor: !!window.wp.editor,
                 plain_content: this.value,
-                cursorPos: this.value.length
+                cursorPos: this.value.length,
+                no_tiny_mce: false
             }
         },
         watch: {
             plain_content() {
-                this.$emit('input', this.plain_content);
+                if(this.no_tiny_mce) {
+                    this.$emit('input', this.plain_content);
+                }
             }
         },
         methods: {
             initEditor() {
                 if (!window.tinymce) {
+                    this.no_tiny_mce = true;
                     return;
                 }
+                this.no_tiny_mce = false;
                 wp.editor.remove(this.editor_id);
                 const that = this;
                 wp.editor.initialize(this.editor_id, {
@@ -121,6 +123,10 @@
     .wp_vue_editor {
         width: 100%;
         min-height: 100px;
+    }
+
+    .wp_vue_editor.wp_vue_editor_plain.el-textarea {
+        margin-top: 30px;
     }
 
     .wp_vue_editor_wrapper {

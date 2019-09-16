@@ -60,17 +60,17 @@ class ItemQuantityComponent extends BaseComponent
                     'type'  => 'number',
                     'group' => 'general'
                 ),
-                'admin_label' => array(
+                'admin_label'    => array(
                     'label' => 'Admin Label',
                     'type'  => 'text',
                     'group' => 'advanced'
                 ),
-                'wrapper_class' => array(
+                'wrapper_class'  => array(
                     'label' => 'Field Wrapper CSS Class',
                     'type'  => 'text',
                     'group' => 'advanced'
                 ),
-                'element_class' => array(
+                'element_class'  => array(
                     'label' => 'Input element CSS Class',
                     'type'  => 'text',
                     'group' => 'advanced'
@@ -104,20 +104,31 @@ class ItemQuantityComponent extends BaseComponent
         $inputClass = $this->elementInputClass($element);
         $inputId = 'wpf_input_' . $form->ID . '_' . $element['id'];
 
-        $defaultValue = apply_filters('wppayform/input_default_value', ArrayHelper::get($fieldOptions, 'default_value'), $element, $form);
+        $defaultValue = '';
+        if (isset($fieldOptions['default_value'])) {
+            $defaultValue = $fieldOptions['default_value'];
+        }
+
+        $defaultValue = apply_filters('wppayform/input_default_value', $defaultValue, $element, $form);
 
         $attributes = array(
             'data-required'       => ArrayHelper::get($fieldOptions, 'required'),
+            'data-type'           => 'input',
             'name'                => $element['id'],
             'placeholder'         => ArrayHelper::get($fieldOptions, 'placeholder'),
             'value'               => $defaultValue,
             'type'                => 'number',
-            'min'                 => ArrayHelper::get($fieldOptions, 'min_value'),
+            'min'                 => ArrayHelper::get($fieldOptions, 'min_value', '0'),
             'max'                 => ArrayHelper::get($fieldOptions, 'max_value'),
             'class'               => $inputClass . ' wpf_item_qty',
             'data-target_product' => ArrayHelper::get($fieldOptions, 'target_product'),
             'id'                  => $inputId
         );
+
+        if (ArrayHelper::get($fieldOptions, 'required') == 'yes') {
+            $attributes['required'] = true;
+        }
+
         ?>
         <div data-element_type="<?php echo $this->elementName; ?>"
              class="<?php echo $controlClass; ?>">

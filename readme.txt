@@ -1,13 +1,13 @@
-=== WPPayForm for Stripe WordPress Payments Plugin ===
+=== WPPayForm for Stripe Payments WordPress Plugin - SCA Ready Payments ===
 Contributors: techjewel, wpmanageninja
-Tags: Stripe, Easy Payment Form, stripe wordpress, payform, paymentform, stripe integrations, stripe wordpress plugin, wordpress stripe, stripe for wordpress, stripe pay, pay with stripe, Event Registration Form, stripe form, accept payment, stripe payments, secure payment form, form, payment form, payments, credit card, stripe checkout, Accept PayPal Payments, credit card payments, checkout.js, payment for stripe
+Tags: stripe, payment, payments, stripe payments, Stripe WordPress, Donations, stripe-gateway
 Requires at least: 4.5
-Tested up to: 5.2.2
-Stable tag: 1.2.6
+Tested up to: 5.2.3
+Stable tag: 1.9.3
 Requires PHP: 5.4
 License: GPLv2 or later
 
-Easily Accept Payments in WordPress with Stripe (PayPal also supported) with Form Builder Capability.
+Easily Accept Payments in WordPress with Stripe (PayPal also supported) with Form Builder Capability - SCA READY.
 
 == Description ==
 
@@ -16,6 +16,9 @@ Easily Accept Payments in WordPress with Stripe (PayPal also supported) with For
 <b>Do you want to accept payments along with user inputs in WordPress?</b> Then WPPayForm is the perfect plugin for you.
 
 With Stripe checkout as well as built-in form builder functionalities, you can build any forms ranging from single payment amount/multiple payment items. Or, you can allow users to pay custom amounts if needed.
+
+== SCA READY for EUROPE ==
+Strong Customer Authentication (SCA), a new rule coming into effect on September 14, 2019, as part of PSD2 regulation in Europe, will require changes to how your European customers authenticate online payments. WPPayForm is compeltely compitable with SCA.
 
 == Intro Video ==
 [youtube https://www.youtube.com/watch?v=oZaBS1EiAJc]
@@ -157,6 +160,8 @@ It's easy, convenient and most importantly, It will increase your conversion rat
 - Export Data as CSV/Excel/JSON *(Done)
 - Accept Subscription Payments *(Done)*
 - Added security fields reCaptcha *(Done)*
+- Implenting Stripe Checkout Version 3 *(Done)*
+- Better Recurring Payment Management (On Development)
 - Send bulk emails to the submitters and filter by payment statuses (On development)
 
 This plugin is a very planned project, and we have a long term development plan for this. We already invested around 200 human working hours (+coffees) on it, and we have the intention to spend much more on it. Please let us know what features you want, and we are happy to add that in our development sprint.
@@ -245,6 +250,30 @@ You are most welcome. You can do the following:
 12. Submission Details (2nd Part)
 
 == Changelog ==
+
+= 1.9.3 - September 15, 2019 =
+- Improved Payment Receipt
+- Upgrade Stripe API version
+- Fix Currency Formatter
+- Email bug issue fixed
+
+= 1.9.2 - September 15, 2019 =
+- Improved Stripe Thank you page
+- 0 Quantity product bug fix
+- Validation Bug fix
+- Better asset management
+- Date Field bug fix
+- Internet explorer error fix
+- PHP improvemt
+
+= 1.9.0 - September 13, 2019 =
+- SCA integration
+- Added Stripe Checkout version 3
+- Fix Date Picker Bug
+- Frontend Notification Fix
+- Frontend Validation
+- Fully re-write the frontend JS. It's more faster now
+- Design improvment
 
 = 1.2.6 - August 08, 2019 =
 - Fix Stripe webhook

@@ -91,6 +91,7 @@ class CustomAmountComponent extends BaseComponent
 
         $attributes = array(
             'data-required' => ArrayHelper::get($fieldOptions, 'required'),
+            'data-type' => 'input',
             'name' => $element['id'],
             'placeholder' => ArrayHelper::get($fieldOptions, 'placeholder'),
             'value' => $defaultValue,

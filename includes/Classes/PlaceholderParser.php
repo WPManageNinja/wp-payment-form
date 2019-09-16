@@ -44,7 +44,6 @@ class PlaceholderParser
         if (!$parsables) {
             return $string;
         }
-
         $formattedParsables = array();
         foreach ($parsables as $parsableKey => $parsable) {
             // Get Parsed Group
@@ -58,6 +57,8 @@ class PlaceholderParser
         $sunmissionPlaceholders = ArrayHelper::only($formattedParsables, array(
             'input', 'quantity', 'payment_item', 'submission'
         ));
+
+
         $submissionParseItems = self::parseInpuFields($sunmissionPlaceholders, $entry);
 
         $wpPlaceholders = ArrayHelper::only($formattedParsables, array(
@@ -100,7 +101,6 @@ class PlaceholderParser
         }
         return $parsedData;
     }
-
 
     public static function parseWPFields($placeHolders, $entry)
     {

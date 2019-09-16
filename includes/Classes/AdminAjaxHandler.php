@@ -39,7 +39,7 @@ class AdminAjaxHandler
             'duplicate_form'             => 'duplicateForm'
         );
 
-        if(WPPAYFORM_DB_VERSION > intval(get_option('WPF_DB_VERSION'))) {
+        if (WPPAYFORM_DB_VERSION > intval(get_option('WPF_DB_VERSION'))) {
             $activator = new Activator();
             $activator->maybeUpgradeDB();
         }
@@ -91,8 +91,8 @@ class AdminAjaxHandler
         $formId = Forms::create($data);
 
         wp_update_post([
-            'ID' => $formId,
-            'post_title' => $data['post_title'] .' (#'.$formId.')'
+            'ID'         => $formId,
+            'post_title' => $data['post_title'] . ' (#' . $formId . ')'
         ]);
 
         if (is_wp_error($formId)) {
@@ -158,6 +158,7 @@ class AdminAjaxHandler
 
         wp_send_json_success(array(
             'confirmation_settings' => Forms::getConfirmationSettings($formId),
+            'receipt_settings'      => Forms::getReceiptSettings($formId),
             'currency_settings'     => Forms::getCurrencySettings($formId),
             'editor_shortcodes'     => FormPlaceholders::getAllPlaceholders($formId),
             'currencies'            => GeneralSettings::getCurrencies(),
@@ -180,8 +181,13 @@ class AdminAjaxHandler
             update_post_meta($formId, 'wppayform_paymentform_currency_settings', $currency_settings);
         }
 
-        if(isset($_REQUEST['form_recaptcha_status'])) {
+        if (isset($_REQUEST['form_recaptcha_status'])) {
             update_post_meta($formId, '_recaptcha_status', sanitize_text_field($_REQUEST['form_recaptcha_status']));
+        }
+
+        if (isset($_REQUEST['receipt_settings'])) {
+            $confirmationSettings = wp_unslash($_REQUEST['receipt_settings']);
+            update_post_meta($formId, 'wppapyform_receipt_settings', $confirmationSettings);
         }
 
         wp_send_json_success(array(
@@ -191,8 +197,18 @@ class AdminAjaxHandler
 
     protected function saveFormBuilderSettings()
     {
+        $data = file_get_contents("php://input");
+        if ($data) {
+            parse_str($data, $form_data);
+            $builderSettings = json_decode($form_data['builder_settings'], true);
+        } else {
+            // failsafe
+            $builderSettings = wp_unslash($_REQUEST['builder_settings']);
+            $builderSettings = json_decode($builderSettings, true);
+        }
+
         $formId = absint($_REQUEST['form_id']);
-        $builderSettings = wp_unslash($_REQUEST['builder_settings']);
+
         if (!$formId || !$builderSettings) {
             wp_send_json_error(array(
                 'message' => __('Validation Error, Please try again', 'wppayform'),
@@ -211,7 +227,7 @@ class AdminAjaxHandler
                 $errors[$builderSetting['id']] = $error;
             }
 
-            if($builderSetting['type'] == 'recurring_payment_item') {
+            if ($builderSetting['type'] == 'recurring_payment_item') {
                 $hasRecurringField = 'yes';
             }
         }
@@ -280,10 +296,10 @@ class AdminAjaxHandler
         $formId = absint($_POST['form_id']);
         $globalTools = new GlobalTools();
         $oldForm = $globalTools->getForm($formId);
-        $oldForm['post_title'] = '(Duplicate) '.$oldForm['post_title'];
+        $oldForm['post_title'] = '(Duplicate) ' . $oldForm['post_title'];
         $oldForm = apply_filters('wppayform/form_duplicate', $oldForm);
 
-        if(!$oldForm) {
+        if (!$oldForm) {
             wp_send_json_error(array(
                 'message' => __('No form found when duplicating the form', 'wppayform')
             ), 423);
@@ -291,7 +307,7 @@ class AdminAjaxHandler
         $newForm = $globalTools->createFormFromData($oldForm);
         wp_send_json_success(array(
             'message' => __('Form successfully duplicated', 'wppayform'),
-            'form' => $newForm
+            'form'    => $newForm
         ), 200);
     }
 }

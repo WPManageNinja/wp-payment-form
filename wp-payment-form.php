@@ -5,7 +5,7 @@
  * Description: Create and Accept Payments in minutes with Stripe, PayPal with built-in form builder
  * Author: WPManageNinja LLC
  * Author URI:  https://wpmanageninja.com
- * Version: 1.2.6
+ * Version: 1.9.3
  * Text Domain: wppayform
  */
 
@@ -33,14 +33,16 @@ if (!defined('ABSPATH')) {
 
 if (!defined('WPPAYFORM_VERSION')) {
     define('WPPAYFORM_VERSION_LITE', true);
-    define('WPPAYFORM_VERSION', '1.2.6');
+    define('WPPAYFORM_VERSION', '1.9.3');
     define('WPPAYFORM_DB_VERSION', 120);
     // Stripe API version should be in 'YYYY-MM-DD' format.
-    define('WPPAYFORM_STRIPE_API_VERSION', '2018-10-31');
+    define('WPPAYFORM_STRIPE_API_VERSION', '2019-05-16');
     define('WPPAYFORM_MAIN_FILE', __FILE__);
     define('WPPAYFORM_URL', plugin_dir_url(__FILE__));
     define('WPPAYFORM_DIR', plugin_dir_path(__FILE__));
-    define('WPPAYFORM_UPLOAD_DIR', '/wppayform');
+    if(!defined('WPPAYFORM_UPLOAD_DIR')) {
+        define('WPPAYFORM_UPLOAD_DIR', '/wppayform');
+    }
 
     class WPPayForm
     {
@@ -117,21 +119,34 @@ if (!defined('WPPAYFORM_VERSION')) {
                 $builder = new \WPPayForm\Classes\Builder\Render();
                 return $builder->render($args['id'], $args['show_title'], $args['show_description']);
             });
-            add_shortcode('wppayform_reciept', function () {
-                if (isset($_REQUEST['wpf_submission']) && $_REQUEST['wpf_submission']) {
-                    $submissionHash = sanitize_text_field($_REQUEST['wpf_submission']);
+            add_shortcode('wppayform_reciept', function ($atts) {
+
+                $args = shortcode_atts( array(
+                    'hash' => ''
+                ), $atts, 'wppayform_reciept' );
+
+                if(!$args['hash']) {
+                    $hash = \WPPayForm\Classes\ArrayHelper::get($_REQUEST, 'wpf_submission');
+                    if(!$hash) {
+                        $hash = \WPPayForm\Classes\ArrayHelper::get($_REQUEST, 'wpf_hash');
+                    }
+                } else {
+                    $hash = $args['hash'];
+                }
+
+                if ($hash) {
                     $submission = wpPayFormDB()->table('wpf_submissions')
-                        ->where('submission_hash', '=', $submissionHash)
+                        ->where('submission_hash', '=', $hash)
                         ->first();
+
                     if ($submission) {
                         $receiptHandler = new \WPPayForm\Classes\Builder\PaymentReceipt();
                         return $receiptHandler->render($submission->id);
-                    } else {
-                        return '<p class="wpf_no_recipt_found">' . __('Sorry, no submission receipt found, Please check your receipt URL', 'wppayform') . '</p>';
                     }
-                } else {
-                    return '<p class="wpf_no_recipt_found">' . __('Sorry, no submission receipt found, Please check your receipt URL', 'wppayform') . '</p>';
                 }
+
+                return '<p class="wpf_no_recipt_found">' . __('Sorry, no submission receipt found, Please check your receipt URL', 'wppayform') . '</p>';
+
             });
         }
 
@@ -146,10 +161,21 @@ if (!defined('WPPAYFORM_VERSION')) {
             $stripe = new \WPPayForm\Classes\PaymentMethods\Stripe\Stripe();
             $stripe->registerHooks();
 
+            // Stripe Inline Handler
+            $stripeInlineHandler = new \WPPayForm\Classes\PaymentMethods\Stripe\StripeInlineHandler();
+            $stripeInlineHandler->registerHooks();
+
+            // Stripe Hosted Checkout Handler
+            $stripeHostedHandler = new \WPPayForm\Classes\PaymentMethods\Stripe\StripeHostedHandler();
+            $stripeHostedHandler->registerHooks();
+
             // Handle Extorior Pages
             add_action('init', function () {
-                $demoPage = new \WPPayForm\Classes\ProcessDemoPage();
+                $demoPage = new \WPPayForm\Classes\Extorior\ProcessDemoPage();
                 $demoPage->handleExteriorPages();
+
+                $frameLessPage = new \WPPayForm\Classes\Extorior\FramelessProcessor();
+                $frameLessPage->init();
             });
         }
 

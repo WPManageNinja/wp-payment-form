@@ -41,7 +41,8 @@ class PlanSubscription
             ),
             'expand' => [
                 'latest_invoice',
-            ]
+            ],
+            'off_session' => 'true'
         );
 
         if($subscription->trial_days) {
@@ -51,11 +52,11 @@ class PlanSubscription
         return self::subscribe($subscriptionArgs);
     }
 
-    private static function subscribe($subscriptionArgs)
+    public static function subscribe($subscriptionArgs)
     {
         $stripe = new Stripe();
         ApiRequest::set_secret_key($stripe->getSecretKey());
-        $response = ApiRequest::request($subscriptionArgs, 'subscriptions', 'POST');
+        return ApiRequest::request($subscriptionArgs, 'subscriptions', 'POST');
         if (!empty($response->error)) {
             $errotType = 'general';
             if (!empty($response->error->type)) {

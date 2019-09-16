@@ -46,12 +46,13 @@ class SubscriptionTransaction
                                 ->where('id', $item['subscription_id'])
                                 ->first();
 
+        // Let's count the total subscription payment
         if($parentSubscription) {
             wpFluent()->table('wpf_subscriptions')
                 ->where('id', $parentSubscription->id)
                 ->update([
-                    'bill_count' => $parentSubscription->bill_count + 1,
-                    'payment_total' => intval($parentSubscription->payment_total) +  $item['payment_total'],
+                    'bill_count' => $this->getPaymentCounts($parentSubscription->id),
+                    'payment_total' => $this->getPaymentTotal($parentSubscription->id),
                     'updated_at' => gmdate('Y-m-d H:i:s')
                 ]);
         }
@@ -86,5 +87,40 @@ class SubscriptionTransaction
         $data['updated_at'] = gmdate('Y-m-d H:i:s');
         $data['transaction_type'] = 'subscription';
         return wpPayFormDB()->table('wpf_order_transactions')->where('id', $transactionId)->update($data);
+    }
+
+    public function getPaymentCounts($subscriptionId, $paymentMethod = false)
+    {
+        $query = wpPayFormDB()
+            ->select(['id'])
+            ->table('wpf_order_transactions')
+            ->where('transaction_type', 'subscription')
+            ->where('subscription_id', $subscriptionId);
+        if($paymentMethod) {
+            $query = $query->where('payment_method', $paymentMethod);
+        }
+
+        $totalPayments = $query->get();
+        return count($totalPayments);
+    }
+
+    public function getPaymentTotal($subscriptionId, $paymentMethod = false)
+    {
+        $query = wpPayFormDB()
+            ->select(['id', 'payment_total'])
+            ->table('wpf_order_transactions')
+            ->where('transaction_type', 'subscription')
+            ->where('subscription_id', $subscriptionId);
+        if($paymentMethod) {
+            $query = $query->where('payment_method', $paymentMethod);
+        }
+        $payments = $query->get();
+
+        $paymentTotal = 0;
+
+        foreach ($payments as $payment) {
+            $paymentTotal += $payment->payment_total;
+        }
+        return $paymentTotal;
     }
 }

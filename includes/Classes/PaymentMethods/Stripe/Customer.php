@@ -41,18 +41,49 @@ class Customer
         return false;
     }
 
+    public static function attachPaymentMethod($args, $paymentMethodId)
+    {
+        $stripe = new Stripe();
+        ApiRequest::set_secret_key($stripe->getSecretKey());
+        $response = ApiRequest::request($args, 'payment_methods/'.$paymentMethodId.'/attach', 'POST');
+        return $response;
+    }
+
+    public static function updateCustomer($args, $customerId) {
+        $stripe = new Stripe();
+        ApiRequest::set_secret_key($stripe->getSecretKey());
+        $response = ApiRequest::request($args, 'customers/'.$customerId, 'POST');
+        return $response;
+    }
+
     public static function validate($args)
     {
         $errors = array();
         // check if the currency is right or not
-        if(empty($args['source'])) {
-            $errors['source'] = __('Stripe token is required', 'wppayform');
+        if(empty($args['source'])  && empty($args['payment_method'])) {
+            $errors['source'] = __('Stripe token/payment_method is required', 'wppayform');
         }
         return $errors;
     }
 
+    public static function getCustomer($customerId, $args = [])
+    {
+        $stripe = new Stripe();
+        ApiRequest::set_secret_key($stripe->getSecretKey());
+
+        $response = ApiRequest::request($args, 'customers/'.$customerId, 'GET');
+        return $response;
+    }
+
     private static function errorHandler($code, $message, $data = array()) {
         return new \WP_Error($code, $message, $data);
+    }
+
+
+    public static function createInvoice($args)
+    {
+        $response = ApiRequest::request($args, 'invoices', 'POST');
+        return $response;
     }
 
 }

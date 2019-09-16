@@ -75,7 +75,6 @@ class StripeCardElementComponent extends BaseComponent
                 'checkout_display_style' => array(
                     'style'                 => 'stripe_checkout',
                     'require_billing_info'  => 'no',
-                    'require_shipping_info' => 'no'
                 )
             )
         );
@@ -89,14 +88,27 @@ class StripeCardElementComponent extends BaseComponent
                 gateway from <b>WPPayFroms->Settings->Stripe Settings</b> to start accepting payments</p>
             <?php return;
         }
-
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
         if (!$fieldOptions) {
             return;
         }
         $checkOutStyle = ArrayHelper::get($fieldOptions, 'checkout_display_style.style', 'stripe_checkout');
+
+        $inputId = 'wpf_input_' . $form->ID . '_' . $this->elementName;
+        add_filter('wppayform/checkout_vars', function ($vars) use ($checkOutStyle, $form, $fieldOptions, $inputId) {
+            if($vars['form_id'] == $form->ID) {
+                $vars['stripe_checkout_style'] = $checkOutStyle;
+                $vars['stripe_verify_zip'] = ArrayHelper::get($fieldOptions, 'verify_zip');
+                $vars['stripe_billing_info']  = ArrayHelper::get($fieldOptions, 'checkout_display_style.require_billing_info');
+                $vars['stripe_shipping_info'] = ArrayHelper::get($fieldOptions, 'checkout_display_style.require_shipping_info');
+                $vars['stripe_element_id'] = $inputId;
+            }
+            return $vars;
+        });
+
+        wp_enqueue_script('stripe_elements', 'https://js.stripe.com/v3/', array('jquery'), '3.0', true);
+
         if ($checkOutStyle == 'stripe_checkout') {
-            wp_enqueue_script('stripe_checkout', 'https://checkout.stripe.com/checkout.js', array('jquery'), '3.0', true);
             $atrributes = array(
                 'data-checkout_style'        => $checkOutStyle,
                 'data-wpf_payment_method'    => 'stripe',
@@ -105,14 +117,12 @@ class StripeCardElementComponent extends BaseComponent
                 'data-require_billing_info'  => ArrayHelper::get($fieldOptions, 'checkout_display_style.require_billing_info'),
                 'data-require_shipping_info' => ArrayHelper::get($fieldOptions, 'checkout_display_style.require_shipping_info')
             );
-            echo '
-        <div style="display:none !important; visibility: hidden !important;" ' . $this->builtAttributes($atrributes) . ' class="wpf_stripe_checkout"></div>';
+            echo '<div style="display:none !important; visibility: hidden !important;" ' . $this->builtAttributes($atrributes) . ' class="wpf_stripe_checkout"></div>';
             return;
-        } else {
-            wp_enqueue_script('stripe_elements', 'https://js.stripe.com/v3/', array('jquery'), '3.0', true);
         }
+
+
         $inputClass = $this->elementInputClass($element);
-        $inputId = 'wpf_input_' . $form->ID . '_' . $this->elementName;
         $label = ArrayHelper::get($fieldOptions, 'label');
         $attributes = array(
             'data-checkout_style'     => $checkOutStyle,

@@ -8,7 +8,7 @@ use WPPayForm\Classes\Models\Submission;
 use WPPayForm\Classes\Models\SubmissionActivity;
 use WPPayForm\Classes\Models\Subscription;
 use WPPayForm\Classes\Models\Transaction;
-use WPPayForm\Classes\PaymentMethods\Stripe\Plan;
+use WPPayForm\Classes\PaymentMethods\Stripe\Stripe;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -27,6 +27,7 @@ class SubmissionHandler
     public function handeSubmission()
     {
         parse_str($_REQUEST['form_data'], $form_data);
+
         // Now Validate the form please
         $formId = absint($_REQUEST['form_id']);
         // Get Original Form Elements Now
@@ -48,18 +49,27 @@ class SubmissionHandler
 
         $this->selectedPaymentMethod = $paymentMethod;
 
+
         // Extract Payment Items Here
         $paymentItems = array();
         $subscriptionItems = array();
 
         foreach ($formattedElements['payment'] as $paymentId => $payment) {
             $quantity = $this->getItemQuantity($formattedElements['item_quantity'], $paymentId, $form_data);
+            if ($quantity == 0) {
+                continue;
+            }
             if ($payment['type'] == 'recurring_payment_item') {
                 $subscription = $this->getSubscriptionLine($payment, $paymentId, $quantity, $form_data, $formId);
-                $subscriptionItems = array_merge($subscriptionItems, $subscription);
+                if(!empty($subscription['type']) && $subscription['type'] == 'single') {
+                    // We converted this as one time payment
+                    $paymentItems[] = $subscription;
+                } else {
+                    $subscriptionItems = array_merge($subscriptionItems, $subscription);
+                }
             } else {
                 $lineItems = $this->getPaymentLine($payment, $paymentId, $quantity, $form_data);
-                if($lineItems) {
+                if ($lineItems) {
                     $paymentItems = array_merge($paymentItems, $lineItems);
                 }
             }
@@ -68,14 +78,13 @@ class SubmissionHandler
         $paymentItems = apply_filters('wppayform/submitted_payment_items', $paymentItems, $formattedElements, $form_data);
         $subscriptionItems = apply_filters('wppayform/submitted_subscription_items', $subscriptionItems, $formattedElements, $form_data);
 
-
         /*
          * providing filter hook for payment method to push some payment data
          *  from $subscriptionItems
          * Some PaymentGateway like stripe may add signup fee as one time fee
          */
-        if($subscriptionItems) {
-            $paymentItems = apply_filters('wppayform/submitted_payment_items_'.$paymentMethod, $paymentItems, $formattedElements, $form_data, $subscriptionItems);
+        if ($subscriptionItems) {
+            $paymentItems = apply_filters('wppayform/submitted_payment_items_' . $paymentMethod, $paymentItems, $formattedElements, $form_data, $subscriptionItems);
         }
 
         // Extract Input Items Here
@@ -109,20 +118,24 @@ class SubmissionHandler
             exit;
         }
 
-        $currencySetting = Forms::getCurrencySettings($formId);
-        $currency = $currencySetting['currency'];
-        $inputItems = apply_filters('wppayform/submission_data_formatted', $inputItems, $form_data, $formId);
-
-        if (isset($form_data['__stripe_billing_address_json'])) {
-            $address = json_decode($form_data['__stripe_billing_address_json'], true);
-            if (!$this->customerName && isset($address['name'])) {
-                $this->customerName = $address['name'];
+        if ($formattedElements['payment_method_element'] && $paymentMethod == 'stripe' && ($paymentTotal || $subscriptionItems)) {
+            // do verification for stripe stripe_inline
+            // We have to see if __stripe_payment_method_id has value or not
+            $stripe = new Stripe();
+            $methodStyle = $stripe->getStripePaymentMethodByElement($formattedElements['payment_method_element']);
+            if ($methodStyle == 'stripe_inline') {
+                if (empty($form_data['__stripe_payment_method_id'])) {
+                    wp_send_json_error(array(
+                        'message' => __('Validation failed, Please fill up card details', 'wppayform')
+                    ), 423);
+                    exit;
+                }
             }
         }
 
-        if (!$this->customerEmail && isset($form_data['__stripe_user_email'])) {
-            $this->customerEmail = $address['__stripe_user_email'];
-        }
+        $currencySetting = Forms::getCurrencySettings($formId);
+        $currency = $currencySetting['currency'];
+        $inputItems = apply_filters('wppayform/submission_data_formatted', $inputItems, $form_data, $formId);
 
         $submission = array(
             'form_id'             => $formId,
@@ -152,19 +165,29 @@ class SubmissionHandler
 
         $submission = apply_filters('wppayform/create_submission_data', $submission, $formId, $form_data);
 
-        do_action('wppayform/wpf_before_submission_data_insert_' . $paymentMethod, $submission, $form_data);
-        do_action('wppayform/wpf_before_submission_data_insert', $submission, $form_data);
+
+        do_action('wppayform/wpf_before_submission_data_insert_' . $paymentMethod, $submission, $form_data, $paymentItems, $subscriptionItems);
+        do_action('wppayform/wpf_before_submission_data_insert', $submission, $form_data, $paymentItems, $subscriptionItems);
 
         // Insert Submission
         $submissionModel = new Submission();
         $submissionId = $submissionModel->create($submission);
         do_action('wppayform/after_submission_data_insert', $submissionId, $formId);
+
+        /*
+         * Dear Payment method developers,
+         * Please do't use this hook to process the payment
+         * The order items is not porcessed yet!
+         */
+        do_action('wppayform/after_submission_data_insert_' . $paymentMethod, $submissionId, $formId, $formattedElements['payment_method_element']);
+
+
         $submission = $submissionModel->getSubmission($submissionId);
 
         if ($paymentItems || $subscriptionItems) {
             // Insert Payment Items
             $itemModel = new OrderItem();
-            foreach ( $paymentItems as $payItem ) {
+            foreach ($paymentItems as $payItem) {
                 $payItem['submission_id'] = $submissionId;
                 $payItem['form_id'] = $formId;
                 $itemModel->create($payItem);
@@ -177,11 +200,11 @@ class SubmissionHandler
                 $subscription->create($subscriptionItem);
             }
 
-            $hasSubscriptions = (bool) $subscriptionItems;
+            $hasSubscriptions = (bool)$subscriptionItems;
 
             $transactionId = false;
 
-            if($paymentItems) {
+            if ($paymentItems) {
                 // Insert Transaction Item Now
                 $transaction = array(
                     'form_id'        => $formId,
@@ -210,17 +233,21 @@ class SubmissionHandler
             ));
 
             if ($paymentMethod) {
-                do_action( 'wppayform/form_submission_make_payment_' . $paymentMethod, $transactionId, $submissionId, $form_data, $form, $hasSubscriptions );
+                do_action('wppayform/form_submission_make_payment_' . $paymentMethod, $transactionId, $submissionId, $form_data, $form, $hasSubscriptions);
             }
         }
 
+        $this->sendSubmissionConfirmation($submission, $formId);
+    }
+
+    public function sendSubmissionConfirmation($submission, $formId)
+    {
+        $confirmation = $this->getFormConfirmation($formId, $submission);
         do_action('wppayform/after_form_submission_complete', $submission, $formId);
-        $confirmation = Forms::getConfirmationSettings($formId);
-        $confirmation = $this->parseConfirmation($confirmation, $submission);
-        $confirmation = apply_filters('wppayform/form_confirmation', $confirmation, $submissionId, $formId);
+
         wp_send_json_success(array(
             'message'       => __('Form is successfully submitted', 'wppayform'),
-            'submission_id' => $submissionId,
+            'submission_id' => $submission->id,
             'confirmation'  => $confirmation
         ), 200);
     }
@@ -266,27 +293,32 @@ class SubmissionHandler
         }
 
         // Maybe validate recatcha
-        if(!$errors) {
+        $formEvents = [];
+        if (!$errors) {
             $recaptchaType = Forms::recaptchaType($formId);
-            if($recaptchaType == 'v2_visible' || $recaptchaType == 'v3_invisible') {
+            if ($recaptchaType == 'v2_visible' || $recaptchaType == 'v3_invisible') {
                 // let's validate recaptcha here
                 $recaptchaSettings = GeneralSettings::getRecaptchaSettings();
                 $ip_address = $this->getIp();
-                $response = wp_remote_get( add_query_arg( array(
+                $response = wp_remote_get(add_query_arg(array(
                     'secret'   => $recaptchaSettings['secret_key'],
-                    'response' => isset( $form_data['g-recaptcha-response'] ) ? $form_data['g-recaptcha-response'] : '',
+                    'response' => isset($form_data['g-recaptcha-response']) ? $form_data['g-recaptcha-response'] : '',
                     'remoteip' => $ip_address
-                ), 'https://www.google.com/recaptcha/api/siteverify' ) );
-                if ( is_wp_error( $response ) || empty( $response['body'] ) || ! ( $json = json_decode( $response['body'] ) ) || ! $json->success ) {
+                ), 'https://www.google.com/recaptcha/api/siteverify'));
+
+                if (is_wp_error($response) || empty($response['body']) || !($json = json_decode($response['body'])) || !$json->success) {
                     $errors['g-recaptcha-response'] = __('reCaptcha validation failed. Please try again.', 'wppayform');
+                    $formEvents[] = 'refresh_recaptcha';
                 }
+
             }
         }
         $errors = apply_filters('wppayform/form_submission_validation_errors', $errors, $formId, $formattedElements);
         if ($errors) {
             wp_send_json_error(array(
-                'message' => __('Form Validation failed', 'wppayform'),
-                'errors'  => $errors
+                'message'     => __('Form Validation failed', 'wppayform'),
+                'errors'      => $errors,
+                'form_events' => $formEvents
             ), 423);
         }
 
@@ -374,7 +406,7 @@ class SubmissionHandler
     private function getSubscriptionLine($payment, $paymentId, $quantity, $formData, $formId)
     {
 
-        if(!defined('WPPAYFORM_PRO_INSTALLED')) {
+        if (!defined('WPPAYFORM_PRO_INSTALLED')) {
             return [];
         }
 
@@ -398,40 +430,57 @@ class SubmissionHandler
             return array();
         }
 
-        if(ArrayHelper::get($plan, 'user_input') == 'yes') {
-            $plan['subscription_amount'] = ArrayHelper::get($formData, $paymentId.'__'.$paymentIndex);
+        if (ArrayHelper::get($plan, 'user_input') == 'yes') {
+            $plan['subscription_amount'] = ArrayHelper::get($formData, $paymentId . '__' . $paymentIndex);
         }
 
-        $daysToExpiration = absint($plan['billing_days_period']);
-        if ($plan['trial_days']) {
-            $daysToExpiration = absint($daysToExpiration);
-        }
 
-        $expirationDate = gmdate('Y-m-d H:i:s', time() + $daysToExpiration * 86400);
+        if ($plan['bill_times'] == 1) {
+            // We can convert this as one time payment
+            // This plan should not have trial
+            if ($plan['has_trial_days'] != 'yes') {
+                $signupFee = 0;
+                if($plan['has_signup_fee'] == 'yes') {
+                    $signupFee = wpPayFormConverToCents($plan['signup_fee']);
+                }
+                $onetimeTotal = $signupFee + wpPayFormConverToCents($plan['subscription_amount']);
+                return [
+                    'type' => 'single',
+                    'parent_holder' => $paymentId,
+                    'item_name' => $label,
+                    'quantity' => $quantity,
+                    'item_price' => $onetimeTotal,
+                    'line_total' => $quantity * $onetimeTotal,
+                    'created_at'       => gmdate('Y-m-d H:i:s'),
+                    'updated_at'       => gmdate('Y-m-d H:i:s')
+                ];
+            }
+        }
 
         $subscription = array(
-            'element_id'          => $paymentId,
-            'item_name'           => $label,
-            'form_id'             => $formId,
-            'plan_name'           => $plan['name'],
-            'billing_interval'    => $plan['billing_interval'],
-            'trial_days'          => 0,
-            'recurring_amount'    => wpPayFormConverToCents($plan['subscription_amount']),
-            'bill_times'          => $plan['bill_times'],
-            'initial_amount'      => 0,
-            'status'              => 'pending',
-            'original_plan'       => maybe_serialize($plan),
-            'expiration_at'       => $expirationDate,
-            'created_at'          => gmdate('Y-m-d H:i:s'),
-            'updated_at'          => gmdate('Y-m-d H:i:s'),
+            'element_id'       => $paymentId,
+            'item_name'        => $label,
+            'form_id'          => $formId,
+            'plan_name'        => $plan['name'],
+            'billing_interval' => $plan['billing_interval'],
+            'trial_days'       => 0,
+            'recurring_amount' => wpPayFormConverToCents($plan['subscription_amount']),
+            'bill_times'       => $plan['bill_times'],
+            'initial_amount'   => 0,
+            'status'           => 'pending',
+            'original_plan'    => maybe_serialize($plan),
+            'created_at'       => gmdate('Y-m-d H:i:s'),
+            'updated_at'       => gmdate('Y-m-d H:i:s'),
         );
 
-        if($plan['has_signup_fee'] == 'yes' && $plan['signup_fee']) {
+        if (ArrayHelper::get($plan, 'has_signup_fee') == 'yes' && ArrayHelper::get($plan, 'signup_fee')) {
             $subscription['initial_amount'] = wpPayFormConverToCents($plan['signup_fee']);
         }
 
-        if($plan['has_trial_days'] == 'yes' && $plan['trial_days']) {
+        if (ArrayHelper::get($plan, 'has_trial_days') == 'yes' && ArrayHelper::get($plan, 'trial_days')) {
             $subscription['trial_days'] = $plan['trial_days'];
+            $expirationDate = gmdate('Y-m-d H:i:s', time() + absint($plan['trial_days']) * 86400);
+            $subscription['expiration_at'] = $expirationDate;
         }
 
         $allSubscriptions = [$subscription];
@@ -475,6 +524,13 @@ class SubmissionHandler
         } else if ($confirmation['redirectTo'] == 'samePage') {
             do_action('wppayform/require_entry_html');
             $confirmation['messageToShow'] = PlaceholderParser::parse($confirmation['messageToShow'], $submission);
+
+            if (strpos($confirmation['messageToShow'], '[wppayform_reciept]') !== false) {
+                $modifiedShortcode = '[wppayform_reciept hash="' . $submission->submission_hash . '"]';
+                $confirmation['messageToShow'] = str_replace('[wppayform_reciept]', $modifiedShortcode, $confirmation['messageToShow']);
+            }
+
+            $confirmation['messageToShow'] = do_shortcode($confirmation['messageToShow']);
             do_action('wppayform/require_entry_html_done');
         }
         return $confirmation;
@@ -488,5 +544,12 @@ class SubmissionHandler
         $uid .= mt_rand(1, 999);
         $uid = str_replace(array("'", '/', '?', '#', "\\"), '', $uid);
         return $uid;
+    }
+
+    public function getFormConfirmation($formId, $submission)
+    {
+        $confirmation = Forms::getConfirmationSettings($formId);
+        $confirmation = $this->parseConfirmation($confirmation, $submission);
+        return apply_filters('wppayform/form_confirmation', $confirmation, $submission->id, $formId);
     }
 }

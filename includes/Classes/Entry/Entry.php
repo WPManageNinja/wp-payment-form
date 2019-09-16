@@ -6,6 +6,7 @@ namespace WPPayForm\Classes\Entry;
 use WPPayForm\Classes\ArrayHelper;
 use WPPayForm\Classes\Models\Forms;
 use WPPayForm\Classes\Models\OrderItem;
+use WPPayForm\Classes\Models\Submission;
 use WPPayForm\Classes\Models\Subscription;
 use WPPayForm\Classes\View;
 
@@ -25,6 +26,7 @@ class Entry
     protected $formattedInput;
     protected $rawInput;
     protected $formattedFields;
+    protected $patsedItems;
     protected $instance;
     public $default = false;
 
@@ -79,31 +81,8 @@ class Entry
 
     public function getInputFieldsHtmlTable()
     {
-        // We have to make the items as label and value pair first
-        $inputItems = $this->formattedInput;
-        $labels = (array)Forms::getFormInputLabels($this->formId);
-        $items = array();
-        foreach ($inputItems as $itemKey => $item) {
-            $label = $itemKey;
-            if (!empty($labels[$itemKey])) {
-                $label = $labels[$itemKey];
-            }
-
-            if (is_array($item)) {
-                $item = $this->maybeNeedToConverHtml($item, $itemKey);
-                if (is_array($item)) {
-                    $item = implode(', ', $item);
-                }
-            }
-
-            $items[] = array(
-                'label' => $label,
-                'value' => $item
-            );
-        }
-
         return View::make('elements.input_fields_html', array(
-            'items' => $items
+            'items' => $this->getParsedItems()
         ));
     }
 
@@ -204,6 +183,11 @@ class Entry
             return number_format($this->submission->payment_total / 100, 2);
         }
 
+        if ($name == 'payment_receipt') {
+            $receiptHandler = new \WPPayForm\Classes\Builder\PaymentReceipt();
+            return $receiptHandler->render($this->submissionId);
+        }
+
         if (property_exists($this->submission, $name)) {
             if ($name == 'payment_total') {
                 return $this->paymentTotal();
@@ -240,5 +224,17 @@ class Entry
             $this->formattedFields = Forms::getFormattedElements($this->formId);
         }
         return $this->formattedFields;
+    }
+
+    public function getParsedItems()
+    {
+        if($this->patsedItems) {
+            return $this->patsedItems;
+        }
+
+        $submissionModel = new Submission();
+        $parsedItems = $submissionModel->getParsedSubmission($this->submission);
+        $this->patsedItems = $parsedItems;
+        return $this->patsedItems;
     }
 }

@@ -48,8 +48,8 @@ class Render
             $form->recaptcha_site_key = $recaptchaSettings['site_key'];
         }
 
+        $this->registerScripts($form);
 
-        $this->addAssets($form);
         ob_start();
         if ($elements):
             foreach ($elements as $element) {
@@ -64,6 +64,9 @@ class Render
         ob_start();
         $this->renderFormFooter($form);
         $formFooter = ob_get_clean();
+
+        $this->addAssets($form);
+
         $html = $header_html . $form_body . $formFooter;
 
         return apply_filters('wppayform/rendered_form_html', $html, $form);
@@ -179,22 +182,12 @@ class Render
                 </span>
             </button>
             <div class="wpf_loading_svg">
-                <svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg"
-                     xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="30px" height="30px"
-                     viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve"><path opacity="0.2"
-                                                                                                      fill="#000"
-                                                                                                      d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946 s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634 c0-6.425,5.209-11.634,11.634-11.634c6.425,0,11.633,5.209,11.633,11.634C31.834,26.541,26.626,31.749,20.201,31.749z"/>
-                    <path fill="#000"
-                          d="M26.013,10.047l1.654-2.866c-2.198-1.272-4.743-2.012-7.466-2.012h0v3.312h0 C22.32,8.481,24.301,9.057,26.013,10.047z">
-                        <animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 20 20"
-                                          to="360 20 20" dur="0.5s" repeatCount="indefinite"/>
-                    </path></svg>
+                <svg version="1.1" id="loader-1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px" width="30px" height="30px" viewBox="0 0 40 40" enable-background="new 0 0 40 40" xml:space="preserve"><path opacity="0.2" fill="#000" d="M20.201,5.169c-8.254,0-14.946,6.692-14.946,14.946c0,8.255,6.692,14.946,14.946,14.946 s14.946-6.691,14.946-14.946C35.146,11.861,28.455,5.169,20.201,5.169z M20.201,31.749c-6.425,0-11.634-5.208-11.634-11.634 c0-6.425,5.209-11.634,11.634-11.634c6.425,0,11.633,5.209,11.633,11.634C31.834,26.541,26.626,31.749,20.201,31.749z"/><path fill="#000" d="M26.013,10.047l1.654-2.866c-2.198-1.272-4.743-2.012-7.466-2.012h0v3.312h0 C22.32,8.481,24.301,9.057,26.013,10.047z"><animateTransform attributeType="xml" attributeName="transform" type="rotate" from="0 20 20" to="360 20 20" dur="0.5s" repeatCount="indefinite"/></path></svg>
             </div>
         </div>
         <?php do_action('wppayform/form_render_after_submit_button', $form); ?>
         </form>
-        <div style="display: none" class="wpf_form_notices wpf_form_errors"></div>
-        <div style="display: none" class="wpf_form_notices wpf_form_success"></div>
+        <div style="display: none" class="wpf_form_notices"></div>
         <?php do_action('wppayform/form_render_after', $form); ?>
         <?php do_action('wppayform/form_render_after_' . $form->ID, $form); ?>
         </div>
@@ -205,15 +198,15 @@ class Render
 
                     if($form->recaptchaType == 'v3_invisible') {
                         $key = $form->recaptcha_site_key;
-                        $src = 'https://www.google.com/recaptcha/api.js?render='.$key.'&onload=wpfOnloadRecaptchaCallback';
+                        $src = 'https://www.google.com/recaptcha/api.js?render='.$key.'&onload=wpf_onload_recaptcha_callback';
                     } else {
-                        $src = 'https://www.google.com/recaptcha/api.js?onload=wpfOnloadRecaptchaCallback&render=explicit';
+                        $src = 'https://www.google.com/recaptcha/api.js?onload=wpf_onload_recaptcha_callback&render=explicit';
                     }
 
                     add_action('wp_footer', function () use ($src) {
                     ?>
-                        <script src="<?php echo $src; ?>" async defer>
-                     <?php }, 999);
+                        <script src="<?php echo $src; ?>" async defer></script>
+                     <?php }, 11);
                      do_action('wpf_added_recaptcha_script');
                 }
             }
@@ -221,23 +214,14 @@ class Render
 
     private function addAssets($form)
     {
-        do_action('wppayform/wppayform_adding_assets', $form);
-
         $currencySettings = Forms::getCurrencyAndLocale($form->ID);
-        wp_register_script('flatpickr', WPPAYFORM_URL . 'assets/libs/flatpickr/flatpickr.min.js', array(), '4.5.7', true);
-        wp_register_style('flatpickr', WPPAYFORM_URL . 'assets/libs/flatpickr/flatpickr.min.css', array(), '4.5.7', 'all');
-
-        wp_enqueue_script('wppayform_public', WPPAYFORM_URL . 'assets/js/payforms-public.js', array('jquery'), WPPAYFORM_VERSION, true);
+        wp_enqueue_script('wppayform_public', WPPAYFORM_URL . 'assets/js/payforms-publicv2.js', array('jquery'), WPPAYFORM_VERSION, true);
         wp_enqueue_style('wppayform_public', WPPAYFORM_URL . 'assets/css/payforms-public.css', array(), WPPAYFORM_VERSION);
-
         wp_localize_script('wppayform_public', 'wp_payform_' . $form->ID, apply_filters('wppayform/checkout_vars', array(
             'form_id'              => $form->ID,
             'checkout_description' => $form->post_title,
             'currency_settings'    => $currencySettings,
         ), $form));
-
-        wp_register_script('dropzone', WPPAYFORM_URL . 'assets/libs/dropzone/dropzone.min.js', array('jquery'), '5.5.0', true);
-        wp_register_script('wppayform_file_upload', WPPAYFORM_URL . 'assets/js/fileupload.js', array('jquery', 'wppayform_public', 'dropzone'), WPPAYFORM_VERSION, true);
 
         wp_localize_script('wppayform_public', 'wp_payform_general', array(
             'ajax_url'  => admin_url('admin-ajax.php'),
@@ -245,7 +229,7 @@ class Render
                 'previousMonth'    => __('Previous Month', 'wppayform'),
                 'nextMonth'        => __('Next Month', 'wppayform'),
                 'months'           => [
-                    'sorthand' => [
+                    'shorthand' => [
                         __('Jan', 'wppayform'),
                         __('Feb', 'wppayform'),
                         __('Mar', 'wppayform'),
@@ -317,8 +301,25 @@ class Render
                     __('PM', 'wppayform')
                 ],
                 'yearAriaLabel'    => __('Year', 'wppayform')
+            ),
+            'i18n' => array(
+                'verify_recapthca' => __('Please verify recaptcha first', 'wppayform'),
+                'submission_error' => __('Something is wrong when submitting the form', 'wppayform'),
+                'is_required' => __('is required', 'wppayform'),
+                'validation_failed' => __('Validation failed, please fill-up required fields', 'wppayform')
             )
         ));
+    }
+
+    private function registerScripts($form)
+    {
+        do_action('wppayform/wppayform_adding_assets', $form);
+        wp_register_script('flatpickr', WPPAYFORM_URL . 'assets/libs/flatpickr/flatpickr.min.js', array(), '4.5.7', true);
+        wp_register_style('flatpickr', WPPAYFORM_URL . 'assets/libs/flatpickr/flatpickr.min.css', array(), '4.5.7', 'all');
+
+        wp_register_script('dropzone', WPPAYFORM_URL . 'assets/libs/dropzone/dropzone.min.js', array('jquery'), '5.5.0', true);
+        wp_register_script('wppayform_file_upload', WPPAYFORM_URL . 'assets/js/fileupload.js', array('jquery', 'wppayform_public', 'dropzone'), WPPAYFORM_VERSION, true);
+
     }
 
     private function parseText($text, $formId)

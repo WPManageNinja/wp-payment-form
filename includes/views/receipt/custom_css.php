@@ -31,6 +31,17 @@
         border-top: 1px solid #cbcbcb;
     }
 
+    table.input_items_table {
+        border-collapse: collapse;
+    }
+
+    table.input_items_table tr td, table.input_items_table tr th {
+        border: 1px solid #cbcbcb;
+        text-align: left;
+        width: 50%;
+        white-space: pre;
+    }
+
     .wpf_payment_info {
         width: 100%;
         -webkit-box-shadow: 0px -2px #e3e8ee;

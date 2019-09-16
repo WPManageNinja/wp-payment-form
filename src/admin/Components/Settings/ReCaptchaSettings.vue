@@ -34,10 +34,6 @@
                             <el-input type="password" size="small" v-model="settings.secret_key"
                                       placeholder="reCaptcha Secret Key"/>
                         </el-form-item>
-                        <el-form-item label="">
-                            <el-checkbox true-label="yes" false-label="no" v-model="settings.all_forms">Add reCaptcha to all the forms automatically</el-checkbox>
-                            <p style="margin-top: 10px;">If you enable this, reCaptha will be enabled to all the forms automatically. Otherwise, You have to enable recapptcha to each form manually.</p>
-                        </el-form-item>
                     </div>
                     <div class="action_right">
                         <el-button @click="saveSettings()" type="primary" size="small">Save Settings</el-button>

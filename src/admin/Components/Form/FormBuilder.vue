@@ -352,7 +352,7 @@
                 this.$adminPost({
                     action: 'wppayform_forms_admin_ajax',
                     form_id: this.form_id,
-                    builder_settings: this.builder_elements,
+                    builder_settings: JSON.stringify(this.builder_elements),
                     submit_button_settings: this.submit_button_settings,
                     route: 'save_form_builder_settings'
                 })

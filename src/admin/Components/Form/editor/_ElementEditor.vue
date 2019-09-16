@@ -86,6 +86,13 @@
                                 <p v-if="item.info" v-html="item.info"></p>
                             </el-form-item>
                         </template>
+                        <template v-else-if="item.type == 'onetime_products_selector'">
+                            <el-form-item :label="item.label">
+                                <one-time-products-selector :all_elements="all_elements" :item_name="itemName"
+                                               :field_options="element.field_options"/>
+                                <p v-if="item.info" v-html="item.info"></p>
+                            </el-form-item>
+                        </template>
                         <template v-else-if="item.type == 'all_product_selector'">
                             <el-form-item :label="item.label">
                                 <all-item-selector :all_elements="all_elements" :item_name="itemName"
@@ -168,6 +175,7 @@
     import KeyPairOptions from './_key_pair_options';
     import PaymentOptionsSettings from './_PaymentOptions'
     import ItemSelector from './_ProductSelector';
+    import OneTimeProductsSelector from './_OnetimeProductsSelector';
     import AllItemSelector from './_AllProductSelector';
     import CheckoutDisplayOption from './_StripeCheckoutSettings';
     import PaymentMethodChoice from './_payment_method_settings';
@@ -186,7 +194,8 @@
             TabularProducts,
             popover,
             RecurringItem,
-            AllItemSelector
+            AllItemSelector,
+            OneTimeProductsSelector
         },
         props: ['element', 'all_elements'],
         comments: {

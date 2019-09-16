@@ -174,7 +174,7 @@
     }
   }
 
-  .el-menu--horizontal>.el-menu-item {
+  .el-menu--horizontal > .el-menu-item {
     height: 50px;
     line-height: 50px;
   }
@@ -326,6 +326,7 @@ table.el-table__header thead tr th {
   text-align: right;
   margin-top: 20px;
 }
+
 .has_payments_table {
   .el-table {
     .wpf_row_paid {
@@ -339,7 +340,6 @@ table.el-table__header thead tr th {
     }
   }
 }
-
 
 .wpf_entry_actions {
   padding: 15px 0px;
@@ -613,9 +613,11 @@ a.el-button {
     margin-top: 15px;
   }
 }
+
 .wpf_capitalize {
   text-transform: capitalize;
 }
+
 .text-center {
   text-align: center;
 }
@@ -625,7 +627,6 @@ a.el-button {
   text-align: right;
   display: inline-block;
 }
-
 
 .wpf_field_group {
   display: block;
@@ -662,7 +663,6 @@ a.el-button {
   }
 }
 
-
 .wpf_settings_section {
   padding: 10px;
   background: rgb(247, 250, 252);
@@ -685,9 +685,11 @@ a.el-button {
   margin: 0px;
   padding: 10px 20px;
 }
+
 .empty_builder_items {
   text-align: right;
 }
+
 main.el-main.no_shadow {
   box-shadow: none;
 }
@@ -697,11 +699,13 @@ main.el-main.no_shadow {
   transition: all .8s;
   max-height: 100vh;
 }
+
 .slide-down-leave-active {
   transition: all .3s;
   max-height: 100vh;
 
 }
+
 .slide-down-enter, .slide-down-leave-to {
   max-height: 0;
 }
@@ -730,7 +734,6 @@ main.el-main.no_shadow {
     }
   }
 }
-
 
 .method_wrapper {
   display: block;
@@ -794,7 +797,7 @@ main.el-main.no_shadow {
           margin-bottom: 30px;
           margin-left: 20px;
           list-style: disc;
-          li  a{
+          li a {
             text-decoration: none;
           }
         }
@@ -843,6 +846,7 @@ main.el-main.no_shadow {
     }
   }
 }
+
 label.el-form-item__label {
   line-height: 100%;
   padding-bottom: 5px !important;
@@ -851,13 +855,16 @@ label.el-form-item__label {
 .el-notification.right {
   z-index: 99999999 !important;
 }
+
 .notification_edit {
   padding: 15px 20px;
 }
+
 .submit_btn_right {
   text-align: right;
   margin-top: 30px;
 }
+
 .payform_hide_valdate_messages {
   .el-form-item.is-error .el-input__inner, .el-form-item.is-error .el-input__inner:focus, .el-form-item.is-error .el-textarea__inner, .el-form-item.is-error .el-textarea__inner:focus, .el-form-item.is-success .el-input__inner, .el-form-item.is-success .el-input__inner:focus, .el-form-item.is-success .el-textarea__inner, .el-form-item.is-success .el-textarea__inner:focus {
     border-color: #dcdfe6;
@@ -944,6 +951,7 @@ label.el-form-item__label {
 .wpf_min_width {
   min-width: 500px;
 }
+
 @media screen and (max-width: 769px) {
   table.el-table__body .row-actions {
     display: block !important;
@@ -1020,7 +1028,7 @@ label.el-form-item__label {
   }
 }
 
-.checkbox_new_lined .el-checkbox{
+.checkbox_new_lined .el-checkbox {
   display: block;
   margin-bottom: 10px;
 }
@@ -1132,9 +1140,11 @@ label.el-form-item__label {
     background-color: #f7fafc;
   }
 }
+
 span.table_payment_amount {
   font-size: 16px;
 }
+
 .space_left_15 {
   margin-left: 15px;
 }
@@ -1148,7 +1158,6 @@ span.table_payment_amount {
     }
   }
 }
-
 
 .wpf_submisson_body:not(.wpf_hide_sidebar) {
   display: block;
@@ -1185,7 +1194,6 @@ ul.wpf_no_style {
   }
 }
 
-
 .wpf_photo_holder {
   button {
     margin: 0px;
@@ -1197,8 +1205,6 @@ ul.wpf_no_style {
     box-shadow: 1px 1px 2px 2px #d4d4d4;
   }
 }
-
-
 
 .tablular_headings {
   display: block;
@@ -1248,11 +1254,11 @@ table.ninja_filter_table {
     border: 1px solid gray;
     border-bottom: 0px;
     /* Permalink - use to edit and share this gradient: https://colorzilla.com/gradient-editor/#eeeeee+0,cccccc+100;Gren+3D */
-    background: rgb(238,238,238); /* Old browsers */
-    background: -moz-linear-gradient(top,  rgba(238,238,238,1) 0%, rgba(204,204,204,1) 100%); /* FF3.6-15 */
-    background: -webkit-linear-gradient(top,  rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%); /* Chrome10-25,Safari5.1-6 */
-    background: linear-gradient(to bottom,  rgba(238,238,238,1) 0%,rgba(204,204,204,1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
-    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#eeeeee', endColorstr='#cccccc',GradientType=0 ); /* IE6-9 */
+    background: rgb(238, 238, 238); /* Old browsers */
+    background: -moz-linear-gradient(top, rgba(238, 238, 238, 1) 0%, rgba(204, 204, 204, 1) 100%); /* FF3.6-15 */
+    background: -webkit-linear-gradient(top, rgba(238, 238, 238, 1) 0%, rgba(204, 204, 204, 1) 100%); /* Chrome10-25,Safari5.1-6 */
+    background: linear-gradient(to bottom, rgba(238, 238, 238, 1) 0%, rgba(204, 204, 204, 1) 100%); /* W3C, IE10+, FF16+, Chrome26+, Opera12+, Safari7+ */
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#cccccc', GradientType=0); /* IE6-9 */
     border-top-left-radius: 7px;
     border-top-right-radius: 7px;
     .wpf_tab {
@@ -1286,6 +1292,12 @@ table.ninja_filter_table {
         display: none;
       }
     }
+  }
+}
+
+.wpf_plan_cards {
+  .wpf_plan_actions {
+    margin-bottom: 20px;
   }
 }
 
