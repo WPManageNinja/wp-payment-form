@@ -21,6 +21,9 @@ class FileHandler
         foreach ($rules as $ruleName => $ruleValue) {
             if ($ruleName == 'extensions') {
                 $fileExtension = $this->file->guessExtension();
+                if(in_array('.mp3', $ruleValue)) {
+                    $ruleValue[] = '.mpga';
+                }
                 if (!in_array('.' . $fileExtension, $ruleValue)) {
                     $errors[$ruleName] = __('Invalid File Extension');
                 }
