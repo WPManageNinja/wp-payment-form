@@ -59,6 +59,7 @@ class ApiRequest
             'name'    => 'WP PayForm',
             'version' => WPPAYFORM_VERSION,
             'url'     => 'https://wpmanageninja.com/downloads/wppayform-pro-wordpress-payments-form-builder/',
+            'partner_id' => 'pp_partner_FN62GfRLM2Kx5d'
         );
         return array(
             'lang'         => 'php',
