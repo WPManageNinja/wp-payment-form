@@ -89,6 +89,7 @@ class StripeHostedHandler extends StripeHandler
             $checkoutArgs['payment_intent_data'] = [
                 'capture_method' => 'automatic',
                 'description'    => $form->post_title,
+                'metadata'       => $this->getIntentMetaData($submission)
             ];
         }
 
@@ -469,6 +470,23 @@ class StripeHostedHandler extends StripeHandler
         echo '<div class="frameless_body_header">' . $paymentHeader . '</div>';
         echo do_shortcode($confirmation['messageToShow']);
         return;
+    }
+    private function getIntentMetaData($submission)
+    {
+        $metadata = [
+            'Submission ID' => $submission->id,
+            'Form ID'       => $submission->form_id
+        ];
+
+        if ($submission->customer_email) {
+            $metadata['customer_email'] = $submission->customer_email;
+        }
+
+        if ($submission->customer_name) {
+            $metadata['customer_name'] = $submission->customer_name;
+        }
+
+        return apply_filters('wppayform/stripe_onetime_payment_metadata', $metadata, $submission);
     }
 
 }
