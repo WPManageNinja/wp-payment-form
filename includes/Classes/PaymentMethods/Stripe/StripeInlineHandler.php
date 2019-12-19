@@ -76,8 +76,8 @@ class StripeInlineHandler extends StripeHandler
             wp_send_json_success([
                 'call_next_method' => 'stripeSetupItent',
                 'submission_id'    => $submissionId,
-                'customer_name' => $submission->customer_name,
-                'customer_email' => $submission->customer_email,
+                'customer_name'    => $submission->customer_name,
+                'customer_email'   => $submission->customer_email,
                 'client_secret'    => $setupIntent->client_secret,
                 'message'          => __('Verifying your card details. Please wait...', 'wppayform')
             ], 200);
@@ -139,7 +139,7 @@ class StripeInlineHandler extends StripeHandler
             $this->handlePaymentSuccess($confirmation, $transaction, $submission, 'confirmation');
         } else {
             $form = Forms::getForm($submission->form_id);
-            $message = 'Payment has been failed. '.$confirmation->error->message;
+            $message = 'Payment has been failed. ' . $confirmation->error->message;
             return $this->handlePaymentChargeError($message, $submission, $form, $confirmation, 'payment_error');
         }
 
@@ -207,7 +207,7 @@ class StripeInlineHandler extends StripeHandler
 
         } else if ($intent->status == 'succeeded') {
             // Payment is succcess here
-            return  $this->handlePaymentSuccess($intent, $transaction, $submission);
+            return $this->handlePaymentSuccess($intent, $transaction, $submission);
         } else {
             wp_send_json_error(array(
                 'message'       => __('Payment Failed! Invalid PaymentIntent status', 'wppayform'),
@@ -335,6 +335,11 @@ class StripeInlineHandler extends StripeHandler
                 'description'         => $form->post_title,
                 'metadata'            => $this->getIntentMetaData($submission)
             ];
+
+            if($submission->customer_email) {
+                $intendArgs['receipt_email'] = $submission->customer_email;
+            }
+            
             $this->handlePaymentItentCharge($transaction, $submission, $intendArgs);
             $transaction = $transactionModel->getLatestTransaction($submission->id);
         }
