@@ -63,7 +63,7 @@
 
                         </template>
                     </el-table-column>
-                    <el-table-column label="Craete Date" width="120">
+                    <el-table-column label="Create Date" width="120">
                         <template slot-scope="scope">
                             {{scope.row.post_date_gmt | dateFormat}}
                         </template>
