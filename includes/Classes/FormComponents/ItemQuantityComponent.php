@@ -14,6 +14,7 @@ class ItemQuantityComponent extends BaseComponent
     {
         parent::__construct('item_quantity', 5);
         add_filter('wppayform/validate_component_on_save_item_quantity', array($this, 'validateOnSave'), 1, 3);
+        add_filter('wppayform/validate_data_on_submission_item_quantity', array($this, 'validateOnSubmission'), 1, 4);
     }
 
     public function component()
@@ -94,6 +95,35 @@ class ItemQuantityComponent extends BaseComponent
         return $error;
     }
 
+    public function validateOnSubmission($error, $elementId, $element, $form_data)
+    {
+        if($error) {
+            return $error;
+        }
+        // Check if Min & max valid with data
+        $itemValue = ArrayHelper::get($form_data, $elementId);
+
+        if(!$itemValue) {
+            return $error;
+        }
+
+        $minValue = ArrayHelper::get($element, 'options.min_value');
+        $maxValue = ArrayHelper::get($element, 'options.max_value');
+
+        $formId = ArrayHelper::get($form_data, '__wpf_form_id');
+        // check the min value
+        if($minValue && $itemValue < $minValue) {
+            $errorText = sprintf( __('need to be greater or equal %d', 'wppayform'), $minValue);
+            return $this->getErrorLabel($element, $formId, $errorText);
+        }
+
+        if($maxValue && $itemValue > $maxValue) {
+            $errorText = sprintf( __('need to be less than or equal %d', 'wppayform'), $maxValue);
+            return $this->getErrorLabel($element, $formId, $errorText);
+        }
+        return $error;
+    }
+
     public function render($element, $form, $elements)
     {
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
@@ -122,7 +152,8 @@ class ItemQuantityComponent extends BaseComponent
             'max'                 => ArrayHelper::get($fieldOptions, 'max_value'),
             'class'               => $inputClass . ' wpf_item_qty',
             'data-target_product' => ArrayHelper::get($fieldOptions, 'target_product'),
-            'id'                  => $inputId
+            'id'                  => $inputId,
+            'autocomplete'        => 'off'
         );
 
         if (ArrayHelper::get($fieldOptions, 'required') == 'yes') {
@@ -139,4 +170,5 @@ class ItemQuantityComponent extends BaseComponent
         </div>
         <?php
     }
+
 }

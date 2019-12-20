@@ -285,11 +285,18 @@ class SubmissionHandler
         }
         // Validate Item Quanity Elements
         foreach ($formattedElements['item_quantity'] as $elementId => $element) {
+            $error = '';
             if (isset($form_data[ArrayHelper::get($element, 'options.target_product')])) {
                 if (ArrayHelper::get($element, 'options.required') == 'yes' && empty($form_data[$elementId])) {
-                    $errors[$elementId] = $this->getErrorLabel($element, $formId);
+                    $error = $this->getErrorLabel($element, $formId);
                 }
             }
+
+            $error = apply_filters('wppayform/validate_data_on_submission_' . $element['type'], $error, $elementId, $element, $form_data);
+            if ($error) {
+                $errors[$elementId] = $error;
+            }
+
         }
 
         // Maybe validate recatcha

@@ -38,6 +38,7 @@ class Render
         $form->scheduleing_settings = Forms::getSchedulingSettings($formId);
 
         $elements = Forms::getBuilderSettings($formId);
+
         $form->designSettings = Forms::getDesignSettings($formId);
         $form->asteriskPosition = $form->designSettings['asteriskPlacement'];
 

@@ -347,4 +347,20 @@ abstract class BaseComponent
 
     abstract function render($element, $form, $elements);
 
+    public function getErrorLabel($element, $formId, $labelSufix = '')
+    {
+        if(!$labelSufix) {
+            $labelSufix = __('is required', 'wppayform');
+        }
+        $label = ArrayHelper::get($element, 'options.label');
+        if (!$label) {
+            $label = ArrayHelper::get($element, 'options.placeholder');
+            if (!$label) {
+                $label = $element['id'];
+            }
+        }
+        $label = $label .' '.$labelSufix;
+        return apply_filters('wppayform/error_label_text', $label, $element, $formId);
+    }
+
 }
