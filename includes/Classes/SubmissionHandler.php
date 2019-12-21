@@ -28,6 +28,7 @@ class SubmissionHandler
     {
         parse_str($_REQUEST['form_data'], $form_data);
 
+
         // Now Validate the form please
         $formId = absint($_REQUEST['form_id']);
         // Get Original Form Elements Now
@@ -431,6 +432,7 @@ class SubmissionHandler
         $pricings = ArrayHelper::get($payment, 'options.recurring_payment_options.pricing_options');
 
         $paymentIndex = $formData[$paymentId];
+
         $plan = $pricings[$paymentIndex];
 
         if (!$plan) {
@@ -440,7 +442,6 @@ class SubmissionHandler
         if (ArrayHelper::get($plan, 'user_input') == 'yes') {
             $plan['subscription_amount'] = ArrayHelper::get($formData, $paymentId . '__' . $paymentIndex);
         }
-
 
         if ($plan['bill_times'] == 1) {
             // We can convert this as one time payment

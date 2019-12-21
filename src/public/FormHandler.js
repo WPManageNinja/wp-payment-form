@@ -21,7 +21,7 @@ class PayFormHandler {
     initForm() {
         // Init Calculate Payments and on change re-calculate
         this.calculatePayments();
-        this.form.find('.wpf_payment_item, .wpf_item_qty, .wpf_tabular_qty').on('change', () => {
+        this.form.find('.wpf_payment_item, .wpf_item_qty, .wpf_tabular_qty').on('change', (e) => {
             this.calculatePayments();
         });
         this.initPaymentMethodChange();
@@ -486,6 +486,7 @@ class PayFormHandler {
     calculatePayments() {
         let form = this.form;
         let elements = form.find('.wpf_payment_item');
+
         let itemTotalValue = {};
 
         let subscriptonAmountTotal = 0;
@@ -505,7 +506,7 @@ class PayFormHandler {
                 }
             }
             else if (elementType == 'hidden') {
-                let itemValue = $elem.data('price');
+                let itemValue = $elem.attr('data-price');
                 if (itemValue) {
                     itemTotalValue[elementName] = parseInt(itemValue);
                 }
@@ -828,12 +829,10 @@ class PayFormHandler {
             var $el = jQuery(this);
             var value = parseInt($el.val() * 100);
             var $hiddenEl = $el.parent().find('.wpf_payment_item');
-            $hiddenEl.data('subscription_amount', value);
-
+            $hiddenEl.attr('data-subscription_amount', value);
             var totalAmount = value + parseInt($el.data('initial_amount'));
-            $hiddenEl.data('price', totalAmount);
-
-            $el.closest('.wpf_form_group').find('.wpf_dynamic_input_amount').html(formatPrice(value, formSettings.currency_settings))
+            $hiddenEl.attr('data-price', totalAmount);
+            $el.closest('.wpf_form_group').find('.wpf_dynamic_input_amount, .wpfbs_subscription_amount').html(formatPrice(value, formSettings.currency_settings))
             $hiddenEl.trigger('change');
         });
         form.find('.wpf_custom_subscription_amount').on('change', function () {

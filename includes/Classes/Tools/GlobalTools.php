@@ -106,11 +106,11 @@ class GlobalTools
             ), 423);
         }
 
-        add_action('wppayform/before_form_json_import', $form);
+        do_action('wppayform/before_form_json_import', $form);
 
         $newForm = $this->createFormFromData($form);
 
-        add_action('wppayform/form_json_imported', $newForm);
+        do_action('wppayform/form_json_imported', $newForm);
 
         wp_send_json_success(array(
             'message' => 'Form successfully imported',
@@ -143,9 +143,7 @@ class GlobalTools
                 update_post_meta($postId, $metaKey, $metaValue);
             }
         }
-
         $newForm = Forms::getForm($postId);
-
         return $newForm;
 
     }
