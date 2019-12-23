@@ -82,6 +82,17 @@ class PlaceholderParser
         return str_replace(array_keys($formatedParsedItems), array_values($formatedParsedItems), $string);
     }
 
+    public static function parseArray($arrayItems, $submission) {
+        if(is_array($arrayItems)) {
+            foreach ($arrayItems as $key => $item) {
+                if(!is_array($item)) {
+                    $arrayItems[$key] = self::parse($item, $submission);
+                }
+            }
+        }
+        return $arrayItems;
+    }
+
     public static function parseInpuFields($placeholders, $entry)
     {
         $parsedData = array();
