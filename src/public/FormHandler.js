@@ -385,103 +385,6 @@ class PayFormHandler {
         });
     }
 
-    // Subscription Item Handlers
-    maybeSubscriptionSetup() {
-        let form = this.form;
-
-        // Handle Radio Button Select
-        function checkForRadio(element) {
-            let elementName = jQuery(element).attr('name');
-            let selectedIndex = jQuery(element).val();
-            let $wrapper = jQuery(element).closest('.wpf_subscription_controls_radio');
-            $wrapper.find('.wpf_subscription_plan_summary_item').hide();
-            $wrapper.find('.wpf_subscription_plan_summary_' + elementName + ' .wpf_subscription_plan_index_' + selectedIndex).show();
-
-            $wrapper.find('.subscription_radio_custom').hide();
-            $wrapper.find('.subscription_radio_custom_' + selectedIndex).show();
-        }
-
-        jQuery.each(form.find('.wpf_subscription_controls_radio input:checked'), function (index, element) {
-            checkForRadio(element);
-        });
-
-        this.form.find('.wpf_subscription_controls_radio input[type=radio]').on('change', function () {
-            checkForRadio(this);
-        });
-
-        // Handle Selection Button Select
-        function checkForSelections(element) {
-            let elementName = jQuery(element).attr('id');
-            let selectedIndex = jQuery(element).val();
-            form.find('.wpf_subscription_plan_summary_' + elementName + ' .wpf_subscription_plan_summary_item').hide();
-            form.find('.wpf_subscription_plan_summary_' + elementName + ' .wpf_subscription_plan_index_' + selectedIndex).show();
-        }
-
-        jQuery.each(this.form.find('.wpf_subscrion_plans_select option:selected'), function (index, element) {
-            if (jQuery(element).attr('value') != '') {
-                checkForSelections(jQuery(element).parent());
-            }
-        });
-
-        form.find('.wpf_subscrion_plans_select select').on('change', function () {
-            checkForSelections(this);
-        });
-    }
-
-    maybeCustomSubscriptionItemSetup() {
-        var that = this;
-        this.form.find('.wpf_custom_subscription_input').on('keyup', function () {
-            var $el = jQuery(this);
-            var value = parseInt($el.val() * 100);
-            var $hiddenEl = $el.parent().find('.wpf_payment_item');
-            $hiddenEl.data('subscription_amount', value);
-
-            var totalAmount = value + parseInt($el.data('initial_amount'));
-            $hiddenEl.data('price', totalAmount);
-
-            $el.closest('.wpf_form_group').find('.wpf_dynamic_input_amount').html(that.getFormattedPrice(value))
-            $hiddenEl.trigger('change');
-        });
-
-        this.form.find('.wpf_custom_subscription_amount').on('change', function () {
-            let $el = jQuery(this);
-            let index = $el.data('plan_index');
-            let value = parseInt($el.val() * 100);
-            let $parent = $el.closest('.wpf_multi_form_controls');
-            $parent.find('.wpf_subscription_plan_summary')
-                .find('.wpf_subscription_plan_index_' + index)
-                .find('.wpf_dynamic_input_amount')
-                .html(that.getFormattedPrice(value));
-
-            var $input = $parent.find('.wpf_payment_item').find('.wpf_option_custom_' + index);
-            var totalAmount = value + parseInt($input.data('initial_amount'));
-            $input
-                .data('subscription_amount', value)
-                .data('price', totalAmount);
-
-            $parent.find('select').trigger('change');
-        });
-
-        this.form.find('.wpf_custom_subscription_amount_radio').on('change', function () {
-            let $el = jQuery(this);
-            let index = $el.data('plan_index');
-            let value = parseInt($el.val() * 100);
-            let $parent = $el.closest('.wpf_multi_form_controls');
-            $parent.find('.wpf_subscription_plan_summary')
-                .find('.wpf_subscription_plan_index_' + index)
-                .find('.wpf_dynamic_input_amount')
-                .html(that.getFormattedPrice(value));
-            var $input = $parent.find('.wpf_option_custom_' + index);
-            var totalAmount = value + parseInt($input.data('initial_amount'));
-            $input
-                .data('subscription_amount', value)
-                .data('price', totalAmount);
-
-            $parent.find('input[type=radio]').trigger('change');
-        });
-
-    }
-
     // Payment Calucations
     calculatePayments() {
         let form = this.form;
@@ -803,7 +706,6 @@ class PayFormHandler {
         });
 
         // Handle Selection Button Select
-
         function checkForSelections(element) {
             let elementName = jQuery(element).attr('id');
             let selectedIndex = jQuery(element).val();
@@ -825,50 +727,43 @@ class PayFormHandler {
         let that = this;
         let form = this.form;
         let formSettings = this.config;
-        form.find('.wpf_custom_subscription_input').on('keyup', function () {
+        form.find('.wpf_custom_subscription_input').on('change', function () {
             var $el = jQuery(this);
             var value = parseInt($el.val() * 100);
             var $hiddenEl = $el.parent().find('.wpf_payment_item');
             $hiddenEl.attr('data-subscription_amount', value);
             var totalAmount = value + parseInt($el.data('initial_amount'));
             $hiddenEl.attr('data-price', totalAmount);
-            $el.closest('.wpf_form_group').find('.wpf_dynamic_input_amount, .wpfbs_subscription_amount').html(formatPrice(value, formSettings.currency_settings))
+            let $parent = $el.closest('.wpf_form_group');
+
+            $parent.find('.wpfbs_subscription_amount').html(formatPrice(value, formSettings.currency_settings))
+            $parent.find('.wpfbs_first_interval_total').html(formatPrice(totalAmount, formSettings.currency_settings))
+
             $hiddenEl.trigger('change');
         });
-        form.find('.wpf_custom_subscription_amount').on('change', function () {
+        form.find('.wpf_custom_subscription_amount_radio, .wpf_custom_subscription_amount_select').on('change', function () {
             let $el = jQuery(this);
             let index = $el.data('plan_index');
             let value = parseInt($el.val() * 100);
-            let $parent = $el.closest('.wpf_multi_form_controls');
-            $parent.find('.wpf_subscription_plan_summary')
-                .find('.wpf_subscription_plan_index_'+index)
-                .find('.wpf_dynamic_input_amount')
-                .html(formatPrice(value, formSettings.currency_settings));
 
-            var $input = $parent.find('.wpf_payment_item').find('.wpf_option_custom_'+index);
-            var totalAmount = value + parseInt($input.data('initial_amount'));
-            $input
-                .data('subscription_amount', value)
-                .data('price', totalAmount);
-
-            $parent.find('select').trigger('change');
-        });
-        form.find('.wpf_custom_subscription_amount_radio').on('change', function () {
-            let $el = jQuery(this);
-            let index = $el.data('plan_index');
-            let value = parseInt($el.val() * 100);
             let $parent = $el.closest('.wpf_multi_form_controls');
-            $parent.find('.wpf_subscription_plan_summary')
-                .find('.wpf_subscription_plan_index_'+index)
-                .find('.wpf_dynamic_input_amount')
-                .html(formatPrice(value, formSettings.currency_settings));
+            let $summary = $parent.find('.wpf_subscription_plan_summary')
+                .find('.wpf_subscription_plan_index_'+index);
+
             var $input = $parent.find('.wpf_option_custom_'+index);
             var totalAmount = value + parseInt($input.data('initial_amount'));
+
+            $summary.find('.wpfbs_subscription_amount')
+                .html(formatPrice(value, formSettings.currency_settings));
+
+            $summary.find('.wpfbs_first_interval_total')
+                .html(formatPrice(totalAmount, formSettings.currency_settings));
+
             $input
                 .data('subscription_amount', value)
                 .data('price', totalAmount);
 
-            $parent.find('input[type=radio]').trigger('change');
+            that.calculatePayments();
         });
     }
 
