@@ -328,7 +328,7 @@ class StripeHostedHandler extends StripeHandler
             }
         } else if (!empty($session->subscription->latest_invoice->charge)) {
             $updateDate['charge_id'] = $session->subscription->latest_invoice->charge;
-            $updateDate['created_at'] = gmdate('Y-m-d H:i:s', $session->subscription->latest_invoice->date);
+            $updateDate['created_at'] = gmdate('Y-m-d H:i:s', $session->subscription->latest_invoice->created);
         }
 
         $transactionModel = new Transaction();
