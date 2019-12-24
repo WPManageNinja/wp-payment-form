@@ -30,15 +30,19 @@ class PlanSubscription
             )
         );
 
+        $metaData = array(
+            'submission_id' => $submission->id,
+            'wpf_subscription_id' => $subscription->id,
+            'form_id' => $submission->form_id
+        );
+
+        $metaData = apply_filters('wppayform/stripe_onetime_payment_metadata', $metaData, $submission);
+
         $subscriptionArgs = array(
             'customer' => $customer,
             'billing'  => 'charge_automatically',
             'items'    => $billablePlan,
-            'metadata' => array(
-                'submission_id' => $submission->id,
-                'wpf_subscription_id' => $subscription->id,
-                'form_id' => $submission->form_id
-            ),
+            'metadata' => $metaData,
             'expand' => [
                 'latest_invoice',
             ],
