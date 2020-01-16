@@ -145,6 +145,11 @@
                                           v-model="element.field_options.confirm_email_label"></el-input>
                             </el-form-item>
                         </template>
+                        <template v-else-if="item.type == 'address_subfields'">
+                            <Address :fields="item.fields" :field_options="element.field_options[itemName]" />
+                            <!-- <pre>{{item.fields}}</pre>
+                            <pre>{{element.field_options[itemName]}}</pre> -->
+                        </template>
                     </div>
                     <el-form-item class="wpf_item_group_advanced" label="Field ID">
                         {{ element.id }}
@@ -182,6 +187,7 @@
     import TabularProducts from './_tabular_products'
     import popover from '../../Common/input-popover-dropdown.vue';
     import RecurringItem from './_RecurringItem';
+    import Address from '../../Common/Address';
 
     export default {
         name: 'elementEditor',
@@ -195,7 +201,8 @@
             popover,
             RecurringItem,
             AllItemSelector,
-            OneTimeProductsSelector
+            OneTimeProductsSelector,
+            Address
         },
         props: ['element', 'all_elements'],
         comments: {

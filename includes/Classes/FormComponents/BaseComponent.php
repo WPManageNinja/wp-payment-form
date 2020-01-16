@@ -90,6 +90,48 @@ abstract class BaseComponent
         <?php
     }
 
+    public function renderAddrItem($element, $form) {
+        $fieldOptions = ArrayHelper::get($element, 'field_options', false);
+        // var_dump($fieldOptions['subfields']['address_line_1']['label']);
+        
+        if (!$fieldOptions) {
+            return;
+        }
+        $inputClass = $this->elementInputClass($element);
+        $inputId = 'wpf_input_' . $form->ID . '_' . $element['id'];
+        // var_dump($fieldOptions['subfields']);
+        ?>
+        <p><?php echo $element["editor_title"];?></p>
+        <?php
+        foreach($fieldOptions['subfields'] as $fieldOption) {
+            $attributes = array(
+                // 'data-required' => ArrayHelper::get($fieldOptions, 'required'),
+                'data-type'     => 'input',
+                'name'          => $fieldOption['label'],
+                'placeholder'   => $fieldOption['label'],
+                'type'          => $fieldOption['type'],
+                'class'         => $inputClass,
+                'id'            => 'wpf_input_' . $form->ID . '_' . $fieldOption['id'],
+                'required'      => $fieldOption['required']
+            );
+            ?>
+            <?php 
+                if($fieldOption['visibility']) {
+                    ?>
+            <div data-element_type="<?php echo $this->elementName; ?>"
+                class="<?php echo $controlClass; ?>">
+                <label><?php echo $fieldOption['label'];?></label>
+                <div class="wpf_input_content">
+                    <input <?php echo $this->builtAttributes($attributes); ?> />
+                </div>
+            </div>
+            <?php
+                }
+        }
+
+        
+    }
+
     public function renderSelectInput($element, $form)
     {
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
@@ -335,7 +377,6 @@ abstract class BaseComponent
                 $xtra_right = ' <span class="wpf_required_sign wpf_required_sign_left">*</span>';
             }
         }
-
         if ($label): ?>
             <div class="wpf_input_label">
                 <label <?php echo $this->builtAttributes($attributes); ?>><?php echo $xtra_left . $label . $xtra_right; ?></label>

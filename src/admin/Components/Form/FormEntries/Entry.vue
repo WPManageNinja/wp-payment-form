@@ -508,6 +508,7 @@
                 }
                 this.$get(query)
                     .then(response => {
+                        console.log(response)
                         this.submission = response.data.submission;
                         this.entry_items = response.data.entry;
                         window.WPPayFormsBus.$emit('site_title', 'Entry#' + response.data.submission.id);
