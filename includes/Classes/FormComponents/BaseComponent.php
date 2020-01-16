@@ -35,7 +35,6 @@ abstract class BaseComponent
 
     public function validateOnSave($error, $element, $formId)
     {
-        return 'ok';
         return $error;
     }
 
@@ -88,48 +87,6 @@ abstract class BaseComponent
             </div>
         </div>
         <?php
-    }
-
-    public function renderAddrItem($element, $form) {
-        $fieldOptions = ArrayHelper::get($element, 'field_options', false);
-        // var_dump($fieldOptions['subfields']['address_line_1']['label']);
-        
-        if (!$fieldOptions) {
-            return;
-        }
-        $inputClass = $this->elementInputClass($element);
-        $inputId = 'wpf_input_' . $form->ID . '_' . $element['id'];
-        // var_dump($fieldOptions['subfields']);
-        ?>
-        <p><?php echo $element["editor_title"];?></p>
-        <?php
-        foreach($fieldOptions['subfields'] as $fieldOption) {
-            $attributes = array(
-                // 'data-required' => ArrayHelper::get($fieldOptions, 'required'),
-                'data-type'     => 'input',
-                'name'          => $fieldOption['label'],
-                'placeholder'   => $fieldOption['label'],
-                'type'          => $fieldOption['type'],
-                'class'         => $inputClass,
-                'id'            => 'wpf_input_' . $form->ID . '_' . $fieldOption['id'],
-                'required'      => $fieldOption['required']
-            );
-            ?>
-            <?php 
-                if($fieldOption['visibility']) {
-                    ?>
-            <div data-element_type="<?php echo $this->elementName; ?>"
-                class="<?php echo $controlClass; ?>">
-                <label><?php echo $fieldOption['label'];?></label>
-                <div class="wpf_input_content">
-                    <input <?php echo $this->builtAttributes($attributes); ?> />
-                </div>
-            </div>
-            <?php
-                }
-        }
-
-        
     }
 
     public function renderSelectInput($element, $form)
@@ -258,8 +215,8 @@ abstract class BaseComponent
         $options = ArrayHelper::get($fieldOptions, 'options', array());
 
         $controlAttributes = array(
-            'data-element_type' => $this->elementName,
-            'class'             => $controlClass,
+            'data-element_type'   => $this->elementName,
+            'class'               => $controlClass,
             'data-target_element' => $element['id']
         );
         if (ArrayHelper::get($fieldOptions, 'required') == 'yes') {
@@ -390,7 +347,7 @@ abstract class BaseComponent
 
     public function getErrorLabel($element, $formId, $labelSufix = '')
     {
-        if(!$labelSufix) {
+        if (!$labelSufix) {
             $labelSufix = __('is required', 'wppayform');
         }
         $label = ArrayHelper::get($element, 'options.label');
@@ -400,7 +357,7 @@ abstract class BaseComponent
                 $label = $element['id'];
             }
         }
-        $label = $label .' '.$labelSufix;
+        $label = $label . ' ' . $labelSufix;
         return apply_filters('wppayform/error_label_text', $label, $element, $formId);
     }
 

@@ -28,7 +28,6 @@ class SubmissionHandler
     {
         parse_str($_REQUEST['form_data'], $form_data);
 
-
         // Now Validate the form please
         $formId = absint($_REQUEST['form_id']);
         // Get Original Form Elements Now

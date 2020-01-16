@@ -206,8 +206,8 @@ class Submission extends Model
         if (!$elements) {
             return array();
         }
-        $parsedSubmission = array();
 
+        $parsedSubmission = array();
         $inputValues = $submission->form_data_formatted;
 
         foreach ($elements as $element) {
