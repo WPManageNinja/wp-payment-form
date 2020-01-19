@@ -277,6 +277,17 @@
       }
     }
   }
+  
+  @media (max-width: 767px) {
+    .wpf_address_wrapper {
+      .wpf_address_items_wrapper {
+        .wpf_form_group {
+          width: 100% !important;
+          max-width: 100% !important;
+        }
+      }
+    }
+  }
   .wpf_submit_button_pos_center {
     .wpf_form_submissions {
       display: block;
@@ -297,6 +308,18 @@
   }
 
   form.wpf_form {
+    .wpf_address_wrapper {
+      .wpf_address_items_wrapper {
+        .wpf_form_group {
+          display: block;
+          width: 50%;
+          float: left;
+        }
+        .wpf_form_group:nth-child(2n) {
+          padding-left: 5px;
+        }
+      }
+    }
     .wpf_default_btn, .wpf_full_block_btn {
       border-radius: 4px;
       display: inline-block;
@@ -321,6 +344,10 @@
       display: block !important;
       width: 100%;
     }
+
+  }
+
+  form.wpf_form {
 
   }
 
