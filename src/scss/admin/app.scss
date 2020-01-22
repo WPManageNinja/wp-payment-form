@@ -284,6 +284,7 @@
 
 .action_right {
   text-align: right;
+  margin-top: 15px;
 }
 
 .handler, .handle {
@@ -1290,6 +1291,11 @@ table.ninja_filter_table {
     .wpf_showing_advanced {
       .wpf_item_group_general {
         display: none;
+      }
+    }
+    table {
+      .el-select {
+        width: 100%;
       }
     }
   }
