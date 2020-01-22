@@ -106,7 +106,7 @@ class Menu
             do_action('wppayform/booting_admin_app');
             wp_enqueue_script('wppayform_admin_app', WPPAYFORM_URL.'assets/js/payforms-admin.js', array('wppayform_boot'), WPPAYFORM_VERSION, true);
             wp_enqueue_style('wppayform_admin_app', WPPAYFORM_URL.'assets/css/payforms-admin.css', array(), WPPAYFORM_VERSION);
-
+            
             $payformAdminVars = apply_filters('wppayform/admin_app_vars',array(
                 'i18n' => array(
                     'All Payment Forms' => __('All Payment Forms', 'wppayform')
@@ -120,7 +120,8 @@ class Menu
                 'ajaxurl' => admin_url('admin-ajax.php'),
                 'ipn_url' => site_url().'?wpf_paypal_ipn=1',
                 'printStyles' => apply_filters('wppayform/print_styles', []),
-                'ace_path_url' => WPPAYFORM_URL.'assets/libs/ace'
+                'ace_path_url' => WPPAYFORM_URL.'assets/libs/ace',
+                'countries' => require WPPAYFORM_DIR . 'includes/Classes/CountryNames.php'
             ));
 
             wp_localize_script('wppayform_boot', 'wpPayFormsAdmin', $payformAdminVars);

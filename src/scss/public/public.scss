@@ -318,6 +318,13 @@
         .wpf_form_group:nth-child(2n) {
           padding-left: 5px;
         }
+        .wpf_item_country {
+          margin-bottom: 23px;
+          .wpf_select {
+            height: 27px !important;
+            font-size: 14px;
+          }
+        }
       }
     }
     .wpf_default_btn, .wpf_full_block_btn {
@@ -345,9 +352,9 @@
       width: 100%;
     }
 
-  }
-
-  form.wpf_form {
+    .wpf_form_submissions {
+      display: flex;
+    }
 
   }
 

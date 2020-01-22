@@ -14,7 +14,15 @@
             </el-table-column>
             <el-table-column label="Default Value">
                 <template slot-scope="scope">
-                    <el-input v-model="field_options[scope.row.id]['default_value']"/>
+                    <el-input v-if="field_options[scope.row.id]['type'] !== 'select'" v-model="field_options[scope.row.id]['default_value']"/>
+                    <el-select v-model="field_options[scope.row.id]['default_value']" placeholder="Select" v-else>
+                        <el-option
+                            v-for="item in countries"
+                            :key="item"
+                            :label="item"
+                            :value="item">
+                        </el-option>
+                    </el-select>
                 </template>
             </el-table-column>
             <el-table-column label="Visibility">
@@ -43,11 +51,14 @@
         props: [ 'fields', 'field_options' ],
         data() {
             return {
-                data_fields: []
+                data_fields: [],
+                countries: {}
             }
         },
+        
         created() {
             this.data_fields.push(Object.values(this.field_options))
+            this.countries = window.wpPayFormsAdmin.countries
         }
     }
 </script>
