@@ -1293,9 +1293,18 @@ table.ninja_filter_table {
         display: none;
       }
     }
-    table {
-      .el-select {
-        width: 100%;
+    .address_fields_wrapper {
+      table {
+        input {
+          height: 28px;
+          line-height: 28px;
+        }
+        .el-select {
+          width: 100%;
+        }
+        .wp_vue_editor {
+          min-height: 0;
+        }
       }
     }
   }

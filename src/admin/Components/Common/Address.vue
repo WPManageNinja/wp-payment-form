@@ -14,15 +14,16 @@
             </el-table-column>
             <el-table-column label="Default Value">
                 <template slot-scope="scope">
-                    <el-input v-if="field_options[scope.row.id]['type'] !== 'select'" v-model="field_options[scope.row.id]['default_value']"/>
-                    <el-select v-model="field_options[scope.row.id]['default_value']" placeholder="Select" v-else>
-                        <el-option
-                            v-for="item in countries"
-                            :key="item"
-                            :label="item"
-                            :value="item">
-                        </el-option>
-                    </el-select>
+                    <div class="wp_vue_editor_wrapper">
+                        <el-input class="wp_vue_editor wp_vue_editor_plain" v-model="field_options[scope.row.id]['default_value']">
+                            <popover
+                                @command="(code) => { field_options[scope.row.id]['default_value'] += code }"
+                                slot="suffix" :data="editorShortcodes"
+                                btnType="text"
+                                buttonText='<i class="el-icon-menu"></i>'>
+                            </popover>
+                        </el-input>
+                    </div>
                 </template>
             </el-table-column>
             <el-table-column label="Visibility">
@@ -46,19 +47,40 @@
 </template>
 
 <script>
+    import popover from './input-popover-dropdown.vue'
     export default {
         name: 'AddressFields',
+        components: {
+            popover
+        },
         props: [ 'fields', 'field_options' ],
         data() {
             return {
                 data_fields: [],
-                countries: {}
+                plain_content: '',
+                countries: {},
+                cursorPos: 0,
+                editorShortcodes: []
             }
         },
         
         created() {
             this.data_fields.push(Object.values(this.field_options))
             this.countries = window.wpPayFormsAdmin.countries
+            this.editorShortcodes =  Object.values(window.wpPayFormsAdmin.value_placeholders)
+        },
+
+        methods: {
+            handleCommand(command) {
+                if (this.hasWpEditor) {
+                    tinymce.activeEditor.insertContent(command);
+                } else {
+                    var part1 = this.plain_content.slice(0, this.cursorPos);
+                    var part2 = this.plain_content.slice(this.cursorPos, this.plain_content.length);
+                    this.plain_content = part1 + command + part2;
+                    this.cursorPos += command.length;
+                }
+            },
         }
     }
 </script>
