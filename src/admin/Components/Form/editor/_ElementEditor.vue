@@ -13,16 +13,7 @@
                         <template v-if="item.type == 'text'">
                             <el-form-item :label="item.label">
                                 <template v-if="itemName == 'default_value'">
-                                    <el-input :placeholder="item.label" size="mini" v-model="element.field_options[itemName]">
-                                        <popover
-                                            v-if="has_pro"
-                                            @command="(code) => { element.field_options[itemName] += code }"
-                                            slot="suffix" :data="merge_tags"
-                                            btnType="text"
-                                            buttonText='<i class="el-icon-menu"></i>'>
-                                        </popover>
-                                        <el-button @click="showDevaultValuePro = true" type="text" size="mini" icon="el-icon-menu" slot="suffix" v-else></el-button>
-                                    </el-input>
+                                    <default-value-component @showProMessage="() => { showDevaultValuePro = true; }" :item="item" :element="element" :itemName="itemName" />
                                 </template>
                                 <template v-else>
                                     <el-input :placeholder="item.label" size="mini"
@@ -186,6 +177,7 @@
     import popover from '../../Common/input-popover-dropdown.vue';
     import RecurringItem from './_RecurringItem';
     import Address from '../../Common/Address';
+    import DefaultValueComponent from './_DefaultValueComponent'
 
     export default {
         name: 'elementEditor',
@@ -200,7 +192,8 @@
             RecurringItem,
             AllItemSelector,
             OneTimeProductsSelector,
-            Address
+            Address,
+            DefaultValueComponent
         },
         props: ['element', 'all_elements'],
         comments: {
