@@ -304,7 +304,7 @@
                     </div>
                     <div class="wpf_submission_sidebar">
                         <template v-if="has_pro">
-                            <div class="entry_info_box">
+                            <div class="wpf_meta_info_wrapper entry_info_box">
                                 <div class="entry_info_header">
                                     <div class="info_box_header">Meta Info</div>
                                 </div>
@@ -381,6 +381,7 @@
                         <el-checkbox label="print_hide_input_items">Hide Input Items</el-checkbox>
                         <el-checkbox label="print_hide_header_items">Hide Header Bar</el-checkbox>
                         <el-checkbox label="print_hide_order_items">Hide Order Items</el-checkbox>
+                        <el-checkbox label="print_hide_meta_info">Hide Meta Info</el-checkbox>
                     </el-checkbox-group>
                 </div>
 

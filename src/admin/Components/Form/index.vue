@@ -30,8 +30,8 @@
             </div>
         </div>
         <el-menu mode="horizontal"
-                 :router="true"
-                 :default-active="current_route"
+            :router="true"
+            :default-active="current_route"
         >
             <el-menu-item
                 v-for="formMenu in form_menus"
@@ -40,13 +40,6 @@
                 :index="formMenu.route">
                 <i :class="formMenu.icon"></i>
                 <span>{{  formMenu.title }}</span>
-            </el-menu-item>
-            <el-menu-item
-                :route="{ name: 'form_entries', params: { form_id: form_id } }"
-                index="entries"
-            >
-                <i class="dashicons dashicons-text"></i>
-                <span>{{  $t('Form Entries') }}</span>
             </el-menu-item>
         </el-menu>
         <div class="payform_editor_wrapper">
@@ -154,6 +147,11 @@
                         title: 'Email Notifications',
                         icon: 'dashicons dashicons-email-alt'
                     },
+                    {
+                        route: 'form_entries',
+                        title: 'Form Entries',
+                        icon: 'dashicons dashicons-text'
+                    }
                 ], this.form_id);
             }
         },

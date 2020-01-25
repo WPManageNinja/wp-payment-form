@@ -197,8 +197,7 @@ class PaymentItemComponent extends BaseComponent
                             }
                             ?>
                             <option <?php echo $this->builtAttributes($optionAttributes); ?>><?php echo esc_attr($price['label']); ?>
-                                (<?php echo esc_html(wpPayFormFormattedMoney(wpPayFormConverToCents($price['value']), $currenySettings)); ?>
-                                )
+                                (<?php echo esc_html(wpPayFormFormattedMoney(wpPayFormConverToCents($price['value']), $currenySettings)); ?>)
                             </option>
                         <?php endforeach; ?>
                     </select>
