@@ -84,6 +84,9 @@ body .wpf_payment_view .entry_info_box {
 .wpf_submisson_body {
   .wpf_submission_sidebar {
     display: none;
+    button {
+      display: none;
+    }
   }
   .wpf_submission_details {
     width: 100% !important;
