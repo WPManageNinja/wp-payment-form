@@ -23,7 +23,6 @@ class StripeHandler
 {
     public $parnentPamentMethod = 'stripe';
 
-
     public function getMode()
     {
         $paymentSettings = $this->getStripeSettings();

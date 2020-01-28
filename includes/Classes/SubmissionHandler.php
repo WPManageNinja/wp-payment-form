@@ -49,7 +49,6 @@ class SubmissionHandler
 
         $this->selectedPaymentMethod = $paymentMethod;
 
-
         // Extract Payment Items Here
         $paymentItems = array();
         $subscriptionItems = array();
@@ -218,7 +217,10 @@ class SubmissionHandler
                     'created_at'     => gmdate('Y-m-d H:i:s'),
                     'updated_at'     => gmdate('Y-m-d H:i:s')
                 );
+
+
                 $transaction = apply_filters('wppayform/submission_transaction_data', $transaction, $formId, $form_data);
+
                 $transactionModel = new Transaction();
                 $transactionId = $transactionModel->create($transaction);
                 do_action('wppayform/after_transaction_data_insert', $transactionId, $transaction);
@@ -296,7 +298,6 @@ class SubmissionHandler
             if ($error) {
                 $errors[$elementId] = $error;
             }
-
         }
 
         // Maybe validate recatcha
@@ -370,7 +371,7 @@ class SubmissionHandler
         $payItem = array(
             'type'          => 'single',
             'parent_holder' => $paymentId,
-            'item_name'     => $label,
+            'item_name'     => strip_tags($label),
             'quantity'      => $quantity,
             'created_at'    => gmdate('Y-m-d H:i:s'),
             'updated_at'    => gmdate('Y-m-d H:i:s'),
@@ -382,7 +383,7 @@ class SubmissionHandler
             if ($payType == 'choose_single') {
                 $pricings = $priceDetailes['multiple_pricing'];
                 $price = $pricings[$formData[$paymentId]];
-                $payItem['item_name'] = $price['label'];
+                $payItem['item_name'] = strip_tags($price['label']);
                 $payItem['item_price'] = wpPayFormConverToCents($price['value']);
                 $payItem['line_total'] = $payItem['item_price'] * $quantity;
             } else if ($payType == 'choose_multiple') {
@@ -391,7 +392,7 @@ class SubmissionHandler
                 $payItems = array();
                 foreach ($selctedItems as $itemIndex => $selctedItem) {
                     $itemClone = $payItem;
-                    $itemClone['item_name'] = $pricings[$itemIndex]['label'];
+                    $itemClone['item_name'] = strip_tags($pricings[$itemIndex]['label']);
                     $itemClone['item_price'] = wpPayFormConverToCents($pricings[$itemIndex]['value']);
                     $itemClone['line_total'] = $itemClone['item_price'] * $quantity;
                     $payItems[] = $itemClone;

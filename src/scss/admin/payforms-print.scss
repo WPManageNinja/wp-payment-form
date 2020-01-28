@@ -1,6 +1,7 @@
 .wpf_header_actions {
   display: none;
 }
+
 .payment_header_right a {
   display: none;
 }
@@ -12,9 +13,11 @@
 .info_box_header_actions, .print_button_controls {
   display: none !important;
 }
+
 .print_hide_transactions .entry_transactions {
   display: none !important;
 }
+
 .print_hide_activities .entry_submission_activity {
   display: none !important;
 }
@@ -26,11 +29,20 @@
 .print_hide_input_items .entry_input_data {
   display: none !important;
 }
+
 .print_hide_header_items .payment_header {
   display: none !important;
 }
+
 .print_hide_order_items .entry_order_items {
   display: none !important;
+}
+
+.print_hide_meta_info {
+  .wpf_submission_sidebar, .wpf_meta_info_wrapper {
+    display: none !important;
+    visibility: hidden !important;
+  }
 }
 
 // Table CSS
@@ -41,7 +53,7 @@
   border-collapse: collapse;
 }
 
-.table td,.table th {
+.table td, .table th {
   padding: .75rem;
   text-align: left;
   vertical-align: top;
@@ -53,7 +65,7 @@
   border-bottom: 2px solid #dee2e6
 }
 
-.table tbody+tbody {
+.table tbody + tbody {
   border-top: 2px solid #dee2e6
 }
 
@@ -61,30 +73,32 @@
   border: 1px solid #dee2e6
 }
 
-.table-bordered td,.table-bordered th {
+.table-bordered td, .table-bordered th {
   border: 1px solid #dee2e6
 }
 
-.table-bordered thead td,.table-bordered thead th {
+.table-bordered thead td, .table-bordered thead th {
   border-bottom-width: 2px
 }
 
 .table-striped tbody tr:nth-of-type(odd) {
-  background-color: rgba(0,0,0,.05)
+  background-color: rgba(0, 0, 0, .05)
 }
 
 body .wpf_payment_view .entry_info_box {
   margin-bottom: 10px !important;
 }
+
 .wpf_entry_transactions ul.wpf_list_items {
   margin: 0;
   padding: 0;
 }
 
 .wpf_submisson_body {
-  .wpf_submission_sidebar, button {
-    display: none;
+  button {
+    display: none !important;
   }
+
   .wpf_submission_details {
     width: 100% !important;
   }

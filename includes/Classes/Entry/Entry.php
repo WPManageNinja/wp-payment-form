@@ -125,6 +125,19 @@ class Entry
         return $this->submission->tax_items;
     }
 
+    public function getTaxTotal()
+    {
+        $taxItems = $this->getTaxItems();
+        if(!$taxItems) {
+            return 0;
+        }
+        $total = 0;
+        foreach ($taxItems as $item) {
+            $total += $item->line_total;
+        }
+        return $total;
+    }
+
     public function getSubscriptionItems()
     {
         if (!property_exists($this->submission, 'subscriptions')) {

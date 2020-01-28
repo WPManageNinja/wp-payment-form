@@ -85,6 +85,7 @@ class StripeInlineHandler extends StripeHandler
 
         $paymentMethodId = ArrayHelper::get($form_data, '__stripe_payment_method_id');
 
+
         // Let's create the one time payment first
         // We will handle One-Time Payment Here only
         $intentArgs = [
@@ -170,6 +171,10 @@ class StripeInlineHandler extends StripeHandler
             $intentArgs['amount'] = intval($transaction->payment_total / 100);
         }
 
+        if ($submission->customer_email && apply_filters('wppayform/send_receipt_email', true, $submission)) {
+            $intendArgs['receipt_email'] = $submission->customer_email;
+        }
+
         $intent = SCA::createPaymentIntent($intentArgs);
 
         if ($intent->status == 'requires_action' &&
@@ -234,7 +239,7 @@ class StripeInlineHandler extends StripeHandler
         $transactionModel->update($transaction->id, array(
             'status'         => 'paid',
             'charge_id'      => $charge->id,
-            'payment_method' => $this->getMode(),
+            'payment_method' => 'stripe',
             'payment_mode'   => $paymentMode,
         ));
 
@@ -336,10 +341,6 @@ class StripeInlineHandler extends StripeHandler
                 'metadata'            => $this->getIntentMetaData($submission)
             ];
 
-            if($submission->customer_email) {
-                $intendArgs['receipt_email'] = $submission->customer_email;
-            }
-            
             $this->handlePaymentItentCharge($transaction, $submission, $intendArgs);
             $transaction = $transactionModel->getLatestTransaction($submission->id);
         }

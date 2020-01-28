@@ -156,6 +156,17 @@ class Forms
         return false;
     }
 
+    public static function hasTaxFields($formId)
+    {
+        $elements = Forms::getBuilderSettings($formId);
+        foreach ($elements as $element) {
+            if ($element['type'] == 'tax_payment_input') {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public static function getPaymentMethodElements($formId)
     {
         $elements = self::getFormattedElements($formId);

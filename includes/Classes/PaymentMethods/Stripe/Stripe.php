@@ -59,8 +59,6 @@ class Stripe
 
     public function choosePaymentMethod($paymentMethod, $elements, $formId, $form_data)
     {
-
-
         if ($paymentMethod) {
             // Already someone choose that it's their payment method
             return $paymentMethod;
@@ -86,6 +84,7 @@ class Stripe
     {
         $submissionModel = new Submission();
         $handler = $submissionModel->getMeta($submissionId, 'stripe_payment_style', 'stripe_hosted');
+
         do_action('wppayform/form_submission_make_payment_' . $handler, $transactionId, $submissionId, $form_data, $form, $hasSubscriptions);
     }
 

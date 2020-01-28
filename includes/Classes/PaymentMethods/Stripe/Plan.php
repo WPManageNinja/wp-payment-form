@@ -130,7 +130,8 @@ class Plan
 
     public static function getGeneratedSubscriptionId($subscription, $currency = 'USD')
     {
-        return $subscriptionId = 'wpf_' . $subscription->form_id . '_' . $subscription->element_id . '_' . $subscription->recurring_amount . '_' . $subscription->billing_interval . '_' . $subscription->trial_days . '_' . $currency;;
+        $subscriptionId = 'wpf_' . $subscription->form_id . '_' . $subscription->element_id . '_' . $subscription->recurring_amount . '_' . $subscription->billing_interval . '_' . $subscription->trial_days . '_' . $currency;;
+        return apply_filters('wppayform/stripe_plan_name_generated', $subscriptionId, $subscription, $currency);
     }
 
 }
