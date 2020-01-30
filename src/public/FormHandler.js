@@ -104,7 +104,7 @@ class PayFormHandler {
     async stripeSetupItent(data) {
         this.showMessages(data.message, 'info', '');
         this.buttonState('validating_form', 'Validating Card Info', true, data);
-        const { setupIntent, errorAction } = await this.stripe.handleCardSetup(
+        const result = await this.stripe.handleCardSetup(
             data.client_secret, this.stripeCard,
             {
                 payment_method_data: {
@@ -116,18 +116,18 @@ class PayFormHandler {
             }
         );
 
-        if (errorAction) {
-            this.showMessages(errorAction.message, 'error', '');
-            this.buttonState('sca_declined', '', false, errorAction);
+        if (result.error) {
+            this.showMessages(result.error.message, 'error', '');
+            this.buttonState('sca_declined', '', false, result.error);
             return;
         }
 
         this.handleStripePaymentConfirm({
             action: 'wppayform_sca_inline_confirm_payment_setup_intents',
             form_id: this.formId,
-            payment_method: setupIntent.payment_method,
+            payment_method: result.setupIntent.payment_method,
             payemnt_method_id: data.payemnt_method_id,
-            payment_intent_id: setupIntent.id,
+            payment_intent_id: result.setupIntent.id,
             submission_id: data.submission_id,
             type: 'handleCardSetup'
         });

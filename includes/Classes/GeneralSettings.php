@@ -461,4 +461,15 @@ class GeneralSettings
         $settings = apply_filters('wppayform/recaptcha_setting', $settings);
         return $settings;
     }
+
+    public static function getStripeDescriptior($string)
+    {
+        $illegal = array( '<', '>', '"', "'" );
+        // Remove slashes
+        $descriptor = stripslashes( $string );
+        // Remove illegal characters
+        $descriptor = str_replace( $illegal, '', $descriptor );
+        // Trim to 22 characters max
+        return substr( $descriptor, 0, 22 );
+    }
 }

@@ -43,6 +43,10 @@
                                     {{ $t('Edit') }}
                                 </router-link>
                                 |
+                                <router-link :to="{ name: 'confirmation_settings', params: { form_id: scope.row.ID } }">
+                                    {{ $t('Settings') }}
+                                </router-link>
+                                |
                                 <router-link :to="{ name: 'form_entries', params: { form_id: scope.row.ID } }">
                                     {{ $t('Entries') }}
                                 </router-link>

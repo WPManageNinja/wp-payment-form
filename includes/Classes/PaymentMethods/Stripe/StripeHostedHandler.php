@@ -42,7 +42,7 @@ class StripeHostedHandler extends StripeHandler
     {
         $submissionModel = new Submission();
         $submission = $submissionModel->getSubmission($submissionId);
-        
+
         $cancelUrl = ArrayHelper::get($submission->form_data_raw, '__wpf_current_url');
         if(!wp_http_validate_url($cancelUrl)) {
             $cancelUrl = site_url('?wpf_page=frameless&wpf_action=stripe_hosted_cancel&wpf_hash=' . $submission->submission_hash);

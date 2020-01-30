@@ -263,7 +263,7 @@ class Stripe
         AccessControl::checkAndPresponseError('get_payment_settings', 'global');
         wp_send_json_success(array(
             'settings'       => $this->getStripeSettings(),
-            'webhook_url'    => site_url() . '/?wpf_stripe_listener=1',
+            'webhook_url'    => site_url('?wpf_stripe_listener=1'),
             'is_key_defined' => $this->isStripeKeysDefined()
         ), 200);
     }

@@ -7,6 +7,7 @@ use WPPayForm\Classes\GeneralSettings;
 use WPPayForm\Classes\Models\Forms;
 use WPPayForm\Classes\Models\Submission;
 use WPPayForm\Classes\Models\SubmissionActivity;
+use WPPayForm\Classes\Models\Subscription;
 use WPPayForm\Classes\Models\Transaction;
 use WPPayForm\Classes\SubmissionHandler;
 
@@ -69,18 +70,7 @@ class StripeInlineHandler extends StripeHandler
 
 
         if ($hasSubscriptions) {
-            $setupIntent = SCA::setupIntent([
-                'usage' => 'off_session'
-            ]);
-
-            wp_send_json_success([
-                'call_next_method' => 'stripeSetupItent',
-                'submission_id'    => $submissionId,
-                'customer_name'    => $submission->customer_name,
-                'customer_email'   => $submission->customer_email,
-                'client_secret'    => $setupIntent->client_secret,
-                'message'          => __('Verifying your card details. Please wait...', 'wppayform')
-            ], 200);
+            $this->handleSetupIntent($submission, $form_data);
         }
 
         $paymentMethodId = ArrayHelper::get($form_data, '__stripe_payment_method_id');
@@ -107,6 +97,121 @@ class StripeInlineHandler extends StripeHandler
         do_action('wppayform/form_payment_success', $submission, $transaction, $submission->form_id, false);
         do_action('wppayform/form_payment_success_stripe', $submission, $transaction, $submission->form_id, false);
         return true;
+    }
+
+
+    public function handleSetupIntent($submission, $formData)
+    {
+        $paymentMethodId = ArrayHelper::get($formData, '__stripe_payment_method_id');
+
+        $form = Forms::getForm($submission->form_id);
+        /*
+         * Step 1 Create the customer first
+         */
+        $customerArgs = [
+            'payment_method'   => $paymentMethodId,
+            'invoice_settings' => [
+                'default_payment_method' => $paymentMethodId
+            ],
+            'metadata'         => [
+                'payform_id'    => $submission->form_id,
+                'submission_id' => $submission->id,
+                'form_name'     => strip_tags($form->post_title)
+            ]
+        ];
+        if ($submission->customer_email) {
+            $customerArgs['email'] = $submission->customer_email;
+            $customerArgs['description'] = $submission->customer_email;
+        }
+        if ($submission->customer_name) {
+            $customerArgs['name'] = $submission->customer_name;
+        }
+
+        $customer = Customer::createCustomer($customerArgs);
+
+        /*
+         * Customer Create Done, Now let's create the PaymentIntent
+         * {"amount":999,"currency":"USD","setup_future_usage":"off_session","confirmation_method":"manual","save_payment_method":true,"description":"Recurring Test","statement_descriptor":"Recurring Test","confirm":true,"payment_method":"pm_1G69JAAybSf0xwaPKhtxXXU8","customer":"cus_GdQ9r0tOBcXRih","metadata":{"email":"cep.jewel@gmail.com"},"capture_method":"manual"}
+         */
+        $intentMeta = [
+            'payform_id'    => $submission->form_id,
+            'submission_id' => $submission->id,
+            'form_name'     => strip_tags($form->post_title)
+        ];
+
+        if ($submission->customer_email) {
+            $intentMeta['email'] = $submission->customer_email;
+        }
+        if ($submission->customer_name) {
+            $intentMeta['name'] = $submission->customer_name;
+        }
+
+        // Let's calculate the payment amounts
+        $paymentTotal = $this->getFirstTimePaymentTotal($submission);
+
+        $isAllTrial = !!$paymentTotal;
+        if (!$isAllTrial) {
+            $subscriptions = (new Subscription())->getSubscriptions($submission->id);
+            foreach ($subscriptions as $subscription) {
+                $paymentTotal += $subscription->recurring_amount * $subscription->quantity;
+            }
+            // @todo: We will handle this for only trial subscription
+        }
+
+        if (GeneralSettings::isZeroDecimal($submission->currency)) {
+            $paymentTotal = intval( $paymentTotal / 100 );
+        }
+
+
+        $intentArg = [
+            'amount'               => $paymentTotal,
+            'currency'             => $submission->currency,
+            'setup_future_usage'   => 'off_session',
+            'confirmation_method'  => 'manual',
+            'save_payment_method'  => 'true',
+            'capture_method'       => 'manual',
+            'description'          => strip_tags($form->post_title),
+            'statement_descriptor' => GeneralSettings::getStripeDescriptior($form->post_title),
+            'confirm'              => 'true',
+            'payment_method'       => $paymentMethodId,
+            'customer'             => $customer->id,
+            'metadata'             => $intentMeta
+        ];
+
+        $paymentIntent = SCA::createPaymentIntent($intentArg);
+
+        wp_send_json_success([
+            'call_next_method' => 'stripeSetupItent',
+            'intent'           => $paymentIntent,
+            'submission_id'    => $submission->id,
+            'customer_name'    => $submission->customer_name,
+            'customer_email'   => $submission->customer_email,
+            'client_secret'    => $paymentIntent->client_secret,
+            'message'          => __('Verifying your card details. Please wait...', 'wppayform')
+        ], 200);
+    }
+
+    public function getFirstTimePaymentTotal($submission)
+    {
+        $subscriptions = (new Subscription())->getSubscriptions($submission->id);
+        $transaction = (new Transaction())->getLatestTransaction($submission->id);
+
+        $paymentTotal = 0;
+        foreach ($subscriptions as $subscription) {
+            if ($subscription->trial_days) {
+                continue;
+            }
+            if ($submission->initial_amount) {
+                $paymentTotal += $subscription->initial_amount * $subscription->quantity;
+            } else {
+                $paymentTotal += $subscription->recurring_amount * $subscription->quantity;
+            }
+        }
+        if ($transaction) {
+            $paymentTotal += $transaction->payment_total;
+        }
+
+        return $paymentTotal;
     }
 
     /*
@@ -136,7 +241,7 @@ class StripeInlineHandler extends StripeHandler
             'payment_method' => $paymentMethod
         ]);
 
-        if (!$confirmation->error && $confirmation->status == 'succeeded') {
+        if (empty($confirmation->error) && $confirmation->status == 'succeeded') {
             $this->handlePaymentSuccess($confirmation, $transaction, $submission, 'confirmation');
         } else {
             $form = Forms::getForm($submission->form_id);
@@ -214,8 +319,13 @@ class StripeInlineHandler extends StripeHandler
             // Payment is succcess here
             return $this->handlePaymentSuccess($intent, $transaction, $submission);
         } else {
+            $message = __('Payment Failed! Your card may declined', 'wppayform');
+            if (!empty($intent->error->message)) {
+                $message = $intent->error->message;
+            }
+
             wp_send_json_error(array(
-                'message'       => __('Payment Failed! Invalid PaymentIntent status', 'wppayform'),
+                'message'       => $message,
                 'payment_error' => true
             ), 423);
         }
@@ -287,8 +397,12 @@ class StripeInlineHandler extends StripeHandler
         $submission = $submissionModel->getSubmission($_REQUEST['submission_id']);
         do_action('wppayform/form_submission_activity_start', $submission->form_id);
 
-        $paymentMethod = $_REQUEST['payment_method'];
+        $paymentMethod = sanitize_text_field($_REQUEST['payment_method']);
+
         $form = Forms::getForm($submission->form_id);
+
+        // Task 1 - Create the customer
+
 
         $customerArgs = [
             'payment_method'   => $paymentMethod,
@@ -298,7 +412,7 @@ class StripeInlineHandler extends StripeHandler
             'metadata'         => [
                 'payform_id'    => $submission->form_id,
                 'submission_id' => $submission->id,
-                'form_name'     => $form->post_title
+                'form_name'     => strip_tags($form->post_title)
             ]
         ];
 
@@ -309,6 +423,7 @@ class StripeInlineHandler extends StripeHandler
         if ($submission->customer_name) {
             $customerArgs['name'] = $submission->customer_name;
         }
+
         $customer = Customer::createCustomer($customerArgs);
 
         /*
@@ -317,6 +432,13 @@ class StripeInlineHandler extends StripeHandler
          */
         $subscribedItems = $this->handleInlineSubscriptions($customer->id, $submission, $form);
 
+        /*
+         * Untill it's not. Because some card does not support off session payments.
+         * This is really a pain.
+         * Example Test Card: 4000002760003184
+         * Also 3D cards does not work: 4000000000003220
+         *
+         */
 
         // handle error for subscribed items
         if ($subscribedItems && is_wp_error($subscribedItems)) {

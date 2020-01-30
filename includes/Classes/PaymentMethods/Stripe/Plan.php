@@ -78,10 +78,14 @@ class Plan
         }
 
         // We don't have this plan yet. Now we have to create the plan from subscription
+        $billingInterval = $subscription->billing_interval;
+        if($billingInterval == 'daily') {
+            $billingInterval = 'day';
+        }
         $plan = array(
             'id'                => $subscriptionId,
             'currency'          => $submission->currency,
-            'interval'          => $subscription->billing_interval,
+            'interval'          => $billingInterval,
             'amount'            => $subscription->recurring_amount,
             'trial_period_days' => $subscription->trial_days,
             'product'           => array(
