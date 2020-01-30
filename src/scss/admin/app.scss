@@ -1307,6 +1307,13 @@ table.ninja_filter_table {
         }
       }
     }
+    .mask_input_wrapper {
+      .mask_input_field {
+        .el-select {
+          width: 100%;
+        }
+      }
+    }
   }
 }
 
