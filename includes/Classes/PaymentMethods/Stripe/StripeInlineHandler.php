@@ -152,7 +152,8 @@ class StripeInlineHandler extends StripeHandler
 
         $stripeSubscription = PlanSubscription::subscribe([
             'customer' => $customer->id,
-            'items'    => $items
+            'items'    => $items,
+            'metadata' => (new StripeHostedHandler())->getIntentMetaData($submission)
         ]);
 
         if(is_wp_error($stripeSubscription)) {

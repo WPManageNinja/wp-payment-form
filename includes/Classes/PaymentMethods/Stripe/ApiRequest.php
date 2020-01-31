@@ -123,8 +123,8 @@ class ApiRequest
         if (is_wp_error($response) || empty($response['body'])) {
             return new \WP_Error('stripe_error', __('There was a problem connecting to the Stripe API endpoint.', 'wppayform'));
         }
-        
-        $response = json_decode($response['body']);
+
+        return json_decode($response['body']);
     }
 
     /**

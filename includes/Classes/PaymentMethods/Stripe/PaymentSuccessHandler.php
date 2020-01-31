@@ -95,7 +95,7 @@ class PaymentSuccessHandler
         $updateDate = [
             'status' => 'paid'
         ];
-        if ($invoice->payment_intent) {
+        if (!empty($invoice->payment_intent)) {
             // This is mostly for only one time payment. If subscription payment exists
             // Then we will not get charge and payment itent which is annoying
             if (!empty($invoice->payment_intent->charges->data[0])) {
@@ -110,7 +110,6 @@ class PaymentSuccessHandler
                 if (!empty($charge->billing_details->address)) {
                     $this->recoredStripeBillingAddress($charge, $submission);
                 }
-
             } else {
                 $updateDate['charge_id'] = $invoice->payment_intent->id;
                 $updateDate['created_at'] = gmdate('Y-m-d H:i:s', $invoice->payment_intent->created);

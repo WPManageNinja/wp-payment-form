@@ -7,9 +7,7 @@ use WPPayForm\Classes\GeneralSettings;
 use WPPayForm\Classes\Models\Forms;
 use WPPayForm\Classes\Models\OrderItem;
 use WPPayForm\Classes\Models\Submission;
-use WPPayForm\Classes\Models\SubmissionActivity;
 use WPPayForm\Classes\Models\Subscription;
-use WPPayForm\Classes\Models\SubscriptionTransaction;
 use WPPayForm\Classes\Models\Transaction;
 use WPPayForm\Classes\SubmissionHandler;
 
@@ -42,13 +40,12 @@ class StripeHostedHandler extends StripeHandler
     {
         $submissionModel = new Submission();
         $submission = $submissionModel->getSubmission($submissionId);
-
         $cancelUrl = ArrayHelper::get($submission->form_data_raw, '__wpf_current_url');
-        if(!wp_http_validate_url($cancelUrl)) {
+        if (!wp_http_validate_url($cancelUrl)) {
             $cancelUrl = site_url('?wpf_page=frameless&wpf_action=stripe_hosted_cancel&wpf_hash=' . $submission->submission_hash);
         }
 
-        $successUrl = site_url() . '?wpf_page=frameless&wpf_action=stripe_hosted_success&wpf_hash=' . $submission->submission_hash;
+        $successUrl = site_url('?wpf_page=frameless&wpf_action=stripe_hosted_success&wpf_hash=' . $submission->submission_hash);
 
         $paymentMethodElements = Forms::getPaymentMethodElements($form->ID);
 
@@ -60,7 +57,8 @@ class StripeHostedHandler extends StripeHandler
             'locale'                     => 'auto',
             'payment_method_types'       => ['card'],
             'client_reference_id'        => $submissionId,
-            'billing_address_collection' => 'required'
+            'billing_address_collection' => 'required',
+            'metadata'                   => $this->getIntentMetaData($submission)
         ];
 
         if ($requireBilling) {
@@ -84,7 +82,7 @@ class StripeHostedHandler extends StripeHandler
             }
         }
 
-        if(empty($checkoutArgs['line_items']) && empty($checkoutArgs['subscription_data'])) {
+        if (empty($checkoutArgs['line_items']) && empty($checkoutArgs['subscription_data'])) {
             return;
         }
 
@@ -132,7 +130,7 @@ class StripeHostedHandler extends StripeHandler
         $formattedItems = [];
         foreach ($items as $item) {
             $price = $item->item_price;
-            if(!$price) {
+            if (!$price) {
                 continue;
             }
             if (GeneralSettings::isZeroDecimal($submission->currency)) {
@@ -162,7 +160,7 @@ class StripeHostedHandler extends StripeHandler
         $maxTrialDays = 0;
 
         foreach ($subscriptions as $subscriptionItem) {
-            if(!$subscriptionItem->recurring_amount) {
+            if (!$subscriptionItem->recurring_amount) {
                 continue;
             }
 
@@ -198,9 +196,9 @@ class StripeHostedHandler extends StripeHandler
         }
 
         $metaData = [
-            'submission_id' => $submission->id,
+            'submission_id'       => $submission->id,
             'wpf_subscription_id' => $subscription->id,
-            'form_id' => $submission->form_id
+            'form_id'             => $submission->form_id
         ];
 
         $metaData = apply_filters('wppayform/stripe_onetime_payment_metadata', $metaData, $submission);
@@ -263,7 +261,12 @@ class StripeHostedHandler extends StripeHandler
 
         // Handle One time payment success
         if ($intentedOneTimeTransaction) {
-            $paymentSuccessHandler->processOnetimeSuccess($intentedOneTimeTransaction, $session->subscription->latest_invoice, $submission);
+            if (empty($session->subscription->latest_invoice)) {
+                $response = $session;
+            } else {
+                $response = $session->subscription->latest_invoice;
+            }
+            $paymentSuccessHandler->processOnetimeSuccess($intentedOneTimeTransaction, $response, $submission);
             $submission = $submissionModel->getSubmission($submission->id); // We are just getting the latest data
         }
 
@@ -303,7 +306,7 @@ class StripeHostedHandler extends StripeHandler
             do_action('wppayform/form_recurring_subscribed_stripe', $submission, $subscriptions, $submission->form_id);
             do_action('wppayform/form_recurring_subscribed', $submission, $subscriptions, $submission->form_id);
 
-            if(!$paymentSuccessFired) {
+            if (!$paymentSuccessFired) {
                 do_action('wppayform/form_payment_success_stripe', $submission, false, $submission->form_id, $session);
                 do_action('wppayform/form_payment_success', $submission, false, $submission->form_id, $session);
             }
@@ -339,7 +342,7 @@ class StripeHostedHandler extends StripeHandler
         return;
     }
 
-    private function getIntentMetaData($submission)
+    public function getIntentMetaData($submission)
     {
         $metadata = [
             'Submission ID' => $submission->id,
