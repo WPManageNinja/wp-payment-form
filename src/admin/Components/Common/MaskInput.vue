@@ -2,7 +2,7 @@
     <div class="mask_input_wrapper">
         <div class="mask_input_field">
             <p>Mask Input:</p>
-            <el-select v-model="field_options.mask_input.value">
+            <el-select v-model="field_options.mask_input.default_value">
                 <el-option
                     v-for="item in mask_input_options"
                     :key="item.value"
@@ -12,7 +12,7 @@
             </el-select>
         </div>
         <div class="mask_input_field_req">
-            <p>Required</p>
+            <p>Required:</p>
             <el-switch
                 active-value="yes"
                 inactive-value="no"
