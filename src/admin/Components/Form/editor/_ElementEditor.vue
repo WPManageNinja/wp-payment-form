@@ -139,8 +139,8 @@
                         <template v-else-if="item.type == 'address_subfields'">
                             <Address :fields="item.fields" :field_options="element.field_options[itemName]" />
                         </template>
-                        <template v-else-if="item.type == 'mask_input_subfields'">
-                            <MaskInput :fields="item.fields" :field_options="element.field_options[itemName]" />
+                        <template v-else-if="item.type == 'mask_input'">
+                            <MaskInput :item="item" :field_options="element.field_options" />
                         </template>
                     </div>
                     <el-form-item class="wpf_item_group_advanced" label="Field ID">

@@ -38,8 +38,11 @@
     table.input_items_table tr td, table.input_items_table tr th {
         border: 1px solid #cbcbcb;
         text-align: left;
-        width: 50%;
-        white-space: pre;
+        width: auto;
+        word-break: normal;
+    }
+    table.input_items_table tr th {
+        min-width: 20%;
     }
 
     .wpf_payment_info {
