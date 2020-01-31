@@ -255,13 +255,15 @@ class StripeHostedHandler extends StripeHandler
             return;
         }
 
+        $paymentSuccessHandler = new PaymentSuccessHandler();
+
         // Collect the Onetime not-paid transation and intented transactions
         $transactionModel = new Transaction();
         $intentedOneTimeTransaction = $transactionModel->getLatestIntentedTransaction($submission->id);
 
         // Handle One time payment success
         if ($intentedOneTimeTransaction) {
-            $this->processOnetimeIntentedSuccess($intentedOneTimeTransaction, $session, $submission);
+            $paymentSuccessHandler->processOnetimeSuccess($intentedOneTimeTransaction, $session->subscription->latest_invoice, $submission);
             $submission = $submissionModel->getSubmission($submission->id); // We are just getting the latest data
         }
 
@@ -273,7 +275,7 @@ class StripeHostedHandler extends StripeHandler
         $subscriptionModel = new Subscription();
         $intentedSubscriptions = $subscriptionModel->getIntentedSubscriptions($submission->id);
         if ($intentedSubscriptions) {
-            $this->processSubscriptionsItentSuccess($intentedSubscriptions, $session->subscription, $submission);
+            $paymentSuccessHandler->processSubscriptionsSuccess($intentedSubscriptions, $session->subscription->latest_invoice, $submission);
         }
 
         // Fire Action Hooks to make the payment
@@ -311,155 +313,6 @@ class StripeHostedHandler extends StripeHandler
     }
 
 
-    /*
-     * This method will be called if stripe hosted checkout page made a payment
-     * which has one time payment only or one time payment with a subscription payment
-     */
-    public function processOnetimeIntentedSuccess($transaction, $session, $submission)
-    {
-        $updateDate = [
-            'status' => 'paid'
-        ];
-        if ($session->payment_intent) {
-            // This is mostly for only one time payment. If subscription payment exists
-            // Then we will not get charge and payment itent which is annoying
-            if (!empty($session->payment_intent->charges->data[0])) {
-                $charge = $session->payment_intent->charges->data[0];
-                $updateDate['charge_id'] = $charge->id;
-
-                if (!empty($charge->payment_method_details->card)) {
-                    $card = $charge->payment_method_details->card;
-                    $updateDate['card_brand'] = $card->brand;
-                    $updateDate['card_last_4'] = $card->last4;
-                }
-                if (!empty($charge->billing_details->address)) {
-                    $this->recoredStripeBillingAddress($charge, $submission);
-                }
-
-            } else {
-                $updateDate['charge_id'] = $session->payment_intent->id;
-                $updateDate['created_at'] = gmdate('Y-m-d H:i:s', $session->payment_intent->created);
-            }
-        } else if (!empty($session->subscription->latest_invoice->charge)) {
-            $updateDate['charge_id'] = $session->subscription->latest_invoice->charge;
-            $updateDate['created_at'] = gmdate('Y-m-d H:i:s', $session->subscription->latest_invoice->created);
-        }
-
-        $transactionModel = new Transaction();
-        $transactionModel->update($transaction->id, $updateDate);
-
-        SubmissionActivity::createActivity(array(
-            'form_id'       => $submission->form_id,
-            'submission_id' => $submission->id,
-            'type'          => 'activity',
-            'created_by'    => 'PayForm BOT',
-            'content'       => __('Stripe One time payment has marked as paid.', 'wppayform')
-        ));
-    }
-
-    private function recoredStripeBillingAddress($charge, $submission)
-    {
-        $formDataFormatted = $submission->form_data_formatted;
-        if(isset($formDataFormatted['__checkout_billing_address_details'])) {
-            return;
-        }
-
-        if(empty($charge->billing_details)) {
-            return;
-        }
-
-        $billingDetails = $charge->billing_details;
-        $formDataFormatted['__checkout_billing_address_details'] = $billingDetails->address;
-        $formDataFormatted['__stripe_phone'] = $billingDetails->phone;
-        $formDataFormatted['__stripe_name'] = $billingDetails->name;
-        $formDataFormatted['__stripe_email'] = $billingDetails->email;
-        $submissionUpdateData = [
-            'form_data_formatted' => maybe_serialize($formDataFormatted)
-        ];
-        if (!$submission->customer_name && $billingDetails->name) {
-            $submissionUpdateData['customer_name'] = $billingDetails->name;
-        }
-        if (!$submission->customer_email && $billingDetails->email) {
-            $submissionUpdateData['customer_email'] = $billingDetails->email;
-        }
-        $submissionModel = new Submission();
-        $submissionModel->update($submission->id, $submissionUpdateData);
-
-        SubmissionActivity::createActivity(array(
-            'form_id'       => $submission->form_id,
-            'submission_id' => $submission->id,
-            'type'          => 'activity',
-            'created_by'    => 'PayForm BOT',
-            'content'       => __('Billing address from stripe has been logged in the submission data', 'wppayform')
-        ));
-    }
-
-    /*
-     * This method will be called if stripe hosted checkout
-     * has subscription payment
-   */
-    public function processSubscriptionsItentSuccess($subscriptions, $stripeResponse, $submission)
-    {
-
-
-        $subscriptionModel = new Subscription();
-        $subscriptionTransactionModel = new SubscriptionTransaction();
-
-        foreach ($subscriptions as $subscription) {
-            $subscriptionStatus = 'active';
-            if ($subscription->trial_days) {
-                $subscriptionStatus = 'trialling';
-            }
-
-            $subscriptionModel->update($subscription->id, [
-                'status'                 => $subscriptionStatus,
-                'vendor_customer_id'     => $stripeResponse->customer,
-                'vendor_subscriptipn_id' => $stripeResponse->id,
-                'vendor_plan_id'         => $subscription->vendor_plan_id,
-                'vendor_response'        => maybe_serialize($stripeResponse),
-            ]);
-
-            if ($subscriptionStatus == 'trialling') {
-                continue;
-            }
-
-            $totalAmount = $subscription->initial_amount + $subscription->recurring_amount;
-            // We have to calculate the payment total
-
-            $transactionItem = [
-                'form_id'          => $submission->form_id,
-                'user_id'          => $submission->user_id,
-                'submission_id'    => $submission->id,
-                'subscription_id'  => $subscription->id,
-                'transaction_type' => 'subscription',
-                'payment_method'   => 'stripe',
-                'charge_id'        => $stripeResponse->latest_invoice->charge,
-                'payment_total'    => $totalAmount,
-                'status'           => $stripeResponse->latest_invoice->status,
-                'currency'         => $stripeResponse->latest_invoice->currency,
-                'payment_mode'     => ($stripeResponse->latest_invoice->livemode) ? 'live' : 'test',
-                'payment_note'     => maybe_serialize($stripeResponse->latest_invoice),
-                'created_at'       => gmdate('Y-m-d H:i:s', $stripeResponse->created),
-                'updated_at'       => gmdate('Y-m-d H:i:s', $stripeResponse->created)
-            ];
-
-            $subscriptionTransactionModel->maybeInsertCharge($transactionItem);
-        }
-
-        SubmissionActivity::createActivity(array(
-            'form_id'       => $submission->form_id,
-            'submission_id' => $submission->id,
-            'type'          => 'activity',
-            'created_by'    => 'PayForm BOT',
-            'content'       => __('Stripe recurring subscription successfully initiated', 'wppayform')
-        ));
-
-        if(!empty($stripeResponse->latest_invoice->payment_intent->charges->data[0])) {
-            $charge = $stripeResponse->latest_invoice->payment_intent->charges->data[0];
-            $this->recoredStripeBillingAddress($charge, $submission);
-        }
-    }
-
     public function showSuccessMessage($action)
     {
         $submissionHash = sanitize_text_field($_REQUEST['wpf_hash']);
@@ -485,6 +338,7 @@ class StripeHostedHandler extends StripeHandler
         echo do_shortcode($confirmation['messageToShow']);
         return;
     }
+
     private function getIntentMetaData($submission)
     {
         $metadata = [

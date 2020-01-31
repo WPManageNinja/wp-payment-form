@@ -60,7 +60,7 @@ class PlanSubscription
     {
         $stripe = new Stripe();
         ApiRequest::set_secret_key($stripe->getSecretKey());
-        return ApiRequest::request($subscriptionArgs, 'subscriptions', 'POST');
+        $response = ApiRequest::request($subscriptionArgs, 'subscriptions', 'POST');
         if (!empty($response->error)) {
             $errotType = 'general';
             if (!empty($response->error->type)) {

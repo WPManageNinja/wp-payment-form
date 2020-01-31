@@ -104,15 +104,10 @@ class PayFormHandler {
     async stripeSetupItent(data) {
         this.showMessages(data.message, 'info', '');
         this.buttonState('validating_form', 'Validating Card Info', true, data);
-        const result = await this.stripe.handleCardSetup(
-            data.client_secret, this.stripeCard,
+        const result = await this.stripe.confirmCardPayment(
+            data.client_secret,
             {
-                payment_method_data: {
-                    billing_details: {
-                        name: data.customer_name,
-                        email: data.customer_email,
-                    }
-                }
+                payment_method: data.payment_method_id
             }
         );
 
@@ -122,13 +117,17 @@ class PayFormHandler {
             return;
         }
 
+        console.log(result.paymentIntent);
+
+
         this.handleStripePaymentConfirm({
             action: 'wppayform_sca_inline_confirm_payment_setup_intents',
             form_id: this.formId,
-            payment_method: result.setupIntent.payment_method,
+            payment_method: result.paymentIntent.payment_method,
             payemnt_method_id: data.payemnt_method_id,
-            payment_intent_id: result.setupIntent.id,
+            payment_intent_id: result.paymentIntent.id,
             submission_id: data.submission_id,
+            stripe_subscription_id: data.stripe_subscription_id,
             type: 'handleCardSetup'
         });
 

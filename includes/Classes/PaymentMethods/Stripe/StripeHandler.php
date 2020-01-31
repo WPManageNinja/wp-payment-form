@@ -146,7 +146,6 @@ class StripeHandler
         return $subscriptionModel->getSubscriptions($submission->id);
     }
 
-
     public function handlePaymentChargeError($message, $submission, $transaction, $form, $charge = false, $type = 'general')
     {
         $paymentMode = $this->getMode();
@@ -199,6 +198,37 @@ class StripeHandler
         ), 423);
     }
 
+    public function getSubmissionPlans($submission)
+    {
+        $subscriptionModel = new Subscription();
+        $subscriptions = $subscriptionModel->getSubscriptions($submission->id);
 
+        if (!$subscriptions) {
+            return [];
+        }
+
+        $plans = [];
+
+        foreach ($subscriptions as $subscription)
+        {
+            $plan = Plan::getOrCreatePlan($subscription, $submission);
+            if ($plan && is_wp_error($plan)) {
+                wp_send_json_error([
+                    'message' => __('Sorry! there has an error when creating the subscrion plan. Please try again', 'wppayform'),
+                    'plan' => $plan
+                ], 423);
+            } else if($plan) {
+                $plans[] = [
+                    'plan_id' => $plan->id,
+                    'description' => $subscription->item_name.' ('.$subscription->plan_name.')',
+                    'quantity' => $subscription->quantity
+                ];
+            }
+        }
+
+        return $plans;
+
+
+    }
 
 }

@@ -2,8 +2,6 @@
 
 namespace WPPayForm\Classes\PaymentMethods\Stripe;
 
-use WPPayForm\Classes\GeneralSettings;
-
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -28,6 +26,28 @@ class SCA
         return ApiRequest::request($args, 'payment_intents');
     }
 
+    public static function retrivePaymentIntent($intentId, $args = [])
+    {
+        $stripe = new Stripe();
+        ApiRequest::set_secret_key($stripe->getSecretKey());
+        $response =  ApiRequest::request($args, 'payment_intents/'.$intentId);
+
+        if (!empty($response->error)) {
+            $errotType = 'general';
+            if (!empty($response->error->type)) {
+                $errotType = $response->error->type;
+            }
+            $errorCode = '';
+            if (!empty($response->error->code)) {
+                $errorCode = $response->error->code . ' : ';
+            }
+            return self::errorHandler($errotType, $errorCode . $response->error->message);
+        }
+        if (false !== $response) {
+            return $response;
+        }
+        return false;
+    }
 
     public static function setupIntent($args = [])
     {
@@ -42,7 +62,7 @@ class SCA
         $args = wp_parse_args($args, $argsDefault);
         $stripe = new Stripe();
         ApiRequest::set_secret_key($stripe->getSecretKey());
-        return ApiRequest::request($args, 'payment_intents/'.$intendId.'/confirm');
+        return ApiRequest::request($args, 'payment_intents/' . $intendId . '/confirm');
     }
 
 
@@ -53,11 +73,16 @@ class SCA
 
     public static function getInvoice($invoiceId)
     {
-        return ApiRequest::request([], 'invoices/'.$invoiceId, 'GET');
+        return ApiRequest::request([], 'invoices/' . $invoiceId, 'GET');
     }
 
     public static function createInvoiceItem($args = [])
     {
         return ApiRequest::request($args, 'invoiceitems', 'POST');
+    }
+
+    private static function errorHandler($code, $message, $data = array())
+    {
+        return new \WP_Error($code, $message, $data);
     }
 }
