@@ -222,7 +222,6 @@ abstract class BaseComponent
         if (ArrayHelper::get($fieldOptions, 'required') == 'yes') {
             $controlAttributes['data-checkbox_required'] = 'yes';
         }
-
         ?>
         <div <?php echo $this->builtAttributes($controlAttributes); ?>>
             <?php $this->buildLabel($fieldOptions, $form, array('for' => $inputId)); ?>

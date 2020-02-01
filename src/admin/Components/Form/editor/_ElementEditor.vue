@@ -19,6 +19,7 @@
                                     <el-input :placeholder="item.label" size="mini"
                                               v-model="element.field_options[itemName]"></el-input>
                                 </template>
+                                <p v-if="item.info" v-html="item.info"></p>
                             </el-form-item>
                         </template>
                         <template v-else-if="item.type == 'number'">
@@ -31,6 +32,7 @@
                             <el-form-item :label="item.label">
                                 <el-input type="textarea" :placeholder="item.label" size="mini"
                                           v-model="element.field_options[itemName]"></el-input>
+                                <p v-if="item.info" v-html="item.info"></p>
                             </el-form-item>
                         </template>
                         <template v-else-if="item.type == 'checkbox'">
@@ -59,11 +61,7 @@
                         </template>
                         <template v-else-if="item.type == 'html'">
                             <el-form-item :label="item.label">
-                                <el-input
-                                    type="textarea"
-                                    rows="5"
-                                    :placeholder="item.label"
-                                    v-model="element.field_options[itemName]"></el-input>
+                                <wp-editor v-model="element.field_options[itemName]" />
                                 <div v-if="item.info" class="html_placeholder_instruction" v-html="item.info"></div>
                             </el-form-item>
                         </template>
@@ -182,6 +180,7 @@
     import Address from '../../Common/Address';
     import MaskInput from '../../Common/MaskInput';
     import DefaultValueComponent from './_DefaultValueComponent'
+    import WpEditor from '../../Common/_wp_editor'
 
     export default {
         name: 'elementEditor',
@@ -198,7 +197,8 @@
             OneTimeProductsSelector,
             Address,
             MaskInput,
-            DefaultValueComponent
+            DefaultValueComponent,
+            WpEditor
         },
         props: ['element', 'all_elements'],
         comments: {

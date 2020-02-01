@@ -441,3 +441,15 @@ label.wpf_address_heading {
     }
   }
 }
+.wpf_tc_scroll {
+  max-height: 200px;
+  overflow: scroll;
+  padding: 15px;
+  background: #f6f8fa;
+  background-image: linear-gradient(to bottom, #ffffff, rgba(255, 255, 255, 0)), linear-gradient(to top, #ffffff, rgba(255, 255, 255, 0)), linear-gradient(to bottom, #f7f7f7, rgba(255, 255, 255, 0)), linear-gradient(to top, #f5f5f5, rgba(255, 255, 255, 0));
+  background-position: 0 0, 0 100%, 0 0, 0 100%;
+  background-repeat: no-repeat;
+  background-size: 100% 0em, 100% 5em, 100% 1em, 100% 1em;
+  background-attachment: local, local, scroll, scroll;
+  border: 1px solid #d4d4d4;
+}
