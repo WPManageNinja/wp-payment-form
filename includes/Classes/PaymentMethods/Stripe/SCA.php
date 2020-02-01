@@ -23,7 +23,22 @@ class SCA
 
         $stripe = new Stripe();
         ApiRequest::set_secret_key($stripe->getSecretKey());
-        return ApiRequest::request($args, 'payment_intents');
+        $response = ApiRequest::request($args, 'payment_intents');
+        if (!empty($response->error)) {
+            $errotType = 'general';
+            if (!empty($response->error->type)) {
+                $errotType = $response->error->type;
+            }
+            $errorCode = '';
+            if (!empty($response->error->code)) {
+                $errorCode = $response->error->code . ' : ';
+            }
+            return self::errorHandler($errotType, $errorCode . $response->error->message);
+        }
+        if (false !== $response) {
+            return $response;
+        }
+        return false;
     }
 
     public static function retrivePaymentIntent($intentId, $args = [])

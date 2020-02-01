@@ -33,13 +33,13 @@ class PaymentSuccessHandler
                 $subscriptionStatus = 'trialling';
             }
 
-            $updateData =  [
-                'status'                 => $subscriptionStatus,
-                'vendor_customer_id'     => $invoice->customer,
-                'vendor_response'        => maybe_serialize($invoice),
+            $updateData = [
+                'status'             => $subscriptionStatus,
+                'vendor_customer_id' => $invoice->customer,
+                'vendor_response'    => maybe_serialize($invoice),
             ];
 
-            if(!$updateData['vendor_subscriptipn_id']) {
+            if (!$subscription->vendor_subscriptipn_id) {
                 $updateData['vendor_subscriptipn_id'] = $invoice->subscription;
             }
 
@@ -145,16 +145,16 @@ class PaymentSuccessHandler
         }
 
         $billingDetails = $charge->billing_details;
-        if(!empty($billingDetails->address)) {
+        if (!empty($billingDetails->address)) {
             $formDataFormatted['__checkout_billing_address_details'] = $billingDetails->address;
         }
-        if(!empty($billingDetails->phone)) {
+        if (!empty($billingDetails->phone)) {
             $formDataFormatted['__stripe_phone'] = $billingDetails->phone;
         }
-        if(!empty($billingDetails->name)) {
+        if (!empty($billingDetails->name)) {
             $formDataFormatted['__stripe_name'] = $billingDetails->name;
         }
-        if(!empty($billingDetails->email)) {
+        if (!empty($billingDetails->email)) {
             $formDataFormatted['__stripe_email'] = $billingDetails->email;
         }
 

@@ -374,7 +374,15 @@ class StripeInlineHandler extends StripeHandler
 
         $intent = SCA::createPaymentIntent($intentArgs);
 
+        if(is_wp_error($intent)) {
+            wp_send_json_error([
+                'message' => $intent->get_error_message(),
+                'intent' => $intent
+            ], 423);
+        }
+
         if ($intent->status == 'requires_action' &&
+            $intent->next_action &&
             $intent->next_action->type == 'use_stripe_sdk') {
             # Tell the client to handle the action
             $transactionModel = new Transaction();

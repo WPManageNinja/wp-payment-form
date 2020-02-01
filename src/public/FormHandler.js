@@ -77,12 +77,14 @@ class PayFormHandler {
                             this.handlePaymentSuccess(response.data);
                         })
                         .fail(error => {
-                            if (typeof error == 'string' || !error.responseJSON.data) {
+                            if (typeof error == 'string' || !error.responseJSON || !error.responseJSON.data) {
                                 this.handleServerUnexpectedError(response);
                             } else {
                                 this.showMessages(error.responseJSON.data.errors, 'error', error.responseJSON.data.message);
                             }
-                            this.form.trigger('wpf_form_fail_submission', error.responseJSON.data);
+                            if(error && error.responseJSON && error.responseJSON.data) {
+                                this.form.trigger('wpf_form_fail_submission', error.responseJSON.data);
+                            }
                             this.form.trigger('server_error', [error]);
                             this.form.removeClass('wpf_submitting_form');
                             this.form.find('button.wpf_submit_button').removeAttr('disabled');
