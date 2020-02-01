@@ -158,13 +158,17 @@
         mounted() {
             this.setFormMenu();
             this.getForm();
-            var clipboard = new Clipboard('.copy');
-            clipboard.on('success', (e) => {
-                this.$message({
-                    message: 'Copied to Clipboard!',
-                    type: 'success'
+            if(!window.wpf_clip_inited) {
+                var clipboard = new Clipboard('.copy');
+                clipboard.on('success', (e) => {
+                    this.$message({
+                        message: 'Copied to Clipboard!',
+                        type: 'success'
+                    });
                 });
-            });
+                window.wpf_clip_inited = true;
+            }
+
         }
     }
 </script>

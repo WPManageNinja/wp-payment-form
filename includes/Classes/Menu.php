@@ -121,6 +121,7 @@ class Menu
                 'ipn_url' => site_url('?wpf_paypal_ipn=1'),
                 'printStyles' => apply_filters('wppayform/print_styles', []),
                 'ace_path_url' => WPPAYFORM_URL.'assets/libs/ace',
+                'icon_url' => WPPAYFORM_URL.'assets/images/icon.png',
                 'countries' => require WPPAYFORM_DIR . 'includes/Classes/CountryNames.php'
             ));
 
