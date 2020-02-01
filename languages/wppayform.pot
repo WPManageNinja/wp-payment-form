@@ -3,7 +3,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: WPPayForm\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2020-01-25 11:30+0000\n"
+"POT-Creation-Date: 2020-02-01 13:07+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: \n"
@@ -17,6 +17,25 @@ msgstr ""
 
 #: wp-payment-form-pro.php:149 wp-payment-form.php:148
 msgid "Sorry, no submission receipt found, Please check your receipt URL"
+msgstr ""
+
+#: includes/Classes/AccessControl.php:50
+msgid "Sorry, You do not have permission to do this action: "
+msgstr ""
+
+#: includes/Classes/Activator.php:274
+msgid "Payment Confirmation"
+msgstr ""
+
+#: includes/Classes/Activator.php:285
+msgid "Payment Failed"
+msgstr ""
+
+#. %s: The [simpay_errors] shortcode
+#: includes/Classes/Activator.php:287
+msgid ""
+"We're sorry, but your transaction failed to process. Please try again or "
+"contact site support."
 msgstr ""
 
 #: includes/Classes/AdminAjaxHandler.php:100
@@ -40,8 +59,8 @@ msgstr ""
 #: includes/Classes/AdminAjaxHandler.php:290
 #: includes/Classes/GlobalSettingsHandler.php:78
 #: includes/Pro/Classes/SchedulingSettings.php:64
+#: includes/Classes/PaymentMethods/Stripe/Stripe.php:257
 #: includes/Pro/GateWays/PayPal/PayPal.php:477
-#: includes/Classes/PaymentMethods/Stripe/Stripe.php:258
 msgid "Settings successfully updated"
 msgstr ""
 
@@ -69,172 +88,12 @@ msgstr ""
 msgid "Form successfully duplicated"
 msgstr ""
 
-#: includes/Classes/SubmissionView.php:156
-msgid "Sorry, No Submission found"
+#: includes/Classes/DashboardWidgetModule.php:23
+msgid "WPPayForm Latest Submissions"
 msgstr ""
 
-#: includes/Classes/SubmissionView.php:193
-msgid "Note successfully added"
-msgstr ""
-
-#: includes/Classes/SubmissionView.php:206
-msgid "The submission have the same status"
-msgstr ""
-
-#: includes/Classes/SubmissionView.php:239
-msgid "Payment status successfully changed"
-msgstr ""
-
-#: includes/Classes/SubmissionView.php:253
-msgid "Selected submission successfully deleted"
-msgstr ""
-
-#: includes/Classes/Activator.php:274
-msgid "Payment Confirmation"
-msgstr ""
-
-#: includes/Classes/Activator.php:285
-msgid "Payment Failed"
-msgstr ""
-
-#. %s: The [simpay_errors] shortcode
-#: includes/Classes/Activator.php:287
-msgid ""
-"We're sorry, but your transaction failed to process. Please try again or "
-"contact site support."
-msgstr ""
-
-#: includes/Classes/SubmissionHandler.php:41
-msgid "Invalid request. Please try again"
-msgstr ""
-
-#: includes/Classes/SubmissionHandler.php:116
-msgid "Validation failed, because selected payment method could not be found"
-msgstr ""
-
-#: includes/Classes/SubmissionHandler.php:129
-msgid "Validation failed, Please fill up card details"
-msgstr ""
-
-#: includes/Classes/SubmissionHandler.php:249
-#: includes/Pro/GateWays/PayPal/PayPal.php:166
-msgid "Form is successfully submitted"
-msgstr ""
-
-#: includes/Classes/SubmissionHandler.php:317
-msgid "reCaptcha validation failed. Please try again."
-msgstr ""
-
-#: includes/Classes/SubmissionHandler.php:326
-msgid "Form Validation failed"
-msgstr ""
-
-#: includes/Classes/SubmissionHandler.php:512
-msgid " is required"
-msgstr ""
-
-#: includes/Classes/GeneralSettings.php:415
-msgid "Paid"
-msgstr ""
-
-#: includes/Classes/GeneralSettings.php:416
-msgid "Processing"
-msgstr ""
-
-#: includes/Classes/GeneralSettings.php:417
-msgid "Pending"
-msgstr ""
-
-#: includes/Classes/GeneralSettings.php:418
-msgid "Failed"
-msgstr ""
-
-#: includes/Classes/GeneralSettings.php:419
-msgid "Refunded"
-msgstr ""
-
-#: includes/Classes/GeneralSettings.php:426
-msgid "Burundian Franc"
-msgstr ""
-
-#: includes/Classes/GeneralSettings.php:427
-msgid "Chilean Peso"
-msgstr ""
-
-#: includes/Classes/GeneralSettings.php:428
-msgid "Djiboutian Franc"
-msgstr ""
-
-#: includes/Classes/GeneralSettings.php:429
-msgid "Guinean Franc"
-msgstr ""
-
-#: includes/Classes/GeneralSettings.php:430
-msgid "Japanese Yen"
-msgstr ""
-
-#: includes/Classes/GeneralSettings.php:431
-msgid "Comorian Franc"
-msgstr ""
-
-#: includes/Classes/GeneralSettings.php:432
-msgid "South Korean Won"
-msgstr ""
-
-#: includes/Classes/GeneralSettings.php:433
-msgid "Malagasy Ariary"
-msgstr ""
-
-#: includes/Classes/GeneralSettings.php:434
-msgid "Paraguayan Guaraní"
-msgstr ""
-
-#: includes/Classes/GeneralSettings.php:435
-msgid "Rwandan Franc"
-msgstr ""
-
-#: includes/Classes/GeneralSettings.php:436
-msgid "Vietnamese Dong"
-msgstr ""
-
-#: includes/Classes/GeneralSettings.php:437
-msgid "Vanuatu Vatu"
-msgstr ""
-
-#: includes/Classes/GeneralSettings.php:438
-msgid "Central African Cfa Franc"
-msgstr ""
-
-#: includes/Classes/GeneralSettings.php:439
-msgid "West African Cfa Franc"
-msgstr ""
-
-#: includes/Classes/GeneralSettings.php:440
-msgid "Cfp Franc"
-msgstr ""
-
-#: includes/Classes/Menu.php:30
-msgid "WPPayForms"
-msgstr ""
-
-#: includes/Classes/Menu.php:60
-msgid "All Forms"
-msgstr ""
-
-#: includes/Classes/Menu.php:65
-msgid "Entries"
-msgstr ""
-
-#: includes/Classes/Menu.php:70
-msgid "Settings"
-msgstr ""
-
-#: includes/Classes/Menu.php:83
-msgid "Support"
-msgstr ""
-
-#: includes/Classes/Menu.php:112
-msgid "All Payment Forms"
+#: includes/Classes/DashboardWidgetModule.php:102
+msgid "Total Paid Total"
 msgstr ""
 
 #: includes/Classes/FormPlaceholders.php:21
@@ -355,16 +214,84 @@ msgstr ""
 msgid "User IP Address"
 msgstr ""
 
-#: includes/Classes/AccessControl.php:50
-msgid "Sorry, You do not have permission to do this action: "
+#: includes/Classes/GeneralSettings.php:415
+msgid "Paid"
 msgstr ""
 
-#: includes/Classes/DashboardWidgetModule.php:23
-msgid "WPPayForm Latest Submissions"
+#: includes/Classes/GeneralSettings.php:416
+msgid "Processing"
 msgstr ""
 
-#: includes/Classes/DashboardWidgetModule.php:102
-msgid "Total Paid Total"
+#: includes/Classes/GeneralSettings.php:417
+msgid "Pending"
+msgstr ""
+
+#: includes/Classes/GeneralSettings.php:418
+msgid "Failed"
+msgstr ""
+
+#: includes/Classes/GeneralSettings.php:419
+msgid "Refunded"
+msgstr ""
+
+#: includes/Classes/GeneralSettings.php:426
+msgid "Burundian Franc"
+msgstr ""
+
+#: includes/Classes/GeneralSettings.php:427
+msgid "Chilean Peso"
+msgstr ""
+
+#: includes/Classes/GeneralSettings.php:428
+msgid "Djiboutian Franc"
+msgstr ""
+
+#: includes/Classes/GeneralSettings.php:429
+msgid "Guinean Franc"
+msgstr ""
+
+#: includes/Classes/GeneralSettings.php:430
+msgid "Japanese Yen"
+msgstr ""
+
+#: includes/Classes/GeneralSettings.php:431
+msgid "Comorian Franc"
+msgstr ""
+
+#: includes/Classes/GeneralSettings.php:432
+msgid "South Korean Won"
+msgstr ""
+
+#: includes/Classes/GeneralSettings.php:433
+msgid "Malagasy Ariary"
+msgstr ""
+
+#: includes/Classes/GeneralSettings.php:434
+msgid "Paraguayan Guaraní"
+msgstr ""
+
+#: includes/Classes/GeneralSettings.php:435
+msgid "Rwandan Franc"
+msgstr ""
+
+#: includes/Classes/GeneralSettings.php:436
+msgid "Vietnamese Dong"
+msgstr ""
+
+#: includes/Classes/GeneralSettings.php:437
+msgid "Vanuatu Vatu"
+msgstr ""
+
+#: includes/Classes/GeneralSettings.php:438
+msgid "Central African Cfa Franc"
+msgstr ""
+
+#: includes/Classes/GeneralSettings.php:439
+msgid "West African Cfa Franc"
+msgstr ""
+
+#: includes/Classes/GeneralSettings.php:440
+msgid "Cfp Franc"
 msgstr ""
 
 #: includes/Classes/GlobalSettingsHandler.php:54
@@ -379,219 +306,77 @@ msgstr ""
 msgid "Something is wrong when uploading the file"
 msgstr ""
 
-#: includes/Pro/Classes/SchedulingSettings.php:136
-msgid "Submission limit has been excceded."
+#: includes/Classes/Menu.php:30
+msgid "WPPayForms"
 msgstr ""
 
-#: includes/Pro/Classes/SchedulingSettings.php:152
-msgid "Form submission is not started yet."
+#: includes/Classes/Menu.php:60
+msgid "All Forms"
 msgstr ""
 
-#: includes/Pro/Classes/SchedulingSettings.php:158
-msgid "Form submission is now closed."
+#: includes/Classes/Menu.php:65
+msgid "Entries"
 msgstr ""
 
-#: includes/Pro/Classes/SchedulingSettings.php:171
-msgid "You must be logged in to submit the form."
+#: includes/Classes/Menu.php:70
+msgid "Settings"
 msgstr ""
 
-#: includes/Pro/Classes/ProShortCodeHandler.php:24
-msgid "You need to login to see your submissions"
+#: includes/Classes/Menu.php:83
+msgid "Support"
 msgstr ""
 
-#: includes/Pro/Classes/ProShortCodeHandler.php:25
-msgid "You do not have any submission yet!"
+#: includes/Classes/Menu.php:112
+msgid "All Payment Forms"
 msgstr ""
 
-#: includes/Pro/Classes/ProShortCodeHandler.php:39
-msgid ""
-"Wrong shortcode parameter, Please use user_id / customer_email in your "
-"shortcode"
+#: includes/Classes/SubmissionHandler.php:41
+msgid "Invalid request. Please try again"
 msgstr ""
 
-#: includes/Pro/Classes/CustomCSSJS.php:65
-msgid "Custom CSS and JS successfully saved"
+#: includes/Classes/SubmissionHandler.php:115
+msgid "Validation failed, because selected payment method could not be found"
 msgstr ""
 
-#: includes/Classes/FormComponents/PaymentItemComponent.php:91
-#: includes/Classes/FormComponents/DemoRecurringPaymentComponent.php:118
-#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:115
-msgid "Payment amount is required for item:"
+#: includes/Classes/SubmissionHandler.php:128
+msgid "Validation failed, Please fill up card details"
 msgstr ""
 
-#: includes/Classes/FormComponents/PaymentItemComponent.php:95
-#: includes/Classes/FormComponents/DemoRecurringPaymentComponent.php:122
-#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:119
-msgid "Pricing Details is required for item:"
+#: includes/Classes/SubmissionHandler.php:251
+#: includes/Pro/GateWays/PayPal/PayPal.php:166
+msgid "Form is successfully submitted"
 msgstr ""
 
-#: includes/Classes/FormComponents/BaseComponent.php:351
-#: includes/Classes/Builder/Render.php:309
-msgid "is required"
+#: includes/Classes/SubmissionHandler.php:318
+msgid "reCaptcha validation failed. Please try again."
 msgstr ""
 
-#: includes/Classes/FormComponents/DemoFileUploadComponent.php:24
-msgid "File Upload (Pro)"
+#: includes/Classes/SubmissionHandler.php:327
+msgid "Form Validation failed"
 msgstr ""
 
-#: includes/Classes/FormComponents/HiddenInputComponent.php:59
-msgid "Value is required for item:"
+#: includes/Classes/SubmissionHandler.php:513
+msgid " is required"
 msgstr ""
 
-#: includes/Classes/FormComponents/DemoPayPalElement.php:64
-#: includes/Pro/GateWays/PayPal/PayPalElement.php:65
-msgid "PayPal Payment Gateway"
+#: includes/Classes/SubmissionView.php:156
+msgid "Sorry, No Submission found"
 msgstr ""
 
-#: includes/Classes/FormComponents/ChoosePaymentMethodComponent.php:90
-msgid "Select Payment Method"
+#: includes/Classes/SubmissionView.php:193
+msgid "Note successfully added"
 msgstr ""
 
-#: includes/Classes/FormComponents/CustomerEmailComponent.php:89
-msgid "Valid email address is required for field:"
+#: includes/Classes/SubmissionView.php:206
+msgid "The submission have the same status"
 msgstr ""
 
-#: includes/Classes/FormComponents/CustomerEmailComponent.php:97
-msgid " does not match"
+#: includes/Classes/SubmissionView.php:239
+msgid "Payment status successfully changed"
 msgstr ""
 
-#: includes/Classes/FormComponents/DemoRecurringPaymentComponent.php:23
-#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:24
-msgid "Recurring Payment Item"
-msgstr ""
-
-#: includes/Classes/FormComponents/DemoRecurringPaymentComponent.php:57
-#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:54
-msgid "Simple Recurring Plan (Single)"
-msgstr ""
-
-#: includes/Classes/FormComponents/DemoRecurringPaymentComponent.php:58
-#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:55
-msgid "Chose One from Multiple Pricing Plans"
-msgstr ""
-
-#: includes/Classes/FormComponents/DemoRecurringPaymentComponent.php:62
-#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:59
-msgid "Radio input field"
-msgstr ""
-
-#: includes/Classes/FormComponents/DemoRecurringPaymentComponent.php:63
-#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:60
-msgid "Select input field"
-msgstr ""
-
-#: includes/Classes/FormComponents/DemoRecurringPaymentComponent.php:85
-#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:82
-msgid "Subscription Item"
-msgstr ""
-
-#: includes/Classes/FormComponents/DemoRecurringPaymentComponent.php:94
-#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:91
-msgid "$9.99 / Month"
-msgstr ""
-
-#: includes/Classes/FormComponents/ItemQuantityComponent.php:93
-#: includes/Pro/Classes/Components/TaxItemComponent.php:101
-msgid "Target Product is required for item:"
-msgstr ""
-
-#: includes/Classes/FormComponents/ItemQuantityComponent.php:116
-#, php-format
-msgid "need to be greater or equal %d"
-msgstr ""
-
-#: includes/Classes/FormComponents/ItemQuantityComponent.php:121
-#, php-format
-msgid "need to be less than or equal %d"
-msgstr ""
-
-#: includes/Classes/Models/Forms.php:107
-msgid "Submit"
-msgstr ""
-
-#: includes/Classes/Models/Forms.php:108
-msgid "Please Wait…"
-msgstr ""
-
-#: includes/Classes/Models/Forms.php:197
-msgid "Form has been successfully submitted"
-msgstr ""
-
-#: includes/Classes/Models/Forms.php:223
-msgid "Thanks for your submission. Here are the details of your submission:"
-msgstr ""
-
-#: includes/Classes/Models/Forms.php:307
-msgid "Submission ID"
-msgstr ""
-
-#: includes/Classes/Models/Forms.php:308
-msgid "Submission Hash ID"
-msgstr ""
-
-#: includes/Classes/Models/Forms.php:309
-msgid "Customer Name"
-msgstr ""
-
-#: includes/Classes/Models/Forms.php:310
-msgid "Customer Email"
-msgstr ""
-
-#: includes/Classes/Models/Forms.php:311
-msgid "Payment Method"
-msgstr ""
-
-#: includes/Classes/Models/Forms.php:315
-msgid "Payment Total"
-msgstr ""
-
-#: includes/Classes/Models/Forms.php:319
-msgid "All input field html"
-msgstr ""
-
-#: includes/Classes/Models/Forms.php:321
-msgid "Order items table html"
-msgstr ""
-
-#: includes/Classes/Models/Forms.php:327
-msgid "Subscription details table html "
-msgstr ""
-
-#: includes/Classes/Models/Forms.php:330
-msgid "Payment Receipt"
-msgstr ""
-
-#: includes/Classes/Models/Forms.php:437
-msgid "Number of entry has been exceeds, Please check back later"
-msgstr ""
-
-#: includes/Classes/Models/Forms.php:443
-msgid ""
-"Form submission time schedule is not started yet. Please check back later"
-msgstr ""
-
-#: includes/Classes/Models/Forms.php:448
-msgid "You need to login to submit this form"
-msgstr ""
-
-#: includes/Classes/Integrations/TinyMceBlock.php:40
-msgid "Select a Form to insert"
-msgstr ""
-
-#: includes/Classes/Integrations/TinyMceBlock.php:41
-msgid "Insert Form Shortcode"
-msgstr ""
-
-#: includes/Classes/Integrations/TinyMceBlock.php:42
-msgid "Please select a Form"
-msgstr ""
-
-#: includes/Classes/Integrations/TinyMceBlock.php:43
-msgid "Insert Shortcode"
-msgstr ""
-
-#: includes/Classes/Extorior/FramelessProcessor.php:45
-msgid "Payment Success"
+#: includes/Classes/SubmissionView.php:253
+msgid "Selected submission successfully deleted"
 msgstr ""
 
 #: includes/Classes/Builder/PaymentReceipt.php:27
@@ -799,8 +584,227 @@ msgstr ""
 msgid "Something is wrong when submitting the form"
 msgstr ""
 
+#: includes/Classes/Builder/Render.php:309
+#: includes/Classes/FormComponents/BaseComponent.php:350
+msgid "is required"
+msgstr ""
+
 #: includes/Classes/Builder/Render.php:310
 msgid "Validation failed, please fill-up required fields"
+msgstr ""
+
+#: includes/Classes/Extorior/FramelessProcessor.php:45
+msgid "Payment Success"
+msgstr ""
+
+#: includes/Classes/FormComponents/ChoosePaymentMethodComponent.php:90
+msgid "Select Payment Method"
+msgstr ""
+
+#: includes/Classes/FormComponents/CustomerEmailComponent.php:89
+msgid "Valid email address is required for field:"
+msgstr ""
+
+#: includes/Classes/FormComponents/CustomerEmailComponent.php:97
+msgid " does not match"
+msgstr ""
+
+#: includes/Classes/FormComponents/DemoFileUploadComponent.php:24
+msgid "File Upload (Pro)"
+msgstr ""
+
+#: includes/Classes/FormComponents/DemoPayPalElement.php:64
+#: includes/Pro/GateWays/PayPal/PayPalElement.php:65
+msgid "PayPal Payment Gateway"
+msgstr ""
+
+#: includes/Classes/FormComponents/DemoRecurringPaymentComponent.php:23
+#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:24
+msgid "Recurring Payment Item"
+msgstr ""
+
+#: includes/Classes/FormComponents/DemoRecurringPaymentComponent.php:57
+#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:54
+msgid "Simple Recurring Plan (Single)"
+msgstr ""
+
+#: includes/Classes/FormComponents/DemoRecurringPaymentComponent.php:58
+#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:55
+msgid "Chose One from Multiple Pricing Plans"
+msgstr ""
+
+#: includes/Classes/FormComponents/DemoRecurringPaymentComponent.php:62
+#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:59
+msgid "Radio input field"
+msgstr ""
+
+#: includes/Classes/FormComponents/DemoRecurringPaymentComponent.php:63
+#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:60
+msgid "Select input field"
+msgstr ""
+
+#: includes/Classes/FormComponents/DemoRecurringPaymentComponent.php:85
+#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:82
+msgid "Subscription Item"
+msgstr ""
+
+#: includes/Classes/FormComponents/DemoRecurringPaymentComponent.php:94
+#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:91
+msgid "$9.99 / Month"
+msgstr ""
+
+#: includes/Classes/FormComponents/DemoRecurringPaymentComponent.php:118
+#: includes/Classes/FormComponents/PaymentItemComponent.php:91
+#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:115
+msgid "Payment amount is required for item:"
+msgstr ""
+
+#: includes/Classes/FormComponents/DemoRecurringPaymentComponent.php:122
+#: includes/Classes/FormComponents/PaymentItemComponent.php:95
+#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:119
+msgid "Pricing Details is required for item:"
+msgstr ""
+
+#: includes/Classes/FormComponents/HiddenInputComponent.php:59
+msgid "Value is required for item:"
+msgstr ""
+
+#: includes/Classes/FormComponents/ItemQuantityComponent.php:93
+#: includes/Pro/Classes/Components/TaxItemComponent.php:101
+msgid "Target Product is required for item:"
+msgstr ""
+
+#: includes/Classes/FormComponents/ItemQuantityComponent.php:116
+#, php-format
+msgid "need to be greater or equal %d"
+msgstr ""
+
+#: includes/Classes/FormComponents/ItemQuantityComponent.php:121
+#, php-format
+msgid "need to be less than or equal %d"
+msgstr ""
+
+#: includes/Classes/Integrations/TinyMceBlock.php:40
+msgid "Select a Form to insert"
+msgstr ""
+
+#: includes/Classes/Integrations/TinyMceBlock.php:41
+msgid "Insert Form Shortcode"
+msgstr ""
+
+#: includes/Classes/Integrations/TinyMceBlock.php:42
+msgid "Please select a Form"
+msgstr ""
+
+#: includes/Classes/Integrations/TinyMceBlock.php:43
+msgid "Insert Shortcode"
+msgstr ""
+
+#: includes/Classes/Models/Forms.php:107
+msgid "Submit"
+msgstr ""
+
+#: includes/Classes/Models/Forms.php:108
+msgid "Please Wait…"
+msgstr ""
+
+#: includes/Classes/Models/Forms.php:208
+msgid "Form has been successfully submitted"
+msgstr ""
+
+#: includes/Classes/Models/Forms.php:234
+msgid "Thanks for your submission. Here are the details of your submission:"
+msgstr ""
+
+#: includes/Classes/Models/Forms.php:318
+msgid "Submission ID"
+msgstr ""
+
+#: includes/Classes/Models/Forms.php:319
+msgid "Submission Hash ID"
+msgstr ""
+
+#: includes/Classes/Models/Forms.php:320
+msgid "Customer Name"
+msgstr ""
+
+#: includes/Classes/Models/Forms.php:321
+msgid "Customer Email"
+msgstr ""
+
+#: includes/Classes/Models/Forms.php:322
+#: includes/Pro/Classes/Export/Export.php:124
+#: includes/Pro/Classes/Export/Export.php:132
+msgid "Payment Method"
+msgstr ""
+
+#: includes/Classes/Models/Forms.php:326
+#: includes/Pro/Classes/Export/Export.php:122
+#: includes/Pro/Classes/Export/Export.php:130
+msgid "Payment Total"
+msgstr ""
+
+#: includes/Classes/Models/Forms.php:330
+msgid "All input field html"
+msgstr ""
+
+#: includes/Classes/Models/Forms.php:332
+msgid "Order items table html"
+msgstr ""
+
+#: includes/Classes/Models/Forms.php:338
+msgid "Subscription details table html "
+msgstr ""
+
+#: includes/Classes/Models/Forms.php:341
+msgid "Payment Receipt"
+msgstr ""
+
+#: includes/Classes/Models/Forms.php:448
+msgid "Number of entry has been exceeds, Please check back later"
+msgstr ""
+
+#: includes/Classes/Models/Forms.php:454
+msgid ""
+"Form submission time schedule is not started yet. Please check back later"
+msgstr ""
+
+#: includes/Classes/Models/Forms.php:459
+msgid "You need to login to submit this form"
+msgstr ""
+
+#: includes/Pro/Classes/CustomCSSJS.php:65
+msgid "Custom CSS and JS successfully saved"
+msgstr ""
+
+#: includes/Pro/Classes/ProShortCodeHandler.php:24
+msgid "You need to login to see your submissions"
+msgstr ""
+
+#: includes/Pro/Classes/ProShortCodeHandler.php:25
+msgid "You do not have any submission yet!"
+msgstr ""
+
+#: includes/Pro/Classes/ProShortCodeHandler.php:39
+msgid ""
+"Wrong shortcode parameter, Please use user_id / customer_email in your "
+"shortcode"
+msgstr ""
+
+#: includes/Pro/Classes/SchedulingSettings.php:136
+msgid "Submission limit has been excceded."
+msgstr ""
+
+#: includes/Pro/Classes/SchedulingSettings.php:152
+msgid "Form submission is not started yet."
+msgstr ""
+
+#: includes/Pro/Classes/SchedulingSettings.php:158
+msgid "Form submission is now closed."
+msgstr ""
+
+#: includes/Pro/Classes/SchedulingSettings.php:171
+msgid "You must be logged in to submit the form."
 msgstr ""
 
 #: includes/views/elements/order_items_table.php:10
@@ -820,6 +824,7 @@ msgid "Line Total"
 msgstr ""
 
 #: includes/views/elements/order_items_table.php:31
+#: includes/Pro/Classes/Export/Export.php:120
 msgid "Sub Total"
 msgstr ""
 
@@ -865,49 +870,287 @@ msgstr ""
 msgid "Submission Details"
 msgstr ""
 
-#: includes/Pro/Classes/EmailNotification/EmailAjax.php:76
-msgid "Email Notifications has been updated"
+#: includes/Classes/PaymentMethods/Stripe/ApiRequest.php:124
+#: includes/Classes/PaymentMethods/Stripe/ApiRequest.php:148
+msgid "There was a problem connecting to the Stripe API endpoint."
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Charge.php:19
+#: includes/Classes/PaymentMethods/Stripe/Customer.php:16
+msgid "Payment data validation failed"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Charge.php:52
+#: includes/Classes/PaymentMethods/Stripe/Customer.php:39
+#: includes/Classes/PaymentMethods/Stripe/Plan.php:40
+msgid "General Error"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Charge.php:64
+#: includes/Classes/PaymentMethods/Stripe/Plan.php:112
+msgid "Invalid currency"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Charge.php:67
+#: includes/Classes/PaymentMethods/Stripe/Plan.php:115
+msgid "Currency is required"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Charge.php:71
+#: includes/Classes/PaymentMethods/Stripe/Plan.php:119
+msgid "Stripe Token is required"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Charge.php:76
+#: includes/Classes/PaymentMethods/Stripe/Plan.php:124
+msgid "Payment Amount can not be 0"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Customer.php:64
+msgid "Stripe token/payment_method is required"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/PaymentSuccessHandler.php:79
+#: includes/Classes/PaymentMethods/Stripe/StripeHandler.php:127
+msgid "Stripe recurring subscription successfully initiated"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/PaymentSuccessHandler.php:132
+msgid "Stripe One time payment has marked as paid."
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/PaymentSuccessHandler.php:178
+msgid "Billing address from stripe has been logged in the submission data"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Stripe.php:98
+msgid "Signup Fee for"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Stripe.php:152
+msgid "Billing Address (From Stripe)"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Stripe.php:169
+msgid "Phone (From Stripe)"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Stripe.php:178
+msgid "Name on Card (From Stripe)"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Stripe.php:224
+msgid "Please provide Test Publishable key and Test Secret Key"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/Stripe.php:232
+msgid "Please provide Live Publishable key and Live Secret Key"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/StripeCardElementComponent.php:73
+msgid "Your Card info (Powered By Stripe)"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/StripeHandler.php:68
+msgid ""
+"Stripe error when creating subscription plan for you. Your card might be "
+"charged for atleast one subscription. Please contact site admin to resolve "
+"the issue"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/StripeHandler.php:70
+msgid ""
+"Stripe error when creating subscription plan for you. Please contact site "
+"admin"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/StripeHandler.php:142
+msgid "Subscription status changed to : "
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/StripeHandler.php:177
+msgid "Payment Failed via stripe. Status changed from Pending to Failed."
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/StripeHandler.php:215
+msgid ""
+"Sorry! there has an error when creating the subscrion plan. Please try again"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/StripeHostedHandler.php:119
+msgid ""
+"Please wait... You are redirecting to Secure Payment page powered by Stripe"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/StripeHostedHandler.php:327
+msgid "Sorry! no associate submission found"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/StripeHostedHandler.php:337
+msgid "Payment has been successfully completed"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/StripeInlineHandler.php:193
+msgid "Verifying your card details. Please wait..."
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/StripeInlineHandler.php:233
+msgid "Payment Failed! Please try again"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/StripeInlineHandler.php:400
+msgid ""
+"SCA is required for this payment. Payment status changed to pending to "
+"intended"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/StripeInlineHandler.php:408
+msgid "SCA is required for this payment. Requested SCA info from customer"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/StripeInlineHandler.php:415
+msgid ""
+"Strong Customer Authentication is required. Please complete 2 factor "
+"authentication."
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/StripeInlineHandler.php:422
+msgid "Payment Failed! Your card may declined"
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/StripeInlineHandler.php:469
+msgid "One time Payment Successfully made via stripe. Charge ID: "
+msgstr ""
+
+#: includes/Classes/PaymentMethods/Stripe/StripeInlineHandler.php:477
+msgid "Payment status changed from pending to paid"
+msgstr ""
+
+#: includes/Pro/Classes/Components/ConsentComponent.php:20
+msgid "Agreed"
 msgstr ""
 
 #: includes/Pro/Classes/Components/FileUploadComponent.php:34
 msgid "File Upload"
 msgstr ""
 
+#: includes/Pro/Classes/Components/MaskInputComponent.php:69
+msgid "None"
+msgstr ""
+
+#: includes/Pro/Classes/Components/MaskInputComponent.php:72
+msgid "23/03/2018"
+msgstr ""
+
+#: includes/Pro/Classes/Components/MaskInputComponent.php:73
+msgid "23:59:59"
+msgstr ""
+
+#: includes/Pro/Classes/Components/MaskInputComponent.php:74
+msgid "23/03/2018 23:59:59"
+msgstr ""
+
+#: includes/Pro/Classes/Components/MaskInputComponent.php:75
+msgid "Custom"
+msgstr ""
+
 #: includes/Pro/Classes/Components/RecurringPaymentComponent.php:244
 msgid "--Select Plan--"
 msgstr ""
 
-#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:403
+#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:402
 msgid ""
 "{first_interval_total} for the first {billing_interval} then "
 "{subscription_amount}/{billing_interval}"
 msgstr ""
 
-#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:404
+#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:403
 msgid "{trial_days} days free then {subscription_amount}/{billing_interval}"
 msgstr ""
 
-#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:405
+#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:404
 msgid "One time payment of {first_interval_total}"
 msgstr ""
 
-#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:406
+#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:405
 msgid "{subscription_amount} for each {billing_interval}"
 msgstr ""
 
-#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:407
+#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:406
 msgid ", for {bill_times} installments"
 msgstr ""
 
-#: includes/Pro/libs/updater/wppayform_pro_updater.php:37
-#: includes/Pro/libs/updater/wppayform_pro_updater.php:39
-msgid "WPPay Form pro"
+#: includes/Pro/Classes/Components/RecurringPaymentComponent.php:424
+msgid "day"
 msgstr ""
 
-#: includes/Pro/libs/updater/WPPayformProUpdateChecker.php:92
-#: includes/Pro/libs/updater/WPPayformProUpdateChecker.php:101
-#, php-format
-msgid "The %s license needs to be activated. %sActivate Now%s"
+#: includes/Pro/Classes/EmailNotification/EmailAjax.php:76
+msgid "Email Notifications has been updated"
+msgstr ""
+
+#: includes/Pro/Classes/Export/Export.php:111
+msgid "ID"
+msgstr ""
+
+#: includes/Pro/Classes/Export/Export.php:112
+msgid "Submission Date"
+msgstr ""
+
+#: includes/Pro/Classes/Export/Export.php:119
+#: includes/Pro/Classes/Export/Export.php:129
+msgid "Payment Status"
+msgstr ""
+
+#: includes/Pro/Classes/Export/Export.php:121
+msgid "Tax Total"
+msgstr ""
+
+#: includes/Pro/Classes/Export/Export.php:123
+#: includes/Pro/Classes/Export/Export.php:131
+msgid "Payment Mode"
+msgstr ""
+
+#: includes/Pro/Classes/Export/Export.php:125
+#: includes/Pro/Classes/Export/Export.php:133
+msgid "Order Items"
+msgstr ""
+
+#: includes/Pro/GateWays/Offline/OfflineElement.php:26
+msgid "Offline/Check Payment"
+msgstr ""
+
+#: includes/Pro/GateWays/Offline/OfflineElement.php:66
+msgid "Direct bank transfer"
+msgstr ""
+
+#: includes/Pro/GateWays/Offline/OfflineProcessor.php:47
+msgid "Offline Payment recorded and change the status to pending"
+msgstr ""
+
+#: includes/Pro/GateWays/PayPal/PayPal.php:49
+msgid "Looks like you have canceled the payment from paypal"
+msgstr ""
+
+#: includes/Pro/GateWays/PayPal/PayPal.php:162
+msgid "Redirect to paypal for payment"
+msgstr ""
+
+#: includes/Pro/GateWays/PayPal/PayPal.php:172
+msgid "Your are redirecting to paypal now"
+msgstr ""
+
+#: includes/Pro/GateWays/PayPal/PayPal.php:454
+msgid "Please enter valid email address"
+msgstr ""
+
+#: includes/Pro/GateWays/PayPal/PayPal.php:664
+msgid ""
+"PayPal does not support subscriptions payment and Single Amount Payment at "
+"one rquest"
+msgstr ""
+
+#: includes/Pro/GateWays/PayPal/PayPal.php:671
+msgid "PayPal does not support multiple subscriptions at one rquest"
 msgstr ""
 
 #: includes/Pro/GateWays/PayPal/PayPalIpn.php:79
@@ -947,7 +1190,7 @@ msgid "Opps! The Subscription has been cancelled"
 msgstr ""
 
 #: includes/Pro/GateWays/PayPal/PayPalIpn.php:354
-#: includes/Pro/GateWays/Stripe/StripeListener.php:208
+#: includes/Pro/GateWays/Stripe/StripeListener.php:218
 msgid "The Subscription Term Period has been completed"
 msgstr ""
 
@@ -971,194 +1214,20 @@ msgid ""
 "Email ID: %s"
 msgstr ""
 
-#: includes/Pro/GateWays/PayPal/PayPal.php:49
-msgid "Looks like you have canceled the payment from paypal"
-msgstr ""
-
-#: includes/Pro/GateWays/PayPal/PayPal.php:162
-msgid "Redirect to paypal for payment"
-msgstr ""
-
-#: includes/Pro/GateWays/PayPal/PayPal.php:172
-msgid "Your are redirecting to paypal now"
-msgstr ""
-
-#: includes/Pro/GateWays/PayPal/PayPal.php:454
-msgid "Please enter valid email address"
-msgstr ""
-
-#: includes/Pro/GateWays/PayPal/PayPal.php:664
-msgid ""
-"PayPal does not support subscriptions payment and Single Amount Payment at "
-"one rquest"
-msgstr ""
-
-#: includes/Pro/GateWays/PayPal/PayPal.php:671
-msgid "PayPal does not support multiple subscriptions at one rquest"
-msgstr ""
-
-#: includes/Pro/GateWays/Offline/OfflineElement.php:26
-msgid "Offline/Check Payment"
-msgstr ""
-
-#: includes/Pro/GateWays/Offline/OfflineElement.php:66
-msgid "Direct bank transfer"
-msgstr ""
-
-#: includes/Pro/GateWays/Offline/OfflineProcessor.php:47
-msgid "Offline Payment recorded and change the status to pending"
-msgstr ""
-
-#: includes/Pro/GateWays/Stripe/StripeListener.php:313
+#: includes/Pro/GateWays/Stripe/StripeListener.php:323
 #, php-format
 msgid "Payment Refunded By Stripe. Refunded: %s"
 msgstr ""
 
-#: includes/Classes/PaymentMethods/Stripe/Charge.php:19
-#: includes/Classes/PaymentMethods/Stripe/Customer.php:16
-msgid "Payment data validation failed"
+#: includes/Pro/libs/updater/wppayform_pro_updater.php:37
+#: includes/Pro/libs/updater/wppayform_pro_updater.php:39
+msgid "WPPay Form pro"
 msgstr ""
 
-#: includes/Classes/PaymentMethods/Stripe/Charge.php:52
-#: includes/Classes/PaymentMethods/Stripe/Customer.php:39
-#: includes/Classes/PaymentMethods/Stripe/Plan.php:40
-msgid "General Error"
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/Charge.php:64
-#: includes/Classes/PaymentMethods/Stripe/Plan.php:108
-msgid "Invalid currency"
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/Charge.php:67
-#: includes/Classes/PaymentMethods/Stripe/Plan.php:111
-msgid "Currency is required"
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/Charge.php:71
-#: includes/Classes/PaymentMethods/Stripe/Plan.php:115
-msgid "Stripe Token is required"
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/Charge.php:76
-#: includes/Classes/PaymentMethods/Stripe/Plan.php:120
-msgid "Payment Amount can not be 0"
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/StripeHandler.php:70
-msgid ""
-"Stripe error when creating subscription plan for you. Your card might be "
-"charged for atleast one subscription. Please contact site admin to resolve "
-"the issue"
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/StripeHandler.php:72
-msgid ""
-"Stripe error when creating subscription plan for you. Please contact site "
-"admin"
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/StripeHandler.php:129
-#: includes/Classes/PaymentMethods/Stripe/StripeHostedHandler.php:450
-msgid "Stripe recurring subscription successfully initiated"
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/StripeHandler.php:144
-msgid "Subscription status changed to : "
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/StripeHandler.php:180
-msgid "Payment Failed via stripe. Status changed from Pending to Failed."
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/StripeHostedHandler.php:117
-msgid ""
-"Please wait... You are redirecting to Secure Payment page powered by Stripe"
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/StripeHostedHandler.php:352
-msgid "Stripe One time payment has marked as paid."
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/StripeHostedHandler.php:389
-msgid "Billing address from stripe has been logged in the submission data"
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/StripeHostedHandler.php:467
-msgid "Sorry! no associate submission found"
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/StripeHostedHandler.php:477
-msgid "Payment has been successfully completed"
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/Customer.php:64
-msgid "Stripe token/payment_method is required"
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/ApiRequest.php:124
-#: includes/Classes/PaymentMethods/Stripe/ApiRequest.php:147
-msgid "There was a problem connecting to the Stripe API endpoint."
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/StripeInlineHandler.php:82
-msgid "Verifying your card details. Please wait..."
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/StripeInlineHandler.php:190
-msgid ""
-"SCA is required for this payment. Payment status changed to pending to "
-"intended"
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/StripeInlineHandler.php:198
-msgid "SCA is required for this payment. Requested SCA info from customer"
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/StripeInlineHandler.php:205
-msgid ""
-"Strong Customer Authentication is required. Please complete 2 factor "
-"authentication."
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/StripeInlineHandler.php:213
-msgid "Payment Failed! Invalid PaymentIntent status"
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/StripeInlineHandler.php:254
-msgid "One time Payment Successfully made via stripe. Charge ID: "
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/StripeInlineHandler.php:262
-msgid "Payment status changed from pending to paid"
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/StripeCardElementComponent.php:73
-msgid "Your Card info (Powered By Stripe)"
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/Stripe.php:99
-msgid "Signup Fee for"
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/Stripe.php:153
-msgid "Billing Address (From Stripe)"
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/Stripe.php:170
-msgid "Phone (From Stripe)"
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/Stripe.php:179
-msgid "Name on Card (From Stripe)"
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/Stripe.php:225
-msgid "Please provide Test Publishable key and Test Secret Key"
-msgstr ""
-
-#: includes/Classes/PaymentMethods/Stripe/Stripe.php:233
-msgid "Please provide Live Publishable key and Live Secret Key"
+#: includes/Pro/libs/updater/WPPayformProUpdateChecker.php:92
+#: includes/Pro/libs/updater/WPPayformProUpdateChecker.php:101
+#, php-format
+msgid "The %s license needs to be activated. %sActivate Now%s"
 msgstr ""
 
 #. Name of the plugin
