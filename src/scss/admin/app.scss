@@ -55,18 +55,6 @@
   background: rgb(255, 255, 255);
   margin: -20px -20px 0;
   padding: 20px 20px 0px;
-
-  span.plugin-name {
-    font-size: 16px;
-    color: #6e6e6e;
-    margin-right: 30px;
-    position: relative;
-    vertical-align: bottom;
-    img {
-      max-width: 36px;
-    }
-  }
-
   .ninja-tab {
     padding: 10px;
     display: inline-block;
@@ -99,6 +87,9 @@
   * {
     box-sizing: border-box;
   }
+}
+.wpf_form_menu li:last-child {
+  float: right;
 }
 
 .payform_editor_wrapper {
@@ -1372,5 +1363,20 @@ html.wpf_go_full {
     background: #f5f7fa;
     padding-top: 10px;
     padding-bottom: 10px;
+  }
+  .settings_header {
+    margin-top: 0px !important;
+    border-bottom: 1px solid #e6e6e6;
+  }
+}
+
+.wpf_plugin-name {
+  font-size: 16px;
+  color: #6e6e6e;
+  margin-right: 30px;
+  position: relative;
+  vertical-align: bottom;
+  img {
+    max-width: 36px;
   }
 }

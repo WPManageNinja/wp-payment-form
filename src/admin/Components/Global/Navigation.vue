@@ -1,6 +1,6 @@
 <template>
     <div class="wppayform_main_nav">
-            <span class="plugin-name">
+            <span class="wpf_plugin-name">
                 <router-link :to="{ name: 'forms' }">
                     <img class="wpf_plugin_brand_img" :src="icon">
                 </router-link>
@@ -16,6 +16,10 @@
             :href="pro_purchase_url">
             Upgrade To Pro
         </a>
+        <div @click="toggleFullScreen()" class="wpf_expand_controller">
+            <span v-if="goFull == 'yes'"><span class="dashicons dashicons-editor-contract"></span></span>
+            <span v-else><span class="dashicons dashicons-editor-expand"></span></span>
+        </div>
     </div>
 </template>
 

@@ -29,9 +29,9 @@
                 </a>
             </div>
         </div>
-        <el-menu mode="horizontal"
-            :router="true"
-            :default-active="current_route"
+        <el-menu class="wpf_form_menu" mode="horizontal"
+                 :router="true"
+                 :default-active="current_route"
         >
             <el-menu-item
                 v-for="formMenu in form_menus"
@@ -40,6 +40,16 @@
                 :index="formMenu.route">
                 <i :class="formMenu.icon"></i>
                 <span>{{  formMenu.title }}</span>
+            </el-menu-item>
+            <el-menu-item
+                index="forms"
+                :route="{ name: 'forms' }">
+                All Forms
+            </el-menu-item>
+
+            <el-menu-item @click="toggleFullScreen()" class="wpf_expand_controller">
+                <span v-if="goFull == 'yes'"><span class="dashicons dashicons-editor-contract"></span></span>
+                <span v-else><span class="dashicons dashicons-editor-expand"></span></span>
             </el-menu-item>
         </el-menu>
         <div class="payform_editor_wrapper">
@@ -74,6 +84,7 @@
 <script type="text/babel">
     import WpEditor from '../Common/_wp_editor';
     import Clipboard from 'clipboard';
+
     export default {
         name: 'global_wrapper',
         components: {WpEditor},
@@ -86,6 +97,8 @@
                 form: {},
                 fetching: false,
                 saving: false,
+                icon: window.wpPayFormsAdmin.icon_url,
+                goFull: window.localStorage.getItem('wpf_full_screen')
             }
         },
         methods: {
@@ -153,12 +166,21 @@
                         icon: 'dashicons dashicons-text'
                     }
                 ], this.form_id);
+            },
+            toggleFullScreen() {
+                let status = 'yes';
+                if (window.localStorage.getItem('wpf_full_screen') === 'yes') {
+                    status = 'no';
+                }
+                this.goFull = status;
+                window.localStorage.setItem('wpf_full_screen', status)
+                jQuery('html').toggleClass('wpf_go_full');
             }
         },
         mounted() {
             this.setFormMenu();
             this.getForm();
-            if(!window.wpf_clip_inited) {
+            if (!window.wpf_clip_inited) {
                 var clipboard = new Clipboard('.copy');
                 clipboard.on('success', (e) => {
                     this.$message({
@@ -167,6 +189,10 @@
                     });
                 });
                 window.wpf_clip_inited = true;
+            }
+
+            if (window.localStorage.getItem('wpf_full_screen') === 'yes') {
+                jQuery('html').addClass('wpf_go_full');
             }
 
         }
