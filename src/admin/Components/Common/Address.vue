@@ -2,20 +2,25 @@
     <div class="address_fields_wrapper">
         <p><strong>Address Fields:</strong></p>
         <el-table :data="data_fields[0]" border style="width: 100%">
-            <el-table-column label="Field">
+            <el-table-column width="130" label="Field">
                 <template slot-scope="scope">
                     {{fields[scope.row.id]}}
                 </template>
             </el-table-column>
             <el-table-column label="Label">
                 <template slot-scope="scope">
-                    <el-input v-model="field_options[scope.row.id]['label']"/>
+                    <el-input auto-complete="off" v-model="field_options[scope.row.id]['label']"/>
+                </template>
+            </el-table-column>
+            <el-table-column label="Placeholder">
+                <template slot-scope="scope">
+                    <el-input auto-complete="off" v-model="field_options[scope.row.id]['placeholder']"/>
                 </template>
             </el-table-column>
             <el-table-column label="Default Value">
                 <template slot-scope="scope">
                     <div class="wp_vue_editor_wrapper">
-                        <el-input class="wp_vue_editor wp_vue_editor_plain" v-model="field_options[scope.row.id]['default_value']">
+                        <el-input auto-complete="off" v-model="field_options[scope.row.id]['default_value']">
                             <popover
                                 @command="(code) => { field_options[scope.row.id]['default_value'] += code }"
                                 slot="suffix" :data="editorShortcodes"
@@ -26,7 +31,7 @@
                     </div>
                 </template>
             </el-table-column>
-            <el-table-column label="Visibility">
+            <el-table-column width="85" label="Visibility">
                 <template slot-scope="scope">
                     <el-switch
                         active-value="yes"
@@ -34,7 +39,7 @@
                         v-model="field_options[scope.row.id]['visibility']"></el-switch>
                 </template>
             </el-table-column>
-            <el-table-column label="Required">
+            <el-table-column width="85" label="Required">
                 <template slot-scope="scope">
                     <el-switch
                         active-value="yes"

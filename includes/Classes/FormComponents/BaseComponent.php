@@ -46,7 +46,7 @@ abstract class BaseComponent
         }
         $controlClass = $this->elementControlClass($element);
         $inputClass = $this->elementInputClass($element);
-        $inputId = 'wpf_input_' . $form->ID . '_' . $element['id'];
+        $inputId = 'wpf_input_' . $form->ID . '_' . str_replace([' ', '[', ']'], '_', $element['id']);
 
         $defaultValue = apply_filters('wppayform/input_default_value', ArrayHelper::get($fieldOptions, 'default_value'), $element, $form);
 
@@ -97,7 +97,7 @@ abstract class BaseComponent
         }
         $controlClass = $this->elementControlClass($element);
         $inputClass = $this->elementInputClass($element);
-        $inputId = 'wpf_input_' . $form->ID . '_' . $element['id'];
+        $inputId = 'wpf_input_' . $form->ID . '_' . str_replace([' ', '[', ']'], '_', $element['id']);
 
         $defaultValue = apply_filters('wppayform/input_default_value', ArrayHelper::get($fieldOptions, 'default_value'), $element, $form);
 
