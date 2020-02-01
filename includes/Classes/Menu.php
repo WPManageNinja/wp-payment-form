@@ -93,6 +93,18 @@ class Menu
     public function enqueueAssets()
     {
         if(isset($_GET['page']) && $_GET['page'] == 'wppayform.php') {
+
+            if(!apply_filters('wppayform/disable_admin_footer_alter', false)) {
+                add_filter('admin_footer_text', function ($text) {
+                    $link = 'https://wpmanageninja.com/downloads/wppayform-pro-wordpress-payments-form-builder/';
+                    return 'Thank you for using <a target="_blank" href="'.$link.'">WPPayForm</a>';
+                });
+
+                add_filter('update_footer', function ($text) {
+                    return 'WPPayForm Version '.WPPAYFORM_VERSION;
+                });
+            }
+
             if (function_exists('wp_enqueue_editor')) {
                 wp_enqueue_editor();
                 wp_enqueue_script('thickbox');

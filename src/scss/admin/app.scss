@@ -88,6 +88,7 @@
     box-sizing: border-box;
   }
 }
+
 .wpf_form_menu li:last-child {
   float: right;
 }
@@ -1319,19 +1320,19 @@ table.ninja_filter_table {
   }
 }
 
-
-
 .wpf_expand_controller {
   display: inline-block;
   float: right;
   cursor: pointer;
 }
 
-
 html.wpf_go_full {
   padding-top: 0;
   body {
     background: white;
+    #wpfooter {
+      margin-left: 0 !important;
+    }
   }
   .wrap {
     margin: 0;
