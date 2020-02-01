@@ -12,7 +12,7 @@
                 <el-input placeholder="Custom Mask Pattern" size="mini"
                           v-model="field_options.mask_custom"></el-input>
             </el-form-item>
-            <el-form-item label="Do Reverse Mask">
+            <el-form-item label="Do Continue Type (Reverse Type)">
                 <el-switch
                     v-model="field_options.is_mask_reverse"
                     active-value="yes"

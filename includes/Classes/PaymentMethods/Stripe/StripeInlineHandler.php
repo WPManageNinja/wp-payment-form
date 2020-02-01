@@ -127,6 +127,12 @@ class StripeInlineHandler extends StripeHandler
         }
         $customer = Customer::createCustomer($customerArgs);
 
+        if(is_wp_error($customer)) {
+            wp_send_json_error([
+                'message' => $customer->get_error_message()
+            ], 423);
+        }
+
         $transaction = (new Transaction())->getLatestTransaction($submission->id);
 
         if ($transaction) {

@@ -2,7 +2,6 @@
 
 namespace WPPayForm\Classes\PaymentMethods\Stripe;
 
-use WPPayForm\Classes\ArrayHelper;
 use WPPayForm\Classes\GeneralSettings;
 use WPPayForm\Classes\Models\Submission;
 use WPPayForm\Classes\Models\SubmissionActivity;
@@ -209,20 +208,22 @@ class StripeHandler
 
         $plans = [];
 
-        foreach ($subscriptions as $subscription)
-        {
+        foreach ($subscriptions as $subscription) {
             $plan = Plan::getOrCreatePlan($subscription, $submission);
             if ($plan && is_wp_error($plan)) {
                 wp_send_json_error([
                     'message' => __('Sorry! there has an error when creating the subscrion plan. Please try again', 'wppayform'),
-                    'plan' => $plan
+                    'plan'    => $plan
                 ], 423);
-            } else if($plan) {
+            } else if ($plan) {
                 $plans[] = [
-                    'plan_id' => $plan->id,
-                    'description' => $subscription->item_name.' ('.$subscription->plan_name.')',
-                    'quantity' => $subscription->quantity
+                    'plan_id'     => $plan->id,
+                    'description' => $subscription->item_name . ' (' . $subscription->plan_name . ')',
+                    'quantity'    => $subscription->quantity
                 ];
+                $subscriptionModel->update($subscription->id, [
+                    'vendor_plan_id' => $plan->id
+                ]);
             }
         }
 
