@@ -27,6 +27,11 @@
                     :href="pro_purchase_url">
                     Upgrade To Pro
                 </a>
+                <a
+                    @click.prevent="gotoAllForms()"
+                    class="el-button payform_action el-button--mini">
+                    All Forms
+                </a>
             </div>
         </div>
         <el-menu class="wpf_form_menu" mode="horizontal"
@@ -40,11 +45,6 @@
                 :index="formMenu.route">
                 <i :class="formMenu.icon"></i>
                 <span>{{  formMenu.title }}</span>
-            </el-menu-item>
-            <el-menu-item
-                index="forms"
-                :route="{ name: 'forms' }">
-                All Forms
             </el-menu-item>
 
             <el-menu-item @click="toggleFullScreen()" class="wpf_expand_controller">
@@ -175,6 +175,11 @@
                 this.goFull = status;
                 window.localStorage.setItem('wpf_full_screen', status)
                 jQuery('html').toggleClass('wpf_go_full');
+            },
+            gotoAllForms() {
+                this.$router.push({
+                    name: 'forms'
+                });
             }
         },
         mounted() {
