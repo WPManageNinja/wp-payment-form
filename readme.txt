@@ -2,8 +2,8 @@
 Contributors: techjewel, wpmanageninja
 Tags: donations, payments, stripe payments, stripe checkout, PayPal
 Requires at least: 4.5
-Tested up to: 5.2.3
-Stable tag: 1.9.3
+Tested up to: 5.3.2
+Stable tag: 1.9.8
 Requires PHP: 5.4
 License: GPLv2 or later
 

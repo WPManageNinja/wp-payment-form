@@ -134,7 +134,8 @@ class Menu
                 'printStyles' => apply_filters('wppayform/print_styles', []),
                 'ace_path_url' => WPPAYFORM_URL.'assets/libs/ace',
                 'icon_url' => WPPAYFORM_URL.'assets/images/icon.png',
-                'countries' => require WPPAYFORM_DIR . 'includes/Classes/CountryNames.php'
+                'countries' => require WPPAYFORM_DIR . 'includes/Classes/CountryNames.php',
+                'value_placeholders' => []
             ));
 
             wp_localize_script('wppayform_boot', 'wpPayFormsAdmin', $payformAdminVars);
