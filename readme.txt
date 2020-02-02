@@ -97,6 +97,8 @@ This is a super fast form builder and it's only loads css and js if you add the 
 * **Event Registration Form with Payment** - Planning to start your next Event? Then you can use this form template where you can take basic register information and accept payment for the event. This is very easy to create an Event Registration Form.
 * **Many More Forms** - We have added many forms and you can build any type of form easily.
 
+== Supports PayPal Payments (Pro) ==
+[youtube https://www.youtube.com/watch?v=yhOzkunVUtw&list=PLXpD0vT4thWF9UVybzSnhQJujKzd54rgH&index=7]
 
 == Use as a Contact Form ==
 You can use **WPPayForm** as a contact form plugin. With the built-in form builder, you can create any types of form and use as a contact/Subscription form where you can see all the submitted data in the backend.
