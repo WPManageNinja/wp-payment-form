@@ -1,24 +1,21 @@
-=== WPPayForm for Stripe Payments WordPress Plugin - SCA Ready Payments ===
+=== Stripe Payments Plugin for WordPress - WPPayForm ===
 Contributors: techjewel, wpmanageninja
-Tags: stripe, payment, payments, stripe payments, Stripe WordPress, Donations, stripe-gateway
+Tags: donations, payments, stripe payments, stripe checkout, PayPal
 Requires at least: 4.5
 Tested up to: 5.2.3
 Stable tag: 1.9.3
 Requires PHP: 5.4
 License: GPLv2 or later
 
-Easily Accept Payments in WordPress with Stripe (PayPal also supported) with Form Builder Capability - SCA READY.
+Simply Accept Payments in WordPress with Stripe (PayPal also supported). Increase your conversion rate for payments.
 
 == Description ==
 
-[View Demo](https://wppayform.wpmanageninja.com) | [User Guide](https://wpmanageninja.com/docs/wppayform/) | [Youtube Documentation Playlist](https://www.youtube.com/watch?v=r-TrR_c3aJ4&list=PLXpD0vT4thWHCXvZc6eNs52eCOt5dO3SO&index=2)
+[View Demo](https://wppayform.wpmanageninja.com) | [User Guide](https://wpmanageninja.com/docs/wppayform/) | [Youtube Documentation Playlist](https://www.youtube.com/watch?v=nT8UYeIWxJU&list=PLXpD0vT4thWF9UVybzSnhQJujKzd54rgH)
 
 <b>Do you want to accept payments along with user inputs in WordPress?</b> Then WPPayForm is the perfect plugin for you.
 
 With Stripe checkout as well as built-in form builder functionalities, you can build any forms ranging from single payment amount/multiple payment items. Or, you can allow users to pay custom amounts if needed.
-
-== SCA READY for EUROPE ==
-Strong Customer Authentication (SCA), a new rule coming into effect on September 14, 2019, as part of PSD2 regulation in Europe, will require changes to how your European customers authenticate online payments. WPPayForm is compeltely compitable with SCA.
 
 == Intro Video ==
 [youtube https://www.youtube.com/watch?v=oZaBS1EiAJc]
@@ -27,23 +24,23 @@ Building beautiful and customizable payment forms has never been easier; and wit
 
 With easy to use and standard payment forms, customers can pay you in less than a minute without going to another page.
 
-== Use as a Contact Form ==
-You can use **WPPayForm** as a contact form plugin. With the built-in form builder, you can create any types of form and use as a contact/Subscription form where you can see all the submitted data in the backend.
-
+== SCA READY for EUROPE ==
+Strong Customer Authentication (SCA), a new rule coming into effect on September 14, 2019, as part of PSD2 regulation in Europe, will require changes to how your European customers authenticate online payments. WPPayForm is compeltely compitable with SCA.
 
 == Create a form and accept payment via Stripe Checkout ==
-[youtube https://www.youtube.com/watch?v=E8_7tBxuKfc&list=PLXpD0vT4thWHCXvZc6eNs52eCOt5dO3SO&index=3]
+[youtube https://www.youtube.com/watch?v=8ILI2DMc05M&list=PLXpD0vT4thWF9UVybzSnhQJujKzd54rgH&index=6]
 
-
-== Payment Features ==
-- Single Payment Amount
-- Multiple choice payment items as Radio Option
-- Multiple choice payment items as Select Option
-- Checkbox payment items where users can check which items they want to pay
-- Donation/ User inputted payment
-- Quantity Field for any payment item field
-- Collect billing and shipping address of the customer in the same form.
+== FEATURES ==
+- Unlimited payment forms
+- Easily take payment for a service from your site via Stripe.
+- Mobile First Optimized Form & Stripe Checkout pages
+- Ability to offer multiple products and plans in a single page
+- Single Page, High converting payment process.
+- Optionally collect customer billing, shipping addresses and any other information in the checkout process.
+- Support for 14 languages, 30+ countries and 135+ currencies
+- PCI DSS and Strong Customer Authentication (SCA) support for improved security
 - Accept donation on your WordPress site
+- View detailed reports of your payments by status, search and export that easily.
 - Option to configure a customized notification email to be sent to the payee after the transaction is complete. (Pro)
 
 == Stripe Checkout Fields ==
@@ -61,6 +58,8 @@ You can use **WPPayForm** as a contact form plugin. With the built-in form build
 - Checkbox Field
 - Date Field
 - Hidden Field
+- Mask input
+- Address Field
 - Custom HTML Markup
 - Option to insert a Terms and Conditions consent field
 - and more on the way
@@ -97,6 +96,10 @@ This is a super fast form builder and it's only loads css and js if you add the 
 * **Donation Form** - We have build a donation form for you and with one click you can create a donation form easily and start accepting donation for your organisation.
 * **Event Registration Form with Payment** - Planning to start your next Event? Then you can use this form template where you can take basic register information and accept payment for the event. This is very easy to create an Event Registration Form.
 * **Many More Forms** - We have added many forms and you can build any type of form easily.
+
+
+== Use as a Contact Form ==
+You can use **WPPayForm** as a contact form plugin. With the built-in form builder, you can create any types of form and use as a contact/Subscription form where you can see all the submitted data in the backend.
 
 == Available Demos ==
 <ul>
@@ -161,10 +164,10 @@ It's easy, convenient and most importantly, It will increase your conversion rat
 - Accept Subscription Payments *(Done)*
 - Added security fields reCaptcha *(Done)*
 - Implenting Stripe Checkout Version 3 *(Done)*
-- Better Recurring Payment Management (On Development)
+- Better Recurring Payment Management *(Done)*
 - Send bulk emails to the submitters and filter by payment statuses (On development)
 
-This plugin is a very planned project, and we have a long term development plan for this. We already invested around 200 human working hours (+coffees) on it, and we have the intention to spend much more on it. Please let us know what features you want, and we are happy to add that in our development sprint.
+This plugin is a very planned project, and we have a long term development plan for this. We already invested around 400 human working hours (+coffees) on it, and we have the intention to spend much more on it. Please let us know what features you want, and we are happy to add that in our development sprint.
 
 The full source code is available on <a href="https://github.com/WPManageNinja/wp-payment-form">Github</a>.
 
@@ -250,6 +253,13 @@ You are most welcome. You can do the following:
 12. Submission Details (2nd Part)
 
 == Changelog ==
+
+= 1.9.8 - February 02, 2020 =
+- Improve SCA Payments processing
+- Fix few form handling bug
+- Internal Architecture improvements
+- Fix email and receipt email issues
+- Ability to push all the form data as stripe meta
 
 = 1.9.3 - September 15, 2019 =
 - Improved Payment Receipt
