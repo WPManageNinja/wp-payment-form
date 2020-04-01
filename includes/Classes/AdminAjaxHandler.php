@@ -26,6 +26,7 @@ class AdminAjaxHandler
 
         $validRoutes = array(
             'get_forms'                  => 'getForms',
+            'get_global_settings'        => 'renderGlobalSettings',
             'create_form'                => 'createForm',
             'update_form'                => 'updateForm',
             'get_form'                   => 'getForm',
@@ -36,7 +37,10 @@ class AdminAjaxHandler
             'get_form_settings'          => 'getFormSettings',
             'get_design_settings'        => 'getDesignSettings',
             'update_design_settings'     => 'updateDesignSettings',
-            'duplicate_form'             => 'duplicateForm'
+            'duplicate_form'             => 'duplicateForm',
+            'payform_get_modules'        => 'getModules',
+            'payform_update_modules'     => 'updateModules',
+           
         );
 
         if (WPPAYFORM_DB_VERSION > intval(get_option('WPF_DB_VERSION'))) {
@@ -50,6 +54,39 @@ class AdminAjaxHandler
             return $this->{$validRoutes[$route]}();
         }
         do_action('wppayform/admin_ajax_handler_catch', $route);
+    }
+
+    /**
+     * Render global settings page.
+     *
+     * @throws \Exception
+     */
+    public function renderGlobalSettings()
+    {
+        // Fire an event letting others know the current component
+        // that fluentform is rendering for the global settings
+        // page. So that they can hook and load their custom
+        // components on this page dynamically & easily.
+        // N.B. native 'components' will always use
+        // 'settings' as their current component.
+        $currentComponent = apply_filters('payform_global_settings_current_component', 'Settings');
+
+        $components = apply_filters('wppayform_global_settings_components', [
+            'reCAPTCHA' => [
+                'hash'  => 're_captcha',
+                'title' => 'reCAPTCHA',
+                'icon'  =>  'el-icon-help'
+            ]
+        ]);
+
+        // View::render('admin.settings.index', [
+        //     'components'       => $components,
+        //     'currentComponent' => $currentComponent
+        // ]);
+        wp_send_json_success(array(
+            'components'       => $components,
+            'currentComponent' => $currentComponent
+        ), 200);
     }
 
     protected function getForms()
@@ -70,6 +107,25 @@ class AdminAjaxHandler
         $forms = Forms::getForms($args, $with = array('entries_count'));
 
         wp_send_json_success($forms);
+    }
+
+    protected function getModules() {
+        $addons = get_option( 'wppayform_global_modules_status' );
+        
+        wp_send_json_success([
+            'addons'  => $addons
+        ], 200);
+    }
+
+    protected function updateModules() {
+        
+        $addons = wp_unslash($_REQUEST['addons']);
+        update_option('wppayform_global_modules_status', $addons, 'no');
+
+        wp_send_json_success([
+            'addons'  => $addons,
+            'message' => 'Status successfully updated'
+        ], 200);
     }
 
     protected function createForm()

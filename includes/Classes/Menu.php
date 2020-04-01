@@ -3,6 +3,7 @@
 namespace WPPayForm\Classes;
 
 use WPPayForm\Classes\Models\Forms;
+use WPPayForm\Classes\Modules\AddOnModule;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -17,7 +18,7 @@ class Menu
     public function register()
     {
         add_action( 'admin_menu', array($this, 'addMenus') );
-        add_action('admin_enqueue_scripts', array($this, 'enqueueAssets'));
+        add_action( 'admin_enqueue_scripts', array($this, 'enqueueAssets') );
     }
 
     public function addMenus()
@@ -55,17 +56,29 @@ class Menu
                 );
             }
         }
+         
+        
 
         $submenu['wppayform.php']['all_forms'] = array(
             __('All Forms', 'wppayform'),
             $menuPermission,
             'admin.php?page=wppayform.php#/',
         );
+       
         $submenu['wppayform.php']['entries'] = array(
             __('Entries', 'wppayform'),
             $menuPermission,
             'admin.php?page=wppayform.php#/entries',
         );
+        
+        add_submenu_page(
+            'wppayform.php',
+            'Modules',
+            'Modules',
+            'manage_options',
+            'payform_add_ons',
+            array($this, 'renderAddOns'));
+
         $submenu['wppayform.php']['settings'] = array(
             __('Settings', 'wppayform'),
             $menuPermission,
@@ -86,59 +99,69 @@ class Menu
         );
     }
 
+    public function renderAddOns()
+    {
+        echo (new AddOnModule())->render();
+    }
+
     public function render() {
         do_action('wppayform/render_admin_app');
     }
 
     public function enqueueAssets()
     {
-        if(isset($_GET['page']) && $_GET['page'] == 'wppayform.php') {
+        if(!apply_filters('wppayform/disable_admin_footer_alter', false)) {
+            add_filter('admin_footer_text', function ($text) {
+                $link = 'https://wpmanageninja.com/downloads/wppayform-pro-wordpress-payments-form-builder/';
+                return 'Thank you for using <a target="_blank" href="'.$link.'">WPPayForm</a>';
+            });
 
-            if(!apply_filters('wppayform/disable_admin_footer_alter', false)) {
-                add_filter('admin_footer_text', function ($text) {
-                    $link = 'https://wpmanageninja.com/downloads/wppayform-pro-wordpress-payments-form-builder/';
-                    return 'Thank you for using <a target="_blank" href="'.$link.'">WPPayForm</a>';
-                });
+            add_filter('update_footer', function ($text) {
+                return 'WPPayForm Version '.WPPAYFORM_VERSION;
+            });
+        }
 
-                add_filter('update_footer', function ($text) {
-                    return 'WPPayForm Version '.WPPAYFORM_VERSION;
-                });
-            }
+        if (function_exists('wp_enqueue_editor')) {
+            wp_enqueue_editor();
+            wp_enqueue_script('thickbox');
+        }
+        if (function_exists('wp_enqueue_media')) {
+            wp_enqueue_media();
+        }
 
-            if (function_exists('wp_enqueue_editor')) {
-                wp_enqueue_editor();
-                wp_enqueue_script('thickbox');
-            }
-            if (function_exists('wp_enqueue_media')) {
-                wp_enqueue_media();
-            }
+        wp_enqueue_script('wppayform_boot', WPPAYFORM_URL.'assets/js/payforms-boot.js', array('jquery'), WPPAYFORM_VERSION, true);
+        // 3rd party developers can now add their scripts here
+        do_action('wppayform/booting_admin_app');
+        
+        $payformAdminVars = apply_filters('wppayform/admin_app_vars',array(
+            'i18n' => array(
+                'All Payment Forms' => __('All Payment Forms', 'wppayform')
+            ),
+            'paymentStatuses' => GeneralSettings::getPaymentStatuses(),
+            'image_upload_url' => admin_url('admin-ajax.php?action=wpf_global_settings_handler&route=wpf_upload_image'),
+            'forms_count' => Forms::getTotalCount(),
+            'assets_url' => WPPAYFORM_URL.'assets/',
+            'has_pro' => defined('WPPAYFORMHASPRO') && WPPAYFORMHASPRO,
+            'hasValidLicense' => get_option('_wppayform_pro_license_status'),
+            'ajaxurl' => admin_url('admin-ajax.php'),
+            'ipn_url' => site_url('?wpf_paypal_ipn=1'),
+            'printStyles' => apply_filters('wppayform/print_styles', []),
+            'ace_path_url' => WPPAYFORM_URL.'assets/libs/ace',
+            'icon_url' => WPPAYFORM_URL.'assets/images/icon.png',
+            'countries' => require WPPAYFORM_DIR . 'includes/Classes/CountryNames.php',
+            'value_placeholders' => []
+        ));
 
-            wp_enqueue_script('wppayform_boot', WPPAYFORM_URL.'assets/js/payforms-boot.js', array('jquery'), WPPAYFORM_VERSION, true);
-            // 3rd party developers can now add their scripts here
-            do_action('wppayform/booting_admin_app');
-            wp_enqueue_script('wppayform_admin_app', WPPAYFORM_URL.'assets/js/payforms-admin.js', array('wppayform_boot'), WPPAYFORM_VERSION, true);
-            wp_enqueue_style('wppayform_admin_app', WPPAYFORM_URL.'assets/css/payforms-admin.css', array(), WPPAYFORM_VERSION);
-            
-            $payformAdminVars = apply_filters('wppayform/admin_app_vars',array(
-                'i18n' => array(
-                    'All Payment Forms' => __('All Payment Forms', 'wppayform')
-                ),
-                'paymentStatuses' => GeneralSettings::getPaymentStatuses(),
-                'image_upload_url' => admin_url('admin-ajax.php?action=wpf_global_settings_handler&route=wpf_upload_image'),
-                'forms_count' => Forms::getTotalCount(),
-                'assets_url' => WPPAYFORM_URL.'assets/',
-                'has_pro' => defined('WPPAYFORMHASPRO') && WPPAYFORMHASPRO,
-                'hasValidLicense' => get_option('_wppayform_pro_license_status'),
-                'ajaxurl' => admin_url('admin-ajax.php'),
-                'ipn_url' => site_url('?wpf_paypal_ipn=1'),
-                'printStyles' => apply_filters('wppayform/print_styles', []),
-                'ace_path_url' => WPPAYFORM_URL.'assets/libs/ace',
-                'icon_url' => WPPAYFORM_URL.'assets/images/icon.png',
-                'countries' => require WPPAYFORM_DIR . 'includes/Classes/CountryNames.php',
-                'value_placeholders' => []
-            ));
+        wp_localize_script('wppayform_boot', 'wpPayFormsAdmin', $payformAdminVars);
+        wp_enqueue_style( 'wppayform_admin_app', WPPAYFORM_URL.'assets/css/payforms-admin.css', array(), WPPAYFORM_VERSION );
 
-            wp_localize_script('wppayform_boot', 'wpPayFormsAdmin', $payformAdminVars);
+
+        if(isset($_GET['page']) && $_GET['page'] === 'wppayform.php') {
+            wp_enqueue_script( 'wppayform_admin_app', WPPAYFORM_URL.'assets/js/payforms-admin.js', array('wppayform_boot'), WPPAYFORM_VERSION, true );
+        }
+
+        else if(isset($_GET['page']) && $_GET['page'] === 'payform_add_ons') {
+            wp_enqueue_script('wppayform_addon_modules', WPPAYFORM_URL.'assets/js/payforms-addon-modules.js', array('wppayform_boot'), WPPAYFORM_VERSION, true);
         }
     }
 
@@ -154,3 +177,4 @@ class Menu
         return 'data:image/svg+xml;base64,' . base64_encode($svg);
     }
 }
+

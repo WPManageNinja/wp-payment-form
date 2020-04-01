@@ -1,10 +1,10 @@
 <template>
     <div class="wppayform_main_nav">
-            <span class="wpf_plugin-name">
-                <router-link :to="{ name: 'forms' }">
-                    <img class="wpf_plugin_brand_img" :src="icon">
-                </router-link>
-            </span>
+        <span class="wpf_plugin-name">
+            <router-link :to="{ name: 'forms' }">
+                <img class="wpf_plugin_brand_img" :src="icon">
+            </router-link>
+        </span>
         <router-link v-for="menuItem in topMenus" :key="menuItem.route" active-class="ninja-tab-active" exact :class="['ninja-tab']" :to="{ name: menuItem.route }">
             {{ menuItem.title }}
         </router-link>

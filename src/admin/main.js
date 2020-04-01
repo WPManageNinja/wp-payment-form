@@ -80,7 +80,7 @@ import App from './App';
 new window.WPPayForms.Vue({
     el: '#wppayformsapp',
     render: h => h(App),
-    router: router,
+    router,
     mounted() {
         window.WPPayFormsBus.$on('site_title', (title) => {
             jQuery(document).attr("title", title + ' :: WPPayFrom');

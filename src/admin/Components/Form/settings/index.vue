@@ -4,11 +4,11 @@
             <el-container>
                 <el-aside :width="sidebarWidth">
                     <el-menu background-color="#545c64"
-                             text-color="#fff"
-                             :router="true"
-                             :collapse="isCollapse"
-                             :default-active="current_route"
-                             active-text-color="#ffd04b"
+                        text-color="#fff"
+                        :router="true"
+                        :collapse="isCollapse"
+                        :default-active="current_route"
+                        active-text-color="#ffd04b"
                     >
                         <el-menu-item
                             v-for="formMenu in form_menus"

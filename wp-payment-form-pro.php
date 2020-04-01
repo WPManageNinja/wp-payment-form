@@ -31,6 +31,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
+
 define( 'WPPAYFORM_PRO_INSTALLED', true );
 
 if (!defined('WPPAYFORM_VERSION_LITE')) {
@@ -67,6 +68,8 @@ if (!defined('WPPAYFORM_VERSION_LITE')) {
             // Register Admin menu
             $menu = new \WPPayForm\Classes\Menu();
             $menu->register();
+           
+            (new \WPPayForm\Classes\Integrations\MailChimp\MailChimpIntegration());
 
             add_action('wppayform/render_admin_app', function () {
                 $adminApp = new \WPPayForm\Classes\AdminApp();

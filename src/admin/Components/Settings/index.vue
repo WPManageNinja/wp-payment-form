@@ -1,15 +1,14 @@
 <template>
     <div class="wppaymform_editor">
-
         <div class="payform_editor_wrapper">
             <el-container>
                 <el-aside :width="sidebarWidth">
                     <el-menu background-color="#545c64"
-                             text-color="#fff"
-                             :router="true"
-                             :collapse="isCollapse"
-                             :default-active="current_route"
-                             active-text-color="#ffd04b"
+                        text-color="#fff"
+                        :router="true"
+                        :collapse="isCollapse"
+                        :default-active="current_route"
+                        active-text-color="#ffd04b"
                     >
                         <el-menu-item
                             v-for="formMenu in form_menus"
@@ -50,7 +49,6 @@
         },
         methods: {
             setMenu() {
-
                 let menu = [
                     {
                         route: 'general_settings',
@@ -78,7 +76,6 @@
                         icon: 'el-icon-help'
                     }
                 ];
-
                 if(this.has_pro) {
                     menu.push({
                         route: 'licensing',
@@ -87,10 +84,27 @@
                     })
                 }
                 this.form_menus = this.applyFilters('global_settings_menu', menu);
+            },
+            fetchMenuItems() {
+                this.$adminGet({
+                    route: 'payform_get_modules',
+                }).then(res => {
+                    let addons = res.data.addons;
+                    for(let addon in addons) {
+                        if(addons[addon] === "yes") {
+                            this.form_menus.push({
+                                route: addon,
+                                title: addon.charAt(0).toUpperCase() + addon.slice(1),
+                                icon: ''
+                            })
+                        }
+                    }
+                })
             }
         },
         mounted() {
             this.setMenu();
+            this.fetchMenuItems();
             if(window.outerWidth < 500) {
                 this.sidebarWidth = "auto";
                 this.isCollapse = true;

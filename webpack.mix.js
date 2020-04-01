@@ -8,6 +8,7 @@ require('laravel-mix-polyfill');
 mix
     .js('src/admin/Boot.js', 'assets/js/payforms-boot.js')
     .js('src/admin/main.js', 'assets/js/payforms-admin.js')
+    .js('src/admin/modules.js', 'assets/js/payforms-addon-modules.js')
     .js('src/public/publicv2.js', 'assets/js/payforms-publicv2.js')
     .js('src/public/fileupload.js', 'assets/js/fileupload.js')
     .js('src/integrations/tinymce.js', 'assets/js/tinymce.js')

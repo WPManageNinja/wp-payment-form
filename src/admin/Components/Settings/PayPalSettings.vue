@@ -7,7 +7,7 @@
                 </h3>
                 <div v-if="has_pro" class="payform_section_actions">
                     <el-button v-loading="saving" @click="saveSettings()" class="payform_action" size="small"
-                               type="primary">
+                        type="primary">
                         {{ $t( 'Save PayPal Settings' ) }}
                     </el-button>
                 </div>
@@ -28,7 +28,7 @@
                     </el-form-item>
                     <el-form-item label="Paypal Email">
                         <el-input type="text" size="small" v-model="settings.paypal_email"
-                                  placeholder="Paypal Email Address"/>
+                            placeholder="Paypal Email Address"/>
                     </el-form-item>
                     <el-form-item label="Disable PayPal IPN Verification">
                         <el-switch active-value="yes" inactive-value="no" v-model="settings.disable_ipn_verification"/>

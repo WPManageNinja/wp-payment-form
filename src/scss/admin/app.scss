@@ -47,6 +47,38 @@
 @import '~element-ui/lib/theme-chalk/notification.css';
 @import "./_element_icons.css";
 
+
+.wppayform_wrap {
+  .wppayform_wrap_area {
+    padding: 15px 15px 15px 0px;
+    overflow: hidden;
+    display: block;
+    .wppay_add_on_navigation {
+      display: block;
+      width: 100%;
+      ul {
+        list-style: none;
+        padding: 0px;
+        margin: 0px;
+        background: white;
+        li {
+          display: inline-block;
+          margin-bottom: 0px;
+          a {
+            border-top: 2px solid #333333;
+            color: #333;
+            padding: 10px 15px 12px;
+            display: block;
+            text-decoration: none;
+            font-weight: bold;
+            border-right: 1px solid #f1f1f1;
+          }
+        }
+      }
+    }
+  }
+}
+
 .wppayform_main_nav {
   display: block;
   width: 100%;

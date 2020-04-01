@@ -7,7 +7,7 @@
                 </h3>
                 <div class="payform_section_actions">
                     <el-button v-loading="saving" @click="saveSettings()" class="payform_action" size="small"
-                               type="primary">
+                        type="primary">
                         {{ $t( 'Save Settings' ) }}
                     </el-button>
                 </div>

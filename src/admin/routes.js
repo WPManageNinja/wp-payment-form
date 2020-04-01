@@ -23,7 +23,9 @@ import FormDesignSettings from './Components/Form/settings/FormDesignSettings'
 import Licensing from './Components/Settings/License'
 import GlobalTools from './Components/Settings/GlobalTools'
 import ReCaptchaSettings from './Components/Settings/ReCaptchaSettings'
-
+import Module from './Components/Settings/Module'
+import WebHook from './Components/Settings/WebHook/WebHook'
+import Slack from './Components/Settings/Slack/Slack'
 
 const globalSettingsViewChilderRoutes = window.WPPayForms.applyFilters('wpf_global_settings_childern_routes', [
     {
@@ -55,8 +57,22 @@ const globalSettingsViewChilderRoutes = window.WPPayForms.applyFilters('wpf_glob
         name: 'licensing',
         path: 'licensing',
         component: Licensing
+    },
+    {
+        name: "slack",
+        path: 'slack',
+        component: Slack
+    },
+    {
+        name: "mailchimp",
+        path: 'mailchimp',
+        component: Module
+    },
+    {
+        name: "webhook",
+        path: 'webhook',
+        component: WebHook
     }
-
 ]);
 const formEditorChildrenRoutes = window.WPPayForms.applyFilters('wpf_main_children_roues', [
     {

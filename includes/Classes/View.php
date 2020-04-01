@@ -4,7 +4,6 @@ namespace WPPayForm\Classes;
 
 class View
 {
-
     /**
      * Generate and echo/print a view file
      * @param  string $path
@@ -40,8 +39,9 @@ class View
      */
     protected static function getFilePath($path)
     {
-        $path = str_replace('.', DIRECTORY_SEPARATOR, $path);
-        $viewName = WPPAYFORM_DIR.DIRECTORY_SEPARATOR.'includes'.DIRECTORY_SEPARATOR.'views'.DIRECTORY_SEPARATOR.$path;
+        $ds = DIRECTORY_SEPARATOR;
+        $path = str_replace('.', $ds, $path);
+        $viewName = WPPAYFORM_DIR.$ds.'src'.$ds.'views'.$ds.$path;
         $fullPath = $viewName.'.php';
         return apply_filters('wppayform/template_view_path', $fullPath, $path);
     }

@@ -1,0 +1,122 @@
+.panel {
+    border-radius: 8px;
+    border: 1px solid darken($gray, 4%);
+    overflow: hidden;
+    margin-bottom: 15px;
+
+    &__heading {
+        background: $gray;
+        border-bottom: 1px solid darken($gray, 4%);
+        height: 42px;
+
+        .form-name-editable {
+            margin: 0;
+            float: left;
+            font-size: 14px;
+            padding: 4px 8px;
+            margin: 8px 0 8px 8px;
+            max-width: 250px;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            overflow: hidden;
+            border-radius: 2px;
+
+            &:hover {
+                background-color: #fff;
+                cursor: pointer;
+            }
+        }
+
+        .copy-form-shortcode {
+            float: left;
+            padding: 4px 8px;
+            margin: 8px 0 8px 8px;
+            background-color: $info;
+            color: #fff;
+            cursor: pointer;
+            border-radius: 2px;
+        }
+
+        &--btn {
+            padding: 3px;
+        }
+
+        .form-inline {
+            padding: 5px;
+            float: left;
+        }
+    }
+    &__body {
+        background: #fff;
+        padding: 10px 0;
+        > .panel {
+            //margin: 10px;
+        }
+        p {
+            font-size: 14px;
+            line-height: 20px;
+            color: #666;
+        }
+        &--list {
+            background: #fff;
+        }
+        &--item, .panel__placeholder {
+            width: 100%;
+            min-height: $item-height;
+            padding: 10px;
+            background: #ffffff;
+            box-sizing: border-box;
+        }
+        &--item.no-padding-left {
+            padding-left: 0;
+        }
+        &--item:last-child {
+            border-bottom: none;
+        }
+        &--item {
+            position: relative;
+
+            &.selected {
+                background-color: #dcefb5;
+                box-shadow: -3px 0px 0px 0px #99cc27;
+            }
+            > .popup-search-element {
+                transition: all 0.3s;
+                position: absolute;
+                left: 50%;
+                transform: translateX(-50%);
+                bottom: -10px;
+                visibility: hidden;
+                opacity: 0;
+                z-index: 3;
+            }
+            &.is-editor-inserter,
+            &:hover {
+                > .item-actions-wrapper {
+                    opacity: 1;
+                    visibility: visible;
+                }
+                > .popup-search-element {
+                    opacity: 1;
+                    visibility: visible;
+                }
+            }
+            iframe,img {
+                max-width: 100%;
+            }
+        }
+    }
+    .panel__placeholder {
+        background: $placeholder-bg;
+    }
+
+    >.panel__body {
+        padding: 15px;
+    }
+}
+
+.panel.panel--info {
+    .panel__body {
+        padding: 15px;
+    }
+}
