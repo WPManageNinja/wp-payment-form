@@ -1381,3 +1381,10 @@ html.wpf_go_full {
     max-width: 36px;
   }
 }
+
+// date time picker bug
+.el-time-spinner__list {
+  .el-time-spinner__item {
+    margin-bottom: 0px !important;
+  }
+}
