@@ -154,18 +154,17 @@ class SubmissionHandler
             'updated_at'          => gmdate('Y-m-d H:i:s')
         );
 
-        $ipLoggingStatus = GeneralSettings::ipLoggingStatus(true);
 
-        if (apply_filters('wppayform/record_client_info', $ipLoggingStatus, $form)) {
-            $browser = new Browser();
+        $browser = new Browser();
+        $ipLoggingStatus = GeneralSettings::ipLoggingStatus(true);
+        if ($ipLoggingStatus != 'no') {
             $submission['ip_address'] = $browser->getIp();
-            $submission['browser'] = $browser->getBrowser();
-            $submission['device'] = $browser->getPlatform();
         }
 
+        $submission['browser'] = $browser->getBrowser();
+        $submission['device'] = $browser->getPlatform();
+
         $submission = apply_filters('wppayform/create_submission_data', $submission, $formId, $form_data);
-
-
 
         do_action('wppayform/wpf_before_submission_data_insert_' . $paymentMethod, $submission, $form_data, $paymentItems, $subscriptionItems);
         do_action('wppayform/wpf_before_submission_data_insert', $submission, $form_data, $paymentItems, $subscriptionItems);
