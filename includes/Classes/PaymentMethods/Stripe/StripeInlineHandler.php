@@ -79,13 +79,13 @@ class StripeInlineHandler extends StripeHandler
         // Let's create the one time payment first
         // We will handle One-Time Payment Here only
         $intentArgs = [
-            'payment_method'      => $paymentMethodId,
-            'amount'              => $transaction->payment_total,
-            'currency'            => $transaction->currency,
+            'payment_method' => $paymentMethodId,
+            'amount' => $transaction->payment_total,
+            'currency' => $transaction->currency,
             'confirmation_method' => 'manual',
-            'confirm'             => 'true',
-            'description'         => $form->post_title,
-            'metadata'            => $this->getIntentMetaData($submission)
+            'confirm' => 'true',
+            'description' => $form->post_title,
+            'metadata' => $this->getIntentMetaData($submission)
         ];
 
         $this->handlePaymentItentCharge($transaction, $submission, $intentArgs);
@@ -108,14 +108,14 @@ class StripeInlineHandler extends StripeHandler
          * Step 1 Create the customer first
          */
         $customerArgs = [
-            'payment_method'   => $paymentMethodId,
+            'payment_method' => $paymentMethodId,
             'invoice_settings' => [
                 'default_payment_method' => $paymentMethodId
             ],
-            'metadata'         => [
-                'payform_id'    => $submission->form_id,
+            'metadata' => [
+                'payform_id' => $submission->form_id,
                 'submission_id' => $submission->id,
-                'form_name'     => strip_tags($form->post_title)
+                'form_name' => strip_tags($form->post_title)
             ]
         ];
         if ($submission->customer_email) {
@@ -126,22 +126,18 @@ class StripeInlineHandler extends StripeHandler
             $customerArgs['name'] = $submission->customer_name;
             $customerArgs['description'] = $submission->customer_name;
         }
-        
+
         $customer = Customer::createCustomer($customerArgs);
-
-        if(is_wp_error($customer)) {
-            wp_send_json_error([
-                'message' => $customer->get_error_message()
-            ], 423);
-        }
-
         $transaction = (new Transaction())->getLatestTransaction($submission->id);
 
+        if (is_wp_error($customer)) {
+            $this->handlePaymentChargeError($customer->get_error_message(), $submission, $transaction, $form, false, 'customer');
+        }
         if ($transaction) {
             Invoice::createItem([
-                'currency'    => $transaction->currency,
-                'customer'    => $customer->id,
-                'amount'      => $transaction->payment_total,
+                'currency' => $transaction->currency,
+                'customer' => $customer->id,
+                'amount' => $transaction->payment_total,
                 'description' => $form->post_title
             ]);
         }
@@ -151,7 +147,7 @@ class StripeInlineHandler extends StripeHandler
         $items = [];
         foreach ($subscriptionPlans as $subscriptionPlan) {
             $items[] = [
-                'plan'     => $subscriptionPlan['plan_id'],
+                'plan' => $subscriptionPlan['plan_id'],
                 'quantity' => $subscriptionPlan['quantity'],
                 'metadata' => [
                     'submission_id' => $submission->id
@@ -161,16 +157,16 @@ class StripeInlineHandler extends StripeHandler
 
         $subscriptionArgs = [
             'customer' => $customer->id,
-            'items'    => $items,
+            'items' => $items,
             'metadata' => (new StripeHostedHandler())->getIntentMetaData($submission)
         ];
 
-        if(count($subscriptionPlans) == 1) {
+        if (count($subscriptionPlans) == 1) {
             $plan = $subscriptionPlans[0];
-            if(!empty($plan['trial_expiration_at'])) {
+            if (!empty($plan['trial_expiration_at'])) {
                 $subscriptionArgs['trial_end'] = $plan['trial_expiration_at'];
             }
-            if(!empty($plan['subscription_cancel_at'])) {
+            if (!empty($plan['subscription_cancel_at'])) {
                 $subscriptionArgs['cancel_at'] = $plan['subscription_cancel_at'];
             }
         }
@@ -178,20 +174,16 @@ class StripeInlineHandler extends StripeHandler
         $stripeSubscription = PlanSubscription::subscribe($subscriptionArgs);
 
 
-        if(is_wp_error($stripeSubscription)) {
-            wp_send_json_error([
-                'message' => $stripeSubscription->get_error_message()
-            ], 423);
+        if (is_wp_error($stripeSubscription)) {
+            $this->handlePaymentChargeError($stripeSubscription->get_error_message(), $submission, $transaction, $form, false, 'subscription');
         }
 
         $invoice = Invoice::retrive($stripeSubscription->latest_invoice, [
             'expand' => ['payment_intent']
         ]);
 
-        if(is_wp_error($invoice)) {
-            wp_send_json_error([
-                'message' => $invoice->get_error_message()
-            ], 423);
+        if (is_wp_error($invoice)) {
+            $this->handlePaymentChargeError($invoice->get_error_message(), $submission, $transaction, $form, false, 'invoice');
         }
 
 
@@ -200,14 +192,14 @@ class StripeInlineHandler extends StripeHandler
             // We need to factor authentication now
             wp_send_json_success([
                 'stripe_subscription_id' => $stripeSubscription->id,
-                'payment_method_id'      => $paymentMethodId,
-                'call_next_method'       => 'stripeSetupItent',
-                'intent'                 => $invoice->payment_intent,
-                'submission_id'          => $submission->id,
-                'customer_name'          => $submission->customer_name,
-                'customer_email'         => $submission->customer_email,
-                'client_secret'          => $invoice->payment_intent->client_secret,
-                'message'                => __('Verifying your card details. Please wait...', 'wppayform')
+                'payment_method_id' => $paymentMethodId,
+                'call_next_method' => 'stripeSetupItent',
+                'intent' => $invoice->payment_intent,
+                'submission_id' => $submission->id,
+                'customer_name' => $submission->customer_name,
+                'customer_email' => $submission->customer_email,
+                'client_secret' => $invoice->payment_intent->client_secret,
+                'message' => __('Verifying your card details. Please wait...', 'wppayform')
             ], 200);
         }
         // now this payment is successful. We don't need anything else
@@ -220,10 +212,10 @@ class StripeInlineHandler extends StripeHandler
     public function confirmScaSetupIntentsPayment()
     {
         $submissionId = intval($_REQUEST['submission_id']);
-
         $intentId = sanitize_text_field($_REQUEST['payment_intent_id']);
         $submissionModel = new Submission();
         $submission = $submissionModel->getSubmission($submissionId);
+
         do_action('wppayform/form_submission_activity_start', $submission->form_id);
 
         // Let's retrive the intent
@@ -233,10 +225,9 @@ class StripeInlineHandler extends StripeHandler
             ]
         ]);
 
-        if(is_wp_error($intent)) {
-            wp_send_json_error([
-                'message' => $intent->get_error_message()
-            ], 423);
+        if (is_wp_error($intent)) {
+            $form = Forms::getForm($submission->form_id);
+            $this->handlePaymentChargeError($intent->get_error_message(), $submission, false, $form, false, 'payment_intent');
         }
 
         $invoice = $intent->invoice;
@@ -246,6 +237,7 @@ class StripeInlineHandler extends StripeHandler
     public function handlePaidSubscriptionInvoice($invoice, $submission)
     {
         if ($invoice->status != 'paid') {
+
             wp_send_json_error([
                 'message' => __('Payment Failed! Please try again', 'wppayform')
             ], 423);
@@ -256,8 +248,8 @@ class StripeInlineHandler extends StripeHandler
         $submissionModel->update($submission->id, [
             'payment_status' => 'paid',
             'payment_mode' => ($invoice->livemode) ? 'live' : 'test',
-            'customer_id'    => $invoice->customer,
-            'updated_at'     => current_time('mysql')
+            'customer_id' => $invoice->customer,
+            'updated_at' => current_time('mysql')
         ]);
 
         $subscriptionModel = new Subscription();
@@ -269,7 +261,7 @@ class StripeInlineHandler extends StripeHandler
         $transactionModel = new Transaction();
         $transaction = $transactionModel->getLatestTransaction($submission->id);
 
-        if($transaction) {
+        if ($transaction) {
             $paymentSuccessHandler->processOnetimeSuccess($transaction, $invoice, $submission);
         }
 
@@ -288,7 +280,7 @@ class StripeInlineHandler extends StripeHandler
             do_action('wppayform/form_recurring_subscribed_stripe', $submission, $subscriptions, $submission->form_id);
             do_action('wppayform/form_recurring_subscribed', $submission, $subscriptions, $submission->form_id);
 
-            if(!$paymentSuccessFired) {
+            if (!$paymentSuccessFired) {
                 do_action('wppayform/form_payment_success_stripe', $submission, false, $submission->form_id, $invoice);
                 do_action('wppayform/form_payment_success', $submission, false, $submission->form_id, $invoice);
             }
@@ -355,7 +347,8 @@ class StripeInlineHandler extends StripeHandler
         } else {
             $form = Forms::getForm($submission->form_id);
             $message = 'Payment has been failed. ' . $confirmation->error->message;
-            return $this->handlePaymentChargeError($message, $submission, $form, $confirmation, 'payment_error');
+            $this->handlePaymentChargeError($message, $submission, $form, $confirmation, 'payment_error');
+            return;
         }
 
         $submissionModel = new Submission();
@@ -391,11 +384,9 @@ class StripeInlineHandler extends StripeHandler
 
         $intent = SCA::createPaymentIntent($intentArgs);
 
-        if(is_wp_error($intent)) {
-            wp_send_json_error([
-                'message' => $intent->get_error_message(),
-                'intent' => $intent
-            ], 423);
+        if (is_wp_error($intent)) {
+            $form = Forms::getForm($submission->form_id);
+            $this->handlePaymentChargeError($intent->get_error_message(), $submission, $transaction, $form, false, 'payment_intent');
         }
 
         if ($intent->status == 'requires_action' &&
@@ -404,32 +395,32 @@ class StripeInlineHandler extends StripeHandler
             # Tell the client to handle the action
             $transactionModel = new Transaction();
             $transactionModel->update($transaction->id, array(
-                'status'       => 'intended',
-                'charge_id'    => $intent->id,
+                'status' => 'intended',
+                'charge_id' => $intent->id,
                 'payment_mode' => $this->getMode()
             ));
 
             SubmissionActivity::createActivity(array(
-                'form_id'       => $submission->form_id,
+                'form_id' => $submission->form_id,
                 'submission_id' => $submission->id,
-                'type'          => 'activity',
-                'created_by'    => 'PayForm BOT',
-                'content'       => __('SCA is required for this payment. Payment status changed to pending to intended', 'wppayform')
+                'type' => 'activity',
+                'created_by' => 'PayForm BOT',
+                'content' => __('SCA is required for this payment. Payment status changed to pending to intended', 'wppayform')
             ));
 
             SubmissionActivity::createActivity(array(
-                'form_id'       => $submission->form_id,
+                'form_id' => $submission->form_id,
                 'submission_id' => $submission->id,
-                'type'          => 'activity',
-                'created_by'    => 'PayForm BOT',
-                'content'       => __('SCA is required for this payment. Requested SCA info from customer', 'wppayform')
+                'type' => 'activity',
+                'created_by' => 'PayForm BOT',
+                'content' => __('SCA is required for this payment. Requested SCA info from customer', 'wppayform')
             ));
 
             wp_send_json_success([
-                'call_next_method'                    => 'initStripeSCAModal',
-                'submission_id'                       => $submission->id,
+                'call_next_method' => 'initStripeSCAModal',
+                'submission_id' => $submission->id,
                 'stripe_payment_intent_client_secret' => $intent->client_secret,
-                'message'                             => __('Strong Customer Authentication is required. Please complete 2 factor authentication.', 'wppayform')
+                'message' => __('Strong Customer Authentication is required. Please complete 2 factor authentication.', 'wppayform')
             ], 200);
 
         } else if ($intent->status == 'succeeded') {
@@ -440,11 +431,8 @@ class StripeInlineHandler extends StripeHandler
             if (!empty($intent->error->message)) {
                 $message = $intent->error->message;
             }
-
-            wp_send_json_error(array(
-                'message'       => $message,
-                'payment_error' => true
-            ), 423);
+            $form = Forms::getForm($submission->form_id);
+            $this->handlePaymentChargeError($message, $submission, $transaction, $form, false, 'payment_intent');
         }
     }
 
@@ -464,34 +452,34 @@ class StripeInlineHandler extends StripeHandler
         $paymentMode = $this->getMode();
         $transactionModel = new Transaction();
         $transactionModel->update($transaction->id, array(
-            'status'         => 'paid',
-            'charge_id'      => $charge->id,
+            'status' => 'paid',
+            'charge_id' => $charge->id,
             'payment_method' => 'stripe',
-            'payment_mode'   => $paymentMode,
+            'payment_mode' => $paymentMode,
         ));
 
         $submissionUpdateData = array(
             'payment_status' => 'paid',
             'payment_method' => 'stripe',
-            'payment_mode'   => $paymentMode,
+            'payment_mode' => $paymentMode,
         );
         $submissionModel = new Submission();
         $submissionModel->update($submission->id, $submissionUpdateData);
 
         SubmissionActivity::createActivity(array(
-            'form_id'       => $submission->form_id,
+            'form_id' => $submission->form_id,
             'submission_id' => $submission->id,
-            'type'          => 'activity',
-            'created_by'    => 'PayForm BOT',
-            'content'       => __('One time Payment Successfully made via stripe. Charge ID: ', 'wppayform') . $charge->id
+            'type' => 'activity',
+            'created_by' => 'PayForm BOT',
+            'content' => __('One time Payment Successfully made via stripe. Charge ID: ', 'wppayform') . $charge->id
         ));
 
         SubmissionActivity::createActivity(array(
-            'form_id'       => $submission->form_id,
+            'form_id' => $submission->form_id,
             'submission_id' => $submission->id,
-            'type'          => 'activity',
-            'created_by'    => 'PayForm BOT',
-            'content'       => __('Payment status changed from pending to paid', 'wppayform')
+            'type' => 'activity',
+            'created_by' => 'PayForm BOT',
+            'content' => __('Payment status changed from pending to paid', 'wppayform')
         ));
 
         return true;
@@ -502,7 +490,7 @@ class StripeInlineHandler extends StripeHandler
     {
         $metadata = [
             'Submission ID' => $submission->id,
-            'Form ID'       => $submission->form_id
+            'Form ID' => $submission->form_id
         ];
         if ($submission->customer_email) {
             $metadata['customer_email'] = $submission->customer_email;

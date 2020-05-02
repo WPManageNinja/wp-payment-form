@@ -149,7 +149,7 @@ class Stripe
         if (isset($fomattedData['__checkout_billing_address_details'])) {
             $address = $fomattedData['__checkout_billing_address_details'];
             $parsed['__checkout_billing_address_details'] = array(
-                'label' => __('Billing Address (From Stripe)', 'wppayform'),
+                'label' => __('Billing Address', 'wppayform'),
                 'value' => $this->formatAddress($address),
                 'type'  => '__checkout_billing_address_details'
             );
@@ -166,7 +166,7 @@ class Stripe
 
         if (!empty($fomattedData['__stripe_phone'])) {
             $parsed['__stripe_phone'] = array(
-                'label' => __('Phone (From Stripe)', 'wppayform'),
+                'label' => __('Phone', 'wppayform'),
                 'value' => $fomattedData['__stripe_phone'],
                 'type'  => '__stripe_phone'
             );
@@ -175,7 +175,7 @@ class Stripe
 
         if (!empty($fomattedData['__stripe_name'])) {
             $parsed['__stripe_name'] = array(
-                'label' => __('Name on Card (From Stripe)', 'wppayform'),
+                'label' => __('Name on Card', 'wppayform'),
                 'value' => $fomattedData['__stripe_name'],
                 'type'  => '__stripe_name'
             );

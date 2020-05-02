@@ -74,6 +74,16 @@ class SubscriptionTransaction
         return apply_filters('wppayform/subscription_transactions', $transactions, $subscriptionId);
     }
 
+    public function getTransactions($submissionId)
+    {
+        $transactions = wpPayFormDB()->table('wpf_order_transactions')
+            ->where('submission_id', $submissionId)
+            ->where('transaction_type', 'subscription')
+            ->get();
+
+        return apply_filters('wppayform/entry_subscription_transactions', $transactions, $submissionId);
+    }
+
     public function getTransaction($transactionId)
     {
         return wpPayFormDB()->table('wpf_order_transactions')

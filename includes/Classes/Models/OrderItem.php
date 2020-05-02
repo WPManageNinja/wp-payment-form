@@ -34,8 +34,6 @@ class OrderItem
             'updated_at'
         ));
 
-
-
         $insertId = wpPayFormDB()->table('wpf_order_items')->insert($insertItem);
         if($metas = ArrayHelper::get($item, 'meta')) {
             foreach ($metas as $metaKey => $value) {

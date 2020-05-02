@@ -27,7 +27,12 @@ class PaymentReceipt
             return '<p class="wpf_invalid_receipt">' . __('Invalid subission. No receipt found', 'wppayform') . '</p>';
         }
 
+        foreach ($submission->subscriptions as $subscription) {
+            $submission->payment_total += $subscription->payment_total;
+        }
+
         $receiptSettings = Forms::getReceiptSettings($submission->form_id);
+
         $receiptSettings['receipt_header'] = PlaceholderParser::parse($receiptSettings['receipt_header'], $submission);
         $receiptSettings['receipt_footer'] = PlaceholderParser::parse($receiptSettings['receipt_footer'], $submission);
 
@@ -37,6 +42,7 @@ class PaymentReceipt
         $html .= $this->paymentReceptHeader($submission, $receiptSettings);
         $html .= $this->paymentInfo($submission, $receiptSettings);
         $html .= $this->recurringPaymentInfo($submission, $receiptSettings);
+
         $html .= $this->itemDetails($submission, $receiptSettings);
         $html .= $this->submissionDetails($submission, $receiptSettings);
         $html .= $this->paymentReceptFooter($submission, $receiptSettings);
@@ -100,9 +106,23 @@ class PaymentReceipt
             return;
         }
 
+        if($submission->subscriptions) {
+            foreach ($submission->subscriptions as $subscription) {
+                $submission->order_items[] = (object) [
+                    'item_name' => $subscription->item_name .' ('.$subscription->plan_name.')',
+                    'quantity' => 1,
+                    'item_price' => $subscription->payment_total,
+                    'line_total' => $subscription->payment_total
+                ];
+            }
+        }
+
+
         if(!$submission->order_items) {
             return;
         }
+
+
 
         return $this->loadView('receipt/payment_info', array(
             'submission' => $submission
