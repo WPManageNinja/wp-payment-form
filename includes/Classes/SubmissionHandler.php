@@ -24,7 +24,7 @@ class SubmissionHandler
     private $customerEmail = '';
     private $selectedPaymentMethod = '';
 
-    public function handeSubmission()
+    public function handleSubmission()
     {
         parse_str($_REQUEST['form_data'], $form_data);
 
@@ -85,6 +85,7 @@ class SubmissionHandler
         if ($subscriptionItems) {
             $paymentItems = apply_filters('wppayform/submitted_payment_items_' . $paymentMethod, $paymentItems, $formattedElements, $form_data, $subscriptionItems);
         }
+
 
         // Extract Input Items Here
         $inputItems = array();
@@ -165,12 +166,15 @@ class SubmissionHandler
         $submission = apply_filters('wppayform/create_submission_data', $submission, $formId, $form_data);
 
 
+
         do_action('wppayform/wpf_before_submission_data_insert_' . $paymentMethod, $submission, $form_data, $paymentItems, $subscriptionItems);
         do_action('wppayform/wpf_before_submission_data_insert', $submission, $form_data, $paymentItems, $subscriptionItems);
 
         // Insert Submission
         $submissionModel = new Submission();
         $submissionId = $submissionModel->create($submission);
+
+
         do_action('wppayform/after_submission_data_insert', $submissionId, $formId);
 
         /*
@@ -233,6 +237,7 @@ class SubmissionHandler
                 'created_by'    => 'PayForm BOT',
                 'content'       => 'After payment actions processed.'
             ));
+
 
             if ($paymentMethod) {
                 do_action('wppayform/form_submission_make_payment_' . $paymentMethod, $transactionId, $submissionId, $form_data, $form, $hasSubscriptions);
@@ -465,6 +470,7 @@ class SubmissionHandler
             }
         }
 
+
         $subscription = array(
             'element_id'       => $paymentId,
             'item_name'        => $label,
@@ -480,6 +486,7 @@ class SubmissionHandler
             'created_at'       => gmdate('Y-m-d H:i:s'),
             'updated_at'       => gmdate('Y-m-d H:i:s'),
         );
+
 
         if (ArrayHelper::get($plan, 'has_signup_fee') == 'yes' && ArrayHelper::get($plan, 'signup_fee')) {
             $subscription['initial_amount'] = wpPayFormConverToCents($plan['signup_fee']);
@@ -498,6 +505,7 @@ class SubmissionHandler
                 $allSubscriptions[] = $subscription;
             }
         }
+
         return $allSubscriptions;
     }
 

@@ -1,3 +1,4 @@
+import Promise from 'promise-polyfill';
 import formatPrice from "../common/formatPrice";
 import isEmpty from 'lodash/isEmpty';
 

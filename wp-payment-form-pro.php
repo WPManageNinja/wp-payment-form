@@ -155,8 +155,8 @@ if (!defined('WPPAYFORM_VERSION_LITE')) {
         {
             // Form Submission Handler
             $submissionHandler = new \WPPayForm\Classes\SubmissionHandler();
-            add_action('wp_ajax_wpf_submit_form', array($submissionHandler, 'handeSubmission'));
-            add_action('wp_ajax_nopriv_wpf_submit_form', array($submissionHandler, 'handeSubmission'));
+            add_action('wp_ajax_wpf_submit_form', array($submissionHandler, 'handleSubmission'));
+            add_action('wp_ajax_nopriv_wpf_submit_form', array($submissionHandler, 'handleSubmission'));
 
             // Stripe Paument Method Init Here
             $stripe = new \WPPayForm\Classes\PaymentMethods\Stripe\Stripe();

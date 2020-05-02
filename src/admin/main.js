@@ -1,4 +1,5 @@
-import moment from 'moment';
+import moment from 'moment/moment';
+
 window.WPPayFormsBus = new window.WPPayForms.Vue();
 
 window.WPPayForms.Vue.mixin({

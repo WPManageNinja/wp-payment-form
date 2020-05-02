@@ -124,7 +124,9 @@ class StripeInlineHandler extends StripeHandler
         }
         if ($submission->customer_name) {
             $customerArgs['name'] = $submission->customer_name;
+            $customerArgs['description'] = $submission->customer_name;
         }
+        
         $customer = Customer::createCustomer($customerArgs);
 
         if(is_wp_error($customer)) {
@@ -145,6 +147,7 @@ class StripeInlineHandler extends StripeHandler
         }
 
         $subscriptionPlans = (new StripeHandler())->getSubmissionPlans($submission);
+
         $items = [];
         foreach ($subscriptionPlans as $subscriptionPlan) {
             $items[] = [
@@ -156,11 +159,24 @@ class StripeInlineHandler extends StripeHandler
             ];
         }
 
-        $stripeSubscription = PlanSubscription::subscribe([
+        $subscriptionArgs = [
             'customer' => $customer->id,
             'items'    => $items,
             'metadata' => (new StripeHostedHandler())->getIntentMetaData($submission)
-        ]);
+        ];
+
+        if(count($subscriptionPlans) == 1) {
+            $plan = $subscriptionPlans[0];
+            if(!empty($plan['trial_expiration_at'])) {
+                $subscriptionArgs['trial_end'] = $plan['trial_expiration_at'];
+            }
+            if(!empty($plan['subscription_cancel_at'])) {
+                $subscriptionArgs['cancel_at'] = $plan['subscription_cancel_at'];
+            }
+        }
+
+        $stripeSubscription = PlanSubscription::subscribe($subscriptionArgs);
+
 
         if(is_wp_error($stripeSubscription)) {
             wp_send_json_error([
@@ -178,7 +194,8 @@ class StripeInlineHandler extends StripeHandler
             ], 423);
         }
 
-        if ($invoice->payment_intent->status == 'requires_action' &&
+
+        if ($invoice->payment_intent && $invoice->payment_intent->status == 'requires_action' &&
             $invoice->payment_intent->next_action->type == 'use_stripe_sdk') {
             // We need to factor authentication now
             wp_send_json_success([

@@ -72,7 +72,9 @@ class Plan
 
         // Generate The subscription ID Here
         $subscriptionId = self::getGeneratedSubscriptionId($subscription, $submission->currency);
+
         $stripePlan = self::retirive($subscriptionId);
+
         if ($stripePlan && !is_wp_error($stripePlan)) {
             return $stripePlan;
         }
@@ -99,6 +101,7 @@ class Plan
                 'wp_plugin'  => 'wppayform'
             )
         );
+
         return self::create($plan);
     }
 

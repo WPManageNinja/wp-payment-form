@@ -33,14 +33,14 @@ class StripeHandler
     {
         $settings = get_option('wppayform_stripe_payment_settings', array());
         $defaults = array(
-            'payment_mode'    => 'test',
-            'live_pub_key'    => '',
+            'payment_mode' => 'test',
+            'live_pub_key' => '',
             'live_secret_key' => '',
-            'test_pub_key'    => '',
+            'test_pub_key' => '',
             'test_secret_key' => '',
-            'company_name'    => get_bloginfo('name'),
-            'checkout_logo'   => '',
-            'send_meta_data'  => 'no'
+            'company_name' => get_bloginfo('name'),
+            'checkout_logo' => '',
+            'send_meta_data' => 'no'
         );
         return wp_parse_args($settings, $defaults);
     }
@@ -83,11 +83,11 @@ class StripeHandler
             }
 
             $subscriptionModel->update($subscriptionItem->id, [
-                'status'                 => $subscriptionStatus,
-                'vendor_customer_id'     => $subscription->customer,
+                'status' => $subscriptionStatus,
+                'vendor_customer_id' => $subscription->customer,
                 'vendor_subscriptipn_id' => $subscription->id,
-                'vendor_plan_id'         => $subscription->plan->id,
-                'vendor_response'        => maybe_serialize($subscription),
+                'vendor_plan_id' => $subscription->plan->id,
+                'vendor_response' => maybe_serialize($subscription),
             ]);
 
             if (!$subscriptionItem->trial_days) {
@@ -99,20 +99,20 @@ class StripeHandler
                         $totalAmount = intval($latestInvoice->total * 100);
                     }
                     $transactionItem = [
-                        'form_id'          => $submission->form_id,
-                        'user_id'          => $submission->user_id,
-                        'submission_id'    => $submission->id,
-                        'subscription_id'  => $subscriptionItem->id,
+                        'form_id' => $submission->form_id,
+                        'user_id' => $submission->user_id,
+                        'submission_id' => $submission->id,
+                        'subscription_id' => $subscriptionItem->id,
                         'transaction_type' => 'subscription',
-                        'payment_method'   => 'stripe',
-                        'charge_id'        => $latestInvoice->charge,
-                        'payment_total'    => $totalAmount,
-                        'status'           => $latestInvoice->status,
-                        'currency'         => $latestInvoice->currency,
-                        'payment_mode'     => ($latestInvoice->livemode) ? 'live' : 'test',
-                        'payment_note'     => maybe_serialize($latestInvoice),
-                        'created_at'       => gmdate('Y-m-d H:i:s', $latestInvoice->created),
-                        'updated_at'       => gmdate('Y-m-d H:i:s', $latestInvoice->created)
+                        'payment_method' => 'stripe',
+                        'charge_id' => $latestInvoice->charge,
+                        'payment_total' => $totalAmount,
+                        'status' => $latestInvoice->status,
+                        'currency' => $latestInvoice->currency,
+                        'payment_mode' => ($latestInvoice->livemode) ? 'live' : 'test',
+                        'payment_note' => maybe_serialize($latestInvoice),
+                        'created_at' => gmdate('Y-m-d H:i:s', $latestInvoice->created),
+                        'updated_at' => gmdate('Y-m-d H:i:s', $latestInvoice->created)
                     ];
                     $subscriptionTransactionModel->maybeInsertCharge($transactionItem);
                 }
@@ -120,26 +120,26 @@ class StripeHandler
         }
 
         SubmissionActivity::createActivity(array(
-            'form_id'       => $form->ID,
+            'form_id' => $form->ID,
             'submission_id' => $submission->id,
-            'type'          => 'activity',
-            'created_by'    => 'PayForm BOT',
-            'content'       => __('Stripe recurring subscription successfully initiated', 'wppayform')
+            'type' => 'activity',
+            'created_by' => 'PayForm BOT',
+            'content' => __('Stripe recurring subscription successfully initiated', 'wppayform')
         ));
 
         $submissionModel = new Submission();
 
         $submissionModel->update($submission->id, [
             'payment_status' => 'paid',
-            'status'         => $subscriptionStatus
+            'status' => $subscriptionStatus
         ]);
 
         SubmissionActivity::createActivity(array(
-            'form_id'       => $form->ID,
+            'form_id' => $form->ID,
             'submission_id' => $submission->id,
-            'type'          => 'activity',
-            'created_by'    => 'PayForm BOT',
-            'content'       => __('Subscription status changed to : ', 'wppayform') . $subscriptionStatus
+            'type' => 'activity',
+            'created_by' => 'PayForm BOT',
+            'content' => __('Subscription status changed to : ', 'wppayform') . $subscriptionStatus
         ));
 
         return $subscriptionModel->getSubscriptions($submission->id);
@@ -156,9 +156,9 @@ class StripeHandler
         if ($transaction) {
             $transactionModel = new Transaction();
             $transactionModel->update($transaction->id, array(
-                'status'         => 'failed',
+                'status' => 'failed',
                 'payment_method' => 'stripe',
-                'payment_mode'   => $paymentMode,
+                'payment_mode' => $paymentMode,
             ));
         }
 
@@ -166,32 +166,32 @@ class StripeHandler
         $submissionModel->update($submission->id, array(
             'payment_status' => 'failed',
             'payment_method' => 'stripe',
-            'payment_mode'   => $paymentMode,
+            'payment_mode' => $paymentMode,
         ));
 
         SubmissionActivity::createActivity(array(
-            'form_id'       => $form->ID,
+            'form_id' => $form->ID,
             'submission_id' => $submission->id,
-            'type'          => 'activity',
-            'created_by'    => 'PayForm BOT',
-            'content'       => __('Payment Failed via stripe. Status changed from Pending to Failed.', 'wppayform')
+            'type' => 'activity',
+            'created_by' => 'PayForm BOT',
+            'content' => __('Payment Failed via stripe. Status changed from Pending to Failed.', 'wppayform')
         ));
 
         if ($message) {
             SubmissionActivity::createActivity(array(
-                'form_id'       => $form->ID,
+                'form_id' => $form->ID,
                 'submission_id' => $submission->id,
-                'type'          => 'error',
-                'created_by'    => 'PayForm BOT',
-                'content'       => $message
+                'type' => 'error',
+                'created_by' => 'PayForm BOT',
+                'content' => $message
             ));
         }
 
         wp_send_json_error(array(
-            'message'       => $message,
+            'message' => $message,
             'payment_error' => true,
-            'type'          => $type,
-            'form_events'   => [
+            'type' => $type,
+            'form_events' => [
                 'payment_failed'
             ]
         ), 423);
@@ -213,14 +213,22 @@ class StripeHandler
             if ($plan && is_wp_error($plan)) {
                 wp_send_json_error([
                     'message' => __('Sorry! there has an error when creating the subscrion plan. Please try again', 'wppayform'),
-                    'plan'    => $plan
+                    'plan' => $plan
                 ], 423);
             } else if ($plan) {
-                $plans[] = [
-                    'plan_id'     => $plan->id,
+                $data = [
+                    'plan_id' => $plan->id,
                     'description' => $subscription->item_name . ' (' . $subscription->plan_name . ')',
-                    'quantity'    => $subscription->quantity
+                    'quantity' => $subscription->quantity,
+                    'trial_expiration_at' => false,
+                    'subscription_cancel_at' => $this->getCancelAtTimeStamp($subscription)
                 ];
+
+                if($subscription->expiration_at) {
+                    $data['trial_expiration_at'] = strtotime($subscription->expiration_at);
+                }
+
+                $plans[] = $data;
                 $subscriptionModel->update($subscription->id, [
                     'vendor_plan_id' => $plan->id
                 ]);
@@ -228,7 +236,39 @@ class StripeHandler
         }
 
         return $plans;
+    }
 
+    private function getCancelAtTimeStamp($subscription)
+    {
+        if(!$subscription->bill_times) {
+            return false;
+        }
+
+        $billingStartDate = time();
+        if($subscription->expiration_at) {
+            $billingStartDate = strtotime($subscription->expiration_at);
+        }
+
+        $billTimes = $subscription->bill_times;
+
+        $interval = $subscription->billing_interval;
+
+        if($interval == 'daily') {
+            $interval = 'day';
+        }
+
+        $interValMaps = [
+            'day' => 'days',
+            'week' => 'weeks',
+            'month' => 'months',
+            'year' => 'years'
+        ];
+
+        if(isset($interValMaps[$interval]) && $billTimes > 1) {
+            $interval = $interValMaps[$interval];
+        }
+
+        return strtotime('+ '.$billTimes.' '.$interval, $billingStartDate);
 
     }
 
