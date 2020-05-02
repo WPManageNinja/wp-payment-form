@@ -2,8 +2,8 @@
 Contributors: techjewel, wpmanageninja
 Tags: donations, payments, stripe payments, stripe checkout, PayPal
 Requires at least: 4.5
-Tested up to: 5.3.2
-Stable tag: 1.9.8
+Tested up to: 5.4.1
+Stable tag: 1.9.91
 Requires PHP: 5.4
 License: GPLv2 or later
 
@@ -255,6 +255,12 @@ You are most welcome. You can do the following:
 12. Submission Details (2nd Part)
 
 == Changelog ==
+
+= 1.9.91 - May 02, 2020 =
+- Stripe Payment Issues has been resolved
+- CSV export issue fixed
+- Receipt Issue resolved
+- IP logging issue resolved
 
 = 1.9.8 - February 02, 2020 =
 - Improve SCA Payments processing
