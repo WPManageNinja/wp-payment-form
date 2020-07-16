@@ -33,7 +33,7 @@
     "filepond-plugin-file-poster": "^2.2.0",
     "filepond-plugin-image-preview": "^4.6.2",
     "jquery-filepond": "^1.0.0",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "moment": "^2.24.0",
     "pikaday": "^1.8.0",
     "promise-polyfill": "8.1.3",
