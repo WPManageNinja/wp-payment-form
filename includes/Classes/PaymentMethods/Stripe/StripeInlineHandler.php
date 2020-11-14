@@ -75,6 +75,11 @@ class StripeInlineHandler extends StripeHandler
 
         $paymentMethodId = ArrayHelper::get($form_data, '__stripe_payment_method_id');
 
+        /*
+         * Step 1 Create the customer first
+         */
+        $customerArgs = $this->customerArguments($paymentMethodId, $formData, $submission);
+        $customer = Customer::createCustomer($customerArgs);
 
         // Let's create the one time payment first
         // We will handle One-Time Payment Here only
@@ -85,10 +90,12 @@ class StripeInlineHandler extends StripeHandler
             'confirmation_method' => 'manual',
             'confirm' => 'true',
             'description' => $form->post_title,
-            'metadata' => $this->getIntentMetaData($submission)
+            'metadata' => $this->getIntentMetaData($submission),
+            'customer' => $customer->id
         ];
 
         $this->handlePaymentItentCharge($transaction, $submission, $intentArgs);
+
 
         $submissionModel = new Submission();
         $submission = $submissionModel->getSubmission($submission->id);
@@ -104,30 +111,13 @@ class StripeInlineHandler extends StripeHandler
         $paymentMethodId = ArrayHelper::get($formData, '__stripe_payment_method_id');
 
         $form = Forms::getForm($submission->form_id);
+
         /*
          * Step 1 Create the customer first
          */
-        $customerArgs = [
-            'payment_method' => $paymentMethodId,
-            'invoice_settings' => [
-                'default_payment_method' => $paymentMethodId
-            ],
-            'metadata' => [
-                'payform_id' => $submission->form_id,
-                'submission_id' => $submission->id,
-                'form_name' => strip_tags($form->post_title)
-            ]
-        ];
-        if ($submission->customer_email) {
-            $customerArgs['email'] = $submission->customer_email;
-            $customerArgs['description'] = $submission->customer_email;
-        }
-        if ($submission->customer_name) {
-            $customerArgs['name'] = $submission->customer_name;
-            $customerArgs['description'] = $submission->customer_name;
-        }
-
+        $customerArgs = $this->customerArguments($paymentMethodId, $formData, $submission);
         $customer = Customer::createCustomer($customerArgs);
+
         $transaction = (new Transaction())->getLatestTransaction($submission->id);
 
         if (is_wp_error($customer)) {
@@ -204,6 +194,31 @@ class StripeInlineHandler extends StripeHandler
         }
         // now this payment is successful. We don't need anything else
         $this->handlePaidSubscriptionInvoice($invoice, $submission);
+    }
+
+    public function customerArguments($paymentMethodId, $form_data, $submission)
+    {
+        $customerArgs = [
+            'payment_method' => $paymentMethodId,
+            'invoice_settings' => [
+                'default_payment_method' => $paymentMethodId
+            ],
+            'metadata' => [
+                'payform_id' => $submission->form_id,
+                'submission_id' => $submission->id,
+                'form_name' => strip_tags($form->post_title)
+            ]
+        ];
+        if ($submission->customer_email) {
+            $customerArgs['email'] = $submission->customer_email;
+            $customerArgs['description'] = $submission->customer_email;
+        }
+        if ($submission->customer_name) {
+            $customerArgs['name'] = $submission->customer_name;
+            $customerArgs['description'] = $submission->customer_name;
+        }
+
+        return $customerArgs;
     }
 
     /*
