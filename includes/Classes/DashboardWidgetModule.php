@@ -6,7 +6,6 @@ use WPPayForm\Classes\Models\Forms;
 
 class DashboardWidgetModule
 {
-
     public function register()
     {
         add_action('wp_dashboard_setup', array($this, 'addWidget'));
@@ -84,14 +83,17 @@ class DashboardWidgetModule
     {
         ?>
         <ul class="wpf_dashboard_stats">
-            <?php foreach ($stats as $stat): ?>
+            <?php foreach ($stats as $stat) : ?>
                 <li>
                     <a title="Form: <?php echo $stat->post_title; ?>"
                        href="<?php echo admin_url('admin.php?page=wppayform.php#/edit-form/' . $stat->form_id . '/entries/' . $stat->id . '/view'); ?>">
                         #<?php echo $stat->id; ?> - <?php echo $stat->customer_name; ?>
-                        <?php if($stat->payment_total): ?>
                         <span class="wpf_status wpf_status_<?php echo $stat->payment_status; ?>"><?php echo $stat->payment_status; ?></span>
-                        <span class="wpf_total"><?php echo $stat->formattedTotal; ?></span>
+                            <?php if ($stat->payment_total == "0" && $stat->payment_status == "paid") { ?>
+                                <span class="wpf_status wpf_status_subscribed"><?php echo 'Subscribed'; ?></span>
+                            <?php }; ?>
+                        <?php if ($stat->payment_total) : ?>
+                            <span class="wpf_total"><?php echo $stat->formattedTotal; ?></span>
                         <?php endif; ?>
                     </a>
                 </li>
@@ -101,11 +103,11 @@ class DashboardWidgetModule
         <div class="wpf_payment_summary">
             <b><?php _e('Total Paid Total', 'wppayform'); ?></b>
             <?php foreach ($paidStats as $index => $stat): ?>
-            <b>(<?php echo $stat->currency; ?>)</b>: <?php echo $stat->formattedTotal; ?> <?php if(count($paidStats) - 1 != $index): ?><br /><?php endif; ?>
+            <b>(<?php echo $stat->currency; ?>)</b>: <?php echo $stat->formattedTotal; ?> <?php if (count($paidStats) - 1 != $index): ?><br /><?php endif; ?>
             <?php endforeach; ?>
         </div>
 
-        <?php if(!defined('WPPAYFORM_PRO_INSTALLED')): ?>
+        <?php if (!defined('WPPAYFORM_PRO_INSTALLED')): ?>
         <div class="wpf_recommended_plugin">
             Upgrade to Pro and get awesome features and increase your conversion rates
             <a style="display: block; width: 100%; margin-top: 10px; text-align: center;" target="_blank" rel="noopener" href="https://wpmanageninja.com/downloads/wppayform-pro-wordpress-payments-form-builder/?utm_source=plugin&utm_medium=dashboard&utm_campaign=upgrade" class="button button-primary">Upgrade To Pro</a>
@@ -140,6 +142,9 @@ class DashboardWidgetModule
 
             ul.wpf_dashboard_stats span.wpf_status_paid {
                 background: #f0f9eb;
+            }
+            ul.wpf_dashboard_stats span.wpf_status_subscribed {
+                background: #c8eeff6b;
             }
 
             ul.wpf_dashboard_stats span.wpf_status_pending {
