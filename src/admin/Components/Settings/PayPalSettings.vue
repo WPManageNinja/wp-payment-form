@@ -79,9 +79,9 @@
                 </el-form>
 
                 <div style="margin-top: 20px">
-                    If you use paypal for recurring payments please set the notification URL in paypal as bellow:
+                    If you use PayPal for recurring payments please set the notification URL in PayPal as bellow:
                     <pre>{{ipn_url}}</pre>
-                    <p>Check the <a target="_blank" href="https://developer.paypal.com/docs/classic/ipn/integration-guide/IPNSetup/#setting-up-ipn-notifications-on-paypal">official documentation</a> </p>
+                    <p>Check the <a target="_blank" href="https://wpmanageninja.com/docs/wppayform/payment-settings/paypal-ipn-setup/">documentation</a> </p>
                     <p>If you don't setup the IPN notification then it will still work for single payments but recurring payments will not be marked as paid for paypal subscription payments.</p>
                 </div>
             </div>
