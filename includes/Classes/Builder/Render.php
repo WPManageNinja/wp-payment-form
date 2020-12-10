@@ -59,24 +59,26 @@ class Render
             $form_body = ob_get_clean();
         endif;
 
+        $instanceCssClass = Helper::getFormInstaceClass($form->ID);
+
         ob_start();
-        $this->renderFormHeader($form);
+        $this->renderFormHeader($form, $instanceCssClass);
         $header_html = ob_get_clean();
         ob_start();
         $this->renderFormFooter($form);
         $formFooter = ob_get_clean();
 
-        $this->addAssets($form);
+        $this->addAssets($form, $instanceCssClass);
 
         $html = $header_html . $form_body . $formFooter;
 
         return apply_filters('wppayform/rendered_form_html', $html, $form);
     }
 
-    public function renderFormHeader($form)
+    public function renderFormHeader($form, $instanceCssClass)
     {
         global $wp;
-        $currentUrl = home_url(add_query_arg($_GET, $wp->request));;
+        $currentUrl = home_url(add_query_arg($_GET, $wp->request));
         $labelPlacement = $form->designSettings['labelPlacement'];
         $btnPosition = ArrayHelper::get($form->designSettings, 'submit_button_position');
 
@@ -86,6 +88,7 @@ class Render
 
         $css_classes = array(
             'wpf_form',
+            $instanceCssClass,
             'wpf_strip_default_style',
             'wpf_form_id_' . $form->ID,
             'wpf_label_' . $labelPlacement,
@@ -107,6 +110,7 @@ class Render
 
         $formAttributes = array(
             'data-wpf_form_id' => $form->ID,
+            'wpf_form_instance'=> $instanceCssClass,
             'class'            => implode(' ', $css_classes),
             'method'           => 'POST',
             'action'           => site_url(),
@@ -213,12 +217,12 @@ class Render
             }
     }
 
-    private function addAssets($form)
+    private function addAssets($form, $instanceCssClass)
     {
         $currencySettings = Forms::getCurrencyAndLocale($form->ID);
         wp_enqueue_script('wppayform_public', WPPAYFORM_URL . 'assets/js/payforms-publicv2.js', array('jquery'), WPPAYFORM_VERSION, true);
         wp_enqueue_style('wppayform_public', WPPAYFORM_URL . 'assets/css/payforms-public.css', array(), WPPAYFORM_VERSION);
-        wp_localize_script('wppayform_public', 'wp_payform_' . $form->ID, apply_filters('wppayform/checkout_vars', array(
+        wp_localize_script('wppayform_public', 'wp_payform_' . $instanceCssClass, apply_filters('wppayform/checkout_vars', array(
             'form_id'              => $form->ID,
             'checkout_description' => $form->post_title,
             'currency_settings'    => $currencySettings,

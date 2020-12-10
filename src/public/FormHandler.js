@@ -5,6 +5,7 @@ import isEmpty from 'lodash/isEmpty';
 class PayFormHandler {
     constructor(form, config) {
         this.form = form;
+        this.selector = '.' + form.attr('wpf_form_instance');
         this.config = config;
         this.formId = config.form_id;
         this.paymentMethod = '';
@@ -36,7 +37,8 @@ class PayFormHandler {
             this.stripe = Stripe(this.config.stripe_pub_key);
         }
 
-        this.form.on('submit', (e) => {
+        // this.form.on('submit', (e) => {
+        jQuery(document).on('submit', this.selector, (e) => {
             e.preventDefault();
             this.handleFormSubmit();
         });

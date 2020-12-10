@@ -10,17 +10,18 @@ window.recaptchInstances = {};
         formData: {},
         init() {
             let body = $(document.body);
-            this.forms = body.find('.wpf_form');
-            this.forms.each(function () {
+            this.forms = $('.wpf_form');
+            $.each(this.forms, function ($form) {
                 let form = $(this);
-                let formId = form.data('wpf_form_id');
-                let formSettings = window['wp_payform_' + formId];
+                let formInstance = form.attr('wpf_form_instance');
+                let formSettings = window['wp_payform_' + formInstance];
 
                 let formHandler = new PayFormHandler(form, formSettings);
                 formHandler.initForm();
                 body.trigger('wpPayFormProcessFormElements', [form, formSettings]);
-                body.trigger('wp_payform_inited_'+formId, [form, formSettings]);
+                body.trigger('wp_payform_inited_'+formInstance, [form, formSettings]);
             });
+
             this.initDatePiker();
             this.initLightBox();
             this.initOther();
@@ -53,7 +54,12 @@ window.recaptchInstances = {};
         }
     };
 
-    $(document).ready(function ($) {
+    // Previous load on ready
+    // $(document).ready(function ($) {
+    //     wpPayformApp.init();
+    // });
+    //
+    $(window).on('load', function () {
         wpPayformApp.init();
     });
 
