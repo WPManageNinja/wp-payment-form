@@ -286,7 +286,7 @@ abstract class BaseComponent
         if ($wrapperCssClass = ArrayHelper::get($element, 'field_options.wrapper_class')) {
             $class .= ' ' . $wrapperCssClass;
         }
-        return apply_filters('wppayfrom/element_control_class', $class, $element);
+        return apply_filters('wppayform/element_control_class', $class, $element);
     }
 
     public function elementInputClass($element)
@@ -300,7 +300,7 @@ abstract class BaseComponent
             $extraClasses .= ' ' . $inputClass;
         }
 
-        return apply_filters('wppayfrom/element_input_class', 'wpf_form_control' . $extraClasses, $element);
+        return apply_filters('wppayform/element_input_class', 'wpf_form_control' . $extraClasses, $element);
     }
 
     public function parseText($text, $formId)

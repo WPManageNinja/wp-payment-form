@@ -84,7 +84,7 @@ new window.WPPayForms.Vue({
     router: router,
     mounted() {
         window.WPPayFormsBus.$on('site_title', (title) => {
-            jQuery(document).attr("title", title + ' :: WPPayFrom');
+            jQuery(document).attr("title", title + ' :: WPPayForm');
         });
     }
 });

@@ -85,7 +85,7 @@ class StripeCardElementComponent extends BaseComponent
         $stripe = new Stripe();
         if (!$stripe->getPubKey()) { ?>
             <p style="color: red">You did not configure stripe payment gateway. Please configure stripe payment
-                gateway from <b>WPPayFroms->Settings->Stripe Settings</b> to start accepting payments</p>
+                gateway from <b>WPPayForms->Settings->Stripe Settings</b> to start accepting payments</p>
             <?php return;
         }
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);

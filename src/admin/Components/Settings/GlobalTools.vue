@@ -37,7 +37,7 @@
                 <div class="wpf_settings_section">
                     <div class="sub_section_header">
                         <h3>{{ $t('Import From') }}</h3>
-                        <p>You can import any form that is exported from wppayfrom</p>
+                        <p>You can import any form that is exported from wppayform</p>
                     </div>
                     <hr/>
                     <div class="sub_section_body">
