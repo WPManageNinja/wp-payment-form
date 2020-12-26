@@ -49,7 +49,7 @@ class PaymentSuccessHandler
                 continue;
             }
 
-            $totalAmount = $subscription->initial_amount + $subscription->recurring_amount;
+            $totalAmount = $subscription->initial_amount + ($subscription->recurring_amount * $subscription->quantity);
             // We have to calculate the payment total
 
             $transactionItem = [

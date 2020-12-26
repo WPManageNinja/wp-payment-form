@@ -393,18 +393,21 @@ class PayFormHandler {
     calculatePayments() {
         let form = this.form;
         let elements = form.find('.wpf_payment_item');
+        let initialAmount = 0;
 
         let itemTotalValue = {};
 
         let subscriptonAmountTotal = 0;
 
         elements.each(function (index, elem) {
+
             let elementType = elem.type;
             let $elem = jQuery(elem);
             let elementName = $elem.attr('name');
             if (elementType == 'radio') {
                 let $element = form.find('input[name=' + elementName + ']:checked');
                 let itemValue = $element.data('price');
+                initialAmount = $element.data('initial_amount');
                 if (itemValue) {
                     itemTotalValue[elementName] = parseInt(itemValue);
                 }
@@ -443,7 +446,7 @@ class PayFormHandler {
                 if (itemValue) {
                     itemTotalValue[elementName] = parseInt(itemValue);
                 }
-
+                initialAmount = $element.data('initial_amount');
                 if ($element.attr('data-subscription_amount')) {
                     subscriptonAmountTotal += parseInt($element.attr('data-subscription_amount'));
                 }
@@ -462,6 +465,9 @@ class PayFormHandler {
                         let lineTotal = Math.abs(parseInt(qty)) * itemValue;
                         itemTotalValue[itemName] = lineTotal;
                         allTotalAmount += lineTotal;
+                        if (parseInt(initialAmount) > 0 && parseInt(qty) > 1) {
+                            allTotalAmount = allTotalAmount - ((parseInt(qty) - 1) * parseInt(initialAmount));
+                        }
                     }
                 } else {
                     allTotalAmount += itemValue;

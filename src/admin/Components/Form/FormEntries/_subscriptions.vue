@@ -5,15 +5,15 @@
         </div>
         <div class="entry_info_body">
 
-            <div v-for="(subscription, subscriptionIndex) in subscriptions" class="payment_header subscripton_item">
+            <div v-for="(subscription, subscriptionIndex) in subscriptions" :key="subscriptionIndex" class="payment_header subscripton_item">
 
                 <div class="payment_head_top">
                     <div class="payment_header_left">
-                        <p class="head_small_title">{{subscription.plan_name}} <span class="mini_title">({{subscription.item_name}})</span></p>
+                        <p class="head_small_title">{{subscription.plan_name}}<span class="mini_title">({{subscription.item_name}})</span></p>
 
                         <div class="head_payment_amount">
                             <span class="pay_amount" v-html="getFormattedMoney(subscription.recurring_amount)"></span>
-                            <span>/{{subscription.billing_interval}}</span>
+                            <span>/{{subscription.billing_interval}}</span><span v-if="subscription.quantity > 1"> x {{subscription.quantity}}</span>
                             <span :class="'wpf_paystatus_badge wpf_pay_status_'+subscription.status">
                                 <i :class="getPaymentStatusIcon(subscription.status)"></i> {{subscription.status}}
                             </span>
@@ -26,7 +26,7 @@
                             View on {{payment_method}}
                         </a>
                         <p style="margin-top: 0px">
-                            <span>Total Payment Recieved: </span><span class="table_payment_amount" v-html="subscriptionTotal(subscription.related_payments)"></span>
+                            <span>Total Payment Received: </span><span class="table_payment_amount" v-html="subscriptionTotal(subscription.related_payments)"></span>
                         </p>
                         <p style="margin-top: 0px" v-html="subscriptionHumanText(subscription.original_plan)"></p>
                     </div>
@@ -42,7 +42,7 @@
                         </tr>
                         </thead>
                         <tbody>
-                            <tr v-for="payment in subscription.related_payments">
+                            <tr v-for="(payment,i) in subscription.related_payments" :key="i">
                                 <td>
                                     <span class="table_payment_amount" v-html="getFormattedMoney(payment.payment_total)"></span>
                                     <span class="payment_currency">{{payment.currency}}</span>

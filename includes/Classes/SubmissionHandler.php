@@ -497,13 +497,17 @@ class SubmissionHandler
             $subscription['expiration_at'] = $expirationDate;
         }
 
+        if ($quantity > 1) {
+            $subscription['quantity'] = $quantity;
+        }
+
         $allSubscriptions = [$subscription];
 
-        if ($quantity > 1) {
-            for ($i = 1; $i < $quantity; $i++) {
-                $allSubscriptions[] = $subscription;
-            }
-        }
+        // if ($quantity > 1) {
+        //     for ($i = 1; $i < $quantity; $i++) {
+        //         $allSubscriptions[] = $subscription;
+        //     }
+        // }
 
         return $allSubscriptions;
     }

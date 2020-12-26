@@ -28,7 +28,7 @@ class PaymentReceipt
         }
 
         foreach ($submission->subscriptions as $subscription) {
-            $submission->payment_total += $subscription->payment_total;
+            $submission->payment_total += ($subscription->payment_total - $subscription->initial_amount);
         }
 
         $receiptSettings = Forms::getReceiptSettings($submission->form_id);
@@ -110,9 +110,9 @@ class PaymentReceipt
             foreach ($submission->subscriptions as $subscription) {
                 $submission->order_items[] = (object) [
                     'item_name' => $subscription->item_name .' ('.$subscription->plan_name.')',
-                    'quantity' => 1,
-                    'item_price' => $subscription->payment_total,
-                    'line_total' => $subscription->payment_total
+                    'quantity' => $subscription->quantity,
+                    'item_price' => $subscription->recurring_amount,
+                    'line_total' => $subscription->payment_total - $subscription->initial_amount
                 ];
             }
         }

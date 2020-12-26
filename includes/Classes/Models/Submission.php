@@ -178,7 +178,7 @@ class Submission extends Model
         $paymentTotal = 0;
         // Calculate from subscriptions
         $query = wpPayFormDB()->table('wpf_subscriptions')
-            ->select(wpPayFormDB()->raw('SUM(payment_total) as payment_total'));
+            ->select(wpPayFormDB()->raw('SUM(payment_total - initial_amount) as payment_total'));
         if ($formId) {
             $query = $query->where('form_id', $formId);
         }
@@ -191,6 +191,7 @@ class Submission extends Model
         if ($result && $result->payment_total) {
             $paymentTotal = $result->payment_total;
         }
+
         return $paymentTotal;
     }
 
