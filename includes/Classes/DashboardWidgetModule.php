@@ -31,10 +31,18 @@ class DashboardWidgetModule
                 'wpf_submissions.customer_name',
                 'wpf_submissions.payment_total',
                 'wpf_submissions.payment_status',
-                'posts.post_title'
+                'posts.post_title',
+
+                'wpf_subscriptions.recurring_amount',
+                'wpf_subscriptions.initial_amount',
+                'wpf_subscriptions.quantity',
+
             ])
             ->orderBy('wpf_submissions.id', 'DESC')
             ->join('posts', 'posts.ID', '=', 'wpf_submissions.form_id')
+            ->leftJoin('wpf_subscriptions', function ($table) {
+                $table->on('wpf_subscriptions.submission_id', '=', 'wpf_submissions.id');
+            })
             ->limit(10)
             ->get();
 
@@ -47,8 +55,12 @@ class DashboardWidgetModule
             } else {
                 $currencySettings = $allCurrencySettings[$stat->form_id];
             }
-
-            $stat->formattedTotal = wpPayFormFormattedMoney($stat->payment_total, $currencySettings);
+            if ($stat->recurring_amount) {
+                $subsTotal = ($stat->recurring_amount * $stat->quantity);
+                $stat->formattedTotal = wpPayFormFormattedMoney($subsTotal, $currencySettings);
+            } else {
+                $stat->formattedTotal = wpPayFormFormattedMoney($stat->payment_total, $currencySettings);
+            }
         }
 
         $paidStats = wpPayFormDB()->table('wpf_submissions')
@@ -89,12 +101,10 @@ class DashboardWidgetModule
                        href="<?php echo admin_url('admin.php?page=wppayform.php#/edit-form/' . $stat->form_id . '/entries/' . $stat->id . '/view'); ?>">
                         #<?php echo $stat->id; ?> - <?php echo $stat->customer_name; ?>
                         <span class="wpf_status wpf_status_<?php echo $stat->payment_status; ?>"><?php echo $stat->payment_status; ?></span>
-                            <?php if ($stat->payment_total == "0" && $stat->payment_status == "paid") { ?>
+                            <?php if ($stat->recurring_amount) { ?>
                                 <span class="wpf_status wpf_status_subscribed"><?php echo 'Subscribed'; ?></span>
                             <?php }; ?>
-                        <?php if ($stat->payment_total) : ?>
                             <span class="wpf_total"><?php echo $stat->formattedTotal; ?></span>
-                        <?php endif; ?>
                     </a>
                 </li>
             <?php endforeach; ?>
