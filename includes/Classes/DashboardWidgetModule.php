@@ -36,6 +36,7 @@ class DashboardWidgetModule
                 'wpf_subscriptions.recurring_amount',
                 'wpf_subscriptions.initial_amount',
                 'wpf_subscriptions.quantity',
+                'wpf_subscriptions.status'
 
             ])
             ->orderBy('wpf_submissions.id', 'DESC')
@@ -72,6 +73,12 @@ class DashboardWidgetModule
             ->whereIn('payment_status', ['paid'])
             ->groupBy('currency')
             ->get();
+
+        $subsTotal = wpPayFormDB()->table('wpf_subscriptions')
+            ->select(wpPayFormDB()->raw('SUM(payment_total - initial_amount) as recurring_total'))
+            ->whereIn('status', ['active'])
+            ->get();
+
         foreach ($paidStats as $paidStat) {
             if (!isset($allCurrencySettings[$paidStat->form_id])) {
                 $currencySettings = Forms::getCurrencyAndLocale($paidStat->form_id);
@@ -79,7 +86,8 @@ class DashboardWidgetModule
             } else {
                 $currencySettings = $allCurrencySettings[$paidStat->form_id];
             }
-            $paidStat->formattedTotal = wpPayFormFormattedMoney($paidStat->total_paid, $currencySettings);
+            $totalPaid = intval($paidStat->total_paid) + intval($subsTotal[0]->recurring_total);
+            $paidStat->formattedTotal = wpPayFormFormattedMoney($totalPaid, $currencySettings);
         }
 
         if (!$stats) {
@@ -100,10 +108,15 @@ class DashboardWidgetModule
                     <a title="Form: <?php echo $stat->post_title; ?>"
                        href="<?php echo admin_url('admin.php?page=wppayform.php#/edit-form/' . $stat->form_id . '/entries/' . $stat->id . '/view'); ?>">
                         #<?php echo $stat->id; ?> - <?php echo $stat->customer_name; ?>
-                        <span class="wpf_status wpf_status_<?php echo $stat->payment_status; ?>"><?php echo $stat->payment_status; ?></span>
                             <?php if ($stat->recurring_amount) { ?>
-                                <span class="wpf_status wpf_status_subscribed"><?php echo 'Subscribed'; ?></span>
-                            <?php }; ?>
+                                <span class="wpf_status wpf_status_<?php echo $stat->status; ?>">
+                                    <?php echo 'subscription'.' '.$stat->status; ?>
+                                </span>
+                            <?php } else { ?>
+                                <span class="wpf_status wpf_status_<?php echo $stat->payment_status; ?>">
+                                    <?php echo 'payment'.' '.$stat->payment_status; ?>
+                                </span>
+                            <?php } ?>
                             <span class="wpf_total"><?php echo $stat->formattedTotal; ?></span>
                     </a>
                 </li>
@@ -111,18 +124,24 @@ class DashboardWidgetModule
         </ul>
 
         <div class="wpf_payment_summary">
-            <b><?php _e('Total Paid Total', 'wppayform'); ?></b>
-            <?php foreach ($paidStats as $index => $stat): ?>
+            <b><?php _e('Total Paid & Active Payment Received', 'wppayform'); ?></b>
+            <?php foreach ($paidStats as $index => $stat) : ?>
             <b>(<?php echo $stat->currency; ?>)</b>: <?php echo $stat->formattedTotal; ?> <?php if (count($paidStats) - 1 != $index): ?><br /><?php endif; ?>
             <?php endforeach; ?>
         </div>
 
-        <?php if (!defined('WPPAYFORM_PRO_INSTALLED')): ?>
+        <?php if (!defined('WPPAYFORM_PRO_INSTALLED')) : ?>
         <div class="wpf_recommended_plugin">
             Upgrade to Pro and get awesome features and increase your conversion rates
-            <a style="display: block; width: 100%; margin-top: 10px; text-align: center;" target="_blank" rel="noopener" href="https://wpmanageninja.com/downloads/wppayform-pro-wordpress-payments-form-builder/?utm_source=plugin&utm_medium=dashboard&utm_campaign=upgrade" class="button button-primary">Upgrade To Pro</a>
+            <a style="display: block; width: 100%; margin-top: 10px; text-align: center;"
+                target="_blank"
+                rel="noopener"
+                href="https://wpmanageninja.com/downloads/wppayform-pro-wordpress-payments-form-builder/?utm_source=plugin&utm_medium=dashboard&utm_campaign=upgrade"
+                class="button button-primary">
+                    Upgrade To Pro
+            </a>
         </div>
-        <?php elseif (!defined('NINJA_TABLES_DIR_URL')): ?>
+        <?php elseif (!defined('NINJA_TABLES_DIR_URL')) : ?>
         <div class="wpf_recommended_plugin">
             Recommended Plugin: <b>Ninja Tables</b> - Best Table Plugin for WP -
             <a href="<?php echo $this->getInstallUrl('ninja-tables'); ?>">Install</a>
@@ -153,8 +172,8 @@ class DashboardWidgetModule
             ul.wpf_dashboard_stats span.wpf_status_paid {
                 background: #f0f9eb;
             }
-            ul.wpf_dashboard_stats span.wpf_status_subscribed {
-                background: #c8eeff6b;
+            ul.wpf_dashboard_stats span.wpf_status_active {
+                background: #f0f9eb;
             }
 
             ul.wpf_dashboard_stats span.wpf_status_pending {
