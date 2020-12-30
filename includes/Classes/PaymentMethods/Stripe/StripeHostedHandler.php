@@ -52,7 +52,7 @@ class StripeHostedHandler extends StripeHandler
         $requireBilling = ArrayHelper::get($paymentMethodElements, 'stripe_card_element.options.checkout_display_style.require_billing_info') == 'yes';
 
         $checkoutArgs = [
-            'cancel_url'                 => $cancelUrl,
+            'cancel_url'                 => wp_sanitize_redirect($cancelUrl),
             'success_url'                => $successUrl,
             'locale'                     => 'auto',
             'payment_method_types'       => ['card'],
