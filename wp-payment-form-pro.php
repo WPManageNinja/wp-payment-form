@@ -31,7 +31,7 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define( 'WPPAYFORM_PRO_INSTALLED', true );
+define('WPPAYFORM_PRO_INSTALLED', true);
 
 if (!defined('WPPAYFORM_VERSION_LITE')) {
     define('WPPAYFORM_VERSION', '1.9.91');
@@ -41,7 +41,7 @@ if (!defined('WPPAYFORM_VERSION_LITE')) {
     define('WPPAYFORM_MAIN_FILE', __FILE__);
     define('WPPAYFORM_URL', plugin_dir_url(__FILE__));
     define('WPPAYFORM_DIR', plugin_dir_path(__FILE__));
-    if(!defined('WPPAYFORM_UPLOAD_DIR')) {
+    if (!defined('WPPAYFORM_UPLOAD_DIR')) {
         define('WPPAYFORM_UPLOAD_DIR', '/wppayform');
     }
 
@@ -100,7 +100,6 @@ if (!defined('WPPAYFORM_VERSION_LITE')) {
             // Dashboard Widget Here
             $dashboardWidget = new \WPPayForm\Classes\DashboardWidgetModule();
             $dashboardWidget->register();
-
         }
 
         public function registerShortcodes()
@@ -121,14 +120,13 @@ if (!defined('WPPAYFORM_VERSION_LITE')) {
                 return $builder->render($args['id'], $args['show_title'], $args['show_description']);
             });
             add_shortcode('wppayform_reciept', function ($atts) {
-
-                $args = shortcode_atts( array(
+                $args = shortcode_atts(array(
                     'hash' => ''
-                ), $atts, 'wppayform_reciept' );
+                ), $atts, 'wppayform_reciept');
 
-                if(!$args['hash']) {
+                if (!$args['hash']) {
                     $hash = \WPPayForm\Classes\ArrayHelper::get($_REQUEST, 'wpf_submission');
-                    if(!$hash) {
+                    if (!$hash) {
                         $hash = \WPPayForm\Classes\ArrayHelper::get($_REQUEST, 'wpf_hash');
                     }
                 } else {
@@ -147,7 +145,6 @@ if (!defined('WPPAYFORM_VERSION_LITE')) {
                 }
 
                 return '<p class="wpf_no_recipt_found">' . __('Sorry, no submission receipt found, Please check your receipt URL', 'wppayform') . '</p>';
-
             });
         }
 
@@ -207,17 +204,16 @@ if (!defined('WPPAYFORM_VERSION_LITE')) {
     });
 
     // Handle Newtwork new Site Activation
-    add_action( 'wpmu_new_blog', function ($blogId) {
+    add_action('wp_insert_site', function ($blogId) {
         require_once(WPPAYFORM_DIR . 'includes/Classes/Activator.php');
-        switch_to_blog( $blogId );
-        \WPPayForm\Classes\Activator::migrate();
+        switch_to_blog($blogId->blog_id);
+        (new \WPPayForm\Classes\Activator())->migrate();
         restore_current_blog();
-    } );
-
+    });
 } else {
-    add_action( 'admin_notices', function () {
+    add_action('admin_notices', function () {
         $class = 'notice notice-error';
         $message =  'Please deactivate WPPayForm Free version';
-        printf( '<div class="%1$s"><p>%2$s</p></div>', esc_attr( $class ), esc_html( $message ) );
+        printf('<div class="%1$s"><p>%2$s</p></div>', esc_attr($class), esc_html($message));
     });
 }
