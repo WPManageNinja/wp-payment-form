@@ -373,6 +373,7 @@
                 <el-button @click="print" type="info" size="mini" icon="el-icon-printer">Print this entry</el-button>
                 <el-button @click="exportJSON()" type="info" size="mini" icon="el-icon-document-copy">Export JSON
                 </el-button>
+                <email-resend :form_id="form_id" :entry_id="entry_id" />
                 <div v-if="show_print_settings">
                     <h3>Mark Sections to hide from print screen</h3>
                     <el-checkbox-group v-model="print_hides">
@@ -415,6 +416,7 @@
                 <el-button type="primary" @click="changePaymentStatus()">Confirm</el-button>
             </span>
             </el-dialog>
+
             <el-dialog
                 :visible.sync="show_print_pro"
                 width="60%">
@@ -436,11 +438,13 @@
     import fromatPrice from '../../../../common/formatPrice';
     import omit from 'lodash/omit';
     import SubscriptionPayments from './_subscriptions';
+    import EmailResend from './_RecentEmailNotification';
 
     export default {
         name: "Entry",
         components: {
-            SubscriptionPayments
+            SubscriptionPayments,
+            EmailResend
         },
         data() {
             return {
