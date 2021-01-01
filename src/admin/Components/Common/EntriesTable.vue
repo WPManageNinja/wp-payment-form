@@ -2,11 +2,35 @@
     <div class="form_entries_wrapper">
 
         <div v-loading="fetching" class="wpf_entries">
+             <div>
+                <div style="float: left">
+                    <label for="bulk-action-selector-top" class="screen-reader-text">
+                            {{ $t('Select bulk action') }}
+                        </label>
+                        <select name="action" v-model="selectOption">
+                            <option :disabled="true" value="-1">{{ $t('Bulk Actions') }}</option>
+                            <option value="delete">{{ $t('Delete Entries')}}</option>
+                        </select>
+                        <remove
+                            v-show="(multipleSelection.length > 0 && selectOption != '-1')"
+                            @on-confirm="applyAction"
+                            class="button action">
+                            {{ $t('Apply') }}
+                        </remove>
+                </div>
+            </div>
             <el-table
+                ref="multipleTable"
                 :data="allEntry"
                 style="width: 100%"
+                @selection-change="handleSelectionChange"
                 :row-class-name="tableRowClassName"
             >
+                <el-table-column
+                    type="selection"
+                    width="60"
+                    >
+                 </el-table-column>
                 <el-table-column
                     label="ID"
                     width="60">
@@ -71,16 +95,34 @@
                 </el-table-column>
             </el-table>
         </div>
-        <div class="wpf_entry_pagination">
-            <el-pagination
-                @size-change="pageSizeChange"
-                @current-change="changePage"
-                :current-page.sync="pagination.current_page"
-                :page-sizes="page_sizes"
-                :page-size="pagination.per_page"
-                layout="total, sizes, prev, pager, next"
-                :total="pagination.total">
-            </el-pagination>
+
+        <div class="tablenav bottom">
+                <div class="alignleft actions bulkactions">
+                    <label for="bulk-action-selector-top" class="screen-reader-text">
+                        {{ $t('Select bulk action') }}
+                    </label>
+                    <select name="action" v-model="selectOption">
+                        <option value="-1">{{ $t('Bulk Actions') }}</option>
+                        <option value="delete">{{ $t('Delete Entries')}}</option>
+                    </select>
+                    <remove
+                        v-show="(multipleSelection.length > 0 && selectOption != -1)"
+                        @on-confirm="applyAction()"
+                        class="button action">
+                        {{ $t('Apply') }}
+                    </remove>
+                </div>
+            <div style="float: right">
+                <el-pagination
+                    @size-change="pageSizeChange"
+                    @current-change="changePage"
+                    :current-page.sync="pagination.current_page"
+                    :page-sizes="page_sizes"
+                    :page-size="pagination.per_page"
+                    layout="total, sizes, prev, pager, next"
+                    :total="pagination.total">
+                </el-pagination>
+            </div>
         </div>
 
         <!--Delete Entry Confimation Modal-->
@@ -103,9 +145,13 @@
 
 <script type="text/babel">
     import fromatPrice from '../../../common/formatPrice';
+    import Remove from '../pieces/confirmation'
     export default {
         name: 'entries_table',
         props: ['form_id', 'payment_status', 'entry_ticker', 'search_string'],
+        components: {
+            Remove
+        },
         watch: {
             form_id() {
                 this.pagination.current_page = 1;
@@ -133,7 +179,12 @@
                 delete_pop_up: false,
                 deleting_row: null,
                 deletetingItem: false,
-                has_payment_items: true
+                has_payment_items: true,
+                multipleSelection: [],
+                tableData: [],
+                selectOption: '-1',
+                visible: false,
+                loading: false
             }
         },
         computed: {
@@ -175,6 +226,10 @@
                         this.fetching = false;
                     });
             },
+
+            handleSelectionChange(val) {
+                this.multipleSelection = val;
+            },
             showDeleteConformation(row) {
                 this.deleting_row = row;
                 this.delete_pop_up = true;
@@ -185,28 +240,48 @@
             },
             deleteEntryNow() {
                 this.deletetingItem = true;
+                this.deleteRow([this.deleting_row.id]);
+            },
+            deleteRow(entries) {
+                this.deletetingItem = true;
                 this.$post({
                     action: 'wpf_submission_endpoints',
                     route: 'delete_submission',
-                    submission_id: this.deleting_row.id,
-                    form_id: this.deleting_row.form_id
+                    submission_id: entries,
+                    form_id: this.router_form_id
                 })
                     .then(response => {
                         this.$message.success(response.data.message);
                         this.getEntries();
+                        this.deletetingItem = false;
                     })
                     .fail(error => {
                         this.$message.error(error.responseJSON.data.message);
+                        this.deletetingItem = false;
                     })
                     .always(() => {
                         this.deletetingItem = false;
                         this.handleDeleteClose();
                     });
             },
+             deleteEntries() {
+                this.deletetingItem = true;
+                const ids = []
+                this.multipleSelection.forEach(element => {
+                    ids.push(element.id)
+                });
+                this.deleteRow(ids);
+            },
+
             changePage(page) {
                 this.pagination.current_page = page;
                 this.pagination.page_number = page;
                 this.getEntries()
+            },
+            applyAction(row) {
+                if (this.multipleSelection.length > 0 && this.selectOption === 'delete') {
+                    this.deleteEntries();
+                }
             },
             getFormattedMoney(row) {
                 let amount = row.payment_total;

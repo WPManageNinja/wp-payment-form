@@ -6,6 +6,7 @@ use WPPayForm\Classes\Models\Forms;
 use WPPayForm\Classes\Models\Submission;
 use WPPayForm\Classes\Models\SubmissionActivity;
 use WPPayForm\Classes\Models\Transaction;
+use WPPayForm\Classes\ArrayHelper as Arr;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -242,8 +243,8 @@ class SubmissionView
 
     public function deleteSubmission()
     {
-        $submissionId = intval($_REQUEST['submission_id']);
-        $formId = intval($_REQUEST['form_id']);
+        $submissionId = Arr::get($_REQUEST, 'submission_id', []);
+        $formId = intval(Arr::get($_REQUEST, 'form_id'));
         do_action('wppayform/before_delete_submission', $submissionId, $formId);
         $submissionModel = new Submission();
         $submissionModel->deleteSubmission($submissionId);

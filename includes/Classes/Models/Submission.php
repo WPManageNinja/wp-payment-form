@@ -278,22 +278,24 @@ class Submission extends Model
 
     public function deleteSubmission($sumissionId)
     {
-        wpPayFormDB()->table('wpf_submissions')
-            ->where('id', $sumissionId)
-            ->delete();
+        foreach ($sumissionId as $value) {
+            wpPayFormDB()->table('wpf_submissions')
+                ->where('id', intval($value))
+                ->delete();
 
-        wpPayFormDB()->table('wpf_order_items')
-            ->where('submission_id', $sumissionId)
-            ->delete();
+            wpPayFormDB()->table('wpf_order_items')
+                ->where('submission_id', intval($value))
+                ->delete();
 
-        wpPayFormDB()->table('wpf_order_transactions')
-            ->where('submission_id', $sumissionId)
-            ->where('transaction_type', 'one_time')
-            ->delete();
+            wpPayFormDB()->table('wpf_order_transactions')
+                ->where('submission_id', intval($value))
+                ->where('transaction_type', 'one_time')
+                ->delete();
 
-        wpPayFormDB()->table('wpf_submission_activities')
-            ->where('submission_id', $sumissionId)
-            ->delete();
+            wpPayFormDB()->table('wpf_submission_activities')
+                ->where('submission_id', intval($value))
+                ->delete();
+        }
     }
 
     public function getEntryCountByPaymentStatus($formId, $paymentStatuses = array(), $period = 'total')
