@@ -16,7 +16,7 @@
             <template v-if="has_pro">
                 <el-form label-width="120px" ref="form" :model="form" label-position="left">
                     <el-form-item label="Notification">
-                        <el-select @change="cleanErr" size="small" placeholder="Select Notification"
+                        <el-select v-loading="fetching" size="small" placeholder="Select Notification"
                                    v-model="form.notification_id">
                             <el-option v-for="notification in notifications" :value="notification.id"
                                        :label="notification.name" :key="notification.id"></el-option>
@@ -35,8 +35,6 @@
                         </el-form-item>
                     </template>
                 </el-form>
-                <div v-if="error_message" v-html="error_message" class="wpf-error"></div>
-                <div v-if="success_message" v-html="success_message" class="wpf-success"></div>
                 <span slot="footer" class="dialog-footer">
                     <el-button @click="dialogVisible = false" size="mini">Cancel</el-button>
                     <el-button v-loading="sending" :disabled="!isActive" size="mini" type="primary" @click="send()">Resend this notification</el-button>
@@ -85,8 +83,6 @@
                 dialogVisible: false,
                 fetching: true,
                 sending: false,
-                error_message: '',
-                success_message: '',
                 form: {
                     notification_id: '',
                     send_to_type: 'default',
@@ -106,7 +102,7 @@
         },
         methods: {
             send() {
-                this.fetching = true;
+                this.sending = true;
                 const query = {
                     action: 'wppayform_forms_admin_ajax',
                     route: 'resend_notifications',
@@ -116,29 +112,35 @@
                 }
                 this.$get(query)
                     .then(res => {
-                        if(res) {
-                            this.error_message = '';
-                            this.success_message = 'Notification send success';
+                        if(res.success) {
+                            this.$message.success({
+                                message: res.data,
+                                offset: 40,
+                                duration: 5000
+                            })
+                        } else {
+                            this.$message.error({
+                                message: res.data,
+                                offset: 40,
+                                duration: 5000
+                            })
                         }
+                        this.sending = false;
                     })
                     .fail((e)=>{
-                        this.error_message = e.responseJSON.data.err;
+                        this.$message.error(e.responseJSON.data.err);
+                        this.sending = false;
                     })
                     .always(() => {
-                        this.fething = false;
+                        this.sending = false;
                     });
             },
             resetData() {
-                this.error_message = '';
-                this.success_message = '';
                 this.form = {
                     notification_id: '',
                     send_to_type: 'default',
                     send_to_custom_email: ''
                 }
-            },
-            cleanErr() {
-                this.error_message = '';
             },
             getNotifications() {
                 this.fetching = true;
@@ -150,9 +152,10 @@
                 this.$get(query)
                     .then(response => {
                         this.notifications = response.data.notifications;
+                        this.fetching = false;
                     })
                     .always(() => {
-                        this.fething = false;
+                        this.fetching = false;
                     });
                 this.dialogVisible = true;
 
@@ -162,19 +165,6 @@
 </script>
 
 <style lang="scss">
-    .wpf-error {
-        background: #FF9800;
-        color: white;
-        padding: 10px;
-        border-radius: 4px;
-    }
-
-    .wpf-success {
-        padding: 10px;
-        background: #4CAF50;
-        color: white;
-        border-radius: 4px;
-    }
     .wpf_email_resend_inline {
         display: inline-block;
     }
