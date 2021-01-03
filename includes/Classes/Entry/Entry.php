@@ -82,7 +82,16 @@ class Entry
     public function getInputFieldsHtmlTable()
     {
         return View::make('elements.input_fields_html', array(
-            'items' => $this->getParsedItems()
+            'items' => $this->getParsedItems(),
+            'showEmpty' => false
+        ));
+    }
+
+    public function getInputFieldsWEmptyHtmlTable()
+    {
+        return View::make('elements.input_fields_html', array(
+            'items' => $this->getParsedItems(),
+            'showEmpty' => true
         ));
     }
 
@@ -180,6 +189,10 @@ class Entry
     {
         if ($name == 'all_input_field_html') {
             return $this->getInputFieldsHtmlTable();
+        }
+
+        if ($name == 'all_input_field_html_with_empty') {
+            return $this->getInputFieldsWEmptyHtmlTable();
         }
 
         if ($name == 'product_items_table_html') {

@@ -328,6 +328,7 @@ class Forms
 
         if ($html) {
             $submissionItem['shortcodes']['{submission.all_input_field_html}'] = __('All input field html', 'wppayform');
+            $submissionItem['shortcodes']['{submission.all_input_field_html_with_empty}'] = __('All input field html with empty', 'wppayform');
             if ($hasPayment) {
                 $submissionItem['shortcodes']['{submission.product_items_table_html}'] = __('Order items table html', 'wppayform');
             }
