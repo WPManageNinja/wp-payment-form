@@ -1,5 +1,5 @@
 <?php
-if(!$submission->order_items) {
+if (!$submission->order_items) {
     return '';
 }
 $currencySetting = \WPPayForm\Classes\GeneralSettings::getGlobalCurrencySettings($submission->form_id);
@@ -14,24 +14,27 @@ $currencySetting['currency_sign'] = \WPPayForm\Classes\GeneralSettings::getCurre
     </thead>
     <tbody>
     <?php $subTotal = 0; ?>
-    <?php foreach ($submission->order_items as $order_item): ?>
+    <?php foreach ($submission->order_items as $order_item) {
+        if ($order_item->line_total) :?>
         <tr>
             <td><?php echo $order_item->item_name; ?></td>
             <td><?php echo $order_item->quantity; ?></td>
             <td><?php echo wpPayFormFormattedMoney($order_item->item_price, $currencySetting); ?></td>
             <td><?php echo wpPayFormFormattedMoney($order_item->line_total, $currencySetting); ?></td>
         </tr>
-    <?php
-        $subTotal += $order_item->line_total;
-        endforeach; ?>
+            <?php
+            $subTotal += $order_item->line_total;
+        endif;
+    };
+    ?>
     </tbody>
     <tfoot>
-    <?php if($submission->tax_items): ?>
+    <?php if ($submission->tax_items) : ?>
         <tr class="wpf_sub_total_row">
             <th style="text-align: right" colspan="3"><?php _e('Sub Total', 'wppayform'); ?></th>
             <td><?php echo wpPayFormFormattedMoney($subTotal, $currencySetting); ?></td>
         </tr>
-        <?php foreach ($submission->tax_items as $tax_item): ?>
+        <?php foreach ($submission->tax_items as $tax_item) : ?>
             <tr class="wpf_sub_total_row">
                 <td style="text-align: right" colspan="3"><?php echo $tax_item->item_name ?></td>
                 <td><?php echo wpPayFormFormattedMoney($tax_item->line_total, $currencySetting); ?></td>
