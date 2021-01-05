@@ -60,7 +60,7 @@ class PayFormHandler {
                 }) // step 3
                 .then(response => {
                     // Before send ajax request
-                    this.buttonState('submitting_form', 'Submitting Data...', true, response);
+                    this.buttonState('submitting_form', this.$t('button_state'), true, response);
                     jQuery.post(this.generalConfig.ajax_url, {
                         action: 'wpf_submit_form',
                         form_id: this.formId,

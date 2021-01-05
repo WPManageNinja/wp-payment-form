@@ -311,7 +311,9 @@ class Render
                 'verify_recapthca' => __('Please verify recaptcha first', 'wppayform'),
                 'submission_error' => __('Something is wrong when submitting the form', 'wppayform'),
                 'is_required' => __('is required', 'wppayform'),
-                'validation_failed' => __('Validation failed, please fill-up required fields', 'wppayform')
+                'validation_failed' => __('Validation failed, please fill-up required fields', 'wppayform'),
+                'button_state' => __('Submitting Data...', 'wppayform'),
+
             )
         ));
     }
