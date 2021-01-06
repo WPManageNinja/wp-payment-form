@@ -534,16 +534,16 @@ class SubmissionHandler
         ) {
             if ($confirmation['redirectTo'] == 'customUrl') {
                 $url = $confirmation['customUrl'];
+                $url = PlaceholderParser::parse($url, $submission);
             } else {
                 $url = get_permalink(intval($confirmation['customPage']));
+                $url = add_query_arg('wpf_submission', $submission->submission_hash, $url);
             }
             $confirmation['redirectTo'] = 'customUrl';
-            $url = add_query_arg('wpf_submission', $submission->submission_hash, $url);
-            $confirmation['customUrl'] = PlaceholderParser::parse($url, $submission);
+            $confirmation['customUrl'] = $url;
         } else if ($confirmation['redirectTo'] == 'samePage') {
             do_action('wppayform/require_entry_html');
             $confirmation['messageToShow'] = PlaceholderParser::parse($confirmation['messageToShow'], $submission);
-
             if (strpos($confirmation['messageToShow'], '[wppayform_reciept]') !== false) {
                 $modifiedShortcode = '[wppayform_reciept hash="' . $submission->submission_hash . '"]';
                 $confirmation['messageToShow'] = str_replace('[wppayform_reciept]', $modifiedShortcode, $confirmation['messageToShow']);
