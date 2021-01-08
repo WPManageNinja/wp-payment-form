@@ -41,6 +41,11 @@ class Submission extends Model
             $resultQuery->where('wpf_submissions.form_id', $formId);
         }
 
+        if (isset($wheres) && ArrayHelper::get($wheres, 'payment_status') == 'abandoned') {
+            $wheres['payment_status'] = 'pending';
+            $resultQuery = $this->makeQueryAbandoned($resultQuery);
+        }
+
         foreach ($wheres as $whereKey => $where) {
             $resultQuery->where('wpf_submissions.' . $whereKey, $where);
         }
@@ -110,11 +115,11 @@ class Submission extends Model
             $subscriptionModel = new Subscription();
             $result->subscriptions = $subscriptionModel->getSubscriptions($result->id);
         }
-        if(in_array('refunds', $with)) {
+        if (in_array('refunds', $with)) {
             $refundModel = new Refund();
             $result->refunds = $refundModel->getRefunds($result->id);
             $refundTotal = 0;
-            if($result->refunds) {
+            if ($result->refunds) {
                 foreach ($result->refunds as $refund) {
                     $refundTotal += $refund->payment_total;
                 }
@@ -132,7 +137,7 @@ class Submission extends Model
                         ->orderBy('id', 'DESC')
                         ->first();
 
-        if($submission) {
+        if ($submission) {
             return $this->getSubmission($submission->id, $with);
         }
         return false;
@@ -144,10 +149,23 @@ class Submission extends Model
         if ($formId) {
             $query = $query->where('form_id', $formId);
         }
-        if ($paymentStatus) {
+        if ($paymentStatus && $paymentStatus !== 'abandoned') {
             $query = $query->where('payment_status', $paymentStatus);
+        } else {
+            $query = $query->where('payment_status', 'pending');
+            $query = $this->makeQueryAbandoned($query);
         }
         return $query->count();
+    }
+
+    public function makeQueryAbandoned($query)
+    {
+        $date = new \DateTime();
+        $date->modify('-3 hours');
+        $formatted_date = $date->format('Y-m-d H:i:s');
+        $query->where('wpf_submissions.created_at', '<', $formatted_date)
+              ->where('wpf_submissions.payment_method', '!=', '');
+        return $query;
     }
 
     public function paymentTotal($formId, $paymentStatus = false)
@@ -158,8 +176,11 @@ class Submission extends Model
         if ($formId) {
             $query = $query->where('form_id', $formId);
         }
-        if ($paymentStatus) {
+        if ($paymentStatus !== 'abandoned') {
             $query->where('payment_status', $paymentStatus);
+        } else {
+            $query->where('payment_status', 'pending');
+            $query = $this->makeQueryAbandoned($query);
         }
         $result = $query->first();
         if ($result && $result->payment_total) {

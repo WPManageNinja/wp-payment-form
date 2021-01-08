@@ -79,6 +79,14 @@
                     </template>
                 </el-table-column>
                 <el-table-column
+                    v-if="has_payment_items"
+                    label="Payment Method">
+                    <template slot-scope="scope">
+                    <span class="wpf_pay_method" :class="'wpf_pay_method_'+scope.row.payment_method">
+                        {{ scope.row.payment_method }}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column
                     label="Submitted At"
                     prop="created_at">
                 </el-table-column>

@@ -30,7 +30,7 @@ class Stripe
 
 
         /*
-         * This is rquired
+         * This is required
          */
         add_action('wppayform/after_submission_data_insert_stripe', array($this, 'addPaymentMethodStyle'), 10, 3);
         add_action('wppayform/form_submission_make_payment_stripe', array($this, 'routePaymentHandler'), 10, 5);

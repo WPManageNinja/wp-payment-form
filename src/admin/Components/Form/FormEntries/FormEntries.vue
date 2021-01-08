@@ -3,6 +3,7 @@
         <div v-if="is_payment_form" class="wpf_report_cards">
             <div
                 v-for="(report, report_name) in reports"
+                :key="report_name"
                 @click="changePaymentStatus(report_name)"
                 :class="(selected_payment_status == report_name) ? 'wpf_active_card card_type_'+report_name : ''"
                 class="wpf_report_card">

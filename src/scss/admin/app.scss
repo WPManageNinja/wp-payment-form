@@ -339,6 +339,25 @@ table.el-table__header thead tr th {
   }
 }
 
+.wpf_pay_method {
+  font-weight: 500;
+  text-transform: capitalize;
+  border-radius: 20px;
+  padding: 2px 7px;
+  &_stripe {
+    color: #fafafa;
+    background: repeating-linear-gradient(45deg, #606dbcc7, #606dbcc9 10px, #465298c4 10px, #465298d1 20px);
+  }
+  &_paypal {
+    color: #fafafa;
+    background: linear-gradient(-120deg, #003087c7, #009cdecc, #012169cf);
+  }
+  &_offline {
+    background-color: #d6ecff;
+    color: #3d4ead;
+  }
+}
+
 .wpf_entry_actions {
   padding: 15px 0px;
 

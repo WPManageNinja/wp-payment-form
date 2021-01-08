@@ -185,7 +185,7 @@ class GeneralSettings
     public static function getComponents()
     {
         $components = array();
-        return apply_filters('wppayform/form_components', $components);;
+        return apply_filters('wppayform/form_components', $components);
     }
 
     /**
@@ -416,7 +416,8 @@ class GeneralSettings
             'processing' => __('Processing', 'wppayform'),
             'pending'    => __('Pending', 'wppayform'),
             'failed'     => __('Failed', 'wppayform'),
-            'refunded'   => __('Refunded', 'wppayform')
+            'refunded'   => __('Refunded', 'wppayform'),
+            'abandoned'  => __('Abandoned', 'wppayform')
         ));
     }
 
