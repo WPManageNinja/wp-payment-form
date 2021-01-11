@@ -400,6 +400,12 @@ class GeneralSettings
         return apply_filters('wppayform/ip_logging_status', $status);
     }
 
+    public static function getAbandonedTime()
+    {
+        $timeAfter = get_option('wppayform_abandoned_time', 3);
+        return apply_filters('wppayform/_abandoned_time', $timeAfter);
+    }
+
     public static function getConfirmationPageSettings()
     {
         $settings = get_option('wppayform_confirmation_pages');

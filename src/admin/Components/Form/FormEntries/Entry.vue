@@ -22,7 +22,7 @@
                             <el-button readonly size="mini" disabled type="plain">{{submission.id}}</el-button>
                             <el-button size="mini" @click="handleNavClick('prev')" type="info">Next <i
                                 class="el-icon-d-arrow-right el-icon-right"></i></el-button>
-                            <el-dropdown v-if="submission.order_items && parseInt(submission.order_items.length)"
+                            <el-dropdown v-if="submission.payment_method"
                                          @command="handleActionCommand">
                                 <el-button size="mini" type="primary">
                                     Actions <i class="el-icon-arrow-down el-icon--right"></i>
@@ -399,8 +399,8 @@
                     <el-form ref="payment_status_form" :model="payment_status_edit_model" label-width="160px">
                         <el-form-item label="New Payment Status">
                             <el-radio-group v-model="payment_status_edit_model.status">
-                                <el-radio v-for="(status, status_key) in available_payment_statuses" :key="status"
-                                          :label="status_key">{{status}}
+                                <el-radio v-for="(status, status_key) in available_payment_statuses" :key="status" v-show="status_key !=='abandoned'"
+                                     :label="status_key">{{status}}
                                 </el-radio>
                             </el-radio-group>
                         </el-form-item>

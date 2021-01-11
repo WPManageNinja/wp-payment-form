@@ -21,7 +21,7 @@
                         <div class="sub_section_body">
                             <el-form-item label="Stripe Checkout Locale">
                                 <el-select size="small" filterable v-model="settings.locale"
-                                           placeholder="Select Stripe Checkput Language">
+                                           placeholder="Select Stripe Checkout Language">
                                     <el-option
                                         v-for="(locale_name, locale_key) in locales"
                                         :key="locale_key"
@@ -54,7 +54,14 @@
                                 </el-select>
                             </el-form-item>
                             <el-form-item label="">
-                                <el-checkbox :true-label="0" :false-label="2" v-model="settings.decimal_points">Hide decimal points for rouned numbers</el-checkbox>
+                                <el-checkbox :true-label="0" :false-label="2" v-model="settings.decimal_points">Hide decimal points for rounded numbers</el-checkbox>
+                            </el-form-item>
+                            <el-form-item label="Submission Abandoned After ">
+                                <el-input type="number" size="small" v-model="abandoned_time">
+                                    <template slot="append">
+                                        Hours
+                                    </template>
+                                </el-input>
                             </el-form-item>
                         </div>
                     </div>
@@ -92,7 +99,8 @@
                     left_space: 'Left Space ($ 100)',
                     right_space: 'Right Space 100 $'
                 },
-                ip_logging_status: 'yes'
+                ip_logging_status: 'yes',
+                abandoned_time: null
             }
         },
         methods: {
@@ -107,6 +115,7 @@
                         this.currencies = response.data.currencies;
                         this.locales = response.data.locales;
                         this.ip_logging_status = response.data.ip_logging_status
+                        this.abandoned_time = response.data.abandoned_time
                     })
                     .fail(error => {
                         this.$message.error(error.responseJSON.data.message);
@@ -121,7 +130,8 @@
                     action: 'wpf_global_settings_handler',
                     route: 'update_global_currency_settings',
                     settings: this.settings,
-                    ip_logging_status: this.ip_logging_status
+                    ip_logging_status: this.ip_logging_status,
+                    abandoned_time: this.abandoned_time
                 })
                     .then(response => {
                         this.$message.success(response.data.message);
