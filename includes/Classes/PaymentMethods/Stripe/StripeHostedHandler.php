@@ -50,11 +50,13 @@ class StripeHostedHandler extends StripeHandler
         $paymentMethodElements = Forms::getPaymentMethodElements($form->ID);
 
         $requireBilling = ArrayHelper::get($paymentMethodElements, 'stripe_card_element.options.checkout_display_style.require_billing_info') == 'yes';
+        
+        $requireBillingForMultiplePayment = ArrayHelper::get($paymentMethodElements, 'choose_payment_method.options.method_settings.payment_settings.stripe.checkout_display_style.require_billing_info') == 'yes';
 
-        $requireBillingMultiple = ArrayHelper::get($paymentMethodElements, 'choose_payment_method.options.method_settings.payment_settings.stripe.checkout_display_style.require_billing_info') == 'yes';
+        // var_dump($requireBillingForMultiplePayment);
 
         $checkoutArgs = [
-            'cancel_url'                 => wp_sanitize_redirect($cancelUrl),
+            'cancel_url'                 => $cancelUrl,
             'success_url'                => $successUrl,
             'locale'                     => 'auto',
             'payment_method_types'       => ['card'],
@@ -63,7 +65,7 @@ class StripeHostedHandler extends StripeHandler
             'metadata'                   => $this->getIntentMetaData($submission)
         ];
 
-        if ($requireBilling || $requireBillingMultiple) {
+        if ($requireBilling || $requireBillingForMultiplePayment) {
             $checkoutArgs['billing_address_collection'] = 'required';
         } else {
             $checkoutArgs['billing_address_collection'] = 'auto';
