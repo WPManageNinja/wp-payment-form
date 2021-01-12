@@ -68,7 +68,7 @@ class Menu
                 ->where('status', 'new')
                 ->count();
             if ($entriesCount) {
-                $entriesTitle .= ' <span class="wpf_unread_count" style="background: #ca4a20;color: white;border-radius: 8px;padding: 1px 8px;">'.$entriesCount.'</span>';
+                $entriesTitle .= ' <span class="wpf_unread_count" style="background: #e89d2d;color: white;border-radius: 8px;padding: 1px 8px;">'.$entriesCount.'</span>';
             }
         }
 

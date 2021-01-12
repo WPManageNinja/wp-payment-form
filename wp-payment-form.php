@@ -206,6 +206,16 @@ if (!defined('WPPAYFORM_VERSION')) {
         $activator->migrateDatabases($newWorkWide);
     });
 
+    // disabled update-nag
+    add_action('admin_init', function () {
+        $disablePages = [
+            'wppayform.php',
+        ];
+        if (isset($_GET['page']) && in_array($_GET['page'], $disablePages)) {
+            remove_all_actions('admin_notices');
+        }
+    });
+
     // Handle Newtwork new Site Activation
     add_action('wp_insert_site', function ($blogId) {
         require_once(WPPAYFORM_DIR . 'includes/Classes/Activator.php');
