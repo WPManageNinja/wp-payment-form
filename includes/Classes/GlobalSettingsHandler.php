@@ -41,7 +41,8 @@ class GlobalSettingsHandler
             'currency_settings' => GeneralSettings::getGlobalCurrencySettings(),
             'currencies'        => GeneralSettings::getCurrencies(),
             'locales'           => GeneralSettings::getLocales(),
-            'ip_logging_status' => GeneralSettings::ipLoggingStatus()
+            'ip_logging_status' => GeneralSettings::ipLoggingStatus(),
+            'abandoned_time'    => GeneralSettings::getAbandonedTime()
         ), 200);
     }
 
@@ -64,8 +65,9 @@ class GlobalSettingsHandler
         );
         update_option('wppayform_global_currency_settings', $data);
         update_option('wppayform_ip_logging_status', sanitize_text_field($_REQUEST['ip_logging_status']), false);
+        update_option('wppayform_abandoned_time', intval($_REQUEST['abandoned_time']), false);
 
-        // We will forecfully try to upgrade the DB and later we will remove this after 1-2 version
+        // We will forcefully try to upgrade the DB and later we will remove this after 1-2 version
         $firstTransaction = wpFluent()->table('wpf_order_transactions')
             ->first();
         if (!$firstTransaction || !property_exists($firstTransaction, 'subscription_id')) {

@@ -41,9 +41,10 @@ class Submission extends Model
             $resultQuery->where('wpf_submissions.form_id', $formId);
         }
 
-        if (isset($wheres) && ArrayHelper::get($wheres, 'payment_status') == 'abandoned') {
+        $queryType = ArrayHelper::get($wheres, 'payment_status');
+        if (isset($wheres) && $queryType === 'abandoned') {
             $wheres['payment_status'] = 'pending';
-            $resultQuery = $this->makeQueryAbandoned($resultQuery);
+            $resultQuery = $this->makeQueryAbandoned($resultQuery, '<', true);
         }
 
         foreach ($wheres as $whereKey => $where) {
@@ -127,6 +128,14 @@ class Submission extends Model
             $result->refundTotal = $refundTotal;
         }
 
+        if ($result->status == 'new') {
+            wpPayFormDB()->table('wpf_submissions')
+            ->where('form_id', $result->form_id)
+            ->where('id', $result->id)
+            ->update(['status'=> 'read']);
+            $result->status = 'read';
+        }
+
         return $result;
     }
 
@@ -153,20 +162,25 @@ class Submission extends Model
             $query = $query->where('payment_status', $paymentStatus);
         } else {
             $query = $query->where('payment_status', 'pending');
-            $query = $this->makeQueryAbandoned($query);
+            $query = $this->makeQueryAbandoned($query, '<', true);
         }
         return $query->count();
     }
 
-    public function makeQueryAbandoned($query)
+    public function makeQueryAbandoned($query, $condition = '<', $payOnly = true)
     {
         $date = new \DateTime();
-        $date->modify('-3 hours');
+        $hour = get_option('wppayform_abandoned_time', 3);
+        $before = '-' . $hour . ' hours';
+        $date->modify($before);
         $formatted_date = $date->format('Y-m-d H:i:s');
-        $query->where('wpf_submissions.created_at', '<', $formatted_date)
-              ->where('wpf_submissions.payment_method', '!=', '');
+        $query->where('wpf_submissions.created_at', $condition, $formatted_date);
+        if ($payOnly) {
+            $query->where('wpf_submissions.payment_method', '!=', '');
+        }
         return $query;
     }
+
 
     public function paymentTotal($formId, $paymentStatus = false)
     {
@@ -180,7 +194,7 @@ class Submission extends Model
             $query->where('payment_status', $paymentStatus);
         } else {
             $query->where('payment_status', 'pending');
-            $query = $this->makeQueryAbandoned($query);
+            $query = $this->makeQueryAbandoned($query, '<', true);
         }
         $result = $query->first();
         if ($result && $result->payment_total) {
@@ -350,4 +364,16 @@ class Submission extends Model
         return $query->count();
     }
 
+    public function changeEntryStatus()
+    {
+        $formId = intval(ArrayHelper::get($_REQUEST, 'form_id'));
+        $entryId = intval(ArrayHelper::get($_REQUEST, 'id'));
+        $newStatus = sanitize_text_field(ArrayHelper::get($_REQUEST, 'status'));
+
+        wpPayFormDB()->table('wpf_submissions')
+            ->where('form_id', $formId)
+            ->where('id', $entryId)
+            ->update(['status'=> $newStatus]);
+        return $newStatus;
+    }
 }

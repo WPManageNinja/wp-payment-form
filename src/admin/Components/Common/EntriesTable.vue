@@ -30,15 +30,24 @@
                     type="selection"
                     width="60"
                     >
-                 </el-table-column>
+                </el-table-column>
                 <el-table-column
                     label="ID"
-                    width="60">
+                    width="90">
                     <template slot-scope="scope">
-                        <router-link
-                            :to="{ name: 'entry', params: { entry_id: scope.row.id, form_id: scope.row.form_id }}">
-                            {{scope.row.id}}
-                        </router-link>
+                        <div class="has_hover_item">
+                            <router-link style="margin-right: 5px;"
+                                :to="{ name: 'entry', params: { entry_id: scope.row.id, form_id: scope.row.form_id }}">
+                                {{scope.row.id}}
+                            </router-link>
+                            <div class="show_on_hover inline_actions">
+                                <span @click="changeStatus(scope.row, scope.$index, 'new')"
+                                      title="Mark as unread" v-if="scope.row.status !== 'new'"
+                                      class="el-icon-circle-check action_button"></span>
+                                <span @click="changeStatus(scope.row, scope.$index, 'read')" title="Mark as read"
+                                      v-else class="el-icon-circle-check-outline action_button"></span>
+                            </div>
+                        </div>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -84,6 +93,14 @@
                     <template slot-scope="scope">
                     <span class="wpf_pay_method" :class="'wpf_pay_method_'+scope.row.payment_method">
                         {{ scope.row.payment_method }}</span>
+                    </template>
+                </el-table-column>
+                <el-table-column
+                    style="text-transform: capitalize;"
+                    label="Entry Status">
+                     <template slot-scope="scope">
+                        <span :class="'wpf_entry_status_'+scope.row.status">
+                            {{ scope.row.status }}</span>
                     </template>
                 </el-table-column>
                 <el-table-column
@@ -156,7 +173,7 @@
     import Remove from '../pieces/confirmation'
     export default {
         name: 'entries_table',
-        props: ['form_id', 'payment_status', 'entry_ticker', 'search_string'],
+        props: ['form_id', 'payment_status', 'status', 'entry_ticker', 'search_string'],
         components: {
             Remove
         },
@@ -166,6 +183,10 @@
                 this.getEntries();
             },
             payment_status() {
+                this.pagination.current_page = 1;
+                this.getEntries();
+            },
+            status() {
                 this.pagination.current_page = 1;
                 this.getEntries();
             },
@@ -219,6 +240,7 @@
                     route: 'get_submissions',
                     form_id: parseInt(this.form_id),
                     payment_status: this.payment_status,
+                    status: this.status,
                     page_number: this.pagination.current_page,
                     per_page: this.pagination.per_page,
                     search_string: this.search_string
@@ -323,6 +345,18 @@
             tableRowClassName({row, rowIndex}) {
                 return 'wpf_row_' + row.payment_status;
             },
+            changeStatus(scope, index, status) {
+                this.$post({
+                    action: 'wpf_submission_endpoints',
+                    route: 'change_entry_status',
+                    id: scope.id,
+                    form_id: scope.form_id,
+                    status: status
+                })
+                .then (res=> {
+                    this.allEntry[index].status = res.data.status;
+                });
+            }
         },
         mounted() {
             this.getEntries();

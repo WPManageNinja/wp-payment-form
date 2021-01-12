@@ -44,7 +44,7 @@
                 <wp-editor editor_id="wp_confirmation_editor_1" :height="250" :editor-shortcodes="editorShortcodes" v-model="confirmation.messageToShow" />
             </el-form-item>
 
-            <!--After form submisssion behavior-->
+            <!--After form submission behavior-->
             <el-form-item>
                 <template slot="label">
                     After Form Submission
@@ -158,7 +158,7 @@
             }
         },
         mounted() {
-           
+
         }
     }
 </script>

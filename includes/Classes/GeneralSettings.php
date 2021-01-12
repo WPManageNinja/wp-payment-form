@@ -400,6 +400,12 @@ class GeneralSettings
         return apply_filters('wppayform/ip_logging_status', $status);
     }
 
+    public static function getAbandonedTime()
+    {
+        $timeAfter = get_option('wppayform_abandoned_time', 3);
+        return apply_filters('wppayform/_abandoned_time', $timeAfter);
+    }
+
     public static function getConfirmationPageSettings()
     {
         $settings = get_option('wppayform_confirmation_pages');
@@ -420,6 +426,15 @@ class GeneralSettings
             'abandoned'  => __('Abandoned', 'wppayform')
         ));
     }
+
+    public static function getEntryStatuses()
+    {
+        return apply_filters('wppayform/available_entry_statuses', array(
+            'new'       => __('Unread', 'wppayform'),
+            'read' => __('Read', 'wppayform')
+        ));
+    }
+
 
     public static function zeroDecimalCurrencies()
     {
