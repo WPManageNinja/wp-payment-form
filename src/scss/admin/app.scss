@@ -371,6 +371,34 @@ table.el-table__header thead tr th {
   }
 }
 
+.wpf_entry_status{
+  &_read {
+    text-transform: capitalize;
+  }
+  &_new {
+    text-transform: capitalize;
+    color: #000000cc;
+    background: #ff980069;
+    padding: 1px 6px;
+    border-radius: 4px;
+    font-family: serif;
+  }
+}
+
+.show_on_hover {
+  display: none;
+}
+
+.el-table__row:hover .show_on_hover {
+  display: inline-block;
+}
+
+.show_on_hover [class*="el-icon-"],
+.show_on_hover [class^="el-icon-"] {
+  font-size: 14px;
+  cursor: pointer;
+}
+
 .wpf_payment_view {
   .payment_header {
     box-shadow: 0 7px 14px 0 rgba(60, 66, 87, 0.1), 0 3px 6px 0 rgba(0, 0, 0, .07);

@@ -67,7 +67,7 @@
                                 class="el-button el-button--default el-button--mini">
                                 View on {{ firstTransaction.payment_method }} dashboard
                             </a>
-                            <span v-else>{{firstTransaction.payment_method}}</span>
+                            <span v-else style="text-transform:capitalize;">{{firstTransaction.payment_method}}</span>
                         </div>
                     </div>
                     <div class="payment_head_bottom">
@@ -106,6 +106,18 @@
                         <div v-if="submission.payment_mode" class="info_block">
                             <div class="info_header">Payment Mode</div>
                             <div class="info_value wpf_capitalize">{{submission.payment_mode}}</div>
+                        </div>
+                        <div class="info_block">
+                            <div class="info_header">Entry Status</div>
+                            <div title="Click icon to mark unread" class="info_value wpf_capitalize" style="cursor: pointer;">
+                                <span @click="changeStatus('new')" title="Mark as unread"
+                                     v-if="submission.status !== 'new'"
+                                    class="el-icon-circle-check action_button"></span>
+                                <span @click="changeStatus('read')" title="Mark as read"
+                                    v-else class="el-icon-circle-check-outline action_button"></span>
+                                {{submission.status}}
+                            </div>
+
                         </div>
                     </div>
                 </div>
@@ -191,7 +203,7 @@
                             </div>
                             <div class="entry_info_body">
                                 <div class="wpf_entry_transactions">
-                                    <div v-for="(transaction,index) in submission.transactions"
+                                    <div v-for="(transaction,index) in submission.transactions" :key="index"
                                          class="wpf_entry_transaction">
                                         <h4 v-show="submission.transactions.length > 1">Transaction #{{ index+1 }}</h4>
                                         <ul class="wpf_list_items">
@@ -660,7 +672,20 @@
                 document.body.appendChild(downloadAnchorNode); // required for firefox
                 downloadAnchorNode.click();
                 downloadAnchorNode.remove();
+            },
+            changeStatus(status) {
+                this.$post({
+                    action: 'wpf_submission_endpoints',
+                    route: 'change_entry_status',
+                    id: this.submission.id,
+                    form_id: this.submission.form_id,
+                    status: status
+                })
+                .then (res=> {
+                    this.submission.status = res.data.status;
+                });
             }
+
         },
         mounted() {
             if (this.$route.query.form_id) {

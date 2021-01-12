@@ -31,6 +31,21 @@
                 </label>
             </div>
             <div class="wpf_entry_action">
+                <label>
+                    <span class="item_title">Filter By Entry Status</span>
+                    <el-select @change="changeEntryStatus()" size="small" v-model="selected_entry_status"
+                               placeholder="All">
+                        <el-option label="All" value=""></el-option>
+                        <el-option
+                            v-for="(status, status_key) in available_entry_statuses"
+                            :key="status_key"
+                            :label="status"
+                            :value="status_key">
+                        </el-option>
+                    </el-select>
+                </label>
+            </div>
+            <div class="wpf_entry_action">
                 <el-input @keyup.enter.native="performSearch" size="mini" placeholder="Search" v-model="search_string">
                     <el-button @click="performSearch" size="mini" slot="append" icon="el-icon-search"></el-button>
                 </el-input>
@@ -45,7 +60,8 @@
                 :entry_ticker="entry_ticker"
                 :form_id="form_id"
                 :search_string="search_string"
-                :payment_status="selected_payment_status" />
+                :payment_status="selected_payment_status"
+                :status="selected_entry_status"/>
         </div>
 
     </div>
@@ -66,7 +82,9 @@
                 selected_payment_status: '',
                 available_statuses: window.wpPayFormsAdmin.paymentStatuses,
                 search_string: '',
-                entry_ticker: 1
+                entry_ticker: 1,
+                selected_entry_status: '',
+                available_entry_statuses: window.wpPayFormsAdmin.entryStatuses
             }
         },
         methods: {
@@ -78,6 +96,9 @@
             },
             changePaymentStatus() {
                 this.$router.push({query: {payment_status: this.selected_payment_status}});
+            },
+            changeEntryStatus() {
+                this.$router.push({query: {status: this.selected_entry_status}});
             },
             getFormTitles() {
                 this.$get({
@@ -95,6 +116,9 @@
             }
             if (this.$route.query.payment_status) {
                 this.selected_payment_status = this.$route.query.payment_status;
+            }
+            if (this.$route.query.status) {
+                this.selected_entry_status = this.$route.query.status;
             }
             this.getFormTitles();
             window.WPPayFormsBus.$emit('site_title', 'Form Entries');

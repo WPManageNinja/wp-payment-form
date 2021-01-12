@@ -427,6 +427,15 @@ class GeneralSettings
         ));
     }
 
+    public static function getEntryStatuses()
+    {
+        return apply_filters('wppayform/available_entry_statuses', array(
+            'new'       => __('Unread', 'wppayform'),
+            'read' => __('Read', 'wppayform')
+        ));
+    }
+
+
     public static function zeroDecimalCurrencies()
     {
         return apply_filters('swppayform/zero_decimal_currencies', array(

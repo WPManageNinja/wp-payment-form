@@ -16,7 +16,7 @@ class Menu
 {
     public function register()
     {
-        add_action( 'admin_menu', array($this, 'addMenus') );
+        add_action('admin_menu', array($this, 'addMenus'));
         add_action('admin_enqueue_scripts', array($this, 'enqueueAssets'));
     }
 
@@ -28,7 +28,7 @@ class Menu
         }
 
         $title = __('WPPayForms', 'wppayform');
-        if(defined('WPPAYFORMHASPRO')) {
+        if (defined('WPPAYFORMHASPRO')) {
             $title .= ' Pro';
         }
 
@@ -43,7 +43,7 @@ class Menu
             25
         );
 
-        if(defined('WPPAYFORM_PRO_INSTALLED')) {
+        if (defined('WPPAYFORM_PRO_INSTALLED')) {
             $license = get_option('_wppayform_pro_license_status');
             if ($license != 'valid') {
                 $submenu['wppayform.php']['activate_license'] = array(
@@ -61,8 +61,19 @@ class Menu
             $menuPermission,
             'admin.php?page=wppayform.php#/',
         );
+
+        $entriesTitle = 'Entries';
+        if (isset($_GET['page']) && $_GET['page'] == 'wppayform.php') {
+            $entriesCount = wpFluent()->table('wpf_submissions')
+                ->where('status', 'new')
+                ->count();
+            if ($entriesCount) {
+                $entriesTitle .= ' <span class="wpf_unread_count" style="background: #ca4a20;color: white;border-radius: 8px;padding: 1px 8px;">'.$entriesCount.'</span>';
+            }
+        }
+
         $submenu['wppayform.php']['entries'] = array(
-            __('Entries', 'wppayform'),
+            __($entriesTitle, 'wppayform'),
             $menuPermission,
             'admin.php?page=wppayform.php#/entries',
         );
@@ -71,7 +82,7 @@ class Menu
             $menuPermission,
             'admin.php?page=wppayform.php#/settings/general-settings',
         );
-        if(!defined('WPPAYFORM_PRO_INSTALLED')) {
+        if (!defined('WPPAYFORM_PRO_INSTALLED')) {
             $submenu['wppayform.php']['upgrade_to_pro'] = array(
                 '<span style="color: #f9e112;">Upgrade To Pro</span>',
                 $menuPermission,
@@ -86,15 +97,16 @@ class Menu
         );
     }
 
-    public function render() {
+    public function render()
+    {
         do_action('wppayform/render_admin_app');
     }
 
     public function enqueueAssets()
     {
-        if(isset($_GET['page']) && $_GET['page'] == 'wppayform.php') {
+        if (isset($_GET['page']) && $_GET['page'] == 'wppayform.php') {
 
-            if(!apply_filters('wppayform/disable_admin_footer_alter', false)) {
+            if (!apply_filters('wppayform/disable_admin_footer_alter', false)) {
                 add_filter('admin_footer_text', function ($text) {
                     $link = 'https://wpmanageninja.com/downloads/wppayform-pro-wordpress-payments-form-builder/';
                     return 'Thank you for using <a target="_blank" href="'.$link.'">WPPayForm</a>';
@@ -118,12 +130,13 @@ class Menu
             do_action('wppayform/booting_admin_app');
             wp_enqueue_script('wppayform_admin_app', WPPAYFORM_URL.'assets/js/payforms-admin.js', array('wppayform_boot'), WPPAYFORM_VERSION, true);
             wp_enqueue_style('wppayform_admin_app', WPPAYFORM_URL.'assets/css/payforms-admin.css', array(), WPPAYFORM_VERSION);
-            
-            $payformAdminVars = apply_filters('wppayform/admin_app_vars',array(
+
+            $payformAdminVars = apply_filters('wppayform/admin_app_vars', array(
                 'i18n' => array(
                     'All Payment Forms' => __('All Payment Forms', 'wppayform')
                 ),
                 'paymentStatuses' => GeneralSettings::getPaymentStatuses(),
+                'entryStatuses' => GeneralSettings::getEntryStatuses(),
                 'image_upload_url' => admin_url('admin-ajax.php?action=wpf_global_settings_handler&route=wpf_upload_image'),
                 'forms_count' => Forms::getTotalCount(),
                 'assets_url' => WPPAYFORM_URL.'assets/',

@@ -128,6 +128,14 @@ class Submission extends Model
             $result->refundTotal = $refundTotal;
         }
 
+        if ($result->status == 'new') {
+            wpPayFormDB()->table('wpf_submissions')
+            ->where('form_id', $result->form_id)
+            ->where('id', $result->id)
+            ->update(['status'=> 'read']);
+            $result->status = 'read';
+        }
+
         return $result;
     }
 
@@ -356,4 +364,16 @@ class Submission extends Model
         return $query->count();
     }
 
+    public function changeEntryStatus()
+    {
+        $formId = intval(ArrayHelper::get($_REQUEST, 'form_id'));
+        $entryId = intval(ArrayHelper::get($_REQUEST, 'id'));
+        $newStatus = sanitize_text_field(ArrayHelper::get($_REQUEST, 'status'));
+
+        wpPayFormDB()->table('wpf_submissions')
+            ->where('form_id', $formId)
+            ->where('id', $entryId)
+            ->update(['status'=> $newStatus]);
+        return $newStatus;
+    }
 }

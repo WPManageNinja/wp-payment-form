@@ -33,7 +33,8 @@ class SubmissionView
             'add_submission_note'      => 'addSubmissionNote',
             'change_payment_status'    => 'changePaymentStatus',
             'delete_submission'        => 'deleteSubmission',
-            'get_form_report'          => 'getFormReport'
+            'get_form_report'          => 'getFormReport',
+            'change_entry_status'      => 'changeEntryStatus'
         );
         $route = sanitize_text_field($_REQUEST['route']);
 
@@ -61,6 +62,10 @@ class SubmissionView
 
         if (isset($_REQUEST['payment_status']) && $_REQUEST['payment_status']) {
             $wheres['payment_status'] = sanitize_text_field($_REQUEST['payment_status']);
+        }
+
+        if (isset($_REQUEST['status']) && $_REQUEST['status']) {
+            $wheres['status'] = sanitize_text_field($_REQUEST['status']);
         }
 
         $submissionModel = new Submission();
@@ -253,6 +258,16 @@ class SubmissionView
         wp_send_json_success(array(
             'message' => __('Selected submission successfully deleted', 'wppayform')
         ), 200);
+    }
+
+    public function changeEntryStatus()
+    {
+        $submissionModel = new Submission();
+        $newStatus = $submissionModel->changeEntryStatus();
+        wp_send_json_success([
+            'message' => __('Item has been marked as ' . $newStatus, 'fluentform'),
+            'status'  => $newStatus
+        ], 200);
     }
 
     public function getFormReport()
