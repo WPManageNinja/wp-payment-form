@@ -150,13 +150,7 @@ class ChoosePaymentMethodComponent extends BaseComponent
             <input data-wpf_payment_method="<?php echo $lastPaymentMethod; ?>" type="hidden"
                    name="__wpf_selected_payment_method" value="<?php echo $lastPaymentMethod; ?>"/>
         <?php endif; ?>
-        <div class="wpf_all_payment_methods_wrapper">
-            <?php foreach ($validMethods as $methodName => $method): ?>
-                <div data-payment_method="<?php echo $methodName; ?>"
-                     class="wpf_payment_method_element wpf_payment_method_element_<?php echo $methodName ?>">
-                    <?php do_action('wppayform/payment_method_choose_element_render_' . $methodName, $method, $form, $elements); ?>
-                </div>
-            <?php endforeach; ?>
+        
         </div>
         <?php
     }
