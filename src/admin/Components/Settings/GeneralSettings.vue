@@ -74,7 +74,7 @@
                         </div>
                     </div>
                 </el-form>
-
+                <privacy/>
                 <div class="action_right">
                     <el-button @click="saveSettings()" type="primary" size="small">{{$t('Save Settings')}}</el-button>
                 </div>
@@ -83,7 +83,9 @@
     </div>
 </template>
 <script type="text/babel">
+    import Privacy from './_Privacy'
     export default {
+        components: { Privacy },
         name: 'global_currency_settings',
         data() {
             return {

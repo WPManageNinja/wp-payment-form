@@ -1,5 +1,7 @@
 <?php
+
 namespace WPPayForm\Classes;
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -43,7 +45,7 @@ class AccessControl
 
     public static function checkAndPresponseError($endpoint = false, $group = false, $message = '')
     {
-        if(self::hasEndPointPermission($endpoint, $group)) {
+        if (self::hasEndPointPermission($endpoint, $group)) {
             return true;
         }
         wp_send_json_error(array(
@@ -54,15 +56,18 @@ class AccessControl
 
     public static function hasEndPointPermission($endpoint = false, $group = false)
     {
-        if($grandAccess = self::hasGrandAccess()) {
+        if ($grandAccess = self::hasGrandAccess()) {
             return apply_filters('wppayform/has_endpoint_access', $grandAccess, $endpoint, $group);
+        } elseif ($roleAccess = self::giveCustomAccess()) {
+            return apply_filters('wppayform/has_endpoint_access', $roleAccess, $endpoint, $group);
         }
 
         $permissions = self::getEndpointPermissionMaps($group);
-        if(isset($permissions[$endpoint])) {
+
+        if (isset($permissions[$endpoint])) {
             $relatedPermission = $permissions[$endpoint];
             foreach ($relatedPermission as $permission) {
-                if(current_user_can($permission)) {
+                if (current_user_can($permission)) {
                     return apply_filters('wppayform/has_endpoint_access', $permission, $endpoint, $group);
                 }
             }
@@ -220,5 +225,76 @@ class AccessControl
             'wpf_can_change_global_settings',
             'wpf_can_change_payment_settings'
         );
+    }
+
+    public static function giveCustomAccess()
+    {
+        $customRoles = get_option('_wppayform_form_permission');
+
+        if (is_string($customRoles)) {
+            $customRoles = [];
+        }
+
+        if (!$customRoles) {
+            return;
+        }
+
+        $hasAccess = false;
+        foreach ($customRoles as $roleName) {
+            if (current_user_can($roleName)) {
+                $hasAccess = true;
+                $menuPermission = $roleName;
+            }
+        }
+        return $hasAccess;
+    }
+
+    public function getAccessRoles()
+    {
+        if (!current_user_can('manage_options')) {
+            wp_send_json_success(array(
+                'capability' => array(),
+                'roles'      => array()
+            ), 200);
+        }
+
+        $roles = \get_editable_roles();
+
+        $formatted = array();
+        foreach ($roles as $key => $role) {
+            if ($key == 'administrator') {
+                continue;
+            }
+            if ($key != 'subscriber') {
+                $formatted[] = array(
+                    'name' => $role['name'],
+                    'key'  => $key
+                );
+            }
+        }
+
+        $capability = get_option('_wppayform_form_permission');
+
+        if (is_string($capability)) {
+            $capability = [];
+        }
+        return array(
+            'capability' => $capability,
+            'roles'      => $formatted
+        );
+    }
+    public function setAccessRoles()
+    {
+        if (current_user_can('manage_options')) {
+            $capability = isset($_REQUEST['capability']) ? $_REQUEST['capability'] : [];
+            update_option('_wppayform_form_permission', $capability, 'no');
+            wp_send_json_success(array(
+                'message' => __('Successfully saved the role(s).', 'wppayform')
+            ), 200);
+        } else {
+            wp_send_json_error(array(
+                'message' => __('Sorry, You can not update permissions. Only administrators can update permissions', 'wppayform')
+            ), 423);
+        }
     }
 }
