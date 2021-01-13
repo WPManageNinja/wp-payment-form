@@ -93,12 +93,14 @@ class DemoTabularProductsComponent extends BaseComponent
                         'product_name'     => 'Product 1',
                         'default_quantity' => 1,
                         'min_quantity'     => 0,
+                        'max_quantity'     => 100,
                         'product_price'    => '10'
                     ],
                     [
                         'product_name'     => 'Product 2',
                         'default_quantity' => 0,
                         'min_quantity'     => 0,
+                        'max_quantity'     => 100,
                         'product_price'    => '20'
                     ]
                 )
