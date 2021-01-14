@@ -38,14 +38,14 @@
                     :list="product_settings"
                     :element="'tbody'"
                 >
-                    <tr v-for="(item, index) in product_settings">
+                    <tr v-for="(item, index) in product_settings" :key="index">
                         <td>
-                            <span style="margin-top: 10px" class="dashicons dashicons-editor-justify handle"></span>
+                            <span style="margin-top: 10px;" class="dashicons dashicons-editor-justify handle"></span>
                         </td>
                         <td v-if="field_options.enable_image == 'yes'">
                             <photo-widget :product="item" />
                         </td>
-                        <td>
+                        <td style="min-width:200px;">
                             <el-input placeholder="Item Name" size="mini" v-model="item.product_name"
                                       type="text"></el-input>
                         </td>
