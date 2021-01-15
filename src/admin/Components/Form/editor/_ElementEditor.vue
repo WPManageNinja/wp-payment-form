@@ -133,6 +133,10 @@
                                 <el-input placeholder="Confirm Email Label" size="mini"
                                           v-model="element.field_options.confirm_email_label"></el-input>
                             </el-form-item>
+                            <el-form-item v-if="element.field_options[itemName] == 'yes'" label="Confirm Email Placeholder">
+                                <el-input placeholder="Confirm Email Placeholder" size="mini"
+                                          v-model="element.field_options.confirm_email_placeholder"></el-input>
+                            </el-form-item>
                         </template>
                         <template v-else-if="item.type == 'address_subfields'">
                             <Address :fields="item.fields" :field_options="element.field_options[itemName]" />
