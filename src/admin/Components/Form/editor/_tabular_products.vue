@@ -45,7 +45,7 @@
                         <td v-if="field_options.enable_image == 'yes'">
                             <photo-widget :product="item" />
                         </td>
-                        <td style="min-width:200px;">
+                        <td style="min-width:150px;">
                             <el-input placeholder="Item Name" size="mini" v-model="item.product_name"
                                       type="text"></el-input>
                         </td>

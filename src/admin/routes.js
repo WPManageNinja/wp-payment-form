@@ -1,4 +1,5 @@
 import SupportAndDocumentation from './Components/SupportAndDocumentation';
+import Discounts from './Components/settings/Discounts/Discounts';
 import GlobalView from './Components/Global/index';
 import AllForms from './Components/Forms/AllForms';
 
@@ -55,6 +56,11 @@ const globalSettingsViewChilderRoutes = window.WPPayForms.applyFilters('wpf_glob
         name: 'licensing',
         path: 'licensing',
         component: Licensing
+    },
+    {
+        name: 'discounts',
+        path: 'discounts',
+        component: Discounts
     }
 
 ]);

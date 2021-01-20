@@ -68,6 +68,11 @@
                         icon: 'el-icon-money'
                     },
                     {
+                        route: 'discounts',
+                        title: 'Discounts',
+                        icon: 'el-icon-discount'
+                    },
+                    {
                         route: 'tools',
                         title: 'Tools',
                         icon: 'el-icon-s-cooperation'

@@ -49,6 +49,10 @@
                         title: 'Settings'
                     },
                     {
+                        route: 'discounts',
+                        title: 'Discounts'
+                    },
+                    {
                         route: 'support',
                         title: 'Support'
                     }
