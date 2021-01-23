@@ -35,12 +35,12 @@
                     </el-input>
             </el-form-item>
             <el-form-item prop="exclude_forms" class="payform_item_half" label="Exclude form">
-                     <el-select class="select-width-full" size="small" v-model="form.exclude_forms" placeholder="Select">
+                     <el-select multiple class="select-width-full" size="small" v-model="form.exclude_forms" placeholder="Select">
                         <el-option
-                        v-for="item in paymentForms"
-                        :key="item.id"
-                        :label="item.name"
-                        :value="item.id">
+                        v-for="item in allForms"
+                        :key="item.ID"
+                        :label="item.post_title"
+                        :value="item.ID">
                         </el-option>
                     </el-select>
             </el-form-item>
@@ -50,12 +50,13 @@
                     class="select-width-full"
                     v-model="form.expired_at"
                     type="datetime"
+                    format="yyyy-MM-dd"
                     placeholder="Select date and time"
                     :picker-options="pickerOptions">
                 </el-date-picker>
             </el-form-item>
-            <el-form-item prop="max_amount" class="payform_item_half" label="Max Amount">
-                    <el-input type="number" size="small" placeholder="Amount" v-model="form.max_amount">
+            <el-form-item prop="min_purchase" class="payform_item_half" label="Min Purchase">
+                    <el-input type="number" size="small" placeholder="minimum purchase required to apply this code" v-model="form.min_purchase">
                         <template slot="append">$</template>
                     </el-input>
             </el-form-item>
@@ -89,16 +90,7 @@
                         value: 'fixed'
                     }
                 ],
-                paymentForms: [
-                    {
-                        name: 'Stripe Hosted payment cancel notification test',
-                        id: 691
-                    },
-                                        {
-                        name: 'PayPal Hosted payment cancels notification test',
-                        id: 692
-                    }
-                ],
+                allForms: [],
                 rules: {
                     title: [
                         {
@@ -153,11 +145,28 @@
                         return false;
                     }
                 });
+            },
+            getAllForms() {
+
+                this.$get({
+                    action: 'wpf_submission_endpoints',
+                    route: 'get_available_forms'
+                })
+                    .then(response => {
+                        this.allForms = response.data.available_forms;
+                    })
+                    .fail(error => {
+
+                    })
+                    .always(() => {
+                        // this.saving = false;
+                    });
             }
         },
         mounted() {
             this.showErrorMessage = false;
             this.form = JSON.parse(JSON.stringify(this.discount));
+            this.getAllForms();
         }
     }
 </script>

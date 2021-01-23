@@ -121,9 +121,9 @@
                     type: 'fixed',
                     amount: '',
                     percent: '',
-                    exclude_forms: '',
+                    exclude_forms: [],
+                    min_purchase: '',
                     expired_at: '',
-                    max_amount: '',
                     status: 'active'
                 });
                 this.editingDiscountIndex = this.discounts.length - 1;
@@ -155,6 +155,7 @@
                     });
             },
             saveDiscount(discount) {
+                console.log(discount)
                 this.saving = true;
                 this.$post({
                     action: 'wppayform_discounts_action',

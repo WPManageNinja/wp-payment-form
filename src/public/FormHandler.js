@@ -26,6 +26,10 @@ class PayFormHandler {
         this.form.find('.wpf_payment_item, .wpf_item_qty, .wpf_tabular_qty').on('change', (e) => {
             this.calculatePayments();
         });
+        this.form.find('.wpf_discount_action').on('click', (e) => {
+            this.applyDiscount();
+        });
+
         this.initPaymentMethodChange();
 
         if (this.config.stripe_checkout_style == 'embeded_form') {
@@ -103,6 +107,23 @@ class PayFormHandler {
                     this.buttonState('state_normal', '', false, error);
                     console.error(error);
                 });
+    }
+
+
+    //discountHandler
+    applyDiscount() {
+        let code = this.form.find('.wpf_discount_field').val();
+        jQuery.post(this.generalConfig.ajax_url, {
+            action: 'wpf_discount_submit',
+            route: 'validate',
+            form_id: this.formId,
+            code : code,
+            payment_total: this.form.data('payment_total'),
+            form_data: jQuery(this.form).serialize()
+        })
+            .then(response => {
+                console.log(response)
+            })
     }
 
     // This is for mainly subscription payment

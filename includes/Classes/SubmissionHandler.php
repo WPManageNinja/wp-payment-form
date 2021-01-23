@@ -60,7 +60,7 @@ class SubmissionHandler
             }
             if ($payment['type'] == 'recurring_payment_item') {
                 $subscription = $this->getSubscriptionLine($payment, $paymentId, $quantity, $form_data, $formId);
-                if(!empty($subscription['type']) && $subscription['type'] == 'single') {
+                if (!empty($subscription['type']) && $subscription['type'] == 'single') {
                     // We converted this as one time payment
                     $paymentItems[] = $subscription;
                 } else {
@@ -68,6 +68,7 @@ class SubmissionHandler
                 }
             } else {
                 $lineItems = $this->getPaymentLine($payment, $paymentId, $quantity, $form_data);
+
                 if ($lineItems) {
                     $paymentItems = array_merge($paymentItems, $lineItems);
                 }
@@ -89,6 +90,7 @@ class SubmissionHandler
 
         // Extract Input Items Here
         $inputItems = array();
+
         foreach ($formattedElements['input'] as $inputName => $inputElement) {
             $value = ArrayHelper::get($form_data, $inputName);
             $inputItems[$inputName] = apply_filters('wppayform/submitted_value_' . $inputElement['type'], $value, $inputElement, $form_data);
