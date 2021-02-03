@@ -54,6 +54,16 @@
                                 <p v-if="item.info" v-html="item.info"></p>
                             </el-form-item>
                         </template>
+                        <template v-else-if="item.type == 'switch'">
+                            <el-form-item :label="item.label">
+                                <el-switch
+                                    v-model="element.field_options[itemName]"
+                                    active-value="yes"
+                                    inactive-value="no">
+                                </el-switch>
+                                <p v-if="item.info" v-html="item.info"></p>
+                            </el-form-item>
+                        </template>
                         <template v-else-if="item.type == 'key_pair'">
                             <el-form-item :label="item.label">
                                 <key-pair-options :value.sync="element.field_options[itemName]"/>
@@ -66,7 +76,10 @@
                             </el-form-item>
                         </template>
                         <template v-else-if="item.type == 'payment_options'">
-                            <payment-options-settings :item="item" :pricing_details="element.field_options.pricing_details"/>
+                            <payment-options-settings 
+                            :item="item" 
+                            :pricing_details="element.field_options.pricing_details"
+                            :enableImage="element.field_options.enable_image" />
                         </template>
                         <template v-else-if="item.type == 'product_selector'">
                             <el-form-item :label="item.label">
@@ -104,7 +117,8 @@
                                                      :checkout_settings="element.field_options[itemName]"></checkout-display-option>
                         </template>
                         <template v-else-if="item.type == 'choose_payment_method'">
-                            <payment-method-choice :item="item" :method_settings="element.field_options[itemName]"/>
+                            <payment-method-choice :item="item" :method_settings="element.field_options[itemName]"
+                            />
                         </template>
                         <template v-else-if="item.type == 'info_html'">
                             <div v-html="item.info"></div>

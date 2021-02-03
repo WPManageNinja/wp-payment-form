@@ -1,12 +1,15 @@
 <template>
-    <div class="key_pair_table_wrapper">
+    <div>
+        <div class="key_pair_table_wrapper">
         <table class="ninja_filter_table">
             <thead>
-            <tr>
-                <th></th>
-                <th>Item Name</th>
-                <th>Item Price</th>
-            </tr>
+           <tr>
+                    <th style="width: 40px;"></th>
+                    <th v-if="enableImage == 'yes'" style="width: 70px;">Photo</th>
+                    <th>Item Name</th>
+                    <th style="width: 90px;">Item Price</th>
+                    <th style="width: 120px;"></th>
+                </tr>
             </thead>
             <draggable
                 :options="{handle:'.handle'}"
@@ -16,6 +19,9 @@
                 <tr v-for="(filter, index) in item">
                     <td>
                         <span style="margin-top: 10px" class="dashicons dashicons-editor-justify handle"></span>
+                    </td>
+                    <td v-if="enableImage == 'yes'">
+                            <photo-widget :product="filter" />
                     </td>
                     <td>
                         <el-input size="mini" v-model="filter.label"
@@ -34,14 +40,17 @@
             </draggable>
         </table>
     </div>
+    </div>
 </template>
 <script type="text/babel">
     import draggable from 'vuedraggable'
+    import PhotoWidget from './_photo_widget';
+    
 
     export default {
         name: 'key_pair_options',
-        components: { draggable },
-        props: ['value'],
+        components: { draggable, PhotoWidget },
+        props: ['value','enableImage'],
         data() {
             return {
                 value_option: false,
@@ -76,4 +85,7 @@
 </script>
 
 <style lang="scss">
+.enableImageContainer{
+    float: left;
+}
 </style>

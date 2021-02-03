@@ -35,6 +35,11 @@ class PaymentItemComponent extends BaseComponent
                     'type'  => 'switch',
                     'group' => 'general'
                 ),
+                'enable_image' => array(
+                    'label' => 'enable_image',
+                    'type'  => 'switch',
+                    'group' => 'general'
+                ),
                 'payment_options' => array(
                     'type'                   => 'payment_options',
                     'group'                  => 'general',
@@ -66,16 +71,23 @@ class PaymentItemComponent extends BaseComponent
             'field_options'    => array(
                 'label'           => 'Payment Item',
                 'required'        => 'yes',
+                'enable_image' => 'no',
                 'pricing_details' => array(
                     'one_time_type'       => 'single',
                     'payment_amount'      => '10.00',
                     'show_onetime_labels' => 'yes',
-                    'multiple_pricing'    => array(
-                        array(
-                            'label' => '',
-                            'value' => ''
-                        )
-                    ),
+                    'image_url' => array(
+                    array(
+                        'label' => '',
+                        'value' => ''
+                    )
+                 ),
+                 'multiple_pricing'  => array(
+                     array(
+                         'label' => '',
+                         'value' => ''
+                     )
+                 ),
                     'prices_display_type' => 'radio'
                 )
             )
@@ -100,6 +112,7 @@ class PaymentItemComponent extends BaseComponent
 
     public function render($element, $form, $elements)
     {
+   
         $pricingDetails = ArrayHelper::get($element, 'field_options.pricing_details', array());
         if (!$pricingDetails) {
             return;
@@ -130,7 +143,19 @@ class PaymentItemComponent extends BaseComponent
 
     public function renderSingleAmount($element, $form, $amount = false)
     {
+        $enableImage = ArrayHelper::get($element, 'field_options.enable_image') == 'yes';
         $showTitle = ArrayHelper::get($element, 'field_options.pricing_details.show_onetime_labels') == 'yes';
+        $imageUrl = ArrayHelper::get($element, 'field_options.pricing_details.image_url');
+        if($enableImage){
+         foreach($imageUrl as $item){
+          ?> <div class='imageContainer'>
+              <div class="wpf_tabular_product_photo">
+             <?php echo $this->renderImage($item['photo']); ?>
+         </div> 
+          </div>
+         <?php
+          };
+        };
         if ($showTitle) {
             $title = ArrayHelper::get($element, 'field_options.label');
             $currenySettings = Forms::getCurrencyAndLocale($form->ID);
@@ -150,12 +175,34 @@ class PaymentItemComponent extends BaseComponent
         echo '<input name=' . $element['id'] . ' type="hidden" class="wpf_payment_item" data-price="' . wpPayFormConverToCents($amount) . '" value="' . $amount . '" />';
     }
 
+    
+    private function renderImage($image, $lightboxed = false)
+    {   
+        if(!$image) {
+            return '';
+        }
+
+        $thumb = ArrayHelper::get($image, 'image_thumb');
+        $imageFull = ArrayHelper::get($image, 'image_full');
+        $altText = ArrayHelper::get($image, 'alt_text');
+
+        if(!$thumb) {
+            return '';
+        }
+
+        if($lightboxed) {
+            return '<a class="wpf_lightbox" href="'.$imageFull.'"><img src="'.$thumb.'" alt="'.$altText.'" /></a>';
+        }
+        return '<img src="'.$thumb.'" alt="'.$altText.'" style="border-radius: 5px; width: 80px; margin-bottom:10px;"';
+    }
+
     public function renderSingleChoice($type, $prices = array(), $element, $form)
     {
         if (!$type || !$prices) {
             return;
         }
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
+        $enableImage = ArrayHelper::get($element, 'field_options.enable_image') == 'yes';
         $currenySettings = Forms::getCurrencyAndLocale($form->ID);
         $elementId = 'wpf_' . $element['id'];
         $controlAttributes = array(
@@ -190,7 +237,7 @@ class PaymentItemComponent extends BaseComponent
                             <?php
                             $optionAttributes = array(
                                 'value'      => $index,
-                                'data-price' => wpPayFormConverToCents($price['value']),
+                                'data-price' => wpPayFormConverToCents($price['value'])
                             );
                             if ($defaultValue == $price['label']) {
                                 $optionAttributes['selected'] = 'true';
@@ -219,8 +266,12 @@ class PaymentItemComponent extends BaseComponent
                         if ($price['label'] == $defaultValue) {
                             $attributes['checked'] = 'true';
                         }
-                        ?>
-                        <div class="form-check">
+                            if($enableImage): ?>
+                        <div class="wpf_tabular_product_photo">
+                            <?php echo $this->renderImage($price['photo']); ?>
+                        </div>
+                    <?php endif; ?>
+                        <div class="form-check" style="margin-top: 10px; margin-bottom:10px; display:flex;">
                             <input <?php echo $this->builtAttributes($attributes); ?>>
                             <label class="form-check-label" for="<?php echo $optionId; ?>">
                                 <span class="wpf_price_option_name"
@@ -241,6 +292,8 @@ class PaymentItemComponent extends BaseComponent
     public function chooseMultipleChoice($prices = array(), $element, $form)
     {
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
+        $enableImage = ArrayHelper::get($fieldOptions, 'enable_image', false);
+
         if (!$fieldOptions) {
             return;
         }
@@ -269,7 +322,7 @@ class PaymentItemComponent extends BaseComponent
                 'data-has_multiple_input' => 'yes'
             );
             ?>
-
+        <table>
             <div <?php echo $this->builtAttributes($itemParentAtrributes); ?>>
                 <?php foreach ($prices as $index => $option): ?>
                     <?php
@@ -281,13 +334,17 @@ class PaymentItemComponent extends BaseComponent
                         'name'          => $element['id'] . '[' . $index . ']',
                         'id'            => $optionId,
                         'data-group_id' => $element['id'],
-                        'value'         => $option['label']
+                        'value'         => $option['label'],
                     );
                     if (in_array($option['value'], $defaultValues)) {
                         $attributes['checked'] = 'true';
                     }
-                    ?>
-                    <div class="form-check">
+                    if($enableImage == 'yes'): ?>
+                        <div>
+                            <?php echo $this->renderImage($option['photo']); ?>
+                        </div>
+                    <?php endif; ?>
+                    <div class="form-check" style="margin-bottom: 20px;">
                         <input <?php echo $this->builtAttributes($attributes); ?>>
                         <label class="form-check-label" for="<?php echo $optionId; ?>">
                             <span class="wpf_price_option_name"

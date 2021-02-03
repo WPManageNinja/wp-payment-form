@@ -53,8 +53,6 @@ class StripeHostedHandler extends StripeHandler
         
         $requireBillingForMultiplePayment = ArrayHelper::get($paymentMethodElements, 'choose_payment_method.options.method_settings.payment_settings.stripe.checkout_display_style.require_billing_info') == 'yes';
 
-        // var_dump($requireBillingForMultiplePayment);
-
         $checkoutArgs = [
             'cancel_url'                 => $cancelUrl,
             'success_url'                => $successUrl,
