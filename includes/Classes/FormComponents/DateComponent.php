@@ -102,6 +102,8 @@ class DateComponent extends BaseComponent
         wp_enqueue_style('flatpickr');
 
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
+        $disable = ArrayHelper::get($fieldOptions, 'disable', false);
+
         if (!$fieldOptions) {
             return;
         }
@@ -125,6 +127,7 @@ class DateComponent extends BaseComponent
         if (ArrayHelper::get($fieldOptions, 'required') == 'yes') {
             $attributes['required'] = true;
         }
+        if(!$disable) {
         ?>
         <div id="wpf_<?php echo $this->elementName; ?>" data-element_type="<?php echo $this->elementName; ?>"
              class="<?php echo $controlClass; ?>">
@@ -134,6 +137,7 @@ class DateComponent extends BaseComponent
             </div>
         </div>
         <?php
+    }
     }
 
     private function getDateFormatConfigJSON($fieldOptions, $form)

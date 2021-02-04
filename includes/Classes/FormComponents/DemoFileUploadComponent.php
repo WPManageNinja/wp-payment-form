@@ -24,7 +24,6 @@ class DemoFileUploadComponent extends BaseComponent
             'editor_title'    => __('File Upload (Pro)', 'wppayform'),
             'group'           => 'input',
             'postion_group'   => 'general',
-            'disabled' => true,
             'disabled_message' => 'File Upload Module requires Pro version of WPPayForm. Please install Pro version to make it work.',
             'editor_elements' => array(
                 'info' => array(
@@ -74,6 +73,7 @@ class DemoFileUploadComponent extends BaseComponent
                 ),
             ),
             'field_options'   => array(
+                'disabled' => false,
                 'label'             => 'Upload Your File',
                 'button_text'       => 'Drag & Drop your files or Browse',
                 'required'          => 'no',

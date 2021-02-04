@@ -64,6 +64,8 @@ class HiddenInputComponent extends BaseComponent
     public function render($element, $form, $elements)
     {
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
+        $disable = ArrayHelper::get($fieldOptions, 'disable',false);
+        
         if (!$fieldOptions) {
             return;
         }
@@ -80,9 +82,10 @@ class HiddenInputComponent extends BaseComponent
         if($userClass = ArrayHelper::get($fieldOptions, 'element_class')) {
             $attributes['class'] = $userClass;
         }
-
+        if(!$disable) {
         ?>
         <input <?php echo $this->builtAttributes($attributes); ?> />
         <?php
+    }
     }
 }

@@ -20,6 +20,7 @@ class CustomerNameComponent extends BaseComponent
         return array(
             'type'            => 'customer_name',
             'editor_title'    => 'Name',
+            'disable'         => false,
             'group'           => 'input',
             'postion_group'   => 'general',
             'editor_elements' => array(

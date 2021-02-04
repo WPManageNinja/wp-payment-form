@@ -58,7 +58,8 @@
                                                  class="payform_builder_item_settings">
                                                 <element-editor @deleteItem="deleteItem(element)"
                                                                 @updateItem="saveSettings"
-                                                                :element="element" :all_elements="builder_elements"/>
+                                                                :element="element" :all_elements="builder_elements"
+                                                                />
                                             </div>
                                         </transition>
                                     </div>
@@ -178,7 +179,7 @@
                 each(this.builder_elements, (element) => {
                     elements.push(element.id);
                 });
-                return elements;
+               return elements;
             },
             hasPaymentMethodField() {
                 let hasField = false;
