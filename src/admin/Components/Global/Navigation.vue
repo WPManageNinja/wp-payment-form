@@ -48,10 +48,10 @@
                         route: 'general_settings',
                         title: 'Settings'
                     },
-                    {
-                        route: 'discounts',
-                        title: 'Discounts'
-                    },
+                    // {
+                    //     route: 'discounts',
+                    //     title: 'Discounts'
+                    // },
                     {
                         route: 'support',
                         title: 'Support'

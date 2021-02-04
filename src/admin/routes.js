@@ -57,11 +57,11 @@ const globalSettingsViewChilderRoutes = window.WPPayForms.applyFilters('wpf_glob
         path: 'licensing',
         component: Licensing
     },
-    {
-        name: 'discounts',
-        path: 'discounts',
-        component: Discounts
-    }
+    // {
+    //     name: 'discounts',
+    //     path: 'discounts',
+    //     component: Discounts
+    // }
 
 ]);
 const formEditorChildrenRoutes = window.WPPayForms.applyFilters('wpf_main_children_roues', [
