@@ -58,7 +58,7 @@ class Refund
 
     public function update($refundId, $data)
     {
-        $data['updated_at'] = gmdate('Y-m-d H:i:s');
+        $data['updated_at'] = current_time('mysql');
         return wpPayFormDB()
             ->table('wpf_order_transactions')
             ->where('id', $refundId)

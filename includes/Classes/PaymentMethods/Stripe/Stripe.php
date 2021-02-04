@@ -105,8 +105,8 @@ class Stripe
                     'quantity'      => 1,
                     'item_price'    => $subscriptionItem['initial_amount'],
                     'line_total'    => $subscriptionItem['initial_amount'],
-                    'created_at'    => gmdate('Y-m-d H:i:s'),
-                    'updated_at'    => gmdate('Y-m-d H:i:s'),
+                    'created_at'    => current_time('mysql'),
+                    'updated_at'    => current_time('mysql'),
                 );
             }
         }

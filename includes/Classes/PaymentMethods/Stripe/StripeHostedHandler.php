@@ -191,7 +191,7 @@ class StripeHostedHandler extends StripeHandler
             if ($maxTrialDays) {
                 $subscriptionModel->updateBySubmissionId($submission->id, [
                     'trial_days' => $maxTrialDays,
-                    'updated_at' => gmdate('Y-m-d H:i:s')
+                    'updated_at' => current_time('mysql')
                 ]);
                 $args['trial_period_days'] = $maxTrialDays;
             }

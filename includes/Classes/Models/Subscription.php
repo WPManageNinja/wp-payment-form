@@ -47,7 +47,7 @@ class Subscription
 
     public function update($id, $data)
     {
-        $data['updated_at'] = gmdate('Y-m-d H:i:s');
+        $data['updated_at'] = current_time('mysql');
         return wpPayFormDB()->table($this->dbName)
             ->where('id', $id)
             ->update($data);
@@ -78,7 +78,7 @@ class Subscription
                     'option_id'  => $optionId,
                     'meta_key'   => $key,
                     'meta_value' => $value,
-                    'updated_at' => gmdate('Y-m-d H:i:s')
+                    'updated_at' => current_time('mysql')
                 ]);
             return $exists->id;
         }
@@ -88,8 +88,8 @@ class Subscription
             'option_id'  => $optionId,
             'meta_key'   => $key,
             'meta_value' => $value,
-            'created_at' => gmdate('Y-m-d H:i:s'),
-            'updated_at' => gmdate('Y-m-d H:i:s')
+            'created_at' => current_time('mysql'),
+            'updated_at' => current_time('mysql')
         ]);
 
     }

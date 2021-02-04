@@ -41,7 +41,7 @@ class Model
                 ->where('id', $exist->id)
                 ->update([
                     'meta_value' => maybe_serialize($metaValue),
-                    'updated_at' => gmdate('Y-m-d H:i:s')
+                    'updated_at' => current_time('mysql')
                 ]);
         } else {
             wpPayFormDB()->table('wpf_meta')
@@ -50,8 +50,8 @@ class Model
                     'option_id' => $submissionId,
                     'meta_group' => $this->metaGroup,
                     'meta_value' => maybe_serialize($metaValue),
-                    'updated_at' => gmdate('Y-m-d H:i:s'),
-                    'created_at' => gmdate('Y-m-d H:i:s'),
+                    'updated_at' => current_time('mysql'),
+                    'created_at' => current_time('mysql'),
                 ]);
         }
     }

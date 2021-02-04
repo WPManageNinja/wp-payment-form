@@ -243,8 +243,10 @@ class StripeHandler
         if(!$subscription->bill_times) {
             return false;
         }
+        $dateTime = current_datetime();
+        $localtime = $dateTime->getTimestamp() + $dateTime->getOffset();
 
-        $billingStartDate = time();
+        $billingStartDate = $localtime;
         if($subscription->expiration_at) {
             $billingStartDate = strtotime($subscription->expiration_at);
         }
