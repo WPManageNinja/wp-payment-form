@@ -114,7 +114,7 @@ class CustomerEmailComponent extends BaseComponent
             );
             $element['extra_input_class'] = 'wpf_confirm_email';
             $element['id'] = '__confirm_'.$element['id'];
-            $element['field_options']['placeholder'] = ArrayHelper::get($element, 'field_options.confirm_email_label', 'Confirm Email');
+            $element['field_options']['placeholder'] = ArrayHelper::get($element, 'field_options.confirm_email_placeholder', 'Confirm Email');
             $element['field_options']['label'] = ArrayHelper::get($element, 'field_options.confirm_email_label', 'Confirm Email');
             $this->renderNormalInput($element, $form);
         }

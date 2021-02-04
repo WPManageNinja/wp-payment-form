@@ -1,8 +1,8 @@
 <template>
-    <div class="wpf_photo_card">
+    <div class="wpf_photo_card" @click="initUploader" style="height: 100%; width: 100%;">
         <div v-if="app_ready" class="wpf_photo_holder">
             <img v-if="product.photo.image_thumb" :src="product.photo.image_thumb"/>
-            <el-button @click="initUploader" type="text">+ Photo</el-button>
+            <el-button  type="text">+ Photo</el-button>
         </div>
     </div>
 
