@@ -78,7 +78,7 @@ class StripeInlineHandler extends StripeHandler
         /*
          * Step 1 Create the customer first
          */
-        $customerArgs = $this->customerArguments($paymentMethodId, $formData, $submission);
+        $customerArgs = $this->customerArguments($paymentMethodId, $form, $submission);
         $customer = Customer::createCustomer($customerArgs);
 
         // Let's create the one time payment first
@@ -115,7 +115,7 @@ class StripeInlineHandler extends StripeHandler
         /*
          * Step 1 Create the customer first
          */
-        $customerArgs = $this->customerArguments($paymentMethodId, $formData, $submission);
+        $customerArgs = $this->customerArguments($paymentMethodId, $form, $submission);
         $customer = Customer::createCustomer($customerArgs);
 
         $transaction = (new Transaction())->getLatestTransaction($submission->id);
@@ -196,7 +196,7 @@ class StripeInlineHandler extends StripeHandler
         $this->handlePaidSubscriptionInvoice($invoice, $submission);
     }
 
-    public function customerArguments($paymentMethodId, $form_data, $submission)
+    public function customerArguments($paymentMethodId, $form, $submission)
     {
         $customerArgs = [
             'payment_method' => $paymentMethodId,
