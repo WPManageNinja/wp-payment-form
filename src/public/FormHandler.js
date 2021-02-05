@@ -122,8 +122,6 @@ class PayFormHandler {
             return;
         }
 
-        console.log(result.paymentIntent);
-
 
         this.handleStripePaymentConfirm({
             action: 'wppayform_sca_inline_confirm_payment_setup_intents',
