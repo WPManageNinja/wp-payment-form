@@ -8,7 +8,6 @@
                     <span style="margin-right:10px;">Disable Field</span>
                     <el-switch
                     v-model="element.field_options.disable"
-                    @change="hello"
                     :active-value="true"
                     :inactive-value="false">
                     </el-switch>
@@ -239,9 +238,6 @@
             }
         },
         methods: {
-            hello(){
-                console.log('hello',this.element);
-            },
             deleteItem() {
                 this.$emit('deleteItem', this.element);
             },
