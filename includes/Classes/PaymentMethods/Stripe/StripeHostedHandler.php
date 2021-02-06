@@ -50,7 +50,7 @@ class StripeHostedHandler extends StripeHandler
         $paymentMethodElements = Forms::getPaymentMethodElements($form->ID);
 
         $requireBilling = ArrayHelper::get($paymentMethodElements, 'stripe_card_element.options.checkout_display_style.require_billing_info') == 'yes';
-        
+
         $requireBillingForMultiplePayment = ArrayHelper::get($paymentMethodElements, 'choose_payment_method.options.method_settings.payment_settings.stripe.checkout_display_style.require_billing_info') == 'yes';
 
         $checkoutArgs = [
@@ -191,7 +191,7 @@ class StripeHostedHandler extends StripeHandler
             if ($maxTrialDays) {
                 $subscriptionModel->updateBySubmissionId($submission->id, [
                     'trial_days' => $maxTrialDays,
-                    'updated_at' => gmdate('Y-m-d H:i:s')
+                    'updated_at' => current_time('mysql')
                 ]);
                 $args['trial_period_days'] = $maxTrialDays;
             }

@@ -106,6 +106,13 @@ class Entry
         ));
     }
 
+    public function getTransactionId()
+    {
+        return View::make('elements.transaction_id', array(
+            'submission' => $this->submission
+        ));
+    }
+
     public function getSubscriptionsHtml()
     {
         // Just check if submission order items added or not
@@ -197,6 +204,9 @@ class Entry
 
         if ($name == 'product_items_table_html') {
             return $this->getOrderItemsHtml();
+        }
+        if ($name == 'transaction_id') {
+            return $this->getTransactionId();
         }
 
         if ($name == 'subscription_details_table_html') {

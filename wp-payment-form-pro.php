@@ -77,6 +77,10 @@ if (!defined('WPPAYFORM_VERSION_LITE')) {
             $ajaxHandler = new \WPPayForm\Classes\AdminAjaxHandler();
             $ajaxHandler->registerEndpoints();
 
+            // Top Level discounts Handlers
+            // $discounts = new \WPPayForm\Pro\Classes\Discounts\Discounts();
+            // $discounts->registerEndpoints();
+
             // Submission Ajax Handler
             $submissionHandler = new \WPPayForm\Classes\SubmissionView();
             $submissionHandler->registerEndpoints();

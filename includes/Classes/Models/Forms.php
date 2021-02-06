@@ -331,6 +331,7 @@ class Forms
             $submissionItem['shortcodes']['{submission.all_input_field_html_with_empty}'] = __('All input field html with empty', 'wppayform');
             if ($hasPayment) {
                 $submissionItem['shortcodes']['{submission.product_items_table_html}'] = __('Order items table html', 'wppayform');
+                $submissionItem['shortcodes']['{submission.transaction_id}'] = __('Transaction Id', 'wppayform');
             }
 
             // check if subsction payment is available for this for
@@ -450,7 +451,7 @@ class Forms
             ),
             'scheduleForm'             => array(
                 'status'               => 'no',
-                'start_date'           => gmdate('Y-m-d H:i:s'),
+                'start_date'           => current_time('mysql'),
                 'end_date'             => '',
                 'before_start_message' => __('Form submission time schedule is not started yet. Please check back later', 'wppayform'),
                 'expire_message'       => __('Form submission time has been expired.')

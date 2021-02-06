@@ -130,12 +130,12 @@ class MetaData
     {
         if($key == 'date') {
             $dateFormat = get_option('date_format');
-            return gmdate($dateFormat, time());
+            return current_time($dateFormat);
         }
 
         if($key == 'time') {
             $dateFormat = get_option('time_format');
-            return gmdate($dateFormat, time());
+            return current_time($dateFormat);
         }
         if($key == 'user_ip') {
             return $this->entry->ip_address;

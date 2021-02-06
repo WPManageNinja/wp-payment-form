@@ -29,6 +29,7 @@
                     <th style="width: 90px;">Item Price</th>
                     <th style="width: 90px;">Default Quantity</th>
                     <th style="width: 90px;">Minimum Quantity</th>
+                    <th style="width: 90px;">Maximum Quantity</th>
                     <th style="width: 120px;"></th>
                 </tr>
                 </thead>
@@ -37,14 +38,14 @@
                     :list="product_settings"
                     :element="'tbody'"
                 >
-                    <tr v-for="(item, index) in product_settings">
+                    <tr v-for="(item, index) in product_settings" :key="index">
                         <td>
-                            <span style="margin-top: 10px" class="dashicons dashicons-editor-justify handle"></span>
+                            <span style="margin-top: 10px;" class="dashicons dashicons-editor-justify handle"></span>
                         </td>
                         <td v-if="field_options.enable_image == 'yes'">
                             <photo-widget :product="item" />
                         </td>
-                        <td>
+                        <td style="min-width:150px;">
                             <el-input placeholder="Item Name" size="mini" v-model="item.product_name"
                                       type="text"></el-input>
                         </td>
@@ -56,6 +57,9 @@
                         </td>
                         <td>
                             <el-input-number size="small" v-model="item.min_quantity" :min="0"></el-input-number>
+                        </td>
+                         <td>
+                            <el-input-number size="small" v-model="item.max_quantity" :min="0"></el-input-number>
                         </td>
                         <td>
                             <el-button :disabled="product_settings.length == 1" @click="deleteItem(index)" type="danger" size="mini">-
@@ -86,6 +90,7 @@
                     product_name: '',
                     default_quantity: '',
                     min_quantity: '',
+                    max_quantity: 100,
                     product_price: ''
                 });
             }

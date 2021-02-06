@@ -17,8 +17,8 @@ class SubscriptionTransaction
     {
         $item['transaction_type'] = 'subscription';
         if(!isset($item['created_at'])) {
-            $item['created_at'] = gmdate('Y-m-d H:i:s');
-            $item['updated_at'] = gmdate('Y-m-d H:i:s');
+            $item['created_at'] = current_time('mysql');
+            $item['updated_at'] = current_time('mysql');
         }
         return wpPayFormDB()
             ->table('wpf_order_transactions')
@@ -53,7 +53,7 @@ class SubscriptionTransaction
                 ->update([
                     'bill_count' => $this->getPaymentCounts($parentSubscription->id),
                     'payment_total' => $this->getPaymentTotal($parentSubscription->id),
-                    'updated_at' => gmdate('Y-m-d H:i:s')
+                    'updated_at' => current_time('mysql')
                 ]);
         }
 
@@ -94,7 +94,7 @@ class SubscriptionTransaction
 
     public function update($transactionId, $data)
     {
-        $data['updated_at'] = gmdate('Y-m-d H:i:s');
+        $data['updated_at'] = current_time('mysql');
         $data['transaction_type'] = 'subscription';
         return wpPayFormDB()->table('wpf_order_transactions')->where('id', $transactionId)->update($data);
     }

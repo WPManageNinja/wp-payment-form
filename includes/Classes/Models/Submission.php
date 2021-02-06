@@ -169,11 +169,12 @@ class Submission extends Model
 
     public function makeQueryAbandoned($query, $condition = '<', $payOnly = true)
     {
-        $date = new \DateTime();
         $hour = get_option('wppayform_abandoned_time', 3);
-        $before = '-' . $hour . ' hours';
-        $date->modify($before);
-        $formatted_date = $date->format('Y-m-d H:i:s');
+
+        $beforeHour = intval($hour) * 3600;
+        $now = current_time('mysql');
+        $formatted_date = date('Y-m-d H:i:s', strtotime($now) - $beforeHour);
+
         $query->where('wpf_submissions.created_at', $condition, $formatted_date);
         if ($payOnly) {
             $query->where('wpf_submissions.payment_method', '!=', '');
@@ -232,7 +233,7 @@ class Submission extends Model
 
     public function update($submissionId, $data)
     {
-        $data['updated_at'] = gmdate('Y-m-d H:i:s');
+        $data['updated_at'] = current_time('mysql');
         return wpPayFormDB()->table('wpf_submissions')->where('id', $submissionId)->update($data);
     }
 

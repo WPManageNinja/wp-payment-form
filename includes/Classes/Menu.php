@@ -23,8 +23,27 @@ class Menu
     public function addMenus()
     {
         $menuPermission = AccessControl::hasTopLevelMenuPermission();
-        if (!$menuPermission) {
-            return;
+
+        if (!current_user_can($menuPermission)) {
+            $customRoles = get_option('_wppayform_form_permission');
+            if (is_string($customRoles)) {
+                $customRoles = [];
+            }
+
+            if (!$customRoles) {
+                return;
+            }
+
+            $hasAccess = false;
+            foreach ($customRoles as $roleName) {
+                if (current_user_can($roleName)) {
+                    $hasAccess = true;
+                    $menuPermission = $roleName;
+                }
+            }
+            if (!$hasAccess) {
+                return;
+            }
         }
 
         $title = __('WPPayForms', 'wppayform');

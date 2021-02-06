@@ -50,7 +50,9 @@ class PlanSubscription
         );
 
         if($subscription->trial_days) {
-            $subscriptionArgs['trial_end'] = time() + $subscription->trial_days * 86400;
+            $dateTime = current_datetime();
+            $localtime = $dateTime->getTimestamp() + $dateTime->getOffset();
+            $subscriptionArgs['trial_end'] = $localtime + $subscription->trial_days * 86400;
         }
 
         return self::subscribe($subscriptionArgs);

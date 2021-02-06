@@ -60,7 +60,7 @@ class SubmissionHandler
             }
             if ($payment['type'] == 'recurring_payment_item') {
                 $subscription = $this->getSubscriptionLine($payment, $paymentId, $quantity, $form_data, $formId);
-                if(!empty($subscription['type']) && $subscription['type'] == 'single') {
+                if (!empty($subscription['type']) && $subscription['type'] == 'single') {
                     // We converted this as one time payment
                     $paymentItems[] = $subscription;
                 } else {
@@ -68,6 +68,7 @@ class SubmissionHandler
                 }
             } else {
                 $lineItems = $this->getPaymentLine($payment, $paymentId, $quantity, $form_data);
+
                 if ($lineItems) {
                     $paymentItems = array_merge($paymentItems, $lineItems);
                 }
@@ -89,6 +90,7 @@ class SubmissionHandler
 
         // Extract Input Items Here
         $inputItems = array();
+
         foreach ($formattedElements['input'] as $inputName => $inputElement) {
             $value = ArrayHelper::get($form_data, $inputName);
             $inputItems[$inputName] = apply_filters('wppayform/submitted_value_' . $inputElement['type'], $value, $inputElement, $form_data);
@@ -150,8 +152,8 @@ class SubmissionHandler
             'submission_hash'     => $this->getHash(),
             'payment_total'       => $paymentTotal,
             'status'              => 'new',
-            'created_at'          => gmdate('Y-m-d H:i:s'),
-            'updated_at'          => gmdate('Y-m-d H:i:s')
+            'created_at'          => current_time('mysql'),
+            'updated_at'          => current_time('mysql')
         );
 
 
@@ -217,8 +219,8 @@ class SubmissionHandler
                     'payment_total'  => $paymentTotal,
                     'currency'       => $currency,
                     'status'         => 'pending',
-                    'created_at'     => gmdate('Y-m-d H:i:s'),
-                    'updated_at'     => gmdate('Y-m-d H:i:s')
+                    'created_at'     => current_time('mysql'),
+                    'updated_at'     => current_time('mysql')
                 );
 
 
@@ -377,8 +379,8 @@ class SubmissionHandler
             'parent_holder' => $paymentId,
             'item_name'     => strip_tags($label),
             'quantity'      => $quantity,
-            'created_at'    => gmdate('Y-m-d H:i:s'),
-            'updated_at'    => gmdate('Y-m-d H:i:s'),
+            'created_at'    => current_time('mysql'),
+            'updated_at'    => current_time('mysql')
         );
 
         if ($payment['type'] == 'payment_item') {
@@ -463,8 +465,8 @@ class SubmissionHandler
                     'quantity' => $quantity,
                     'item_price' => $onetimeTotal,
                     'line_total' => $quantity * $onetimeTotal,
-                    'created_at'       => gmdate('Y-m-d H:i:s'),
-                    'updated_at'       => gmdate('Y-m-d H:i:s')
+                    'created_at'       => current_time('mysql'),
+                    'updated_at'       => current_time('mysql')
                 ];
             }
         }
@@ -482,8 +484,8 @@ class SubmissionHandler
             'initial_amount'   => 0,
             'status'           => 'pending',
             'original_plan'    => maybe_serialize($plan),
-            'created_at'       => gmdate('Y-m-d H:i:s'),
-            'updated_at'       => gmdate('Y-m-d H:i:s'),
+            'created_at'       => current_time('mysql'),
+            'updated_at'       => current_time('mysql'),
         );
 
 
@@ -493,7 +495,9 @@ class SubmissionHandler
 
         if (ArrayHelper::get($plan, 'has_trial_days') == 'yes' && ArrayHelper::get($plan, 'trial_days')) {
             $subscription['trial_days'] = $plan['trial_days'];
-            $expirationDate = gmdate('Y-m-d H:i:s', time() + absint($plan['trial_days']) * 86400);
+            $dateTime = current_datetime();
+            $localtime = $dateTime->getTimestamp() + $dateTime->getOffset();
+            $expirationDate = gmdate('Y-m-d H:i:s', $localtime + absint($plan['trial_days']) * 86400);
             $subscription['expiration_at'] = $expirationDate;
         }
 
@@ -557,7 +561,9 @@ class SubmissionHandler
 
     private function getHash()
     {
-        $prefix = 'wpf_' . time();
+        $dateTime = current_datetime();
+        $localtime = $dateTime->getTimestamp() + $dateTime->getOffset();
+        $prefix = 'wpf_' . $localtime;
         $uid = uniqid($prefix);
         // now let's make a unique number from 1 to 999
         $uid .= mt_rand(1, 999);

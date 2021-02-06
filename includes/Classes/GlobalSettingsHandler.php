@@ -24,7 +24,9 @@ class GlobalSettingsHandler
             'update_global_currency_settings' => 'updateGlobalCurrencySettings',
             'wpf_upload_image'                => 'handleFileUpload',
             'get_recaptcha_settings'          => 'getRecaprchaSettings',
-            'save_recaptcha_settings'         => 'saveRecaptchaSettings'
+            'save_recaptcha_settings'         => 'saveRecaptchaSettings',
+            'get_access_roles'                => 'getAccessRoles',
+            'set_access_roles'                => 'setAccessRoles'
         );
         $route = sanitize_text_field($_REQUEST['route']);
         if (isset($routes[$route])) {
@@ -136,5 +138,15 @@ class GlobalSettingsHandler
         wp_send_json_success([
             'message' => 'Settings successfully updated'
         ], 200);
+    }
+
+    public function getAccessRoles()
+    {
+        $roles =  (new AccessControl)->getAccessRoles();
+        wp_send_json_success($roles, 200);
+    }
+    public function setAccessRoles()
+    {
+        (new AccessControl)->setAccessRoles();
     }
 }
