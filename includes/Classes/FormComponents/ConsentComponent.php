@@ -76,6 +76,8 @@ class ConsentComponent extends BaseComponent
     public function render($element, $form, $elements)
     {
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
+        $disable = ArrayHelper::get($fieldOptions, 'disable');
+
         if (!$fieldOptions) {
             return;
         }
@@ -94,6 +96,8 @@ class ConsentComponent extends BaseComponent
             $controlAttributes['data-checkbox_required'] = 'yes';
         }
         $termDescription = ArrayHelper::get($fieldOptions, 'tc_description');
+
+        if(!$disable) {
         ?>
         <div <?php echo $this->builtAttributes($controlAttributes); ?>>
             <div class="wpf_multi_form_controls wpf_input_content">
@@ -124,7 +128,7 @@ class ConsentComponent extends BaseComponent
             </div>
         </div>
         <?php
-
+    }
     }
 
 }
