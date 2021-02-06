@@ -29,12 +29,12 @@
                             <draggable
                                 :options="{handle:'.handler', animation: 0, ghostClass: 'ghost', group:'components'}"
                                 :list="builder_elements"
-                                :element="'div'"
+                                :element="'div'" 
                             >
-                                <template v-if="builder_elements.length">
+                                <template v-if="builder_elements.length" style="height:100%">
                                     <div v-for="element in builder_elements" :key="element.id"
                                          class="payform_builder_item">
-                                        <div class="payform_builder_header">
+                                        <div :style="element.field_options.disable ? disableStyle : activeStyle" class="payform_builder_header">
                                             <div class="payform_head_left">
                                                 <div class="handler payform_inline_item">
                                                     <span class="dashicons dashicons-menu"></span>
@@ -45,7 +45,7 @@
                                                 </div>
                                             </div>
                                             <div @click="toggleEditing(element.id)" class="payform_head_right">
-                                                <div class="element_type payform_inline_item">
+                                                <div :style="element.field_options.disable ? disableStyle : activeStyle" class="element_type payform_inline_item">
                                                     {{ element.editor_title }}
                                                 </div>
                                                 <div class="element_control payform_inline_item">
@@ -58,7 +58,8 @@
                                                  class="payform_builder_item_settings">
                                                 <element-editor @deleteItem="deleteItem(element)"
                                                                 @updateItem="saveSettings"
-                                                                :element="element" :all_elements="builder_elements"/>
+                                                                :element="element" :all_elements="builder_elements"
+                                                                />
                                             </div>
                                         </transition>
                                     </div>
@@ -169,7 +170,9 @@
                     payment: false,
                     payment_method: false,
                     general: false
-                }
+                },
+                disableStyle: "color:#c8ccc9;",
+                activeStyle:"none"
             }
         },
         computed: {
@@ -178,7 +181,7 @@
                 each(this.builder_elements, (element) => {
                     elements.push(element.id);
                 });
-                return elements;
+               return elements;
             },
             hasPaymentMethodField() {
                 let hasField = false;

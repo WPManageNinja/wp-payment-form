@@ -207,6 +207,7 @@ class AdminAjaxHandler
             $builderSettings = json_decode($builderSettings, true);
         }
 
+
         $formId = absint($_REQUEST['form_id']);
 
         if (!$formId || !$builderSettings) {

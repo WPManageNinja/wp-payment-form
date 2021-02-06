@@ -63,6 +63,7 @@ class DemoTaxItemComponent extends BaseComponent
                 ),
             ),
             'field_options'   => array(
+                'disable'         => false,
                 'label' => 'Tax Amount:',
                 'tax_percent' => '10'
             )

@@ -78,6 +78,7 @@ class ItemQuantityComponent extends BaseComponent
                 ),
             ),
             'field_options'   => array(
+                'disable'          => false,
                 'label'          => 'Quantity',
                 'placeholder'    => 'Provide Quantity',
                 'required'       => 'yes',
@@ -127,6 +128,8 @@ class ItemQuantityComponent extends BaseComponent
     public function render($element, $form, $elements)
     {
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
+        $disable = ArrayHelper::get($fieldOptions, 'disable', false);
+
         if (!$fieldOptions) {
             return;
         }
@@ -160,6 +163,7 @@ class ItemQuantityComponent extends BaseComponent
             $attributes['required'] = true;
         }
 
+        if(!$disable) {
         ?>
         <div data-element_type="<?php echo $this->elementName; ?>"
              class="<?php echo $controlClass; ?>">
@@ -169,6 +173,8 @@ class ItemQuantityComponent extends BaseComponent
             </div>
         </div>
         <?php
+
+    }
     }
 
 }

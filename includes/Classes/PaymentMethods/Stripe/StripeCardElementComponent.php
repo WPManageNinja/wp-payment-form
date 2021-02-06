@@ -70,6 +70,7 @@ class StripeCardElementComponent extends BaseComponent
                 ),
             ),
             'field_options'   => array(
+                'disable'         => false,
                 'label'                  => __('Your Card info (Powered By Stripe)', 'wppayform'),
                 'verify_zip'             => 'no',
                 'checkout_display_style' => array(

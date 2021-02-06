@@ -71,6 +71,7 @@ class TextAreaComponent extends BaseComponent
     public function render($element, $form, $elements)
     {
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
+        $disable = ArrayHelper::get($fieldOptions, 'disable', false);
         if (!$fieldOptions) {
             return;
         }
@@ -97,6 +98,7 @@ class TextAreaComponent extends BaseComponent
 
         $defaultValue = apply_filters('wppayform/input_default_value', ArrayHelper::get($fieldOptions, 'default_value'), $element, $form);
 
+        if(!$disable) {
         ?>
         <div data-element_type="<?php echo $this->elementName; ?>"
              class="<?php echo $controlClass; ?>">
@@ -106,6 +108,7 @@ class TextAreaComponent extends BaseComponent
             </div>
         </div>
         <?php
+    }
     }
 
 }

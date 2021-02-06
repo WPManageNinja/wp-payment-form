@@ -270,7 +270,7 @@ class SubmissionHandler
         // Validate Normal Inputs
         foreach ($formattedElements['input'] as $elementId => $element) {
             $error = false;
-            if (ArrayHelper::get($element, 'options.required') == 'yes' && empty($form_data[$elementId])) {
+            if (ArrayHelper::get($element, 'options.required') == 'yes' && empty($form_data[$elementId]) && !ArrayHelper::get($element, 'options.disable',false)) {
                 $error = $this->getErrorLabel($element, $formId);
             }
             $error = apply_filters('wppayform/validate_data_on_submission_' . $element['type'], $error, $elementId, $element, $form_data);
@@ -287,7 +287,7 @@ class SubmissionHandler
 
         // Validate Payment Fields
         foreach ($formattedElements['payment'] as $elementId => $element) {
-            if (ArrayHelper::get($element, 'options.required') == 'yes' && !isset($form_data[$elementId])) {
+            if (ArrayHelper::get($element, 'options.required') == 'yes' && !isset($form_data[$elementId]) && !ArrayHelper::get($element, 'options.disable',false)) {
                 $errors[$elementId] = $this->getErrorLabel($element, $formId);
             }
         }
@@ -295,7 +295,7 @@ class SubmissionHandler
         foreach ($formattedElements['item_quantity'] as $elementId => $element) {
             $error = '';
             if (isset($form_data[ArrayHelper::get($element, 'options.target_product')])) {
-                if (ArrayHelper::get($element, 'options.required') == 'yes' && empty($form_data[$elementId])) {
+                if (ArrayHelper::get($element, 'options.required') == 'yes' && empty($form_data[$elementId]) && !ArrayHelper::get($element, 'options.disable',false)) {
                     $error = $this->getErrorLabel($element, $formId);
                 }
             }

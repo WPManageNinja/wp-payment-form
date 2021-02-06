@@ -1,13 +1,22 @@
 <template>
     <div class="element_editor">
-
         <div class="wpf_editor_tabs">
             <div class="wpf_tabs_header">
                 <div @click="showing_tab = 'general'" :class="(showing_tab == 'general') ? 'wpf_tab_active' : ''" class="wpf_tab">General</div>
                 <div @click="showing_tab = 'advanced'" :class="(showing_tab == 'advanced') ? 'wpf_tab_active' : ''" class="wpf_tab">Advanced</div>
+                <div  style="float: right; margin-top:15px; margin-right:20px; display:flex;">
+                    <div v-if="element.postion_group !== 'payment_method'">
+                        <span style="margin-right:10px;">Disable Field</span>
+                    <el-switch
+                    v-model="element.field_options.disable"
+                    :active-value="true"
+                    :inactive-value="false">
+                    </el-switch>
+                    </div>
+                </div>
             </div>
             <div class="wpf_tab_body">
-                <el-form ref="element_form" :class="'wpf_element_editor_form wpf_showing_'+showing_tab" :model="element" label-width="220px">
+                <el-form :disabled="element.field_options.disable" ref="element_form" :class="'wpf_element_editor_form wpf_showing_'+showing_tab" :model="element" label-width="220px">
                     <div v-for="(item, itemName) in element.editor_elements" :class="[item.wrapper_class, 'wpf_item_group_'+item.group]"
                          class="editor_form_item">
                         <template v-if="item.type == 'text'">
@@ -162,11 +171,11 @@
                     <el-form-item class="wpf_item_group_advanced" label="Field ID">
                         {{ element.id }}
                     </el-form-item>
-                    <div class="action_right">
+                </el-form>
+                <div class="action_right">
                         <el-button @click="deleteItem()" size="mini">Delete</el-button>
                         <el-button @click="updateItem()" type="success" size="mini">Update</el-button>
-                    </div>
-                </el-form>
+                </div>
             </div>
         </div>
 
@@ -227,7 +236,7 @@
                 merge_tags: Object.values(window.wpPayFormsAdmin.value_placeholders),
                 showDevaultValuePro: false,
                 assets_url: window.wpPayFormsAdmin.assets_url,
-                showing_tab: 'general'
+                showing_tab: 'general',
             }
         },
         methods: {

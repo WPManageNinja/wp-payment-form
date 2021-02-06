@@ -66,6 +66,7 @@ class CustomerEmailComponent extends BaseComponent
                 ),
             ),
             'field_options'   => array(
+                'disable'          => 'no',
                 'label' => 'Email Address',
                 'placeholder' => 'Email Address',
                 'required' => 'yes',

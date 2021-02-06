@@ -69,6 +69,7 @@ class PaymentItemComponent extends BaseComponent
             'is_system_field'  => true,
             'is_payment_field' => true,
             'field_options'    => array(
+                'disable'          => false,
                 'label'           => 'Payment Item',
                 'required'        => 'yes',
                 'enable_image' => 'no',
@@ -146,7 +147,8 @@ class PaymentItemComponent extends BaseComponent
         $enableImage = ArrayHelper::get($element, 'field_options.enable_image') == 'yes';
         $showTitle = ArrayHelper::get($element, 'field_options.pricing_details.show_onetime_labels') == 'yes';
         $imageUrl = ArrayHelper::get($element, 'field_options.pricing_details.image_url');
-        if($enableImage){
+        $disable = ArrayHelper::get($element, 'field_options.disable',false);
+        if($enableImage && !$disable){
          foreach($imageUrl as $item){
           ?> <div class='imageContainer'>
               <div class="wpf_tabular_product_photo">
@@ -156,7 +158,7 @@ class PaymentItemComponent extends BaseComponent
          <?php
           };
         };
-        if ($showTitle) {
+        if ($showTitle && !$disable) {
             $title = ArrayHelper::get($element, 'field_options.label');
             $currenySettings = Forms::getCurrencyAndLocale($form->ID);
             $controlAttributes = array(
@@ -202,6 +204,7 @@ class PaymentItemComponent extends BaseComponent
             return;
         }
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
+        $disable = ArrayHelper::get($element, 'field_options.disable',false);
         $enableImage = ArrayHelper::get($element, 'field_options.enable_image') == 'yes';
         $currenySettings = Forms::getCurrencyAndLocale($form->ID);
         $elementId = 'wpf_' . $element['id'];
@@ -213,6 +216,8 @@ class PaymentItemComponent extends BaseComponent
             'class'                 => $this->elementControlClass($element)
         );
         $defaultValue = ArrayHelper::get($fieldOptions, 'default_value');
+
+        if(!$disable) {
         ?>
         <div <?php echo $this->builtAttributes($controlAttributes); ?>>
             <?php $this->buildLabel($fieldOptions, $form, array('for' => $elementId)); ?>
@@ -288,11 +293,14 @@ class PaymentItemComponent extends BaseComponent
         </div>
         <?php
     }
+    }
 
     public function chooseMultipleChoice($prices = array(), $element, $form)
     {
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
         $enableImage = ArrayHelper::get($fieldOptions, 'enable_image', false);
+        $disable = ArrayHelper::get($fieldOptions, 'disable',false);
+
 
         if (!$fieldOptions) {
             return;
@@ -310,6 +318,9 @@ class PaymentItemComponent extends BaseComponent
             'data-element_type'      => 'checkbox',
             'data-target_element'    => $element['id']
         );
+
+        if(!$disable) {
+
         ?>
         <div <?php echo $this->builtAttributes($controlAttributes); ?>>
             <?php $this->buildLabel($fieldOptions, $form, array('for' => $inputId)); ?>
@@ -359,5 +370,6 @@ class PaymentItemComponent extends BaseComponent
             </div>
         </div>
         <?php
+    }
     }
 }

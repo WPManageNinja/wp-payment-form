@@ -68,6 +68,7 @@ class CustomAmountComponent extends BaseComponent
                 ),
             ),
             'field_options'   => array(
+                'disable'     => false,
                 'label' => 'Custom Payment Amount',
                 'placeholder' => '',
                 'required' => 'no'
@@ -79,6 +80,7 @@ class CustomAmountComponent extends BaseComponent
     {
         $currencySettings = Forms::getCurrencyAndLocale($form->ID);
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
+        $disable = ArrayHelper::get($fieldOptions, 'disable');
         if (!$fieldOptions) {
             return;
         }
@@ -106,7 +108,8 @@ class CustomAmountComponent extends BaseComponent
         if (ArrayHelper::get($fieldOptions, 'required') == 'yes') {
             $attributes['required'] = true;
         }
-        ?>
+        if(!$disable) {
+            ?>
         <div data-element_type="<?php echo $this->elementName; ?>"
              class="<?php echo $controlClass; ?>">
             <?php $this->buildLabel($fieldOptions, $form, array('for' => $inputId)); ?>
@@ -120,5 +123,6 @@ class CustomAmountComponent extends BaseComponent
             </div>
         </div>
         <?php
+        };
     }
 }

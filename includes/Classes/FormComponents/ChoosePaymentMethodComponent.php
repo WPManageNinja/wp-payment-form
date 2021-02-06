@@ -99,6 +99,7 @@ class ChoosePaymentMethodComponent extends BaseComponent
     public function render($element, $form, $elements)
     {
         $fieldOption = ArrayHelper::get($element, 'field_options');
+        $disable = ArrayHelper::get($fieldOption, 'disable', false);
 
         $controlAttributes = array(
             'id'                => 'wpf_' . $this->elementName,
@@ -117,13 +118,13 @@ class ChoosePaymentMethodComponent extends BaseComponent
         }
         echo '<input type="hidden" name="__wpf_valid_payment_methods_count" value="' . count($validMethods) . '"/>';
 
-        if ($validMethods && count($validMethods) > 1) :
+        if ($validMethods && count($validMethods) > 1 && !$disable) :
             ?>
             <div <?php echo $this->builtAttributes($controlAttributes); ?>>
                 <?php $this->buildLabel($fieldOption, $form); ?>
                 <div class="wpf_multi_form_controls wpf_input_content">
                     <?php foreach ($validMethods as $methodName => $method): ?>
-                        <?php
+                        <?php   
                         $optionId = $element['id'] . '_' . $methodName . '_' . $form->ID;
                         $attributes = array(
                             'class'    => 'form-check-input',
