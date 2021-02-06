@@ -104,6 +104,16 @@ if (!defined('WPPAYFORM_VERSION_LITE')) {
             // Dashboard Widget Here
             $dashboardWidget = new \WPPayForm\Classes\DashboardWidgetModule();
             $dashboardWidget->register();
+
+            // disabled update-nag
+            add_action('admin_init', function () {
+                $disablePages = [
+                    'wppayform.php',
+                ];
+                if (isset($_GET['page']) && in_array($_GET['page'], $disablePages)) {
+                    remove_all_actions('admin_notices');
+                }
+            });
         }
 
         public function registerShortcodes()
@@ -205,16 +215,6 @@ if (!defined('WPPAYFORM_VERSION_LITE')) {
         require_once(WPPAYFORM_DIR . 'includes/Classes/Activator.php');
         $activator = new \WPPayForm\Classes\Activator();
         $activator->migrateDatabases($newWorkWide);
-    });
-
-    // disabled update-nag
-    add_action('admin_init', function () {
-        $disablePages = [
-            'wppayform.php',
-        ];
-        if (isset($_GET['page']) && in_array($_GET['page'], $disablePages)) {
-            remove_all_actions('admin_notices');
-        }
     });
 
     // Handle Newtwork new Site Activation
