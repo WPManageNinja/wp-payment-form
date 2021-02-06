@@ -5,12 +5,14 @@
                 <div @click="showing_tab = 'general'" :class="(showing_tab == 'general') ? 'wpf_tab_active' : ''" class="wpf_tab">General</div>
                 <div @click="showing_tab = 'advanced'" :class="(showing_tab == 'advanced') ? 'wpf_tab_active' : ''" class="wpf_tab">Advanced</div>
                 <div  style="float: right; margin-top:15px; margin-right:20px; display:flex;">
-                    <span style="margin-right:10px;">Disable Field</span>
+                    <div v-if="element.postion_group !== 'payment_method'">
+                        <span style="margin-right:10px;">Disable Field</span>
                     <el-switch
                     v-model="element.field_options.disable"
                     :active-value="true"
                     :inactive-value="false">
                     </el-switch>
+                    </div>
                 </div>
             </div>
             <div class="wpf_tab_body">

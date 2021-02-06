@@ -260,7 +260,6 @@ class SubmissionHandler
 
     private function validate($form_data, $formattedElements, $form)
     {
-        // dd($formattedElements['input']);
         $errors = array();
         $formId = $form->ID;
         $customerName = '';
