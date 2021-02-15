@@ -275,11 +275,6 @@ abstract class BaseComponent
     public function renderHtmlContent($element, $form)
     {
         $wrapperClass = 'wpf_html_content_wrapper';
-        $disable = ArrayHelper::get($element, 'field_options.disable', false);
-
-        if($disable) {
-            return;
-        }
 
         if ($userClass = ArrayHelper::get($element, 'field_options.wrapper_class')) {
             $wrapperClass .= ' ' . $userClass;

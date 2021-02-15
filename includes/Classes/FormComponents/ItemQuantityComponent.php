@@ -90,6 +90,12 @@ class ItemQuantityComponent extends BaseComponent
 
     public function validateOnSave($error, $element, $formId)
     {
+        $disable = ArrayHelper::get($element, 'field_options.disable', false);
+
+        if($disable) {
+            return;
+        }
+
         if (!ArrayHelper::get($element, 'field_options.target_product')) {
             $error = __('Target Product is required for item:', 'wppayform') . ' ' . ArrayHelper::get($element, 'field_options.label');
         }
