@@ -1,6 +1,7 @@
 <?php
 
 namespace WPPayForm\Classes\FormComponents;
+use WPPayForm\Classes\ArrayHelper;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -38,6 +39,10 @@ class HtmlComponent extends BaseComponent
 
     public function render($element, $form, $elements)
     {
+        $disable = ArrayHelper::get($element, 'field_options.disable', false);
+        if($disable) {
+            return;
+        }
         $this->renderHtmlContent($element, $form);
     }
 }

@@ -78,11 +78,7 @@ class ConsentComponent extends BaseComponent
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
         $disable = ArrayHelper::get($fieldOptions, 'disable');
 
-        if($disable) {
-            return;
-        }
-
-        if (!$fieldOptions) {
+        if (!$fieldOptions || $disable) {
             return;
         }
         $controlClass = $this->elementControlClass($element);

@@ -99,7 +99,6 @@ class ChoosePaymentMethodComponent extends BaseComponent
     public function render($element, $form, $elements)
     {
         $fieldOption = ArrayHelper::get($element, 'field_options');
-        $disable = ArrayHelper::get($fieldOption, 'disable', false);
 
         $controlAttributes = array(
             'id'                => 'wpf_' . $this->elementName,

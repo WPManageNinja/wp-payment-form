@@ -354,9 +354,12 @@ class SubmissionHandler
 
     private function getItemQuantity($quantityElements, $tragetItemId, $formData)
     {
-        if (!$quantityElements) {
+        $state = ArrayHelper::get($quantityElements, 'item_quantity.options.disable');
+
+        if (!$quantityElements || $state) {
             return 1;
         }
+
         foreach ($quantityElements as $key => $element) {
             if (ArrayHelper::get($element, 'options.target_product') == $tragetItemId) {
                 return absint($formData[$key]);

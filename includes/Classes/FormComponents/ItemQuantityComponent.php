@@ -90,11 +90,10 @@ class ItemQuantityComponent extends BaseComponent
 
     public function validateOnSave($error, $element, $formId)
     {
-        $disable = ArrayHelper::get($element, 'field_options.disable', false);
-
-        if($disable) {
-            return;
-        }
+        $disable = ArrayHelper::get($element, 'field_options.disable',false);
+         if ($disable) {
+             return;
+         }
 
         if (!ArrayHelper::get($element, 'field_options.target_product')) {
             $error = __('Target Product is required for item:', 'wppayform') . ' ' . ArrayHelper::get($element, 'field_options.label');
@@ -104,6 +103,11 @@ class ItemQuantityComponent extends BaseComponent
 
     public function validateOnSubmission($error, $elementId, $element, $form_data)
     {
+        $disable = ArrayHelper::get($element, 'field_options.disable',false);
+         if ($disable) {
+             return;
+         }
+
         if($error) {
             return $error;
         }
@@ -134,13 +138,9 @@ class ItemQuantityComponent extends BaseComponent
     public function render($element, $form, $elements)
     {
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
-        $disable = ArrayHelper::get($fieldOptions, 'disable', false);
+        $disable = ArrayHelper::get($fieldOptions, 'disable',false);
 
-        if($disable) {
-            return;
-        }
-
-        if (!$fieldOptions) {
+        if (!$fieldOptions || $disable) {
             return;
         }
         $controlClass = $this->elementControlClass($element);
@@ -182,6 +182,6 @@ class ItemQuantityComponent extends BaseComponent
             </div>
         </div>
         <?php
-    }
+        }
 
 }
