@@ -128,7 +128,9 @@ class Submission extends Model
             $result->refundTotal = $refundTotal;
         }
 
-        if ($result->status == 'new') {
+        $route =  ArrayHelper::get($_REQUEST, 'route', '');
+
+        if ($result->status == 'new' && $route === 'get_submission') {
             wpPayFormDB()->table('wpf_submissions')
             ->where('form_id', $result->form_id)
             ->where('id', $result->id)
