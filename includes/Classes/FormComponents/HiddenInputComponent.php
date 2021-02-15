@@ -69,6 +69,9 @@ class HiddenInputComponent extends BaseComponent
         if (!$fieldOptions) {
             return;
         }
+        if($disable) {
+            return;
+        }
         $inputId = 'wpf_input_' . $form->ID . '_' . $element['id'];
         $defaultValue = apply_filters('wppayform/input_default_value', ArrayHelper::get($fieldOptions, 'default_value'), $element, $form);
 
@@ -82,10 +85,8 @@ class HiddenInputComponent extends BaseComponent
         if($userClass = ArrayHelper::get($fieldOptions, 'element_class')) {
             $attributes['class'] = $userClass;
         }
-        if(!$disable) {
         ?>
         <input <?php echo $this->builtAttributes($attributes); ?> />
         <?php
-    }
     }
 }

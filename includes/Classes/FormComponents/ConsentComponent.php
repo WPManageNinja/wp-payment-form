@@ -78,6 +78,10 @@ class ConsentComponent extends BaseComponent
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
         $disable = ArrayHelper::get($fieldOptions, 'disable');
 
+        if($disable) {
+            return;
+        }
+
         if (!$fieldOptions) {
             return;
         }
@@ -97,7 +101,6 @@ class ConsentComponent extends BaseComponent
         }
         $termDescription = ArrayHelper::get($fieldOptions, 'tc_description');
 
-        if(!$disable) {
         ?>
         <div <?php echo $this->builtAttributes($controlAttributes); ?>>
             <div class="wpf_multi_form_controls wpf_input_content">
@@ -128,7 +131,6 @@ class ConsentComponent extends BaseComponent
             </div>
         </div>
         <?php
-    }
     }
 
 }

@@ -151,7 +151,7 @@ class Render
     }
 
     public function renderFormFooter($form)
-    {
+    {  
         $submitButton = Forms::getButtonSettings($form->ID);
         $processingText = $submitButton['processing_text'];
         if (!$processingText) {
@@ -179,7 +179,7 @@ class Render
             </div>
         <?php endif; ?>
 
-        <div class="wpf_form_group wpf_form_submissions">
+        <div class="wpf_form_group wpf_form_submissions" style="margin-top: 20px;">
             <button <?php echo $this->builtAttributes($buttonAttributes); ?>>
                 <span class="wpf_txt_normal"><?php echo $this->parseText($button_text, $form->ID); ?></span>
                 <span style="display: none;" class="wpf_txt_loading">

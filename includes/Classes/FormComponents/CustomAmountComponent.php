@@ -81,6 +81,11 @@ class CustomAmountComponent extends BaseComponent
         $currencySettings = Forms::getCurrencyAndLocale($form->ID);
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
         $disable = ArrayHelper::get($fieldOptions, 'disable');
+
+        if($disable) {
+            return;
+        }
+
         if (!$fieldOptions) {
             return;
         }
@@ -108,7 +113,6 @@ class CustomAmountComponent extends BaseComponent
         if (ArrayHelper::get($fieldOptions, 'required') == 'yes') {
             $attributes['required'] = true;
         }
-        if(!$disable) {
             ?>
         <div data-element_type="<?php echo $this->elementName; ?>"
              class="<?php echo $controlClass; ?>">
@@ -123,6 +127,5 @@ class CustomAmountComponent extends BaseComponent
             </div>
         </div>
         <?php
-        };
     }
 }

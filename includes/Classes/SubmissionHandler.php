@@ -259,7 +259,7 @@ class SubmissionHandler
             'confirmation'  => $confirmation
         ), 200);
     }
-
+    
     private function validate($form_data, $formattedElements, $form)
     {
         $errors = array();
@@ -506,12 +506,6 @@ class SubmissionHandler
         }
 
         $allSubscriptions = [$subscription];
-
-        // if ($quantity > 1) {
-        //     for ($i = 1; $i < $quantity; $i++) {
-        //         $allSubscriptions[] = $subscription;
-        //     }
-        // }
 
         return $allSubscriptions;
     }

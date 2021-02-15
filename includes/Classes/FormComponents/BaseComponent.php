@@ -42,6 +42,9 @@ abstract class BaseComponent
     {
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
         $disable = ArrayHelper::get($fieldOptions, 'disable',false);
+        if($disable) {
+            return;
+        }
         if (!$fieldOptions) {
             return;
         }
@@ -79,7 +82,6 @@ abstract class BaseComponent
                 $attributes = wp_parse_args($extraAtts, $attributes);
             }
         }
-        if(!$disable) {
             ?>
         <div data-element_type="<?php echo $this->elementName; ?>"
              class="<?php echo $controlClass; ?>">
@@ -89,13 +91,17 @@ abstract class BaseComponent
             </div>
         </div>
         <?php
-        }
     }
 
     public function renderSelectInput($element, $form)
     {
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
         $disable = ArrayHelper::get($fieldOptions, 'disable', false);
+
+        if($disable) {
+            return;
+        }
+
         if (!$fieldOptions) {
             return;
         }
@@ -121,7 +127,6 @@ abstract class BaseComponent
             'data-element_type' => $this->elementName,
             'class'             => $controlClass
         );
-        if(!$disable) {
         ?>
         <div <?php echo $this->builtAttributes($controlAttributes); ?>>
             <?php $this->buildLabel($fieldOptions, $form, array('for' => $inputId)); ?>
@@ -145,7 +150,6 @@ abstract class BaseComponent
             </div>
         </div>
         <?php
-        }
     }
 
     public function renderRadioInput($element, $form)
@@ -153,6 +157,9 @@ abstract class BaseComponent
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
         $disable = ArrayHelper::get($fieldOptions, 'disable', false);
 
+        if($disable) {
+            return;
+        }
 
         if (!$fieldOptions) {
             return;
@@ -172,7 +179,6 @@ abstract class BaseComponent
             'data-required'       => ArrayHelper::get($fieldOptions, 'required'),
             'data-target_element' => $element['id']
         );
-        if(!$disable) {
         ?>
         <div <?php echo $this->builtAttributes($controlAttributes); ?>>
             <?php $this->buildLabel($fieldOptions, $form, array('for' => $inputId)); ?>
@@ -205,7 +211,6 @@ abstract class BaseComponent
             </div>
         </div>
         <?php
-        }
     }
 
     public function renderCheckBoxInput($element, $form)
@@ -213,6 +218,9 @@ abstract class BaseComponent
         $fieldOptions = ArrayHelper::get($element, 'field_options', false);
         $disable = ArrayHelper::get($fieldOptions, 'disable', false);
 
+        if($disable) {
+            return;
+        }
         if (!$fieldOptions) {
             return;
         }
@@ -234,7 +242,6 @@ abstract class BaseComponent
         if (ArrayHelper::get($fieldOptions, 'required') == 'yes') {
             $controlAttributes['data-checkbox_required'] = 'yes';
         }
-        if(!$disable) {
         ?>
         <div <?php echo $this->builtAttributes($controlAttributes); ?>>
             <?php $this->buildLabel($fieldOptions, $form, array('for' => $inputId)); ?>
@@ -264,17 +271,19 @@ abstract class BaseComponent
         </div>
         <?php
     }
-    }
 
     public function renderHtmlContent($element, $form)
     {
         $wrapperClass = 'wpf_html_content_wrapper';
         $disable = ArrayHelper::get($element, 'field_options.disable', false);
 
+        if($disable) {
+            return;
+        }
+
         if ($userClass = ArrayHelper::get($element, 'field_options.wrapper_class')) {
             $wrapperClass .= ' ' . $userClass;
         }
-        if(!$disable) {
         ?>
         <div class="<?php echo $wrapperClass; ?>">
             <?php
@@ -283,7 +292,6 @@ abstract class BaseComponent
             ?>
         </div>
         <?php
-    }
     }
 
     public function builtAttributes($attributes)
@@ -342,6 +350,9 @@ abstract class BaseComponent
     {
         $label = ArrayHelper::get($fieldOptions, 'label');
         $disable = ArrayHelper::get($fieldOptions, 'disable',false);
+        if($disable) {
+            return;
+        }
         $xtra_left = '';
         $xtra_right = '';
         $astPosition = $form->asteriskPosition;
@@ -352,7 +363,7 @@ abstract class BaseComponent
                 $xtra_right = ' <span class="wpf_required_sign wpf_required_sign_left">*</span>';
             }
         }
-        if ($label && !$disable): ?>
+        if ($label): ?>
             <div class="wpf_input_label">
                 <label <?php echo $this->builtAttributes($attributes); ?>><?php echo $xtra_left . $label . $xtra_right; ?></label>
             </div>

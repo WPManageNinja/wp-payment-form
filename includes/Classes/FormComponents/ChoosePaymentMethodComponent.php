@@ -118,7 +118,7 @@ class ChoosePaymentMethodComponent extends BaseComponent
         }
         echo '<input type="hidden" name="__wpf_valid_payment_methods_count" value="' . count($validMethods) . '"/>';
 
-        if ($validMethods && count($validMethods) > 1 && !$disable) :
+        if ($validMethods && count($validMethods) > 1) :
             ?>
             <div <?php echo $this->builtAttributes($controlAttributes); ?>>
                 <?php $this->buildLabel($fieldOption, $form); ?>
