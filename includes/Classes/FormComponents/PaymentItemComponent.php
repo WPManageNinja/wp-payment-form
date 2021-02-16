@@ -115,11 +115,7 @@ class PaymentItemComponent extends BaseComponent
     {
         $disable = ArrayHelper::get($element, 'field_options.disable',false);
         $pricingDetails = ArrayHelper::get($element, 'field_options.pricing_details', array());
-        if (!$pricingDetails) {
-            return;
-        }
-
-        if($disable) {
+        if (!$pricingDetails || $disable) {
             return;
         }
 
