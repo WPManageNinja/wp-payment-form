@@ -36,7 +36,7 @@ class PaymentItemComponent extends BaseComponent
                     'group' => 'general'
                 ),
                 'enable_image' => array(
-                    'label' => 'enable_image',
+                    'label' => 'Enable Image',
                     'type'  => 'switch',
                     'group' => 'general'
                 ),
@@ -152,7 +152,7 @@ class PaymentItemComponent extends BaseComponent
           ?> <div class='imageContainer'>
               <div class="wpf_tabular_product_photo">
              <?php echo $this->renderImage($item['photo']); ?>
-         </div> 
+         </div>
           </div>
          <?php
           };
@@ -176,9 +176,9 @@ class PaymentItemComponent extends BaseComponent
         echo '<input name=' . $element['id'] . ' type="hidden" class="wpf_payment_item" data-price="' . wpPayFormConverToCents($amount) . '" value="' . $amount . '" />';
     }
 
-    
+
     private function renderImage($image, $lightboxed = false)
-    {   
+    {
         if(!$image) {
             return '';
         }
