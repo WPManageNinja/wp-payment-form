@@ -1,6 +1,6 @@
 <?php
 
-if (!$submission->transactions) {
+if (!isset($submission->transactions)) {
     return '';
 }
 
