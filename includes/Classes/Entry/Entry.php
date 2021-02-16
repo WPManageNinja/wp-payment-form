@@ -9,6 +9,7 @@ use WPPayForm\Classes\Models\OrderItem;
 use WPPayForm\Classes\Models\Submission;
 use WPPayForm\Classes\Models\Subscription;
 use WPPayForm\Classes\View;
+use WPPayForm\Classes\Models\Transaction;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -108,9 +109,20 @@ class Entry
 
     public function getTransactionId()
     {
+        $this->getTransactionItems();
+
         return View::make('elements.transaction_id', array(
             'submission' => $this->submission
         ));
+    }
+
+    public function getTransactionItems()
+    {
+        if (!property_exists($this->submission, 'transactions')) {
+            $transactions = new Transaction();
+            $this->submission->transactions = $transactions->getTransactions($this->submissionId);
+        }
+        return $this->submission->transactions;
     }
 
     public function getSubscriptionsHtml()
