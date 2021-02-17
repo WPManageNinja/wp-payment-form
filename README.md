@@ -1,39 +1,53 @@
-WPPayForm Plugin for WordPress with Contact Form Functionalities
----
-Easily Accept Payments in WordPress with Stripe (PayPal also supported) with Form Builder Capability.
+=== Stripe Payments Plugin for WordPress - WPPayForm ===
+Contributors: techjewel, wpmanageninja
+Tags: donations, payments, stripe payments, stripe checkout, PayPal
+Requires at least: 4.5
+Tested up to: 5.6.1
+Stable tag: 2.0.0
+Requires PHP: 5.4
+License: GPLv2 or later
 
-####Description
+Simply Accept Payments in WordPress with Stripe (PayPal also supported). Increase your conversion rate for payments.
 
-[Download From WordPress](https://wordpress.org/plugins/wp-payment-form) | [View Demo](https://wppayform.wpmanageninja.com) | [User Guide](https://wpmanageninja.com/docs/wppayform/) | [Youtube Documentation Playlist](https://www.youtube.com/watch?v=r-TrR_c3aJ4&list=PLXpD0vT4thWHCXvZc6eNs52eCOt5dO3SO&index=2)
+== Description ==
+
+[View Demo](https://wppayform.wpmanageninja.com) | [User Guide](https://wpmanageninja.com/docs/wppayform/) | [Youtube Documentation Playlist](https://www.youtube.com/watch?v=nT8UYeIWxJU&list=PLXpD0vT4thWF9UVybzSnhQJujKzd54rgH)
 
 <b>Do you want to accept payments along with user inputs in WordPress?</b> Then WPPayForm is the perfect plugin for you.
 
 With Stripe checkout as well as built-in form builder functionalities, you can build any forms ranging from single payment amount/multiple payment items. Or, you can allow users to pay custom amounts if needed.
 
+== Intro Video ==
+[youtube https://www.youtube.com/watch?v=oZaBS1EiAJc]
+
 Building beautiful and customizable payment forms has never been easier; and with Stripe integration, you can accept payments on form submission.
 
 With easy to use and standard payment forms, customers can pay you in less than a minute without going to another page.
 
-#### Use as a Contact Form
-You can use **WPPayForm** as a contact form plugin. With the built-in form builder, you can create any types of form and use as a contact/Subscription form where you can see all the submitted data in the backend.
+== SCA READY for EUROPE ==
+Strong Customer Authentication (SCA), a new rule coming into effect on September 14, 2019, as part of PSD2 regulation in Europe, will require changes to how your European customers authenticate online payments. WPPayForm is completely compilable with SCA.
 
+== Create a form and accept payment via Stripe Checkout ==
+[youtube https://www.youtube.com/watch?v=8ILI2DMc05M&list=PLXpD0vT4thWF9UVybzSnhQJujKzd54rgH&index=6]
 
-#### Payment Features
-- Single Payment Amount
-- Multiple choice payment items as Radio Option
-- Multiple choice payment items as Select Option
-- Checkbox payment items where users can check which items they want to pay
-- Donation/ User inputted payment
-- Quantity Field for any payment item field
-- Collect billing and shipping address of the customer in the same form.
+== FEATURES ==
+- Unlimited payment forms
+- Easily take payment for a service from your site via Stripe.
+- Mobile First Optimized Form & Stripe Checkout pages
+- Ability to offer multiple products and plans in a single page
+- Single Page, High converting payment process.
+- Optionally collect customer billing, shipping addresses and any other information in the checkout process.
+- Support for 14 languages, 30+ countries and 135+ currencies
+- PCI DSS and Strong Customer Authentication (SCA) support for improved security
 - Accept donation on your WordPress site
+- View detailed reports of your payments by status, search and export that easily.
 - Option to configure a customized notification email to be sent to the payee after the transaction is complete. (Pro)
 
-#### Stripe Checkout Fields
+== Stripe Checkout Fields ==
 - Stripe checkout.js popup option
 - Stripe Elements Checkout option with securely embedded feature
 
-#### General Input Fields
+== General Input Fields ==
 - Customer Email
 - Customer Name
 - Single Line text
@@ -44,44 +58,52 @@ You can use **WPPayForm** as a contact form plugin. With the built-in form build
 - Checkbox Field
 - Date Field
 - Hidden Field
+- Mask input
+- Address Field
 - Custom HTML Markup
 - Option to insert a Terms and Conditions consent field
 - and more on the way
 
-#### Currency Settings
+== Currency Settings ==
 WPPayForm supports 135+ currencies (same as Stripe) so you can accept any currency type you want. Each form can have their own currency type. For example, in Form A you can accept USD, and in Form B you can accept Euro.
 
-#### Design Settings
+= Design Settings =
 You can customize your form design styles from a wide range of design settings including label position, submit button position, form labels and styling for input fields. The form will look great in any themes you use. Not only that, the payment forms are completely responsive and will fit to screens of all display sizes.
 
-#### Submission Management
+== Submission Management ==
 With built-in submission management system, you can see the total view of your submissions, which payments are failed and which are completed. You can filter by status and form.
 
 In individual submission page, you can see the complete data, order items as payment table, payment, and activity. You can also change the payment status easily. The submissions can have their own notes too.
 
-#### Event Registration Form with Built-in Payment Processing
-With **Stripe WordPress Payments - WPPayForm Plugin**, You can easily design a form for your next awesome event/webinar and start recieving payments along with the register information. You can see the data in your dashboard as well as you can send automatted emails to your register or yourself.
+== Event Registration Form with Built-in Payment Processing ==
+With **Stripe WordPress Payments - WPPayForm Plugin**, You can easily design a form for your next awesome event/webinar and start receiving payments along with the register information. You can see the data in your dashboard as well as you can send automated emails to your register or yourself.
 With the built-in reporting module, You can track the failed/success/pending payments and use the data for your business.
 
-#### Built-in Stripe Payment Gateway
+== Built-in Stripe Payment Gateway ==
 **Stripe WordPress Payments - WPPayForm Plugin** offers Stripe payment gateway, Where you can just connect your stripe account and start accepting payments securely. We added both stripe checkout.js and stripe element for checkout experience. We have implemented all the best practices as stripe.com recommends. You can also collect billing and shipping information with stripe checkout.js.
 
-#### High Conversion Stripe Payment Forms in WordPress
-Design a high conversion Payment form is hard. This plugin make it easy for you. In few minutes, You can build a high conversion form and start accpeting payments with stripe right way. With the pro version, You can also accept payments using paypal.
+== High Conversion Stripe Payment Forms in WordPress ==
+Design a high conversion Payment form is hard. This plugin make it easy for you. In few minutes, You can build a high conversion form and start accepting payments with stripe right way. With the pro version, You can also accept payments using payPal.
 
-#### Accept Donation on your WordPress site ==
+== Accept Donation on your WordPress site ==
 Accepting donations got easier with WPPayForm’s Stripe payment processing. Now your users can fluently donate to your site with just a couple of clicks. Your users can manually set the amount and make the donation. Optionally, You can set a default amount and minimum amount to make the process lot easier.
 
-#### Super fast and Light Weight Form
+== Super fast and Light Weight Form ==
 This is a super fast form builder and it's only loads css and js if you add the form in a page. Every line of CSS and JS is useful and there has no extra css and js. For a normal form, It's loads less than 30KB css and js combined. This form builder plugin will not slow down your site. it's the fastest form builder plugin in WordPress.
 
-#### Pre-Build Forms to get started easily
+== Pre-Build Forms to get started easily ==
 * **Contact Form** - With WPPayForm you can easily build a contact form in your site without any payment related fields. It will show the contact information beautifully on the Wordpress Backend.
-* **Donation Form** - We have build a donation form for you and with one click you can create a donation form easily and start accepting donation for your organisation.
+* **Donation Form** - We have build a donation form for you and with one click you can create a donation form easily and start accepting donation for your organization.
 * **Event Registration Form with Payment** - Planning to start your next Event? Then you can use this form template where you can take basic register information and accept payment for the event. This is very easy to create an Event Registration Form.
 * **Many More Forms** - We have added many forms and you can build any type of form easily.
 
-#### Available Demos
+== Supports PayPal Payments (Pro) ==
+[youtube https://www.youtube.com/watch?v=yhOzkunVUtw&list=PLXpD0vT4thWF9UVybzSnhQJujKzd54rgH&index=7]
+
+== Use as a Contact Form ==
+You can use **WPPayForm** as a contact form plugin. With the built-in form builder, you can create any types of form and use as a contact/Subscription form where you can see all the submitted data in the backend.
+
+== Available Demos ==
 <ul>
 <li><a href="https://wppayform.wpmanageninja.com/">Stripe Quick Checkout</a></li>
 <li><a href="https://wppayform.wpmanageninja.com/stripe-simple-checkout-with-address/">Stripe Quick Checkout with Address</a></li>
@@ -95,7 +117,7 @@ This is a super fast form builder and it's only loads css and js if you add the 
 <li><a href="https://wppayform.wpmanageninja.com/quick-pay-by-paypal/">Quick Pay by PayPal</a></li>
 </ul>
 
-#### Documentation and User Guide
+== Documentation and User Guide ==
 <h4>Getting Started with WPPayForm</h4>
 <ul>
  	<li><a href="https://wpmanageninja.com/docs/wppayform/getting-started-with-wppayform/install-and-activate-wppayform/" target="_blank" rel="noopener">Install and Activate - WPPayForm</a></li>
@@ -116,7 +138,7 @@ This is a super fast form builder and it's only loads css and js if you add the 
  	<li><a href="https://wpmanageninja.com/docs/wppayform/managing-form-entries-in-wppayform/view-single-submission-data-and-managing-payments-in-wppayform/" target="_blank" rel="noopener">View Single Submission Data and Managing Payments</a></li>
 </ul>
 
-#### WPPayform Pro Features
+= WPPayform Pro Features =
 - Accept recurring/subscription payments
 - Accept payment using PayPal too
 - Let your users choose from the available payment method
@@ -131,22 +153,27 @@ This is a super fast form builder and it's only loads css and js if you add the 
 - Tax Calculated Amount
 - Custom Email send on form/payment submission
 
-#### Accept Recurring or Subscription payments with Stripe / PayPal (Pro)
+== Accept Recurring or Subscription payments with Stripe / PayPal (Pro) ==
 Sometimes, You need to accept subscription payments like $9.99/month. You can do that easily with WPPayForm Pro. You can setup your recurring payments details and start accepting the payments via card payments (Stripe) / PayPal. Your users don't need to create an account to make payments.
 It's easy, convenient and most importantly, It will increase your conversion rate.
 
 
-#### Features Tracker
+= Features Tracker =
 - Payment Receipt Page *(DONE)*
 - Submission Activity and custom notes *(DONE)*
 - Email Notifications *(Done)*
 - Export Data as CSV/Excel/JSON *(Done)
 - Accept Subscription Payments *(Done)*
+- Added security fields reCaptcha *(Done)*
+- Implementing Stripe Checkout Version 3 *(Done)*
+- Better Recurring Payment Management *(Done)*
 - Send bulk emails to the submitters and filter by payment statuses (On development)
 
-This plugin is a very planned project, and we have a long term development plan for this. We already invested around 200 human working hours (+coffees) on it, and we have the intention to spend much more on it. Please let us know what features you want, and we are happy to add that in our development sprint.
+This plugin is a very planned project, and we have a long term development plan for this. We already invested around 400 human working hours (+coffees) on it, and we have the intention to spend much more on it. Please let us know what features you want, and we are happy to add that in our development sprint.
 
-#### Installation
+The full source code is available on <a href="https://github.com/WPManageNinja/wp-payment-form">Github</a>.
+
+== Installation ==
 
 This section describes how to install the plugin and get it working.
 e.g.
@@ -156,44 +183,45 @@ e.g.
 1. Use the WPPay Forms -> All Forms -> Add a Form to create a form and get started.
 
 
-#### Frequently Asked Questions
+== Frequently Asked Questions ==
 
-#####Is The Forms build with this plugin responsive?
+= Is The Forms build with this plugin responsive? =
+
 Forms created by WPPayForm Plugin are mobile responsive and looks beautiful on any device.
 
-#####What Payment methods is available currently?
+= What Payment methods is available currently? =
 
 You can accept payment with Stripe and in WPPayForm Pro you can use PayPal too.
 
-#####Does the plugin save form submissions?
+= Does the plugin save form submissions? =
 
 Yes, All user submitted data will be saved on your WordPress site and you can view them anytime with detailed data.
 
-#####How Many forms can I build with this plugin?
+= How Many forms can I build with this plugin? =
 
 You can build as many form as you want, there is no restriction.
 
-##### Does this plugin support stripe checkout.js?
+= Does this plugin support stripe checkout.js? =
 
 Yes, You use stripe's checkout.js or element.js to accept payment. It's built in and you don't have to do any code.
 
-#####Do I have to be a developer or hire one to use this plugin?
+= Do I have to be a developer or hire one to use this plugin? =
 
 Absolutely not! Our main goal is to make it easy as much as possible for all kinds of users. We have very powerful features for developers too where they can hook to different action and filters.
 
-##### Can I build regular forms without payment methods?
+= Can I build regular forms without payment methods? =
 
 Yes, You can build regular forms without adding payment methods. It has a powerful form builder where you can build any sort of forms.
 
-##### Can I build Contact Forms?
+= Can I build Contact Forms? =
 
 Yes, You can build contact forms too.
 
-##### Is the plugin is secure?
+= Is the plugin is secure?  =
 
 This plugin is highly secured and we have implemented all the standard security features. Plus, we have used official Stripe's checkout.js and elements.js so all the forms created with WPPayForm is secure.
 
-##### How I can contribute to this project
+= How I can contribute to this project =
 
 You are most welcome. You can do the following:
 <ul>
@@ -204,18 +232,125 @@ You are most welcome. You can do the following:
 </ul>
 
 
-##### Other Plugins by WPManageNinja
+== Other Plugins by WPManageNinja ==
 <ul>
 <li><a href="https://wordpress.org/plugins/ninja-tables/" target="_blank">Ninja Tables – WP Data Table Plugin for WordPress</a></li>
 <li><a href="https://wordpress.org/plugins/fluentform/" target="_blank">WP Fluent Form – Contact Form Plugin for WordPress with Advanced Form Builder Features</a></li>
 <li><a href="https://wpmanageninja.com/azonpress/" target="_blank">AzonPress - The Most Intuitive WordPress Plugin for Amazon Affiliates</a></li>
 </ul>
 
+== Screenshots ==
 
-##### Changelog
+1. Dashboard
+2. Pre-Build Forms
+3. Easy Form Builder
+4. Form and Payment Screen
+5. Payment Receipt
+6. Submissions and Reporting
+7. View Single Submission
+8. Email Notification Settings (Pro)
+9. Form Confirmation Settings
+10. Form Scheduling Settings
+11. Stripe Payment Gateway Settings
+12. Submission Details (2nd Part)
+
+== Changelog ==
+
+= 2.0.0 - Feb 17, 2021 =
+- Adds resend / manual email notification
+- Adds disable fields for later use
+- Adds user access control / role base access
+- Adds quick update entry status (new/read)
+- Adds terms condition field to free version
+- Adds abandoned item filter
+- Adds recurring quantity for stripe
+- Adds bulk delete option for entries
+- Adds payment field with photo
+- Adds max quantity for tabular item
+- Adds transaction-id shortcode
+- Adds shortcode for all_input_field_html_with_empty
+- Adds recurring payment for dashboard widget
+- Adds new entry count on menu
+- Fixes recurring subscription daily basis
+- Fixes stripe long-meta data issue
+- Fixes confirmation page shortcode issue
+- Fixes stripe-customer name and email issue
+- Fixes payPal recurring notification issue
+- Fixes timestamp on universal timezone issue
+- Fixes title bar typo
+- Fixes elementor popup issue
+- Fixes missing translation issue
+- Fixes payPal docs link issue
+- Fixes required login message issue
+- Fixes non paid item on receipt
+- Fixes shortcode on url issue
+- Fixes multi-site deprecated hook issue
+- Fixes email empty fields issue
+- Fixes payment success action hook issue
+- Fixes created and entry time mismatch
+- Fixes missing placeholder for confirm email
+- Fixes file upload issue
+- Fixes recurring payment currency icon issue
+- Fixes missing stripe billing info on multiple payment
+
+
+= 1.9.91 - May 02, 2020 =
+- Stripe Payment Issues has been resolved
+- CSV export issue fixed
+- Receipt Issue resolved
+- IP logging issue resolved
+
+= 1.9.8 - February 02, 2020 =
+- Improve SCA Payments processing
+- Fix few form handling bug
+- Internal Architecture improvements
+- Fix email and receipt email issues
+- Ability to push all the form data as stripe meta
+
+= 1.9.3 - September 15, 2019 =
+- Improved Payment Receipt
+- Upgrade Stripe API version
+- Fix Currency Formatter
+- Email bug issue fixed
+
+= 1.9.2 - September 15, 2019 =
+- Improved Stripe Thank you page
+- 0 Quantity product bug fix
+- Validation Bug fix
+- Better asset management
+- Date Field bug fix
+- Internet explorer error fix
+- PHP improvement
+
+= 1.9.0 - September 13, 2019 =
+- SCA integration
+- Added Stripe Checkout version 3
+- Fix Date Picker Bug
+- Frontend Notification Fix
+- Frontend Validation
+- Fully re-write the frontend JS. It's more faster now
+- Design improvement
+
+= 1.2.6 - August 08, 2019 =
+- Fix Stripe webhook
+- Addded Advanced settings in editor
+- Added payment method on placeholders.
+- Improve performance
+
+= 1.2.5 - July 18, 2019 =
+- Added Google reCaptcha version 2 and 3
+- Fix Asterisk sign
+- Fix function undefined error
+- Fix issues on various types.
+
+= 1.2.1 - July 01, 2019 =
+- Fix PayPal Payments for Taxable Items
+- Fix Stripe Trial Period Amounts
+- Rename The plugin
+- Added source vue files
 
 = 1.2.0 - June 19, 2019 =
-- Fix Zero Decimal Currecncy for other elements
+- Fix Zero Decimal Currency for other elements
 - Added Confirm email field
 - Performance Improvement
 - Added more developer hooks
@@ -223,16 +358,16 @@ You are most welcome. You can do the following:
 - Added Meta Tables
 
 = 1.1.6 - June 02, 2019 =
-- Fix Zero Decimal Currecncy charges
+- Fix Zero Decimal Currency charges
 - Added Dashboard Widget
-- Impromvemt of Editor
+- Improvement of Editor
 
 = 1.1.5 - March 21, 2019 =
 - Added Reporting screen
 - New Date Time picker
 - HTML field bug fix
 - added new hooks for developers
-- Stripe Payment Method initilization fix
+- Stripe Payment Method initialization fix
 - Overall improvements
 - Added new form fields
 - estimated human hours for this release: 60 hours & Coffees

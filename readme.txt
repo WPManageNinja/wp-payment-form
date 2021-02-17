@@ -2,7 +2,7 @@
 Contributors: techjewel, wpmanageninja
 Tags: donations, payments, stripe payments, stripe checkout, PayPal
 Requires at least: 4.5
-Tested up to: 5.6
+Tested up to: 5.6.1
 Stable tag: 2.0.0
 Requires PHP: 5.4
 License: GPLv2 or later
@@ -25,7 +25,7 @@ Building beautiful and customizable payment forms has never been easier; and wit
 With easy to use and standard payment forms, customers can pay you in less than a minute without going to another page.
 
 == SCA READY for EUROPE ==
-Strong Customer Authentication (SCA), a new rule coming into effect on September 14, 2019, as part of PSD2 regulation in Europe, will require changes to how your European customers authenticate online payments. WPPayForm is compeltely compitable with SCA.
+Strong Customer Authentication (SCA), a new rule coming into effect on September 14, 2019, as part of PSD2 regulation in Europe, will require changes to how your European customers authenticate online payments. WPPayForm is completely compilable with SCA.
 
 == Create a form and accept payment via Stripe Checkout ==
 [youtube https://www.youtube.com/watch?v=8ILI2DMc05M&list=PLXpD0vT4thWF9UVybzSnhQJujKzd54rgH&index=6]
@@ -76,14 +76,14 @@ With built-in submission management system, you can see the total view of your s
 In individual submission page, you can see the complete data, order items as payment table, payment, and activity. You can also change the payment status easily. The submissions can have their own notes too.
 
 == Event Registration Form with Built-in Payment Processing ==
-With **Stripe WordPress Payments - WPPayForm Plugin**, You can easily design a form for your next awesome event/webinar and start recieving payments along with the register information. You can see the data in your dashboard as well as you can send automatted emails to your register or yourself.
+With **Stripe WordPress Payments - WPPayForm Plugin**, You can easily design a form for your next awesome event/webinar and start receiving payments along with the register information. You can see the data in your dashboard as well as you can send automated emails to your register or yourself.
 With the built-in reporting module, You can track the failed/success/pending payments and use the data for your business.
 
 == Built-in Stripe Payment Gateway ==
 **Stripe WordPress Payments - WPPayForm Plugin** offers Stripe payment gateway, Where you can just connect your stripe account and start accepting payments securely. We added both stripe checkout.js and stripe element for checkout experience. We have implemented all the best practices as stripe.com recommends. You can also collect billing and shipping information with stripe checkout.js.
 
 == High Conversion Stripe Payment Forms in WordPress ==
-Design a high conversion Payment form is hard. This plugin make it easy for you. In few minutes, You can build a high conversion form and start accpeting payments with stripe right way. With the pro version, You can also accept payments using paypal.
+Design a high conversion Payment form is hard. This plugin make it easy for you. In few minutes, You can build a high conversion form and start accepting payments with stripe right way. With the pro version, You can also accept payments using payPal.
 
 == Accept Donation on your WordPress site ==
 Accepting donations got easier with WPPayForm’s Stripe payment processing. Now your users can fluently donate to your site with just a couple of clicks. Your users can manually set the amount and make the donation. Optionally, You can set a default amount and minimum amount to make the process lot easier.
@@ -93,7 +93,7 @@ This is a super fast form builder and it's only loads css and js if you add the 
 
 == Pre-Build Forms to get started easily ==
 * **Contact Form** - With WPPayForm you can easily build a contact form in your site without any payment related fields. It will show the contact information beautifully on the Wordpress Backend.
-* **Donation Form** - We have build a donation form for you and with one click you can create a donation form easily and start accepting donation for your organisation.
+* **Donation Form** - We have build a donation form for you and with one click you can create a donation form easily and start accepting donation for your organization.
 * **Event Registration Form with Payment** - Planning to start your next Event? Then you can use this form template where you can take basic register information and accept payment for the event. This is very easy to create an Event Registration Form.
 * **Many More Forms** - We have added many forms and you can build any type of form easily.
 
@@ -165,7 +165,7 @@ It's easy, convenient and most importantly, It will increase your conversion rat
 - Export Data as CSV/Excel/JSON *(Done)
 - Accept Subscription Payments *(Done)*
 - Added security fields reCaptcha *(Done)*
-- Implenting Stripe Checkout Version 3 *(Done)*
+- Implementing Stripe Checkout Version 3 *(Done)*
 - Better Recurring Payment Management *(Done)*
 - Send bulk emails to the submitters and filter by payment statuses (On development)
 
@@ -256,6 +256,44 @@ You are most welcome. You can do the following:
 
 == Changelog ==
 
+= 2.0.0 - Feb 17, 2021 =
+- Adds resend / manual email notification
+- Adds disable fields for later use
+- Adds user access control / role base access
+- Adds quick update entry status (new/read)
+- Adds terms condition field to free version
+- Adds abandoned item filter
+- Adds recurring quantity for stripe
+- Adds bulk delete option for entries
+- Adds payment field with photo
+- Adds max quantity for tabular item
+- Adds transaction-id shortcode
+- Adds shortcode for all_input_field_html_with_empty
+- Adds recurring payment for dashboard widget
+- Adds new entry count on menu
+- Fixes recurring subscription daily basis
+- Fixes stripe long-meta data issue
+- Fixes confirmation page shortcode issue
+- Fixes stripe-customer name and email issue
+- Fixes payPal recurring notification issue
+- Fixes timestamp on universal timezone issue
+- Fixes title bar typo
+- Fixes elementor popup issue
+- Fixes missing translation issue
+- Fixes payPal docs link issue
+- Fixes required login message issue
+- Fixes non paid item on receipt
+- Fixes shortcode on url issue
+- Fixes multi-site deprecated hook issue
+- Fixes email empty fields issue
+- Fixes payment success action hook issue
+- Fixes created and entry time mismatch
+- Fixes missing placeholder for confirm email
+- Fixes file upload issue
+- Fixes recurring payment currency icon issue
+- Fixes missing stripe billing info on multiple payment
+
+
 = 1.9.91 - May 02, 2020 =
 - Stripe Payment Issues has been resolved
 - CSV export issue fixed
@@ -282,7 +320,7 @@ You are most welcome. You can do the following:
 - Better asset management
 - Date Field bug fix
 - Internet explorer error fix
-- PHP improvemt
+- PHP improvement
 
 = 1.9.0 - September 13, 2019 =
 - SCA integration
@@ -291,7 +329,7 @@ You are most welcome. You can do the following:
 - Frontend Notification Fix
 - Frontend Validation
 - Fully re-write the frontend JS. It's more faster now
-- Design improvment
+- Design improvement
 
 = 1.2.6 - August 08, 2019 =
 - Fix Stripe webhook
@@ -301,7 +339,7 @@ You are most welcome. You can do the following:
 
 = 1.2.5 - July 18, 2019 =
 - Added Google reCaptcha version 2 and 3
-- Fix Asterics sign
+- Fix Asterisk sign
 - Fix function undefined error
 - Fix issues on various types.
 
@@ -312,7 +350,7 @@ You are most welcome. You can do the following:
 - Added source vue files
 
 = 1.2.0 - June 19, 2019 =
-- Fix Zero Decimal Currecncy for other elements
+- Fix Zero Decimal Currency for other elements
 - Added Confirm email field
 - Performance Improvement
 - Added more developer hooks
@@ -320,16 +358,16 @@ You are most welcome. You can do the following:
 - Added Meta Tables
 
 = 1.1.6 - June 02, 2019 =
-- Fix Zero Decimal Currecncy charges
+- Fix Zero Decimal Currency charges
 - Added Dashboard Widget
-- Impromvemt of Editor
+- Improvement of Editor
 
 = 1.1.5 - March 21, 2019 =
 - Added Reporting screen
 - New Date Time picker
 - HTML field bug fix
 - added new hooks for developers
-- Stripe Payment Method initilization fix
+- Stripe Payment Method initialization fix
 - Overall improvements
 - Added new form fields
 - estimated human hours for this release: 60 hours & Coffees
