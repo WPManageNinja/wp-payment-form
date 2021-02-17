@@ -205,7 +205,9 @@ if (!defined('WPPAYFORM_VERSION')) {
     add_action('plugins_loaded', function () {
         // Let's check again if Pro version is available or not
         if (defined('WPPAYFORM_PRO_INSTALLED')) {
-            deactivate_plugins(plugin_basename(__FILE__));
+            if (function_exists("deactivate_plugins")) {
+                deactivate_plugins(plugin_basename(__FILE__));
+            }
         } else {
             (new WPPayForm())->boot();
         }
