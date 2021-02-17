@@ -1,53 +1,120 @@
 <template>
-    <div>
-        <el-row :gutter="20">
-            <el-col :xs="24" :md="12">
-                <div class="wpf_support_block">
-                    <div class="support_block_header">
-                        <h3>Documentation and User Guide</h3>
-                    </div>
-                    <div class="support_block_body">
-                        <ul class="support_block_lists">
-                            <li v-for="list in docs">
-                                <h4>{{ list.title }}</h4>
-                                <ul>
-                                    <li v-for="doc in list.docs">
-                                        <a target="_blank" rel="noopener" :href="doc.url">
-                                            {{ doc.title }}
-                                        </a>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                    </div>
-                </div>
-            </el-col>
-            <el-col :xs="24" :md="12">
-                <div v-if="!has_pro" class="wpf_support_block">
-                    <div class="support_block_header">
-                        <h3>WPPayForm Pro Features</h3>
-                    </div>
-                    <div class="support_block_body">
-                        <p>Upgrade to WPPayForm Pro and get more information about your submission, Plus you will get the following features</p>
-                        <ul class="wpf_no_style">
-                            <li><i class="el-icon-circle-check"></i> Accept Subscription/Recurring Payments</li>
-                            <li><i class="el-icon-circle-check"></i> Accept Payment via PayPal</li>
-                            <li><i class="el-icon-circle-check"></i> Collect Tax with Payment Items</li>
-                            <li><i class="el-icon-circle-check"></i> Tabular Product Order Field</li>
-                            <li><i class="el-icon-circle-check"></i> Get Email Notification on Form Submission</li>
-                            <li><i class="el-icon-circle-check"></i> Send Customized Email to form submitter</li>
-                            <li><i class="el-icon-circle-check"></i> Poweful Email Notification System</li>
-                            <li><i class="el-icon-circle-check"></i> File Upload Field</li>
-                            <li><i class="el-icon-circle-check"></i> Export and Print Your Data (Excel/CSV/JSON)</li>
-                            <li><i class="el-icon-circle-check"></i> Form Scheduling and Subsmission Restriction Module</li>
-                            <li><i class="el-icon-circle-check"></i> Get Powerful reporting features</li>
-                        </ul>
-                        <a target="_blank" href="https://wpmanageninja.com/wppayform-pro-wordpress-payments-form-builder/?utm_source=upgrade&amp;utm_medium=url&amp;utm_campaign=wppayform_upgrade" class="el-button payform_action el-button--danger el-button--mini">
-                            Upgrade To Pro
-                        </a>
-                    </div>
-                </div>
-                <div class="wpf_support_block">
+	<div>
+		<el-row>
+			<el-col v-for="(item, i) in items" :key="i" :xs="24" :md="8">
+				<div class="wpf_support_block_with_img">
+					<img :src="assetsUrl(item.img)" alt="" />
+					<div class="support_block_header">
+						<h3>{{ $t(item.title) }}</h3>
+					</div>
+					<div class="support_block_body">
+						<p>
+							{{ $t(item.des) }}
+						</p>
+						<a
+							target="_blank"
+							class="el-button el-button--mini is-plain"
+							:href="item.url"
+							type="info"
+							>{{ item.btn }}</a
+						>
+					</div>
+				</div>
+			</el-col>
+		</el-row>
+		<el-row :gutter="20">
+			<el-col :xs="24" :md="12">
+				<div class="wpf_support_block">
+					<div class="support_block_header">
+						<h3>Documentation and User Guide</h3>
+					</div>
+					<div class="support_block_body">
+						<ul class="support_block_lists">
+							<li v-for="(list,i) in docs" :key="i">
+								<h4>{{ list.title }}</h4>
+								<ul>
+									<li v-for="doc in list.docs">
+										<a
+											target="_blank"
+											rel="noopener"
+											:href="doc.url"
+										>
+											{{ doc.title }}
+										</a>
+									</li>
+								</ul>
+							</li>
+						</ul>
+					</div>
+				</div>
+			</el-col>
+			<el-col :xs="24" :md="12">
+				<div v-if="!has_pro" class="wpf_support_block">
+					<div class="support_block_header">
+						<h3>WPPayForm Pro Features</h3>
+					</div>
+					<div class="support_block_body">
+						<p>
+							Upgrade to WPPayForm Pro and get more information
+							about your submission, Plus you will get the
+							following features
+						</p>
+						<ul class="wpf_no_style">
+							<li>
+								<i class="el-icon-circle-check"></i> Accept
+								Subscription/Recurring Payments
+							</li>
+							<li>
+								<i class="el-icon-circle-check"></i> Accept
+								Payment via PayPal
+							</li>
+							<li>
+								<i class="el-icon-circle-check"></i> Collect Tax
+								with Payment Items
+							</li>
+							<li>
+								<i class="el-icon-circle-check"></i> Tabular
+								Product Order Field
+							</li>
+							<li>
+								<i class="el-icon-circle-check"></i> Get Email
+								Notification on Form Submission
+							</li>
+							<li>
+								<i class="el-icon-circle-check"></i> Send
+								Customized Email to form submitter
+							</li>
+							<li>
+								<i class="el-icon-circle-check"></i> Poweful
+								Email Notification System
+							</li>
+							<li>
+								<i class="el-icon-circle-check"></i> File Upload
+								Field
+							</li>
+							<li>
+								<i class="el-icon-circle-check"></i> Export and
+								Print Your Data (Excel/CSV/JSON)
+							</li>
+							<li>
+								<i class="el-icon-circle-check"></i> Form
+								Scheduling and Subsmission Restriction Module
+							</li>
+							<li>
+								<i class="el-icon-circle-check"></i> Get
+								Powerful reporting features
+							</li>
+						</ul>
+						<a
+							target="_blank"
+							href="https://wpmanageninja.com/wppayform-pro-wordpress-payments-form-builder/?utm_source=upgrade&amp;utm_medium=url&amp;utm_campaign=wppayform_upgrade"
+							class="el-button payform_action el-button--danger el-button--mini"
+						>
+							Upgrade To Pro
+						</a>
+					</div>
+				</div>
+				<div class="wpf_support_block">
                     <div class="support_block_header">
                         <h3>Feedback and Support us</h3>
                     </div>
@@ -88,74 +155,132 @@
                         </ul>
                     </div>
                 </div>
-            </el-col>
-        </el-row>
-    </div>
+			</el-col>
+		</el-row>
+	</div>
 </template>
 
 <script type="text/babel">
-    export default {
-        name: 'support_documentation',
-        data() {
-            return {
-                docs: {
-                    getting_started: {
-                        title: 'Getting Started with WPPayForm',
-                        docs: [
-                            {
-                                title: 'Install and Activate - WPPayForm',
-                                url: 'https://wpmanageninja.com/docs/wppayform/getting-started-with-wppayform/install-and-activate-wppayform/'
-                            },
-                            {
-                                title: 'Configure Payment Methods and Currency',
-                                url: 'https://wpmanageninja.com/docs/wppayform/getting-started-with-wppayform/configure-payment-methods-and-currency/'
-                            }
-                        ]
-                    },
-                    form_configaration: {
-                        title: 'Form Configuration',
-                        docs: [
-                            {
-                                'title': 'Create your first Payment Form under a minute',
-                                'url' : 'https://wpmanageninja.com/docs/wppayform/form-configuration-wppayform/create-your-first-payment-form-under-a-minute-and-accept-payments/'
-                            },
-                            {
-                                title: 'Available input fields',
-                                url: 'https://wpmanageninja.com/docs/wppayform/form-configuration-wppayform/form-input-fields-wppayform/'
-                            },
-                            {
-                                title: 'Form Confirmation Settings',
-                                url: 'https://wpmanageninja.com/docs/wppayform/form-configuration-wppayform/form-confirmation-settings-wppayform/'
-                            },
-                            {
-                                title: 'Custom Currency Settings',
-                                url: 'https://wpmanageninja.com/docs/wppayform/form-configuration-wppayform/custom-currency-settings-wppayform/'
-                            },
-                            {
-                                title: 'Form Design Settings',
-                                url: 'https://wpmanageninja.com/docs/wppayform/form-configuration-wppayform/form-design-settings-in-wppayform/'
-                            },
-                            {
-                                title: 'Form Scheduling and Restriction Settings',
-                                url: 'https://wpmanageninja.com/docs/wppayform/form-configuration-wppayform/form-scheduling-and-restriction-settings-in-wppayform/'
-                            }
-                        ]
-                    },
-                    form_entries: {
-                        title: 'Managing Form Entries',
-                        docs: [
-                            {
-                                title: 'View and Manage all Form Entries',
-                                url: 'https://wpmanageninja.com/docs/wppayform/managing-form-entries-in-wppayform/view-and-manage-all-form-entries-in-wppayform/'
-                            },
-                            {
-                                title: 'View Single Submission Data and Managing Payments',
-                                url: 'https://wpmanageninja.com/docs/wppayform/managing-form-entries-in-wppayform/view-single-submission-data-and-managing-payments-in-wppayform/'
-                            }
-                        ]
-                    }
-                }
-            }
-        }
-    }
+	export default {
+		name: 'support_documentation',
+		data() {
+			return {
+				docs: {
+					getting_started: {
+						title: 'Getting Started with WPPayForm',
+						docs: [
+							{
+								title: 'Install and Activate - WPPayForm',
+								url:
+									'https://wpmanageninja.com/docs/wppayform/getting-started-with-wppayform/install-and-activate-wppayform/'
+							},
+							{
+								title: 'Configure Payment Methods and Currency',
+								url:
+									'https://wpmanageninja.com/docs/wppayform/getting-started-with-wppayform/configure-payment-methods-and-currency/'
+							}
+						]
+					},
+					form_configaration: {
+						title: 'Form Configuration',
+						docs: [
+							{
+								title:
+									'Create your first Payment Form under a minute',
+								url:
+									'https://wpmanageninja.com/docs/wppayform/form-configuration-wppayform/create-your-first-payment-form-under-a-minute-and-accept-payments/'
+							},
+							{
+								title: 'Available input fields',
+								url:
+									'https://wpmanageninja.com/docs/wppayform/form-configuration-wppayform/form-input-fields-wppayform/'
+							},
+							{
+								title: 'Form Confirmation Settings',
+								url:
+									'https://wpmanageninja.com/docs/wppayform/form-configuration-wppayform/form-confirmation-settings-wppayform/'
+							},
+							{
+								title: 'Custom Currency Settings',
+								url:
+									'https://wpmanageninja.com/docs/wppayform/form-configuration-wppayform/custom-currency-settings-wppayform/'
+							},
+							{
+								title: 'Form Design Settings',
+								url:
+									'https://wpmanageninja.com/docs/wppayform/form-configuration-wppayform/form-design-settings-in-wppayform/'
+							},
+							{
+								title:
+									'Form Scheduling and Restriction Settings',
+								url:
+									'https://wpmanageninja.com/docs/wppayform/form-configuration-wppayform/form-scheduling-and-restriction-settings-in-wppayform/'
+							}
+						]
+					},
+					form_entries: {
+						title: 'Managing Form Entries',
+						docs: [
+							{
+								title: 'View and Manage all Form Entries',
+								url:
+									'https://wpmanageninja.com/docs/wppayform/managing-form-entries-in-wppayform/view-and-manage-all-form-entries-in-wppayform/'
+							},
+							{
+								title:
+									'View Single Submission Data and Managing Payments',
+								url:
+									'https://wpmanageninja.com/docs/wppayform/managing-form-entries-in-wppayform/view-single-submission-data-and-managing-payments-in-wppayform/'
+							}
+						]
+					}
+				},
+				items: {
+					support1: {
+						title: 'Need And Expert Support?',
+						des:
+							'Our EXPERTS would like to assist you for your query and any customization.',
+						url: 'https://wpmanageninja.com/support-tickets/',
+						img: 'images/supports/support.png',
+						btn: 'Contact Support'
+					},
+					support2: {
+						title: 'Love this Plugin?',
+						des:
+							'Please write a review in wp.org plugin repository. We appreciate it!',
+						url: 'https://wordpress.org/plugins/wp-payment-form/',
+						img: 'images/supports/like.png',
+						btn: 'Write a Review'
+					},
+					support3: {
+						title: 'Found a Bug?',
+						des:
+							'Please report us and we promise we will fix that as soon as humanly possible',
+						url: 'https://wpmanageninja.com/support-tickets/',
+						img: 'images/supports/bug.png',
+						btn: 'Let us know'
+					}
+				}
+			};
+		},
+		methods: {
+			assetsUrl(path) {
+				return window.wpPayFormsAdmin.assets_url + path;
+			}
+		}
+	};
 </script>
+<style lang="scss" scoped>
+	.wpf_tab_title {
+		font-size: 17px;
+		color: #6e6e6e;
+		margin: 20px;
+	}
+	.wpf_support_block_with_img {
+		padding: 12px;
+		background: white;
+		text-align: center;
+		margin: 12px;
+		min-height: 200px;
+	}
+</style>
