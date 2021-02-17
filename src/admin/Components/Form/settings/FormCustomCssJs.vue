@@ -62,8 +62,8 @@
 </template>
 
 <script type="text/babel">
-    import AceEditorCss from '../../common/_ace_editor_css';
-    import AceEditorJs from '../../common/_ace_editor_js';
+    import AceEditorCss from '../../Common/_ace_editor_css';
+    import AceEditorJs from '../../Common/_ace_editor_js';
 
     export default {
         name: 'custom_css_js',

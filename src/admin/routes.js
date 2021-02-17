@@ -1,5 +1,5 @@
 import SupportAndDocumentation from './Components/SupportAndDocumentation';
-import Discounts from './Components/settings/Discounts/Discounts';
+// import Discounts from './Components/Settings/Discounts/Discounts';
 import GlobalView from './Components/Global/index';
 import AllForms from './Components/Forms/AllForms';
 
