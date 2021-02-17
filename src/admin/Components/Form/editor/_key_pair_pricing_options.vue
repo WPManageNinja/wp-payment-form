@@ -45,7 +45,7 @@
 <script type="text/babel">
     import draggable from 'vuedraggable'
     import PhotoWidget from './_photo_widget';
-    
+
 
     export default {
         name: 'key_pair_options',
@@ -75,6 +75,7 @@
                     value: ''
                 });
             }
+
         },
         mounted() {
             if (!this.value[0].photo && this.enableImage =='yes'){
@@ -84,6 +85,7 @@
             if (this.value) {
                 this.item = JSON.parse(JSON.stringify(this.value));
             }
+
         }
     }
 </script>

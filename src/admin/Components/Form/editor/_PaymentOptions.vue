@@ -9,7 +9,7 @@
         <template v-if="pricing_details.one_time_type == 'single'">
             <div class="payment_actions" style="margin-bottom:30px; margin-left:30px;">
                 <div class="imageUpload" v-if="enableImage == 'yes'">
-                    <div v-for="(item,index) in pricing_details.image_url">
+                    <div v-for="(item,index) in pricing_details.image_url" :key="index">
                         <photo-widget :product="item" />
                     </div>
                 </div>
@@ -20,7 +20,7 @@
                     size="small"
                     v-model="pricing_details.payment_amount"
                     :min="0"></el-input-number>
-                   
+
             </el-form-item>
             <el-form-item label="Show Item title and Price">
                 <el-checkbox
@@ -73,11 +73,11 @@
 .imageUpload{
     padding: 10px;
     width: 100px;
-    height: 80px; 
-    margin-top: 20px; 
+    height: 80px;
+    margin-top: 20px;
     margin-bottom: 20px;
-    border-radius: 5px; 
-    border: 2px solid; 
+    border-radius: 5px;
+    border: 2px solid;
     border-color: #469EFF;
     margin-left:40px;
     cursor: pointer;
