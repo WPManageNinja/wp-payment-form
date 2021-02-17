@@ -16,7 +16,7 @@
                 :list="item"
                 :element="'tbody'"
             >
-                <tr v-for="(filter, index) in item">
+                <tr v-for="(filter, index) in item" :key="index">
                     <td>
                         <span style="margin-top: 10px" class="dashicons dashicons-editor-justify handle"></span>
                     </td>
@@ -77,6 +77,10 @@
             }
         },
         mounted() {
+            if (!this.value[0].photo && this.enableImage =='yes'){
+                return
+            }
+
             if (this.value) {
                 this.item = JSON.parse(JSON.stringify(this.value));
             }

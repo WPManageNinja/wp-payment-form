@@ -5,7 +5,6 @@
             <el-button  type="text">+ Photo</el-button>
         </div>
     </div>
-
 </template>
 
 <script type="text/babel">
@@ -51,7 +50,7 @@
                 return finalUrl || maybeUrl;
             },
         },
-        mounted() {
+         mounted() {
             if (!this.product.photo || typeof this.product.photo != 'object') {
                 this.$set(this.product, 'photo', {
                     'alt_text': '',
