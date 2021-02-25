@@ -15,11 +15,12 @@ window.recaptchInstances = {};
                 let form = $(this);
                 let formInstance = form.attr('wpf_form_instance');
                 let formSettings = window['wp_payform_' + formInstance];
-
+                let formId = form.attr('data-wpf_form_id');
                 let formHandler = new PayFormHandler(form, formSettings);
                 formHandler.initForm();
                 body.trigger('wpPayFormProcessFormElements', [form, formSettings]);
-                body.trigger('wp_payform_inited_'+formInstance, [form, formSettings]);
+                body.trigger('wp_payform_inited_'+ formInstance, [form, formSettings]);
+                body.trigger('wp_payform_inited_'+ formId, [form, formSettings]);
             });
 
             this.initDatePiker();

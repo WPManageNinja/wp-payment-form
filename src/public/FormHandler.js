@@ -81,6 +81,10 @@ class PayFormHandler {
                                 this[response.data.call_next_method](response.data);
                                 return;
                             }
+                            this.form.trigger('wpf_submission_success', {
+                                form: this.form,
+                                config: this.config,
+                            });
                             this.handlePaymentSuccess(response.data);
                         })
                         .fail(error => {
