@@ -68,7 +68,9 @@ function wpfValidateNonce($key = 'wpf_admin_nonce')
 {
     $nonce = \WPPayForm\Classes\ArrayHelper::get($_REQUEST, $key);
 
-    if (!wp_verify_nonce($nonce, $key)) {
+    $shouldVerify = apply_filters('wppayform_nonce_verify', true);
+
+    if ($shouldVerify && !wp_verify_nonce($nonce, $key)) {
         $errors = apply_filters('wppayform_nonce_error', [
             'error' => [
                 __('Nonce verification failed, please try again.', 'wppayform')
