@@ -1,6 +1,6 @@
 <?php
 
-if(!function_exists('wpFluent')) {
+if (!function_exists('wpFluent')) {
     include WPPAYFORM_DIR . 'includes/libs/wp-fluent/wp-fluent.php';
 }
 
@@ -15,13 +15,13 @@ function wpPayFormDB()
 
 function wpPayFormFormatMoney($amountInCents, $formId = false)
 {
-    if(!$formId) {
+    if (!$formId) {
         $currencySettings = \WPPayForm\Classes\GeneralSettings::getGlobalCurrencySettings();
     } else {
         $currencySettings = \WPPayForm\Classes\Models\Forms::getCurrencySettings($formId);
     }
-    if(empty($currencySettings['currency_sign'])) {
-        $currencySettings['currency_sign'] = \WPPayForm\Classes\GeneralSettings::getCurrencySymbol( $currencySettings['currency']);
+    if (empty($currencySettings['currency_sign'])) {
+        $currencySettings['currency_sign'] = \WPPayForm\Classes\GeneralSettings::getCurrencySymbol($currencySettings['currency']);
     }
     return wpPayFormFormattedMoney($amountInCents, $currencySettings);
 }
@@ -62,4 +62,19 @@ function wpPayFormConverToCents($amount)
     }
     $amount = floatval($amount);
     return round($amount * 100, 0);
+}
+
+function wpfValidateNonce($key = 'wpf_admin_nonce')
+{
+    $nonce = \WPPayForm\Classes\ArrayHelper::get($_REQUEST, $key);
+
+    if (!wp_verify_nonce($nonce, $key)) {
+        $errors = apply_filters('wppayform_nonce_error', [
+            'error' => [
+                __('Nonce verification failed, please try again.', 'wppayform')
+            ]
+        ]);
+
+        wp_send_json($errors['error'], 422);
+    }
 }

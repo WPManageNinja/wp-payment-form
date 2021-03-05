@@ -98,7 +98,8 @@
                 let query = jQuery.param({
                     action: 'wppayform_global_tools',
                     route: 'export_form',
-                    form_id: this.export_id
+                    form_id: this.export_id,
+                    wpf_admin_nonce: window.wpPayFormsAdmin.wpf_admin_nonce
                 });
                 window.location.href = window.wpPayFormsAdmin.ajaxurl + '?' + query;
                 this.$notify.success('Exporting form');

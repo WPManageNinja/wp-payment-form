@@ -18,11 +18,11 @@ class DemoForms
 
     public function registerEndpoints()
     {
-        add_action('wp_ajax_wppayform_demo_forms', array($this, 'handeEndPoint'));
+        add_action('wp_ajax_wppayform_demo_forms', array($this, 'handleEndPoint'));
         add_action('wppayform/after_create_form', array($this, 'insertTemplateForm'), 10, 3);
     }
 
-    public function handeEndPoint()
+    public function handleEndPoint()
     {
         $route = sanitize_text_field($_REQUEST['route']);
 

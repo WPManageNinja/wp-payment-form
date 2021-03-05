@@ -108,7 +108,8 @@
                     doc_type: doc_type,
                     search_string: this.search_string,
                     form_id: parseInt(this.form_id),
-                    payment_status: this.selected_payment_status
+                    payment_status: this.selected_payment_status,
+                    wpf_admin_nonce: window.wpPayFormsAdmin.wpf_admin_nonce
                 });
 
                 window.location.href = window.wpPayFormsAdmin.ajaxurl + '?' + query;

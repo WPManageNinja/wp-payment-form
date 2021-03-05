@@ -19,6 +19,7 @@ class GlobalSettingsHandler
 
     public function handleEndpoints()
     {
+        wpfValidateNonce('wpf_admin_nonce');
         $routes = array(
             'get_global_currency_settings'    => 'getGlobalCurrencySettings',
             'update_global_currency_settings' => 'updateGlobalCurrencySettings',

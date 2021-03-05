@@ -17,13 +17,14 @@ class AdminAjaxHandler
 {
     public function registerEndpoints()
     {
-        add_action('wp_ajax_wppayform_forms_admin_ajax', array($this, 'handeEndPoint'));
+        add_action('wp_ajax_wppayform_forms_admin_ajax', array($this, 'handleEndPoint'));
     }
 
-    public function handeEndPoint()
+    public function handleEndPoint()
     {
-        $route = sanitize_text_field($_REQUEST['route']);
+        wpfValidateNonce('wpf_admin_nonce');
 
+        $route = sanitize_text_field($_REQUEST['route']);
         $validRoutes = array(
             'get_forms'                  => 'getForms',
             'create_form'                => 'createForm',
@@ -68,7 +69,6 @@ class AdminAjaxHandler
             $args['s'] = $searchString;
         }
         $forms = Forms::getForms($args, $with = array('entries_count'));
-
         wp_send_json_success($forms);
     }
 
@@ -97,7 +97,7 @@ class AdminAjaxHandler
 
         if (is_wp_error($formId)) {
             wp_send_json_error(array(
-                'message' => __('Something is wrong when createding the form. Please try again', 'wppayform')
+                'message' => __('Something is wrong when creating the form. Please try again', 'wppayform')
             ), 423);
             return;
         }
@@ -214,7 +214,7 @@ class AdminAjaxHandler
             wp_send_json_error(array(
                 'message' => __('Validation Error, Please try again', 'wppayform'),
                 'errors'  => array(
-                    'general' => __('Please add atleast one input element', 'wppayform')
+                    'general' => __('Please add at least one input element', 'wppayform')
                 )
             ), 423);
         }

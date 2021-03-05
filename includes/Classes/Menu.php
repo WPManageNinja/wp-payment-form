@@ -154,6 +154,7 @@ class Menu
                 'i18n' => array(
                     'All Payment Forms' => __('All Payment Forms', 'wppayform')
                 ),
+                'wpf_admin_nonce' => wp_create_nonce('wpf_admin_nonce'),
                 'paymentStatuses' => GeneralSettings::getPaymentStatuses(),
                 'entryStatuses' => GeneralSettings::getEntryStatuses(),
                 'image_upload_url' => admin_url('admin-ajax.php?action=wpf_global_settings_handler&route=wpf_upload_image'),

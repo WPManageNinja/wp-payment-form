@@ -18,10 +18,10 @@ class GlobalTools
 {
     public function registerEndpoints()
     {
-        add_action('wp_ajax_wppayform_global_tools', array($this, 'handeEndPoint'));
+        add_action('wp_ajax_wppayform_global_tools', array($this, 'handleEndPoint'));
     }
 
-    public function handeEndPoint()
+    public function handleEndPoint()
     {
         $route = sanitize_text_field($_REQUEST['route']);
 
@@ -40,6 +40,8 @@ class GlobalTools
 
     public function getForms()
     {
+        wpfValidateNonce('wpf_admin_nonce');
+
         $forms = wpPayFormDB()->table('posts')
             ->select(['ID', 'post_title'])
             ->where('post_type', 'wp_payform')
@@ -53,6 +55,8 @@ class GlobalTools
 
     public function exportFormJson()
     {
+        wpfValidateNonce('wpf_admin_nonce');
+
         $formId = absint($_REQUEST['form_id']);
         $form = $this->getForm($formId);
 

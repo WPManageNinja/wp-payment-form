@@ -25,6 +25,8 @@ class SubmissionView
 
     public function routeAjaxMaps()
     {
+        wpfValidateNonce('wpf_admin_nonce');
+
         $routes = array(
             'get_submissions'          => 'getSubmissions',
             'get_submission'           => 'getSubmission',

@@ -213,6 +213,8 @@ class Stripe
 
     public function savePaymentSettings()
     {
+        wpfValidateNonce('wpf_admin_nonce');
+
         AccessControl::checkAndPresponseError('set_payment_settings', 'global');
         $settings = $_REQUEST['settings'];
         // Validate the data first
@@ -260,6 +262,8 @@ class Stripe
 
     public function getPaymentSettings()
     {
+        wpfValidateNonce('wpf_admin_nonce');
+
         AccessControl::checkAndPresponseError('get_payment_settings', 'global');
         wp_send_json_success(array(
             'settings'       => $this->getStripeSettings(),
