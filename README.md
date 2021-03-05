@@ -2,8 +2,8 @@
 Contributors: techjewel, wpmanageninja
 Tags: donations, payments, stripe payments, stripe checkout, PayPal
 Requires at least: 4.5
-Tested up to: 5.6.1
-Stable tag: 2.0.0
+Tested up to: 5.6.2
+Stable tag: 2.0.1
 Requires PHP: 5.4
 License: GPLv2 or later
 
@@ -255,6 +255,10 @@ You are most welcome. You can do the following:
 12. Submission Details (2nd Part)
 
 == Changelog ==
+
+= 2.0.1 - Mar 05, 2021 =
+- Adds nonce security for ajax
+- Fixes resend notification issue
 
 = 2.0.0 - Feb 17, 2021 =
 - Adds resend / manual email notification
