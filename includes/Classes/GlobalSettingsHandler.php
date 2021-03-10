@@ -19,7 +19,12 @@ class GlobalSettingsHandler
 
     public function handleEndpoints()
     {
-        wpfValidateNonce('wpf_admin_nonce');
+        $route = sanitize_text_field($_REQUEST['route']);
+
+        if ($route !== 'wpf_upload_image') {
+            wpfValidateNonce('wpf_admin_nonce');
+        }
+
         $routes = array(
             'get_global_currency_settings'    => 'getGlobalCurrencySettings',
             'update_global_currency_settings' => 'updateGlobalCurrencySettings',
@@ -29,7 +34,7 @@ class GlobalSettingsHandler
             'get_access_roles'                => 'getAccessRoles',
             'set_access_roles'                => 'setAccessRoles'
         );
-        $route = sanitize_text_field($_REQUEST['route']);
+
         if (isset($routes[$route])) {
             AccessControl::checkAndPresponseError($route, 'global');
             do_action('wppayform/doing_ajax_global_' . $route);
