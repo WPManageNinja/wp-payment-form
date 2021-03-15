@@ -325,7 +325,7 @@ class PaymentItemComponent extends BaseComponent
                 'data-has_multiple_input' => 'yes'
             );
             ?>
-        <table>
+
             <div <?php echo $this->builtAttributes($itemParentAtrributes); ?>>
                 <?php foreach ($prices as $index => $option): ?>
                     <?php
