@@ -257,6 +257,7 @@ You are most welcome. You can do the following:
 == Changelog ==
 = 2.0.2 - Mar 15, 2021 =
 - Fixes footer merged issue
+- Fixes checkout logo upload issue
 
 = 2.0.1 - Mar 05, 2021 =
 - Adds nonce security for ajax
