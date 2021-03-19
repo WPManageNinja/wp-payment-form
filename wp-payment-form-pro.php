@@ -78,8 +78,8 @@ if (!defined('WPPAYFORM_VERSION_LITE')) {
             $ajaxHandler->registerEndpoints();
 
             // Top Level discounts Handlers
-            // $discounts = new \WPPayForm\Pro\Classes\Discounts\Discounts();
-            // $discounts->registerEndpoints();
+            $discounts = new \WPPayForm\Pro\Classes\Coupons\Coupon();
+            $discounts->registerEndpoints();
 
             // Submission Ajax Handler
             $submissionHandler = new \WPPayForm\Classes\SubmissionView();
@@ -168,6 +168,11 @@ if (!defined('WPPAYFORM_VERSION_LITE')) {
             $submissionHandler = new \WPPayForm\Classes\SubmissionHandler();
             add_action('wp_ajax_wpf_submit_form', array($submissionHandler, 'handleSubmission'));
             add_action('wp_ajax_nopriv_wpf_submit_form', array($submissionHandler, 'handleSubmission'));
+
+            // coupon actions
+            $CouponController = new \WPPayForm\Pro\Classes\Coupons\CouponController();
+            add_action('wp_ajax_wpf_coupon_apply', array($CouponController, 'validateCoupon'));
+            add_action('wp_ajax_nopriv_wpf_coupon_apply', array($CouponController, 'validateCoupon'));
 
             // Stripe Paument Method Init Here
             $stripe = new \WPPayForm\Classes\PaymentMethods\Stripe\Stripe();

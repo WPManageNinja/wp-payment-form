@@ -55,27 +55,27 @@
                     {
                         route: 'general_settings',
                         title: 'General Settings',
-                        icon: 'dashicons dashicons-translation'
-                    },
-                    {
-                        route: 'stripe_settings',
-                        title: 'Stripe Settings',
-                        icon: 'el-icon-bank-card'
-                    },
-                    {
-                        route: 'paypal_settings',
-                        title: 'Paypal Settings',
-                        icon: 'el-icon-money'
+                        icon:  'dashicons dashicons-translation'
                     },
                     // {
-                    //     route: 'discounts',
-                    //     title: 'Discounts',
-                    //     icon: 'el-icon-discount'
+                    //     route: 'stripe_settings',
+                    //     title: 'Stripe Settings',
+                    //     icon: 'el-icon-bank-card'
                     // },
+                    // {
+                    //     route: 'paypal_settings',
+                    //     title: 'Paypal Settings',
+                    //     icon:  'el-icon-money'
+                    // },
+                    {
+                        route: 'payments',
+                        title: 'Payments',
+                        icon:  'el-icon-bank-card'
+                    },
                     {
                         route: 'tools',
                         title: 'Tools',
-                        icon: 'el-icon-s-cooperation'
+                        icon:  'el-icon-s-cooperation'
                     },
                     {
                         route: 'recaptcha',

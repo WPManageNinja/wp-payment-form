@@ -24,6 +24,7 @@ import FormDesignSettings from './Components/Form/settings/FormDesignSettings'
 import Licensing from './Components/Settings/License'
 import GlobalTools from './Components/Settings/GlobalTools'
 import ReCaptchaSettings from './Components/Settings/ReCaptchaSettings'
+import Payments from './Components/Settings/Payments.vue'
 
 
 const globalSettingsViewChilderRoutes = window.WPPayForms.applyFilters('wpf_global_settings_childern_routes', [
@@ -57,11 +58,11 @@ const globalSettingsViewChilderRoutes = window.WPPayForms.applyFilters('wpf_glob
         path: 'licensing',
         component: Licensing
     },
-    // {
-    //     name: 'discounts',
-    //     path: 'discounts',
-    //     component: Discounts
-    // }
+    {
+        name: 'payments',
+        path: 'payments',
+        component: Payments
+    }
 
 ]);
 const formEditorChildrenRoutes = window.WPPayForms.applyFilters('wpf_main_children_roues', [

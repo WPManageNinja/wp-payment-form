@@ -2,9 +2,6 @@
     <div v-loading="fetching">
         <div class="all_payforms_wrapper payform_section">
             <div class="payform_section_header">
-                <h3 class="payform_section_title">
-                    {{ $t('PayPal Gateway Settings') }}
-                </h3>
                 <div v-if="has_pro" class="payform_section_actions">
                     <el-button v-loading="saving" @click="saveSettings()" class="payform_action" size="small"
                                type="primary">

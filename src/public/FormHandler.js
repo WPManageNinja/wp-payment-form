@@ -26,11 +26,9 @@ class PayFormHandler {
         this.form.find('.wpf_payment_item, .wpf_item_qty, .wpf_tabular_qty').on('change', (e) => {
             this.calculatePayments();
         });
-        this.form.find('.wpf_discount_action').on('click', (e) => {
-            this.applyDiscount();
-        });
 
         this.initPaymentMethodChange();
+        this.initDiscountCode();
 
         if (this.config.stripe_checkout_style == 'embeded_form') {
             this.paymentMethod = 'stripe';
@@ -113,17 +111,32 @@ class PayFormHandler {
                 });
     }
 
+    initDiscountCode() {
+        var couponCodes = this.form.find('.wpf_item_coupon');
+        if(!couponCodes.length) {
+            return false;
+        }
+        console.log('coupon init')
+
+        this.form.append('<input type="hidden" class="__wpf_all_applied_coupons" name="__wpf_all_applied_coupons"/>')
+        this.form.find('.wpf_coupon_action').on('click', (e) => {
+            this.applyCoupon();
+        });
+
+
+    }
 
     //discountHandler
-    applyDiscount() {
-        let code = this.form.find('.wpf_discount_field').val();
+    applyCoupon() {
+        let code = this.form.find('.wpf_coupon_field').val();
         jQuery.post(this.generalConfig.ajax_url, {
-            action: 'wpf_discount_submit',
+            action: 'wpf_coupon_apply',
             route: 'validate',
             form_id: this.formId,
-            code : code,
+            coupon : code,
             payment_total: this.form.data('payment_total'),
-            form_data: jQuery(this.form).serialize()
+            form_data: jQuery(this.form).serialize(),
+            other_coupons: this.$form.find('.__wpf_all_applied_coupons').val()
         })
             .then(response => {
                 console.log(response)
