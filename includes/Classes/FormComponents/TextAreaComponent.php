@@ -3,6 +3,8 @@
 namespace WPPayForm\Classes\FormComponents;
 
 use WPPayForm\Classes\ArrayHelper;
+use WPPayForm\Classes\Builder;
+use WPPayForm\Classes\Builder\Helper;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -10,6 +12,13 @@ if (!defined('ABSPATH')) {
 
 class TextAreaComponent extends BaseComponent
 {
+    static $formInstance = 0;
+    public static function getFormInstace($formId)
+    {
+        static::$formInstance += 1;
+        return 'wpf_form_instance_' . $formId . '_' . static::$formInstance;
+    }
+
     public function __construct()
     {
         parent::__construct('textarea', 14);
@@ -77,7 +86,8 @@ class TextAreaComponent extends BaseComponent
         }
         $controlClass = $this->elementControlClass($element);
         $inputClass = $this->elementInputClass($element);
-        $inputId = 'wpf_input_' . $form->ID . '_' . $this->elementName;
+        $formID = $this->getFormInstace($form->ID);
+        $inputId = 'wpf_input_' . $formID . '_' . $this->elementName;
 
         $attributes = array(
             'data-required' => ArrayHelper::get($fieldOptions, 'required'),
