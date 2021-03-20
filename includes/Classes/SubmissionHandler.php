@@ -259,7 +259,7 @@ class SubmissionHandler
             'confirmation'  => $confirmation
         ), 200);
     }
-    
+
     private function validate($form_data, $formattedElements, $form)
     {
         $errors = array();

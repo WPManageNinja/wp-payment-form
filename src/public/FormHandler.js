@@ -11,6 +11,7 @@ class PayFormHandler {
         this.paymentMethod = '';
         this.generalConfig = window.wp_payform_general;
         this.$formNoticeWrapper = form.parent().find('.wpf_form_notices');
+        this.appliedCoupons = {};
     }
 
     $t(stringKey) {
@@ -116,8 +117,6 @@ class PayFormHandler {
         if(!couponCodes.length) {
             return false;
         }
-        console.log('coupon init')
-
         this.form.append('<input type="hidden" class="__wpf_all_applied_coupons" name="__wpf_all_applied_coupons"/>')
         this.form.find('.wpf_coupon_action').on('click', (e) => {
             this.applyCoupon();
@@ -129,6 +128,8 @@ class PayFormHandler {
     //discountHandler
     applyCoupon() {
         let code = this.form.find('.wpf_coupon_field').val();
+        var $codeWrapper = this.form.find('.wpf_item_coupon');
+        const $input = $codeWrapper.find('input.wpf_coupon_field');
         jQuery.post(this.generalConfig.ajax_url, {
             action: 'wpf_coupon_apply',
             route: 'validate',
@@ -136,11 +137,59 @@ class PayFormHandler {
             coupon : code,
             payment_total: this.form.data('payment_total'),
             form_data: jQuery(this.form).serialize(),
-            other_coupons: this.$form.find('.__wpf_all_applied_coupons').val()
+            other_coupons: this.form.find('.__wpf_all_applied_coupons').val()
         })
             .then(response => {
                 console.log(response)
+                const coupon = response.coupon;
+                this.appliedCoupons[coupon.code] = coupon;
+                this.form.find('.__wpf_all_applied_coupons').attr('value', JSON.stringify(Object.keys(this.appliedCoupons)));
+                let couponAmount = coupon.amount + '%';
+                if(coupon.coupon_type == 'fixed') {
+                    couponAmount = this.getFormattedPrice(coupon.amount * 100);
+                }
+                let message = `${coupon.code} <span>-${couponAmount}</span>`;
+                this.recordCouponMessage($codeWrapper, code, message, 'success');
+                this.calculatePayments();
+                $input.val('');
             })
+            .fail((errors) => {
+                this.recordCouponMessage($codeWrapper, code, errors.responseJSON.message, 'error');
+            })
+            .always(() => {
+                this.calculatePayments();
+                $input.val('');
+            });
+    }
+
+    getDiscounts() {
+        return Object.values(this.appliedCoupons);
+    }
+
+    recordCouponMessage($wrapper, coupon_code, message, type) {
+        if(!$wrapper.find('.wpf_coupon_responses').length) {
+            $wrapper.append('<ul class="wpf_coupon_responses"></ul>');
+        }
+
+        const $responseDiv = $wrapper.find('.wpf_coupon_responses');
+        $responseDiv.find('.wpf_error, .wpf_resp_item_'+coupon_code).remove();
+
+        let errorHtml = jQuery('<li/>', {
+            'class': `wpf_${type} wpf_resp_item_${coupon_code}`
+        });
+
+        let cross = jQuery('<span/>', {
+            class: 'error-clear',
+            html: '&times;',
+            click: (e) => {
+                $responseDiv.find('.wpf_resp_item_'+coupon_code).remove();
+                delete this.appliedCoupons[coupon_code];
+                this.form.find('.__wpf_all_applied_coupons').attr('value', JSON.stringify(Object.keys(this.appliedCoupons)));
+                this.calculatePayments();
+            }
+        });
+
+        $responseDiv.append(errorHtml.append(cross, message));
     }
 
     // This is for mainly subscription payment
@@ -436,7 +485,6 @@ class PayFormHandler {
         let subscriptonAmountTotal = 0;
 
         elements.each(function (index, elem) {
-
             let elementType = elem.type;
             let $elem = jQuery(elem);
             let elementName = $elem.attr('name');
@@ -510,6 +558,20 @@ class PayFormHandler {
                 }
             }
         });
+
+        // DISCOUNT CALCULATION START
+        const discounts = this.getDiscounts();
+        jQuery.each(discounts, (index, discount) => {
+            let discountAmount = discount.amount;
+            if (discount.coupon_type == 'percent') {
+                discountAmount = (discount.amount / 100) * allTotalAmount;
+            } else {
+                discountAmount = (discount.amount * 100)
+            }
+            allTotalAmount -= discountAmount;
+        });
+        // DISCOUNT CALCULATION END
+
 
         let subTotal = allTotalAmount;
         let taxAmount = this.calCulateTaxAmount(itemTotalValue);

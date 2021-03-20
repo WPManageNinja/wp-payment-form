@@ -158,7 +158,6 @@
         -ms-flex-align: stretch;
         align-items: stretch;
         width: 100%;
-        max-width: 250px;
 
         .wpf_input-group-prepend {
           display: -webkit-box;
@@ -453,4 +452,29 @@ label.wpf_address_heading {
   background-size: 100% 0em, 100% 5em, 100% 1em, 100% 1em;
   background-attachment: local, local, scroll, scroll;
   border: 1px solid #d4d4d4;
+}
+
+ul.wpf_coupon_responses {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  li {
+    padding-top: 5px;
+  }
+
+  span.error-clear {
+    font-weight: bold;
+    color: #ff5050;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+
+  .wpf_error {
+    color: #f56c6c;
+    cursor: pointer;
+  }
+
+  .wpf_success {
+    color: #28a745;
+  }
 }
