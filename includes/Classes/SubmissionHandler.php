@@ -9,6 +9,8 @@ use WPPayForm\Classes\Models\SubmissionActivity;
 use WPPayForm\Classes\Models\Subscription;
 use WPPayForm\Classes\Models\Transaction;
 use WPPayForm\Classes\PaymentMethods\Stripe\Stripe;
+use WPPayForm\Pro\Classes\Coupons\CouponModel;
+use WPPayForm\Pro\Classes\Coupons\CouponController;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -23,6 +25,8 @@ class SubmissionHandler
     private $customerName = '';
     private $customerEmail = '';
     private $selectedPaymentMethod = '';
+    private $appliedCoupons;
+    private $formID = null;
 
     public function handleSubmission()
     {
@@ -30,6 +34,7 @@ class SubmissionHandler
 
         // Now Validate the form please
         $formId = absint($_REQUEST['form_id']);
+        $this->formID =  $formId;
         // Get Original Form Elements Now
 
         do_action('wppayform/form_submission_activity_start', $formId);
@@ -66,6 +71,8 @@ class SubmissionHandler
                 } else {
                     $subscriptionItems = array_merge($subscriptionItems, $subscription);
                 }
+            } elseif ($payment['type'] == 'coupon') {
+                $this->appliedCoupons = json_decode($form_data['__wpf_all_applied_coupons']);
             } else {
                 $lineItems = $this->getPaymentLine($payment, $paymentId, $quantity, $form_data);
 
@@ -191,10 +198,24 @@ class SubmissionHandler
         if ($paymentItems || $subscriptionItems) {
             // Insert Payment Items
             $itemModel = new OrderItem();
+
             foreach ($paymentItems as $payItem) {
                 $payItem['submission_id'] = $submissionId;
                 $payItem['form_id'] = $formId;
                 $itemModel->create($payItem);
+            }
+
+            $coupons = (new CouponModel())->getCouponsByCodes($this->appliedCoupons);
+
+            if (isset($this->appliedCoupons)) {
+                $validCouponItems = (new CouponModel())->getValidCoupons($coupons, $this->formID, $paymentTotal);
+                $couponItems = (new CouponController())->getTotalLine($validCouponItems, $paymentTotal);
+            }
+
+            foreach ($couponItems as $item) {
+                $payItem['submission_id'] = $submissionId;
+                $payItem['form_id'] = $formId;
+                $itemModel->create($item);
             }
 
             // insert subscription items
@@ -411,7 +432,7 @@ class SubmissionHandler
                 $payItem['item_price'] = wpPayFormConverToCents(ArrayHelper::get($priceDetailes, 'payment_amount'));
                 $payItem['line_total'] = $payItem['item_price'] * $quantity;
             }
-        } else if ($payment['type'] == 'custom_payment_input') {
+        } elseif ($payment['type'] == 'custom_payment_input') {
             $payItem['item_price'] = wpPayFormConverToCents(floatval($formData[$paymentId]));
             $payItem['line_total'] = $payItem['item_price'] * $quantity;
         } else {
