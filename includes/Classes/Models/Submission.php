@@ -104,6 +104,10 @@ class Submission extends Model
             $result->order_items = (new OrderItem())->getSingleOrderItems($submissionId);
         }
 
+        if (in_array('discount', $with)) {
+            $result->discounts = (new OrderItem())->getDiscountItems($submissionId);
+        }
+
         if (in_array('tax_items', $with)) {
             $result->tax_items = (new OrderItem())->getTaxOrderItems($submissionId);
         }

@@ -1,6 +1,6 @@
 === Stripe Payments Plugin for WordPress - WPPayForm ===
 Contributors: techjewel, wpmanageninja
-Tags: donations, payments, stripe payments, stripe checkout, PayPal
+Tags: donations, payments, stripe payments, payment form, PayPal
 Requires at least: 4.5
 Tested up to: 5.7
 Stable tag: 2.0.3

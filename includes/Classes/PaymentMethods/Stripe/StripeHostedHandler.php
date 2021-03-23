@@ -38,6 +38,7 @@ class StripeHostedHandler extends StripeHandler
      */
     public function redirectToStripe($transactionId, $submissionId, $form_data, $form, $hasSubscriptions)
     {
+        // dd($transactionId, $submissionId, $form_data, $form, $hasSubscriptions);
         $submissionModel = new Submission();
         $submission = $submissionModel->getSubmission($submissionId);
         $cancelUrl = ArrayHelper::get($submission->form_data_raw, '__wpf_current_url');
@@ -122,7 +123,6 @@ class StripeHostedHandler extends StripeHandler
             'call_next_method' => 'stripeRedirectToCheckout',
             'session_id'       => $checkoutSession->id
         ], 200);
-
     }
 
     private function getLineItems($submission)
@@ -130,6 +130,7 @@ class StripeHostedHandler extends StripeHandler
         $orderItemsModel = new OrderItem();
         $items = $orderItemsModel->getOrderItems($submission->id);
         $formattedItems = [];
+        $priceSubtotal = 0;
         foreach ($items as $item) {
             $price = $item->item_price;
             if (!$price) {
@@ -139,13 +140,39 @@ class StripeHostedHandler extends StripeHandler
                 $price = intval($price / 100);
             }
 
+            $quantity = ($item->quantity) ? $item->quantity : 1;
+
             $formattedItems[] = [
                 'amount'   => $price,
                 'currency' => $submission->currency,
                 'name'     => $item->item_name,
-                'quantity' => ($item->quantity) ? $item->quantity : 1,
+                'quantity' => $quantity,
             ];
+            $priceSubtotal += $price * intval($quantity);
         }
+
+        $discountItems = $orderItemsModel->getDiscountItems($submission->id);
+        if ($discountItems) {
+            $discountTotal = 0;
+            foreach ($discountItems as $discountItem) {
+                $discountTotal += $discountItem->line_total;
+            }
+
+            if (GeneralSettings::isZeroDecimal($submission->currency)) {
+                $discountTotal = intval($discountTotal / 100);
+            }
+
+            $newDiscountItems = [];
+
+            foreach ($formattedItems as $item) {
+                $baseAmount = $item['amount'];
+                $item['amount'] = intval($baseAmount - ($discountTotal / $priceSubtotal) * $baseAmount);
+                $newDiscountItems[] = $item;
+            }
+
+            $formattedItems = $newDiscountItems;
+        }
+
         return $formattedItems;
     }
 

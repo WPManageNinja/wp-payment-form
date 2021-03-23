@@ -72,4 +72,10 @@
     .wpf_payment_receipt h4 {
         font-size: 18px;
     }
+    .wpf_order_items_table {
+        border-collapse: collapse;
+    }
+    .wpf_order_items_table tr {
+        border: 1px solid #ccc;
+    }
 </style>

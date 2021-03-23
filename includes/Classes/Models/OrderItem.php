@@ -1,7 +1,5 @@
 <?php
-
 namespace WPPayForm\Classes\Models;
-
 
 use WPPayForm\Classes\ArrayHelper;
 
@@ -35,7 +33,7 @@ class OrderItem
         ));
 
         $insertId = wpPayFormDB()->table('wpf_order_items')->insert($insertItem);
-        if($metas = ArrayHelper::get($item, 'meta')) {
+        if ($metas = ArrayHelper::get($item, 'meta')) {
             foreach ($metas as $metaKey => $value) {
                 $this->updateMeta($insertId, $metaKey, $value);
             }
@@ -47,9 +45,10 @@ class OrderItem
     {
         $orderItems = wpPayFormDB()->table('wpf_order_items')
             ->where('submission_id', $submissionId)
+            ->where('type', '!=', 'discount')
             ->get();
         foreach ($orderItems as $orderItem) {
-            if($orderItem->type == 'tax_line') {
+            if ($orderItem->type == 'tax_line') {
                 $orderItem->quantity = $orderItem->line_total / $orderItem->item_price;
             }
         }
@@ -90,7 +89,7 @@ class OrderItem
                     ->where('option_id', $optionId)
                     ->first();
 
-        if($exists) {
+        if ($exists) {
             wpFluent()->table('wpf_meta')
                 ->where('id', $exists->id)
                     ->update([
@@ -111,7 +110,6 @@ class OrderItem
             'created_at' => current_time('mysql'),
             'updated_at' => current_time('mysql')
         ]);
-
     }
 
     public function getMetas($optionId)
@@ -125,5 +123,14 @@ class OrderItem
             $formatted[$meta->meta_key] = maybe_unserialize($meta->meta_value);
         }
         return (object) $formatted;
+    }
+
+    public function getDiscountItems($submissionId)
+    {
+        $discounts =  wpFluent()->table('wpf_order_items')
+            ->where('submission_id', intval($submissionId))
+            ->where('type', 'discount')
+            ->get();
+        return $discounts;
     }
 }

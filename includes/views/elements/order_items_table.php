@@ -2,6 +2,7 @@
 if (!$submission->order_items) {
     return '';
 }
+
 $currencySetting = \WPPayForm\Classes\GeneralSettings::getGlobalCurrencySettings($submission->form_id);
 $currencySetting['currency_sign'] = \WPPayForm\Classes\GeneralSettings::getCurrencySymbol($submission->currency);
 ?>
@@ -42,8 +43,24 @@ $currencySetting['currency_sign'] = \WPPayForm\Classes\GeneralSettings::getCurre
         <?php endforeach; ?>
     <?php endif; ?>
     <tr class="wpf_total_row">
-        <th style="text-align: right" colspan="3"><?php _e('Total', 'wppayform'); ?></th>
+        <th style="text-align: right" colspan="3"><?php _e('Sub-Total', 'wppayform'); ?></th>
         <td><?php echo wpPayFormFormattedMoney($submission->payment_total, $currencySetting); ?></td>
     </tr>
+    <?php if (isset($submission->discounts)) : ?>
+        <?php
+        $discountTotal = 0;
+        foreach ($submission->discounts as $discount) :
+            $discountTotal += intval($discount->line_total);
+            ?>
+            <tr class="wpf_discount_row">
+                <th style="text-align: right" colspan="3"><?php _e('Discounts ('. $discount->item_name . ' )', 'wppayform'); ?></th>
+                <td><?php echo '-' . wpPayFormFormattedMoney($discount->line_total, $currencySetting); ?></td>
+            </tr>
+        <?php endforeach; ?>
+    <?php endif; ?>
+        <tr class="wpf_total_payment_row">
+            <th style="text-align: right" colspan="3"><?php _e('Total', 'wppayform'); ?></th>
+            <td><?php echo  wpPayFormFormattedMoney(intval($submission->payment_total - $discountTotal), $currencySetting); ?></td>
+        </tr>
     </tfoot>
 </table>

@@ -25,7 +25,7 @@ class SubmissionHandler
     private $customerName = '';
     private $customerEmail = '';
     private $selectedPaymentMethod = '';
-    private $appliedCoupons;
+    private $appliedCoupons = array();
     private $formID = null;
 
     public function handleSubmission()
@@ -205,17 +205,18 @@ class SubmissionHandler
                 $itemModel->create($payItem);
             }
 
-            $coupons = (new CouponModel())->getCouponsByCodes($this->appliedCoupons);
-
             if (isset($this->appliedCoupons)) {
-                $validCouponItems = (new CouponModel())->getValidCoupons($coupons, $this->formID, $paymentTotal);
+                $couponModel = new CouponModel();
+                $coupons = $couponModel->getCouponsByCodes($this->appliedCoupons);
+                $validCouponItems = $couponModel->getValidCoupons($coupons, $this->formID, $paymentTotal);
                 $couponItems = (new CouponController())->getTotalLine($validCouponItems, $paymentTotal);
-            }
 
-            foreach ($couponItems as $item) {
-                $payItem['submission_id'] = $submissionId;
-                $payItem['form_id'] = $formId;
-                $itemModel->create($item);
+                foreach ($couponItems['discounts'] as $item) {
+                    $item['submission_id'] = intval($submissionId);
+                    $item['form_id'] = $formId;
+                    $itemModel->create($item);
+                }
+                $paymentTotal -= $couponItems['totalDiscounts'];
             }
 
             // insert subscription items
@@ -259,7 +260,6 @@ class SubmissionHandler
                 'created_by'    => 'PayForm BOT',
                 'content'       => 'After payment actions processed.'
             ));
-
 
             if ($paymentMethod) {
                 do_action('wppayform/form_submission_make_payment_' . $paymentMethod, $transactionId, $submissionId, $form_data, $form, $hasSubscriptions);
