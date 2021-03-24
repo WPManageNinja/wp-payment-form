@@ -350,6 +350,7 @@
                                         <li><i class="el-icon-circle-check"></i> Export and Print Your Data (Excel/CSV/JSON)</li>
                                         <li><i class="el-icon-circle-check"></i> Form Scheduling and Subsmission Restriction Module</li>
                                         <li><i class="el-icon-circle-check"></i> Get Powerful reporting features</li>
+                                        <li><i class="el-icon-circle-check"></i> Get payments with custom discounts</li>
                                     </ul>
                                     <a target="_blank" href="https://wpmanageninja.com/wppayform-pro-wordpress-payments-form-builder/?utm_source=upgrade&amp;utm_medium=url&amp;utm_campaign=wppayform_upgrade" class="el-button payform_action el-button--danger el-button--mini">
                                         Upgrade To Pro

@@ -98,11 +98,15 @@
 							</li>
 							<li>
 								<i class="el-icon-circle-check"></i> Form
-								Scheduling and Subsmission Restriction Module
+								Scheduling and Submission Restriction Module
 							</li>
 							<li>
 								<i class="el-icon-circle-check"></i> Get
 								Powerful reporting features
+							</li>
+							<li>
+								<i class="el-icon-circle-check"></i> Get
+								Get payments with custom discounts
 							</li>
 						</ul>
 						<a

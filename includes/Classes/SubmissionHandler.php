@@ -71,7 +71,7 @@ class SubmissionHandler
                 } else {
                     $subscriptionItems = array_merge($subscriptionItems, $subscription);
                 }
-            } elseif ($payment['type'] == 'coupon') {
+            } elseif ($payment['type'] == 'coupon' && isset($form_data['__wpf_all_applied_coupons'])) {
                 $this->appliedCoupons = json_decode($form_data['__wpf_all_applied_coupons']);
             } else {
                 $lineItems = $this->getPaymentLine($payment, $paymentId, $quantity, $form_data);

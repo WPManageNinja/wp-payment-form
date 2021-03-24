@@ -152,6 +152,8 @@ You can use **WPPayForm** as a contact form plugin. With the built-in form build
 - Print Single Submission
 - Tax Calculated Amount
 - Custom Email send on form/payment submission
+- Resend notification from entries
+- Get payment with discount code
 
 == Accept Recurring or Subscription payments with Stripe / PayPal (Pro) ==
 Sometimes, You need to accept subscription payments like $9.99/month. You can do that easily with WPPayForm Pro. You can setup your recurring payments details and start accepting the payments via card payments (Stripe) / PayPal. Your users don't need to create an account to make payments.
@@ -168,6 +170,9 @@ It's easy, convenient and most importantly, It will increase your conversion rat
 - Implementing Stripe Checkout Version 3 *(Done)*
 - Better Recurring Payment Management *(Done)*
 - Send bulk emails to the submitters and filter by payment statuses (On development)
+
+= Upcoming =
+- CRM integrations
 
 This plugin is a very planned project, and we have a long term development plan for this. We already invested around 400 human working hours (+coffees) on it, and we have the intention to spend much more on it. Please let us know what features you want, and we are happy to add that in our development sprint.
 

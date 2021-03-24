@@ -1,6 +1,21 @@
 <template>
     <el-container>
         <el-main>
+            <el-dialog
+                title="Field disabled"
+                :visible.sync="isVisible"
+                width="50%">
+                <div style="text-align: center;">
+                    <div>
+                        <p style="margin-bottom: 30px; font-size: 18px;">{{disabledMessage}}</p>
+                        <a  target="_blank"
+                            class="el-button el-button--danger"
+                            :href="campaignUrl">
+                            Upgrade to Pro Now
+                        </a>
+                    </div>
+                </div>
+            </el-dialog>
             <div class="edit_form_warpper">
                 <div class="all_payforms_wrapper payform_section">
                     <div class="payform_section_header">
@@ -29,7 +44,7 @@
                             <draggable
                                 :options="{handle:'.handler', animation: 0, ghostClass: 'ghost', group:'components'}"
                                 :list="builder_elements"
-                                :element="'div'" 
+                                :element="'div'"
                             >
                                 <template v-if="builder_elements.length" style="height:100%">
                                     <div v-for="element in builder_elements" :key="element.id"
@@ -110,7 +125,7 @@
             </div>
         </el-main>
         <el-aside width="250px">
-            <div v-for="(componentGroup,componentGroupIndex) in fieldGroups" class="wpf_field_group" :class="isActiveGroup(componentGroupIndex)">
+            <div v-for="(componentGroup,componentGroupIndex) in fieldGroups" :key="componentGroupIndex" class="wpf_field_group" :class="isActiveGroup(componentGroupIndex)">
                 <div @click="toggleActiveGroup(componentGroupIndex)" class="field_group_header">
                     <i :class="componentGroup.icon"></i> {{componentGroup.title}}
                     <span v-if="isActiveGroup(componentGroupIndex)" class="field_group_icon_nav"><i class="el-icon-caret-top"></i></span>
@@ -133,6 +148,7 @@
                         >
                             {{ component.editor_title }}
                         </el-button>
+
                     </draggable>
                 </div>
             </div>
@@ -172,7 +188,10 @@
                     general: false
                 },
                 disableStyle: "color:#c8ccc9;",
-                activeStyle:"none"
+                activeStyle:"none",
+                isVisible: false,
+                campaignUrl: 'https://wpmanageninja.com/downloads/wppayform-pro-wordpress-payments-form-builder/',
+                disabledMessage: 'This item is available on Pro version'
             }
         },
         computed: {
@@ -310,11 +329,10 @@
                 this.adding_component = '';
             },
             handlePro(component) {
-                let message = 'This item is disabled';
+                this.isVisible = true;
                 if(component.disabled_message) {
-                    message = component.disabled_message;
+                    this.disabledMessage = component.disabled_message;
                 }
-                this.$notify.error(message);
                 return false;
             },
             getClonedItem(component) {
@@ -396,7 +414,11 @@
                 if (!this.hasPaymentMethodField || component.group != 'payment_method_element') {
                     isActive = ' item_active';
                 }
-                return 'wpf_item_' + component.group + isActive;
+                let availClass = 'wpf_item_' + component.group + isActive;
+                if (component.disabled) {
+                    availClass += ' require-pro'
+                }
+                return availClass;
             },
             hideNotices() {
                 this.setStoreData('hide_form_' + this.form_id, 'yes');
@@ -418,6 +440,12 @@
     .no-move {
         transition: transform 0s;
     }
+    .field_group_body {
+        .require-pro {
+            opacity: .5;
+        }
+    }
+
 
     .ghost {
         opacity: 0.2;

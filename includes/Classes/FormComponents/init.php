@@ -24,4 +24,5 @@ if (!defined('WPPAYFORM_PRO_INSTALLED')) {
     new \WPPayForm\Classes\FormComponents\DemoPayPalElement();
     new \WPPayForm\Classes\FormComponents\DemoTabularProductsComponent();
     new \WPPayForm\Classes\FormComponents\DemoRecurringPaymentComponent();
+    new \WPPayForm\Classes\FormComponents\DemoCouponComponent();
 }
