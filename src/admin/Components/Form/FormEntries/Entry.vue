@@ -181,6 +181,18 @@
                                                 <td v-html="getFormattedMoney(taxItem.line_total)"></td>
                                             </tr>
                                         </template>
+                                        <template v-if="submission.discounts">
+                                            <tr v-for="(discount,i) in submission.discounts.applied" :key="i">
+                                                <th class="wpf-entry-applied-coupon" style="text-align: right; font-weight: normal; color: #52a055;" colspan="3">
+                                                    <i class="el-icon-discount" />
+                                                    Discount ({{discount.item_name}}):
+                                                </th>
+                                                <th style="font-weight: normal;">
+                                                    <span>-</span>
+                                                    <span v-html="getFormattedMoney(discount.line_total)"></span>
+                                                </th>
+                                            </tr>
+                                        </template>
                                         <tr>
                                             <th style="text-align: right" colspan="3">Total:</th>
                                             <th v-html="getFormattedMoney(orderTotal)"></th>
@@ -506,7 +518,12 @@
                 each(this.submission.tax_items, (item) => {
                     total += parseInt(item.line_total);
                 });
-                return total + this.subTotal;
+
+                if (this.submission.discounts.total) {
+                    return ((total + this.subTotal) - this.submission.discounts.total);
+                } else {
+                    return total + this.subTotal;
+                }
             },
             firstTransaction() {
                 if (this.submission.transactions && this.submission.transactions.length) {

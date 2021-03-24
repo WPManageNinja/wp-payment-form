@@ -105,7 +105,18 @@ class Submission extends Model
         }
 
         if (in_array('discount', $with)) {
-            $result->discounts = (new OrderItem())->getDiscountItems($submissionId);
+            $discounts = (new OrderItem())->getDiscountItems($submissionId);
+
+            $totalDiscount = 0;
+            if (isset($discounts)) {
+                foreach ($discounts as $discount) {
+                    $totalDiscount += intval($discount->line_total);
+                }
+            }
+            $result->discounts = array(
+                'applied' => $discounts,
+                'total'   => $totalDiscount
+            );
         }
 
         if (in_array('tax_items', $with)) {

@@ -212,10 +212,10 @@ class StripeHandler
             $plan = Plan::getOrCreatePlan($subscription, $submission);
             if ($plan && is_wp_error($plan)) {
                 wp_send_json_error([
-                    'message' => __('Sorry! there has an error when creating the subscrion plan. Please try again', 'wppayform'),
+                    'message' => __('Sorry! there has an error when creating the subscription plan. Please try again', 'wppayform'),
                     'plan' => $plan
                 ], 423);
-            } else if ($plan) {
+            } elseif ($plan) {
                 $data = [
                     'plan_id' => $plan->id,
                     'description' => $subscription->item_name . ' (' . $subscription->plan_name . ')',
@@ -224,7 +224,7 @@ class StripeHandler
                     'subscription_cancel_at' => $this->getCancelAtTimeStamp($subscription)
                 ];
 
-                if($subscription->expiration_at) {
+                if ($subscription->expiration_at) {
                     $data['trial_expiration_at'] = strtotime($subscription->expiration_at);
                 }
 
@@ -240,14 +240,14 @@ class StripeHandler
 
     private function getCancelAtTimeStamp($subscription)
     {
-        if(!$subscription->bill_times) {
+        if (!$subscription->bill_times) {
             return false;
         }
         $dateTime = current_datetime();
         $localtime = $dateTime->getTimestamp() + $dateTime->getOffset();
 
         $billingStartDate = $localtime;
-        if($subscription->expiration_at) {
+        if ($subscription->expiration_at) {
             $billingStartDate = strtotime($subscription->expiration_at);
         }
 
@@ -255,7 +255,7 @@ class StripeHandler
 
         $interval = $subscription->billing_interval;
 
-        if($interval == 'daily') {
+        if ($interval == 'daily') {
             $interval = 'day';
         }
 
@@ -266,12 +266,10 @@ class StripeHandler
             'year' => 'years'
         ];
 
-        if(isset($interValMaps[$interval]) && $billTimes > 1) {
+        if (isset($interValMaps[$interval]) && $billTimes > 1) {
             $interval = $interValMaps[$interval];
         }
 
         return strtotime('+ '.$billTimes.' '.$interval, $billingStartDate);
-
     }
-
 }

@@ -24,7 +24,7 @@ class PaymentReceipt
         $submission = $submissionModel->getSubmission($submissionId, array('transactions', 'order_items', 'tax_items', 'subscriptions', 'discount'));
 
         if (!$submission) {
-            return '<p class="wpf_invalid_receipt">' . __('Invalid subission. No receipt found', 'wppayform') . '</p>';
+            return '<p class="wpf_invalid_receipt">' . __('Invalid submission. No receipt found', 'wppayform') . '</p>';
         }
 
         foreach ($submission->subscriptions as $subscription) {

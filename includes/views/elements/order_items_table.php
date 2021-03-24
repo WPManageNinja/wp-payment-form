@@ -46,10 +46,10 @@ $currencySetting['currency_sign'] = \WPPayForm\Classes\GeneralSettings::getCurre
         <th style="text-align: right" colspan="3"><?php _e('Sub-Total', 'wppayform'); ?></th>
         <td><?php echo wpPayFormFormattedMoney($submission->payment_total, $currencySetting); ?></td>
     </tr>
-    <?php if (isset($submission->discounts)) : ?>
+    <?php $discountTotal = 0;
+    if (isset($submission->discounts['applied'])) : ?>
         <?php
-        $discountTotal = 0;
-        foreach ($submission->discounts as $discount) :
+        foreach ($submission->discounts['applied'] as $discount) :
             $discountTotal += intval($discount->line_total);
             ?>
             <tr class="wpf_discount_row">
