@@ -561,6 +561,7 @@ class PayFormHandler {
 
         // DISCOUNT CALCULATION START
         const discounts = this.getDiscounts();
+        var totalDiscounts = 0;
         jQuery.each(discounts, (index, discount) => {
             let discountAmount = discount.amount;
             if (discount.coupon_type == 'percent') {
@@ -569,12 +570,12 @@ class PayFormHandler {
                 discountAmount = (discount.amount * 100)
             }
             allTotalAmount -= discountAmount;
+            totalDiscounts += discountAmount;
         });
         // DISCOUNT CALCULATION END
 
-
         let subTotal = allTotalAmount;
-        let taxAmount = this.calCulateTaxAmount(itemTotalValue);
+        let taxAmount = this.calCulateTaxAmount(itemTotalValue, totalDiscounts);
         if (taxAmount) {
             allTotalAmount += taxAmount;
         }
@@ -586,7 +587,7 @@ class PayFormHandler {
         form.data('subscription_total', subscriptonAmountTotal);
     }
 
-    calCulateTaxAmount(itemizedValue) {
+    calCulateTaxAmount(itemizedValue, totalDiscounts) {
         let form = this.form;
         if (!form.hasClass('wpf_has_tax_item')) {
             return 0;
@@ -600,7 +601,14 @@ class PayFormHandler {
             let taxId = $line.attr('id');
             let taxLineAmount = 0;
             if (itemizedValue[targetItem] && taxPercent) {
-                taxLineAmount = itemizedValue[targetItem] * (taxPercent / 100);
+                if (totalDiscounts) {
+                    let targetVal = itemizedValue[targetItem];
+                    let percentDiscount = (totalDiscounts * 100) / targetVal;
+                    let baseVal = targetVal - (targetVal * (percentDiscount /100))
+                    taxLineAmount =  baseVal * (taxPercent / 100);
+                } else {
+                    taxLineAmount = itemizedValue[targetItem] * (taxPercent / 100);
+                }
                 taxTotal += taxLineAmount;
             } else {
             }
