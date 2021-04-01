@@ -159,7 +159,8 @@
         align-items: stretch;
         width: 100%;
 
-        .wpf_input-group-prepend {
+        .wpf_input-group-prepend,
+        .wpf_input-group-append {
           display: -webkit-box;
           display: -ms-flexbox;
           display: flex;
@@ -182,8 +183,14 @@
             background-color: rgb(233, 236, 239);
             border: 1px solid rgb(206, 212, 218);
             border-radius: 0;
-            border-top-left-radius: 0.25rem;
-            border-bottom-left-radius: 0.25rem;
+              &-prepend {
+                border-top-left-radius: 0.25rem;
+                border-bottom-left-radius: 0.25rem;
+              }
+              &-append {
+                border-top-right-radius: 0.25rem;
+                border-bottom-right-radius: 0.25rem;
+              }
           }
         }
 
@@ -194,9 +201,14 @@
           flex: 1 1 auto;
           width: 1% !important;
           margin-bottom: 0;
+        }
+        .input-prepend {
           border-top-left-radius: 0 !important;
           border-bottom-left-radius: 0 !important;
-
+        }
+        .input-append {
+          border-top-right-radius: 0 !important;
+          border-bottom-right-radius: 0 !important;
         }
       }
     }

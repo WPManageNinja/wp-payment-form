@@ -104,7 +104,7 @@ class CustomAmountComponent extends BaseComponent
             'min' => ArrayHelper::get($fieldOptions, 'min_value'),
             'data-price' => 0,
             'id' => $inputId,
-            'class' => $inputClass.' wpf_custom_amount wpf_money_amount wpf_payment_item'
+            'class' => $inputClass.' wpf_custom_amount wpf_money_amount wpf_payment_item input-prepend'
         );
         if (ArrayHelper::get($fieldOptions, 'required') == 'yes') {
             $attributes['required'] = true;
@@ -116,7 +116,7 @@ class CustomAmountComponent extends BaseComponent
             <div class="wpf_input_content">
                 <div class="wpf_form_item_group">
                     <div class="wpf_input-group-prepend">
-                        <div class="wpf_input-group-text"><?php echo $currencySettings['currency_sign']; ?></div>
+                        <div class="wpf_input-group-text wpf_input-group-text-prepend"><?php echo $currencySettings['currency_sign']; ?></div>
                     </div>
                     <input <?php echo $this->builtAttributes($attributes); ?> />
                 </div>
