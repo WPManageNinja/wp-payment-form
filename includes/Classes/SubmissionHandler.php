@@ -105,8 +105,12 @@ class SubmissionHandler
 
         // Calculate Payment Total Now
         $paymentTotal = 0;
+        $taxTotal = 0;
         foreach ($paymentItems as $paymentItem) {
             $paymentTotal += $paymentItem['line_total'];
+            if ($paymentItem['type'] == 'tax_line') {
+                $taxTotal += $paymentItem['line_total'];
+            }
         }
 
         $currentUserId = get_current_user_id();
@@ -208,15 +212,15 @@ class SubmissionHandler
             if (isset($this->appliedCoupons)) {
                 $couponModel = new CouponModel();
                 $coupons = $couponModel->getCouponsByCodes($this->appliedCoupons);
-                $validCouponItems = $couponModel->getValidCoupons($coupons, $this->formID, $paymentTotal);
-                $couponItems = (new CouponController())->getTotalLine($validCouponItems, $paymentTotal);
+                $validCouponItems = $couponModel->getValidCoupons($coupons, $this->formID, $paymentTotal, $taxTotal);
+                $couponItems = (new CouponController())->getTotalLine($validCouponItems, $paymentTotal, $taxTotal);
 
                 foreach ($couponItems['discounts'] as $item) {
                     $item['submission_id'] = intval($submissionId);
                     $item['form_id'] = $formId;
                     $itemModel->create($item);
                 }
-                $paymentTotal -= $couponItems['totalDiscounts'];
+                $paymentTotal = $paymentTotal - $couponItems['totalDiscounts'] + $taxTotal;
             }
 
             // insert subscription items

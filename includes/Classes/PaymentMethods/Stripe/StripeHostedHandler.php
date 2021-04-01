@@ -131,8 +131,12 @@ class StripeHostedHandler extends StripeHandler
         $items = $orderItemsModel->getOrderItems($submission->id);
         $formattedItems = [];
         $priceSubtotal = 0;
+        $taxTotal = 0;
         foreach ($items as $item) {
             $price = $item->item_price;
+            if ($item->type == 'tax_line') {
+                $taxTotal += intval($item->line_total);
+            }
             if (!$price) {
                 continue;
             }
@@ -154,6 +158,7 @@ class StripeHostedHandler extends StripeHandler
         $discountItems = $orderItemsModel->getDiscountItems($submission->id);
         if ($discountItems) {
             $discountTotal = 0;
+            $priceSubtotal -= $taxTotal;
             foreach ($discountItems as $discountItem) {
                 $discountTotal += $discountItem->line_total;
             }
@@ -388,5 +393,4 @@ class StripeHostedHandler extends StripeHandler
 
         return apply_filters('wppayform/stripe_onetime_payment_metadata', $metadata, $submission);
     }
-
 }
