@@ -33,7 +33,7 @@ class Stripe
          * This is required
          */
         add_action('wppayform/after_submission_data_insert_stripe', array($this, 'addPaymentMethodStyle'), 10, 3);
-        add_action('wppayform/form_submission_make_payment_stripe', array($this, 'routePaymentHandler'), 10, 5);
+        add_action('wppayform/form_submission_make_payment_stripe', array($this, 'routePaymentHandler'), 10, 6);
 
         // ajax endpoints for admin
         add_action('wp_ajax_wpf_save_stripe_settings', array($this, 'savePaymentSettings'));
@@ -80,12 +80,12 @@ class Stripe
         $submissionModel->updateMeta($submissionId, 'stripe_payment_style', $style);
     }
 
-    public function routePaymentHandler($transactionId, $submissionId, $form_data, $form, $hasSubscriptions)
+    public function routePaymentHandler($transactionId, $submissionId, $form_data, $form, $hasSubscriptions, $totalPayable = 0)
     {
         $submissionModel = new Submission();
         $handler = $submissionModel->getMeta($submissionId, 'stripe_payment_style', 'stripe_hosted');
 
-        do_action('wppayform/form_submission_make_payment_' . $handler, $transactionId, $submissionId, $form_data, $form, $hasSubscriptions);
+        do_action('wppayform/form_submission_make_payment_' . $handler, $transactionId, $submissionId, $form_data, $form, $hasSubscriptions, $totalPayable);
     }
 
     public function maybeSignupFeeToPaymentItems($paymentItems, $formattedElements, $form_data, $subscriptionItems)

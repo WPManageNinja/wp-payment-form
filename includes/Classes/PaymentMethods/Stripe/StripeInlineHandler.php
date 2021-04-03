@@ -28,7 +28,7 @@ class StripeInlineHandler extends StripeHandler
         /*
          * After form submission this hooks fire to start Making payment
          */
-        add_filter('wppayform/form_submission_make_payment_stripe_inline', array($this, 'makePaymentIntent'), 10, 5);
+        add_filter('wppayform/form_submission_make_payment_stripe_inline', array($this, 'makePaymentIntent'), 10, 6);
 
         /*
          * Mainly for single payment items

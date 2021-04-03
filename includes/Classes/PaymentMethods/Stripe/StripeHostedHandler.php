@@ -25,7 +25,7 @@ class StripeHostedHandler extends StripeHandler
 
     public function registerHooks()
     {
-        add_filter('wppayform/form_submission_make_payment_' . $this->paymentMethod, array($this, 'redirectToStripe'), 10, 5);
+        add_filter('wppayform/form_submission_make_payment_' . $this->paymentMethod, array($this, 'redirectToStripe'), 10, 6);
         add_action('wppayform/frameless_pre_render_page_stripe_hosted_success', array($this, 'markPaymentSuccess'), 10, 1);
         add_action('wppayform/frameless_body_stripe_hosted_success', array($this, 'showSuccessMessage'), 10, 1);
     }
@@ -36,7 +36,7 @@ class StripeHostedHandler extends StripeHandler
      * make the redirection. Then we will be done here.
      *
      */
-    public function redirectToStripe($transactionId, $submissionId, $form_data, $form, $hasSubscriptions)
+    public function redirectToStripe($transactionId, $submissionId, $form_data, $form, $hasSubscriptions, $totalPayable = 0)
     {
         // dd($transactionId, $submissionId, $form_data, $form, $hasSubscriptions);
         $submissionModel = new Submission();
@@ -74,12 +74,12 @@ class StripeHostedHandler extends StripeHandler
             $checkoutArgs['customer_email'] = $submission->customer_email;
         }
 
-        if ($lineItems = $this->getLineItems($submission)) {
+        if ($lineItems = $this->getLineItems($submission, $totalPayable)) {
             $checkoutArgs['line_items'] = $lineItems;
         }
 
         if ($hasSubscriptions) {
-            $subscriptionArgs = $this->getSubscriptionArgs($submission);
+            $subscriptionArgs = $this->getSubscriptionArgs($submission, $totalPayable);
             if ($subscriptionArgs) {
                 $checkoutArgs['subscription_data'] = $subscriptionArgs;
             }
@@ -125,7 +125,7 @@ class StripeHostedHandler extends StripeHandler
         ], 200);
     }
 
-    private function getLineItems($submission)
+    private function getLineItems($submission, $totalPayable)
     {
         $orderItemsModel = new OrderItem();
         $items = $orderItemsModel->getOrderItems($submission->id);
@@ -158,7 +158,7 @@ class StripeHostedHandler extends StripeHandler
         $discountItems = $orderItemsModel->getDiscountItems($submission->id);
         if ($discountItems) {
             $discountTotal = 0;
-            $priceSubtotal -= $taxTotal;
+            $totalPayable -= $taxTotal;
             foreach ($discountItems as $discountItem) {
                 $discountTotal += $discountItem->line_total;
             }
@@ -171,7 +171,8 @@ class StripeHostedHandler extends StripeHandler
 
             foreach ($formattedItems as $item) {
                 $baseAmount = $item['amount'];
-                $item['amount'] = intval($baseAmount - ($discountTotal / $priceSubtotal) * $baseAmount);
+                // dd($baseAmount, $discountTotal, $priceSubtotal, ($discountTotal / $priceSubtotal) * $baseAmount);
+                $item['amount'] = intval($baseAmount - ($discountTotal / $totalPayable) * $baseAmount);
                 $newDiscountItems[] = $item;
             }
 
@@ -181,7 +182,7 @@ class StripeHostedHandler extends StripeHandler
         return $formattedItems;
     }
 
-    private function getSubscriptionArgs($submission)
+    private function getSubscriptionArgs($submission, $totalPayable)
     {
         $subscriptionModel = new Subscription();
         $subscriptions = $subscriptionModel->getSubscriptions($submission->id);
@@ -193,6 +194,31 @@ class StripeHostedHandler extends StripeHandler
         $subscriptionItems = [];
         $maxTrialDays = 0;
 
+        $orderItemsModel = new OrderItem();
+        $discountItems = $orderItemsModel->getDiscountItems($submission->id);
+
+        if ($discountItems) {
+            $discountTotal = 0;
+            // $priceSubtotal -= $taxTotal;
+            foreach ($discountItems as $discountItem) {
+                $discountTotal += $discountItem->line_total;
+            }
+
+            if (GeneralSettings::isZeroDecimal($submission->currency)) {
+                $discountTotal = intval($discountTotal / 100);
+            }
+
+            $newDiscountItems = [];
+
+            foreach ($subscriptions as $subscription) {
+                $baseAmount = intval($subscription->recurring_amount);
+                $subscription->recurring_amount = intval($baseAmount - ($discountTotal / $totalPayable) * $baseAmount);
+                $newDiscountItems[] = $subscription;
+            }
+
+            $subscriptions = $newDiscountItems;
+        }
+
         foreach ($subscriptions as $subscriptionItem) {
             if (!$subscriptionItem->recurring_amount) {
                 continue;
@@ -203,6 +229,7 @@ class StripeHostedHandler extends StripeHandler
                 $subscriptionItem->trial_days = 0;
             }
             $subscription = Plan::getOrCreatePlan($subscriptionItem, $submission);
+
             $subscriptionItems[] = [
                 'plan'     => $subscription->id,
                 'quantity' => ($subscriptionItem->quantity) ? $subscriptionItem->quantity : 1

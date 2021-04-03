@@ -191,8 +191,8 @@ class SubmissionHandler
 
         /*
          * Dear Payment method developers,
-         * Please do't use this hook to process the payment
-         * The order items is not porcessed yet!
+         * Please don't use this hook to process the payment
+         * The order items is not processed yet!
          */
         do_action('wppayform/after_submission_data_insert_' . $paymentMethod, $submissionId, $formId, $formattedElements['payment_method_element']);
 
@@ -209,11 +209,26 @@ class SubmissionHandler
                 $itemModel->create($payItem);
             }
 
+            // insert subscription items
+            $subsTotal = 0;
+            $subscription = new Subscription();
+            foreach ($subscriptionItems as $subscriptionItem) {
+                $quantity = isset($subscriptionItem['quantity']) ? $subscriptionItem['quantity'] : 1;
+                $linePrice = $subscriptionItem['recurring_amount'] * $quantity;
+                $subsTotal += intval($linePrice);
+
+                $subscriptionItem['submission_id'] = $submissionId;
+                $subscription->create($subscriptionItem);
+            }
+
+            $hasSubscriptions = (bool)$subscriptionItems;
+            $transactionId = false;
+            $totalPayable = $paymentTotal + $subsTotal;
             if (isset($this->appliedCoupons)) {
                 $couponModel = new CouponModel();
                 $coupons = $couponModel->getCouponsByCodes($this->appliedCoupons);
-                $validCouponItems = $couponModel->getValidCoupons($coupons, $this->formID, $paymentTotal, $taxTotal);
-                $couponItems = (new CouponController())->getTotalLine($validCouponItems, $paymentTotal, $taxTotal);
+                $validCouponItems = $couponModel->getValidCoupons($coupons, $this->formID, $totalPayable, $taxTotal);
+                $couponItems = (new CouponController())->getTotalLine($validCouponItems, $totalPayable, $taxTotal);
 
                 foreach ($couponItems['discounts'] as $item) {
                     $item['submission_id'] = intval($submissionId);
@@ -222,17 +237,6 @@ class SubmissionHandler
                 }
                 $paymentTotal = $paymentTotal - $couponItems['totalDiscounts'] + $taxTotal;
             }
-
-            // insert subscription items
-            $subscription = new Subscription();
-            foreach ($subscriptionItems as $subscriptionItem) {
-                $subscriptionItem['submission_id'] = $submissionId;
-                $subscription->create($subscriptionItem);
-            }
-
-            $hasSubscriptions = (bool)$subscriptionItems;
-
-            $transactionId = false;
 
             if ($paymentItems) {
                 // Insert Transaction Item Now
@@ -266,7 +270,7 @@ class SubmissionHandler
             ));
 
             if ($paymentMethod) {
-                do_action('wppayform/form_submission_make_payment_' . $paymentMethod, $transactionId, $submissionId, $form_data, $form, $hasSubscriptions);
+                do_action('wppayform/form_submission_make_payment_' . $paymentMethod, $transactionId, $submissionId, $form_data, $form, $hasSubscriptions, $totalPayable);
             }
         }
 
