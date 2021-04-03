@@ -140,7 +140,6 @@ class PayFormHandler {
             other_coupons: this.form.find('.__wpf_all_applied_coupons').val()
         })
             .then(response => {
-                console.log(response)
                 const coupon = response.coupon;
                 this.appliedCoupons[coupon.code] = coupon;
                 this.form.find('.__wpf_all_applied_coupons').attr('value', JSON.stringify(Object.keys(this.appliedCoupons)));
@@ -575,7 +574,7 @@ class PayFormHandler {
         // DISCOUNT CALCULATION END
 
         let subTotal = allTotalAmount;
-        let taxAmount = this.calCulateTaxAmount(itemTotalValue, totalDiscounts);
+        let taxAmount = this.calCulateTaxAmount(itemTotalValue, totalDiscounts, allTotalAmount);
         if (taxAmount) {
             allTotalAmount += taxAmount;
         }
@@ -587,7 +586,7 @@ class PayFormHandler {
         form.data('subscription_total', subscriptonAmountTotal);
     }
 
-    calCulateTaxAmount(itemizedValue, totalDiscounts) {
+    calCulateTaxAmount(itemizedValue, totalDiscounts, allTotalAmount) {
         let form = this.form;
         if (!form.hasClass('wpf_has_tax_item')) {
             return 0;
@@ -603,7 +602,7 @@ class PayFormHandler {
             if (itemizedValue[targetItem] && taxPercent) {
                 if (totalDiscounts) {
                     let targetVal = itemizedValue[targetItem];
-                    let percentDiscount = (totalDiscounts * 100) / targetVal;
+                    let percentDiscount = (totalDiscounts * 100) / (allTotalAmount + totalDiscounts);
                     let baseVal = targetVal - (targetVal * (percentDiscount /100))
                     taxLineAmount =  baseVal * (taxPercent / 100);
                 } else {

@@ -196,6 +196,17 @@ class StripeHostedHandler extends StripeHandler
 
         $orderItemsModel = new OrderItem();
         $discountItems = $orderItemsModel->getDiscountItems($submission->id);
+        $items = $orderItemsModel->getOrderItems($submission->id);
+        $taxTotal = 0;
+        foreach ($items as $item) {
+            $price = $item->item_price;
+            if ($item->type == 'tax_line') {
+                $taxTotal += intval($item->line_total);
+            }
+        }
+        if ($taxTotal) {
+            $totalPayable -= $taxTotal;
+        }
 
         if ($discountItems) {
             $discountTotal = 0;
