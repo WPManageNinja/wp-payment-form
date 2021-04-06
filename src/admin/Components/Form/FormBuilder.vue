@@ -311,8 +311,10 @@
                    return this.handlePro(component);
                 }
 
+                console.log(component)
+
                 // check if it's single only
-                if (component.single_only && this.alreadyExistElement(component.group)) {
+                if (component.single_only && this.alreadyExistElement(component.group) || this.alreadyExistElement(component.editor_title)) {
                     this.$message({
                         message: 'Element already exists on your form. You can not add more of this type',
                         type: 'error'
@@ -348,7 +350,8 @@
             alreadyExistElement(type) {
                 let status = false;
                 each(this.builder_elements, (element) => {
-                    if (element.group == type) {
+                    console.log(type)
+                    if (element.group == type || element.editor_title == type && type === 'Coupon') {
                         status = true;
                     }
                 });

@@ -23,6 +23,7 @@ class DemoCouponComponent extends BaseComponent
             'editor_title'    => 'Coupon (Pro)',
             'group'           => 'payment',
             'postion_group'   => 'payment',
+            'single_only'     => true,
             'is_system_field' => false,
             'is_payment_field'=> false,
             'disabled'        => true,
