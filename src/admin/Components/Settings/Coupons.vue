@@ -175,10 +175,9 @@
                     route: 'get_coupons'
                 })
                     .then(response => {
-                        console.log(response)
                         this.coupon_status = response.coupon_status;
                         if(response.coupon_status) {
-                            this.coupons = response.coupons.data;
+                            this.coupons = response.coupons;
                             this.pagination.total = response.coupons.total;
                             if(response.available_forms) {
                                 this.available_forms = response.available_forms;
