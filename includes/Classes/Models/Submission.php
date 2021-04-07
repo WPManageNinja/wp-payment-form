@@ -104,10 +104,6 @@ class Submission extends Model
             $result->order_items = (new OrderItem())->getSingleOrderItems($submissionId);
         }
 
-        if (in_array('tax_items', $with)) {
-            $result->tax_items = (new OrderItem())->getTaxOrderItems($submissionId);
-        }
-
         if (in_array('discount', $with)) {
             $discounts = (new OrderItem())->getDiscountItems($submissionId);
 
@@ -121,6 +117,10 @@ class Submission extends Model
                 'applied' => $discounts,
                 'total'   => $totalDiscount
             );
+        }
+
+        if (in_array('tax_items', $with)) {
+            $result->tax_items = (new OrderItem())->getTaxOrderItems($submissionId);
         }
 
         if (in_array('activities', $with)) {
@@ -152,7 +152,6 @@ class Submission extends Model
             ->update(['status'=> 'read']);
             $result->status = 'read';
         }
-
         return $result;
     }
 

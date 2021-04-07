@@ -38,7 +38,6 @@ class StripeHostedHandler extends StripeHandler
      */
     public function redirectToStripe($transactionId, $submissionId, $form_data, $form, $hasSubscriptions, $totalPayable = 0)
     {
-        // dd($transactionId, $submissionId, $form_data, $form, $hasSubscriptions);
         $submissionModel = new Submission();
         $submission = $submissionModel->getSubmission($submissionId);
         $cancelUrl = ArrayHelper::get($submission->form_data_raw, '__wpf_current_url');
@@ -132,11 +131,11 @@ class StripeHostedHandler extends StripeHandler
         $formattedItems = [];
         $priceSubtotal = 0;
         $taxTotal = 0;
+        $payItems = [];
+        $taxItems = [];
         foreach ($items as $item) {
             $price = $item->item_price;
-            if ($item->type == 'tax_line') {
-                $taxTotal += intval($item->line_total);
-            }
+
             if (!$price) {
                 continue;
             }
@@ -146,12 +145,22 @@ class StripeHostedHandler extends StripeHandler
 
             $quantity = ($item->quantity) ? $item->quantity : 1;
 
-            $formattedItems[] = [
-                'amount'   => $price,
-                'currency' => $submission->currency,
-                'name'     => $item->item_name,
-                'quantity' => $quantity,
-            ];
+            if ($item->type == 'tax_line') {
+                $taxTotal += intval($item->line_total);
+                $taxItems[] = [
+                    'amount'   => $price,
+                    'currency' => $submission->currency,
+                    'name'     => $item->item_name,
+                    'quantity' => $quantity,
+                ];
+            } else {
+                $payItems[] = [
+                    'amount'   => $price,
+                    'currency' => $submission->currency,
+                    'name'     => $item->item_name,
+                    'quantity' => $quantity,
+                ];
+            }
             $priceSubtotal += $price * intval($quantity);
         }
 
@@ -169,14 +178,13 @@ class StripeHostedHandler extends StripeHandler
 
             $newDiscountItems = [];
 
-            foreach ($formattedItems as $item) {
+            foreach ($payItems as $item) {
                 $baseAmount = $item['amount'];
-                // dd($baseAmount, $discountTotal, $priceSubtotal, ($discountTotal / $priceSubtotal) * $baseAmount);
                 $item['amount'] = intval($baseAmount - ($discountTotal / $totalPayable) * $baseAmount);
                 $newDiscountItems[] = $item;
             }
 
-            $formattedItems = $newDiscountItems;
+            $formattedItems = array_merge($newDiscountItems, $taxItems);
         }
 
         return $formattedItems;

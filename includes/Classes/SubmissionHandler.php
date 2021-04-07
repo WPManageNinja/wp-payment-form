@@ -27,6 +27,7 @@ class SubmissionHandler
     private $selectedPaymentMethod = '';
     private $appliedCoupons = array();
     private $formID = null;
+    private $validCoupons = null;
 
     public function handleSubmission()
     {
@@ -82,9 +83,32 @@ class SubmissionHandler
             }
         }
 
-        $paymentItems = apply_filters('wppayform/submitted_payment_items', $paymentItems, $formattedElements, $form_data);
-        $subscriptionItems = apply_filters('wppayform/submitted_subscription_items', $subscriptionItems, $formattedElements, $form_data);
+        $totalOrderLine = 0;
+        if (isset($paymentItems)) {
+            foreach ($paymentItems as $payItems) {
+                $totalOrderLine += intval($payItems['line_total']);
+            }
+        }
 
+        $subscriptionItems = apply_filters('wppayform/submitted_subscription_items', $subscriptionItems, $formattedElements, $form_data);
+        $totalSubsLine = 0;
+        if (isset($subscriptionItems)) {
+            foreach ($subscriptionItems as $subsItems) {
+                $totalSubsLine += intval($subsItems['recurring_amount'] + $subsItems['initial_amount']);
+            }
+        }
+
+        $discountPercent = 0;
+        if (isset($this->appliedCoupons)) {
+            $amountToPay = $totalOrderLine + $totalSubsLine;
+            $couponModel = new CouponModel();
+            $coupons = $couponModel->getCouponsByCodes($this->appliedCoupons);
+            $validCouponItems = $couponModel->getValidCoupons($coupons, $this->formID, $amountToPay);
+            $this->validCoupons = (new CouponController())->getTotalLine($validCouponItems, $amountToPay);
+            $discountPercent = ($this->validCoupons['totalDiscounts'] * 100)/$amountToPay;
+        }
+
+        $paymentItems = apply_filters('wppayform/submitted_payment_items', $paymentItems, $formattedElements, $form_data, $discountPercent);
         /*
          * providing filter hook for payment method to push some payment data
          *  from $subscriptionItems
@@ -167,7 +191,6 @@ class SubmissionHandler
             'updated_at'          => current_time('mysql')
         );
 
-
         $browser = new Browser();
         $ipLoggingStatus = GeneralSettings::ipLoggingStatus(true);
         if ($ipLoggingStatus != 'no') {
@@ -202,7 +225,6 @@ class SubmissionHandler
         if ($paymentItems || $subscriptionItems) {
             // Insert Payment Items
             $itemModel = new OrderItem();
-
             foreach ($paymentItems as $payItem) {
                 $payItem['submission_id'] = $submissionId;
                 $payItem['form_id'] = $formId;
@@ -224,18 +246,14 @@ class SubmissionHandler
             $hasSubscriptions = (bool)$subscriptionItems;
             $transactionId = false;
             $totalPayable = $paymentTotal + $subsTotal;
-            if (isset($this->appliedCoupons)) {
-                $couponModel = new CouponModel();
-                $coupons = $couponModel->getCouponsByCodes($this->appliedCoupons);
-                $validCouponItems = $couponModel->getValidCoupons($coupons, $this->formID, $totalPayable, $taxTotal);
-                $couponItems = (new CouponController())->getTotalLine($validCouponItems, $totalPayable, $taxTotal);
 
-                foreach ($couponItems['discounts'] as $item) {
+            if (isset($this->validCoupons)) {
+                foreach ($this->validCoupons['discounts'] as $item) {
                     $item['submission_id'] = intval($submissionId);
                     $item['form_id'] = $formId;
                     $itemModel->create($item);
                 }
-                $paymentTotal = $paymentTotal - $couponItems['totalDiscounts'] + $taxTotal;
+                $paymentTotal = $paymentTotal - $this->validCoupons['totalDiscounts'] + $taxTotal;
             }
 
             if ($paymentItems) {
@@ -402,6 +420,7 @@ class SubmissionHandler
         if (!isset($formData[$paymentId])) {
             return array();
         }
+
         $label = ArrayHelper::get($payment, 'options.label');
         if (!$label) {
             $label = $paymentId;
@@ -446,6 +465,7 @@ class SubmissionHandler
         } else {
             return array();
         }
+
         return array($payItem);
     }
 
@@ -486,7 +506,7 @@ class SubmissionHandler
             // This plan should not have trial
             if ($plan['has_trial_days'] != 'yes') {
                 $signupFee = 0;
-                if($plan['has_signup_fee'] == 'yes') {
+                if ($plan['has_signup_fee'] == 'yes') {
                     $signupFee = wpPayFormConverToCents($plan['signup_fee']);
                 }
                 $onetimeTotal = $signupFee + wpPayFormConverToCents($plan['subscription_amount']);
