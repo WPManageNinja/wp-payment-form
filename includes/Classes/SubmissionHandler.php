@@ -99,7 +99,7 @@ class SubmissionHandler
         }
 
         $discountPercent = 0;
-        if (isset($this->appliedCoupons)) {
+        if (!empty($this->appliedCoupons)) {
             $amountToPay = $totalOrderLine + $totalSubsLine;
             $couponModel = new CouponModel();
             $coupons = $couponModel->getCouponsByCodes($this->appliedCoupons);

@@ -163,7 +163,6 @@ class StripeHostedHandler extends StripeHandler
             }
             $priceSubtotal += $price * intval($quantity);
         }
-
         $discountItems = $orderItemsModel->getDiscountItems($submission->id);
         if ($discountItems) {
             $discountTotal = 0;
@@ -183,10 +182,9 @@ class StripeHostedHandler extends StripeHandler
                 $item['amount'] = intval($baseAmount - ($discountTotal / $totalPayable) * $baseAmount);
                 $newDiscountItems[] = $item;
             }
-
-            $formattedItems = array_merge($newDiscountItems, $taxItems);
+            $payItems = $newDiscountItems;
         }
-
+        $formattedItems = array_merge($payItems, $taxItems);
         return $formattedItems;
     }
 
