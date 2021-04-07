@@ -45,7 +45,7 @@
                             <div class="head_payment_amount">
                                 <template v-if="parseInt(submission.payment_total)">
                                     <span class="pay_amount"
-                                          v-html="getFormattedMoney(submission.payment_total)"></span>
+                                          v-html="getFormattedMoney(orderTotal)"></span>
                                     <span class="payment_currency">{{submission.currency}}</span>
                                     <span :class="'wpf_paystatus_badge wpf_pay_status_'+submission.payment_status">
                                     <i :class="getPaymentStatusIcon(submission.payment_status)"></i> {{submission.payment_status}}
