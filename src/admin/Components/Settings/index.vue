@@ -15,6 +15,7 @@
                             v-for="formMenu in form_menus"
                             :key="formMenu.route"
                             :route="{ name: formMenu.route }"
+                            :class="'wpf_menu_'+ formMenu.route"
                             :index="formMenu.route">
                             <i :class="formMenu.icon"></i>
                             <span>{{  formMenu.title }}</span>
@@ -57,16 +58,6 @@
                         title: 'General Settings',
                         icon:  'dashicons dashicons-translation'
                     },
-                    // {
-                    //     route: 'stripe_settings',
-                    //     title: 'Stripe Settings',
-                    //     icon: 'el-icon-bank-card'
-                    // },
-                    // {
-                    //     route: 'paypal_settings',
-                    //     title: 'Paypal Settings',
-                    //     icon:  'el-icon-money'
-                    // },
                     {
                         route: 'payments',
                         title: 'Payments',

@@ -11,7 +11,7 @@
                         <a  target="_blank"
                             class="el-button el-button--danger"
                             :href="campaignUrl">
-                            Upgrade to Pro Now
+                            {{campaignBtn}}
                         </a>
                     </div>
                 </div>
@@ -191,7 +191,8 @@
                 activeStyle:"none",
                 isVisible: false,
                 campaignUrl: 'https://wpmanageninja.com/downloads/wppayform-pro-wordpress-payments-form-builder/',
-                disabledMessage: 'This item is available on Pro version'
+                disabledMessage: 'This item is available on Pro version',
+                campaignBtn: 'Upgrade to Pro Now'
             }
         },
         computed: {
@@ -311,7 +312,9 @@
                    return this.handlePro(component);
                 }
 
-                console.log(component)
+                if (component.migrate) {
+                    return this.migrateTable(component);
+                }
 
                 // check if it's single only
                 if (component.single_only && this.alreadyExistElement(component.group) || this.alreadyExistElement(component.editor_title)) {
@@ -335,6 +338,13 @@
                 if(component.disabled_message) {
                     this.disabledMessage = component.disabled_message;
                 }
+                return false;
+            },
+            migrateTable(component) {
+                this.isVisible = true;
+                this.disabledMessage = component.migrate_message;
+                this.campaignBtn = component.btnText;
+                this.campaignUrl = component.url;
                 return false;
             },
             getClonedItem(component) {

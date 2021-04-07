@@ -2,15 +2,15 @@
 	<div v-loading="loading" class="wpf_payment_wrapper">
 		<div class="wpf_payment_settings_wrapper">
 			<el-tabs v-model="selectedMethod" type="border-card">
-				<el-tab-pane name="stripe" label="Stripe Settings">
-					<stripe-settings v-if="selectedMethod == 'stripe'"
+				<el-tab-pane name="stripe-settings" label="Stripe Settings">
+					<stripe-settings v-if="selectedMethod == 'stripe-settings'"
 					/>
 				</el-tab-pane>
-				<el-tab-pane name="paypal" label="PayPal Settings">
-					<pay-pal-settings v-if="selectedMethod == 'paypal'"/>
+				<el-tab-pane name="paypal-settings" label="PayPal Settings">
+					<pay-pal-settings v-if="selectedMethod == 'paypal-settings'"/>
 				</el-tab-pane>
-				<el-tab-pane name="coupon" label="Coupons">
-					<coupons v-if="selectedMethod == 'coupon'"/>
+				<el-tab-pane name="coupons" label="Coupons">
+					<coupons v-if="selectedMethod == 'coupons'"/>
 				</el-tab-pane>
 			</el-tabs>
 		</div>
@@ -32,9 +32,17 @@
 		data() {
 			return {
 				loading: false,
-				selectedMethod: 'stripe'
+				selectedMethod: 'stripe-settings'
 			};
-		}
+		},
+		mounted() {
+            jQuery('li.wpf_menu_payments').addClass('active');
+            let uri = window.location.href;
+			let path = uri.substring(uri.lastIndexOf("/payments") + 10, uri.length);
+            if(path) {
+                this.selectedMethod = path;
+            }
+        }
 	};
 </script>
 

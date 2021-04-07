@@ -1,5 +1,5 @@
 import SupportAndDocumentation from './Components/SupportAndDocumentation';
-// import Discounts from './Components/Settings/Discounts/Discounts';
+import Discounts from './Components/Settings/Discounts/Discounts'
 import GlobalView from './Components/Global/index';
 import AllForms from './Components/Forms/AllForms';
 
@@ -29,19 +29,9 @@ import Payments from './Components/Settings/Payments.vue'
 
 const globalSettingsViewChilderRoutes = window.WPPayForms.applyFilters('wpf_global_settings_childern_routes', [
     {
-        name: 'stripe_settings',
-        path: 'stripe-settings',
-        component: StripeSettings
-    },
-    {
         name: 'general_settings',
         path: 'general-settings',
         component: GeneralSettings
-    },
-    {
-        name: 'paypal_settings',
-        path: 'paypal-settings',
-        component: PayPalSettings
     },
     {
         name: 'tools',
@@ -61,7 +51,24 @@ const globalSettingsViewChilderRoutes = window.WPPayForms.applyFilters('wpf_glob
     {
         name: 'payments',
         path: 'payments',
-        component: Payments
+        component: Payments,
+        children: [
+            {
+                name: 'coupons',
+                path: 'coupons',
+                component: Discounts
+            },
+            {
+                name: 'stripe_settings',
+                path: 'stripe-settings',
+                component: StripeSettings
+            },
+            {
+                name: 'paypal_settings',
+                path: 'paypal-settings',
+                component: PayPalSettings
+            },
+        ]
     }
 
 ]);
