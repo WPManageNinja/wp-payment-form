@@ -315,9 +315,11 @@
             },
             getFormattedMoney(row) {
                 let amount = row.payment_total;
-                if (!amount) {
+                if (amount == 0) {
+                    return '0'
+                } else if (!amount) {
                     return 'n/a';
-                }
+                } 
                 return fromatPrice(amount, row.currencySettings);
             },
             goToViewRoute(row) {
