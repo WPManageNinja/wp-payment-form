@@ -12,7 +12,7 @@
                         <p class="head_small_title">{{subscription.plan_name}}<span class="mini_title">({{subscription.item_name}})</span></p>
 
                         <div class="head_payment_amount">
-                            <span class="pay_amount" v-html="getFormattedMoney(subscription.recurring_amount)"></span>
+                            <span class="pay_amount" v-html="mayBeHandleDiscount(subscription.recurring_amount)"></span>
                             <span>/{{subscription.billing_interval}}</span><span v-if="subscription.quantity > 1"> x {{subscription.quantity}}</span>
                             <span :class="'wpf_paystatus_badge wpf_pay_status_'+subscription.status">
                                 <i :class="getPaymentStatusIcon(subscription.status)"></i> {{subscription.status}}
@@ -44,7 +44,7 @@
                         <tbody>
                             <tr v-for="(payment,i) in subscription.related_payments" :key="i">
                                 <td>
-                                    <span class="table_payment_amount" v-html="getFormattedMoney(payment.payment_total)"></span>
+                                    <span class="table_payment_amount" v-html="mayBeHandleDiscount(payment.payment_total)"></span>
                                     <span class="payment_currency">{{payment.currency}}</span>
                                     <span class="wpf_paystatus_badge wpf_pay_status_active">{{payment.status}}</span>
                                 </td>
@@ -57,6 +57,17 @@
                                     </a>
                                 </td>
                             </tr>
+                            <template v-if="discounts.percent">
+                                <tr v-for="(payment,i) in subscription.related_payments">
+                                    <td>
+                                        Discounts
+                                    </td>
+                                    <td>
+                                        <span v-html="getDiscountsTotal(payment.payment_total)"></span>
+                                    </td>
+                                </tr>
+                            </template>
+
                         </tbody>
                     </table>
                     <div v-else>
@@ -75,7 +86,7 @@
 
     export default {
         name: 'subscription_payments',
-        props: ['subscriptions', 'currencySetting', 'payment_mode', 'payment_method'],
+        props: ['subscriptions', 'currencySetting', 'payment_mode', 'payment_method', 'discounts'],
         methods: {
             subscriptionTotal(payments) {
                 let total = 0;
@@ -84,7 +95,7 @@
                         total += payment.payment_total;
                     }
                 });
-                return this.getFormattedMoney(total);
+                return this.mayBeHandleDiscount(total);
             },
             getFormattedMoney(amount) {
                 if (!amount) {
@@ -133,6 +144,19 @@
                 } else {
                     return 'Customer will be billed untill cancelled';
                 }
+            },
+            mayBeHandleDiscount(amount) {
+                if (this.discounts.percent) {
+                    amount -= amount * (this.discounts.percent /100)
+                };
+                return this.getFormattedMoney(amount);
+            },
+            getDiscountsTotal(amount) {
+                let discounted = '-';
+                if (this.discounts.percent) {
+                    discounted = amount * (this.discounts.percent/100);
+                }
+                return this.getFormattedMoney(discounted);
             }
         }
     }

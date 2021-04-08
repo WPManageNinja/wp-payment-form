@@ -54,7 +54,7 @@
                                 <template v-if="submission.subscription_payment_total">
                                     <span><span v-show="parseInt(submission.payment_total)"> & </span><span
                                         class="pay_amount"
-                                        v-html="getFormattedMoney(submission.subscription_payment_total)"></span> (From Subscriptions)</span>
+                                        v-html="subscriptionPaymentTotal(submission)"></span> (From Subscriptions)</span>
                                 </template>
                             </div>
                         </div>
@@ -181,20 +181,15 @@
                                                 <td v-html="getFormattedMoney(taxItem.line_total)"></td>
                                             </tr>
                                         </template>
-                                        <template v-if="submission.discounts">
-                                            <tr v-for="(discount,i) in submission.discounts.applied" :key="i">
-                                                <th class="wpf-entry-applied-coupon" style="text-align: right; font-weight: normal; color: #52a055;" colspan="3">
-                                                    <i class="el-icon-discount" />
-                                                    Discount ({{discount.item_name}}):
-                                                </th>
-                                                <th style="font-weight: normal;">
-                                                    <span>-</span>
-                                                    <span v-html="getFormattedMoney(discount.line_total)"></span>
-                                                </th>
-                                            </tr>
-                                        </template>
                                         <tr>
-                                            <th style="text-align: right" colspan="3">Total:</th>
+                                            <th style="text-align: right" colspan="3">
+                                               <span v-if="submission.discounts.percent">
+                                                    Total
+                                                    <span class="" style="font-weight: normal; color: #52a055;">
+                                                       (After discount):</span>
+                                                    </span>
+                                               <span v-else>Total:</span>
+                                            </th>
                                             <th v-html="getFormattedMoney(orderTotal)"></th>
                                         </tr>
                                         </tfoot>
@@ -207,8 +202,40 @@
                             :payment_method="submission.payment_method"
                             :payment_mode="submission.payment_mode"
                             :currencySetting="submission.currencySetting"
-                            :subscriptions="submission.subscriptions"/>
+                            :subscriptions="submission.subscriptions"
+                            :discounts="submission.discounts"
+                            />
 
+                        <div class="entry_info_box entry_discounts">
+                            <div class="entry_info_header">
+                                    <div class="info_box_header">Discounts Based on Coupon Code</div>
+                                </div>
+                            <div class="entry_info_body" v-if="submission.discounts">
+                                <table style="margin-bottom:12px;" class="wp-list-table widefat table table-bordered striped">
+                                    <thead>
+                                        <tr>
+                                            <th>Discounts</th>
+                                            <th style="text-align: right">Total Discount Amount</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr v-for="(discount,i) in submission.discounts.applied" :key="i">
+                                            <th class="wpf-entry-applied-coupon" style="font-weight: normal; color: #52a055;" colspan="3">
+                                                <i class="el-icon-discount" />
+                                                Discount ({{discount.item_name}}):
+                                            </th>
+                                            <th style="font-weight: normal;">
+                                                <span v-html="getFormattedMoney(discount.line_total)"></span>
+                                            </th>
+                                        </tr>
+                                        <tr>
+                                            <th style="text-align: right" colspan="3">Total Discounts:</th>
+                                            <th v-html="getFormattedMoney(submission.discounts.total)"></th>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
                         <div v-if="parseInt(submission.transactions.length)" class="entry_info_box entry_transactions">
                             <div class="entry_info_header">
                                 <div class="info_box_header">Transaction Details</div>
@@ -519,8 +546,9 @@
                     total += parseInt(item.line_total);
                 });
 
-                if (this.submission.discounts.total) {
-                    return ((total + this.subTotal) - this.submission.discounts.total);
+                if (this.submission.discounts.percent) {
+                    let discounted = this.subTotal - (this.subTotal * (this.submission.discounts.percent / 100));
+                    return (total + discounted);
                 } else {
                     return total + this.subTotal;
                 }
@@ -568,6 +596,13 @@
                     return 'el-icon-warning';
                 }
                 return '';
+            },
+            subscriptionPaymentTotal(submission) {
+                let amount = submission.subscription_payment_total;
+                if (submission.discounts.percent) {
+                    amount -= amount * (submission.discounts.percent /100)
+                };
+                return this.getFormattedMoney(amount);
             },
             handleNavClick(type) {
                 this.loading = true;

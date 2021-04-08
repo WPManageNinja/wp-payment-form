@@ -109,7 +109,6 @@ class SubmissionHandler
             $paymentItems = apply_filters('wppayform/submitted_payment_items_' . $paymentMethod, $paymentItems, $formattedElements, $form_data, $subscriptionItems);
         }
 
-
         // Extract Input Items Here
         $inputItems = array();
 
@@ -245,7 +244,7 @@ class SubmissionHandler
                     $itemModel->create($item);
                 }
                 //issue on bottom line- should minus discount based on percent
-                $paymentTotal = $paymentTotal - $this->validCoupons['totalDiscounts'] + $taxTotal;
+                $paymentTotal = ($paymentTotal - ($paymentTotal * $discountPercent)/100) + $taxTotal;
             }
 
             if ($paymentItems) {

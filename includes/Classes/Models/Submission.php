@@ -113,9 +113,25 @@ class Submission extends Model
                     $totalDiscount += intval($discount->line_total);
                 }
             }
+            $totalWithoutTax = 0;
+            $orderTotal = 0;
+            if (!empty($result->order_items)) {
+                foreach ($result->order_items as $items) {
+                    $orderTotal += intval($items->line_total);
+                }
+            }
+
+            $subsTotal = intval($this->getSubscriptionPaymentTotal($result->form_id, $submissionId));
+            $totalWithoutTax = $orderTotal + $subsTotal;
+            $percentDiscount = 0;
+            if ($totalWithoutTax) {
+                $percentDiscount = intval(($totalDiscount * 100) / $totalWithoutTax, 2);
+            }
+
             $result->discounts = array(
                 'applied' => $discounts,
-                'total'   => $totalDiscount
+                'total'   => $totalDiscount,
+                'percent' => $percentDiscount
             );
         }
 
