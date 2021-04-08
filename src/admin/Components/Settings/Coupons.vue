@@ -133,6 +133,11 @@
                 <el-button type="primary" v-loading="saving" @click="saveCoupon()">Save Coupon</el-button>
             </span>
         </el-dialog>
+        <div v-if="!has_pro" class="payform_pro_message">
+            <h3>Coupon is a pro version feature.</h3>
+            <p>Please upgrade to pro to unlock this feature. WP Payform Pro comes with lots of feature which will increase the flexebility and conversion rate</p>
+            <a target="_blank" :href="pro_purchase_url">Upgrade to WP Payment Form Pro</a>
+        </div>
     </div>
 </template>
 
@@ -282,7 +287,9 @@
             }
         },
         mounted() {
-            this.getCoupons();
+            if(this.has_pro) {
+                this.getCoupons();
+            }
         }
     }
 </script>
