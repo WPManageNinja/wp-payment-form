@@ -68,7 +68,9 @@ class PayFormHandler {
                         action: 'wpf_submit_form',
                         form_id: this.formId,
                         payment_total: this.form.data('payment_total'),
-                        form_data: jQuery(this.form).serialize()
+                        form_data: jQuery(this.form).serialize(),
+                        tax_total: this.form.data('tax_total'),
+                        main_total: this.form.data('payment_total_without_discount')
                     })
                         .then(response => {
                             if (!response || !response.data || typeof response == 'string') {
@@ -558,6 +560,8 @@ class PayFormHandler {
             }
         });
 
+        let paymentWithoutDis = allTotalAmount;
+
         // DISCOUNT CALCULATION START
         const discounts = this.getDiscounts();
         var totalDiscounts = 0;
@@ -583,7 +587,9 @@ class PayFormHandler {
         form.find('.wpf_calc_sub_total').html(this.getFormattedPrice(subTotal));
         form.find('.wpf_calc_payment_total').html(this.getFormattedPrice(allTotalAmount));
         form.data('payment_total', allTotalAmount);
+        form.data('payment_total_without_discount', paymentWithoutDis);
         form.data('subscription_total', subscriptonAmountTotal);
+        form.data('tax_total', taxAmount);
     }
 
     calCulateTaxAmount(itemizedValue, totalDiscounts, allTotalAmount) {

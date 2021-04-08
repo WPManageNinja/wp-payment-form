@@ -37,6 +37,10 @@ class SubmissionHandler
         $formId = absint($_REQUEST['form_id']);
         $this->formID =  $formId;
         // Get Original Form Elements Now
+        // Get Original Form Elements Now
+        $totalPayableAmount = intval($_REQUEST['main_total']);
+        $tax_total = intval($_REQUEST['tax_total']);
+
 
         do_action('wppayform/form_submission_activity_start', $formId);
 
@@ -83,24 +87,11 @@ class SubmissionHandler
             }
         }
 
-        $totalOrderLine = 0;
-        if (isset($paymentItems)) {
-            foreach ($paymentItems as $payItems) {
-                $totalOrderLine += intval($payItems['line_total']);
-            }
-        }
-
         $subscriptionItems = apply_filters('wppayform/submitted_subscription_items', $subscriptionItems, $formattedElements, $form_data);
-        $totalSubsLine = 0;
-        if (isset($subscriptionItems)) {
-            foreach ($subscriptionItems as $subsItems) {
-                $totalSubsLine += intval($subsItems['recurring_amount'] + $subsItems['initial_amount']);
-            }
-        }
 
         $discountPercent = 0;
         if (!empty($this->appliedCoupons)) {
-            $amountToPay = $totalOrderLine + $totalSubsLine;
+            $amountToPay = $totalPayableAmount;
             $couponModel = new CouponModel();
             $coupons = $couponModel->getCouponsByCodes($this->appliedCoupons);
             $validCouponItems = $couponModel->getValidCoupons($coupons, $this->formID, $amountToPay);
@@ -253,6 +244,7 @@ class SubmissionHandler
                     $item['form_id'] = $formId;
                     $itemModel->create($item);
                 }
+                //issue on bottom line- should minus discount based on percent
                 $paymentTotal = $paymentTotal - $this->validCoupons['totalDiscounts'] + $taxTotal;
             }
 
