@@ -3,7 +3,7 @@ Contributors: techjewel, wpmanageninja
 Tags: payment form, donations, payments, stripe payments, PayPal, stripe checkout
 Requires at least: 4.5
 Tested up to: 5.7
-Stable tag: 2.0.3
+Stable tag: 2.1.0
 Requires PHP: 5.4
 License: GPLv2 or later
 
@@ -151,6 +151,7 @@ You can use **WPPayForm** as a contact form plugin. With the built-in form build
 - Print Single Submission
 - Tax Calculated Amount
 - Custom Email send on form/payment submission
+- Discount code for payment items
 
 == Accept Recurring or Subscription payments with Stripe / PayPal (Pro) ==
 Sometimes, You need to accept subscription payments like $9.99/month. You can do that easily with WPPayForm Pro. You can setup your recurring payments details and start accepting the payments via card payments (Stripe) / PayPal. Your users don't need to create an account to make payments.
