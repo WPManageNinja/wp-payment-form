@@ -257,6 +257,10 @@ You are most welcome. You can do the following:
 12. Submission Details (2nd Part)
 
 == Changelog ==
+= 2.1.0 - Mar 17, 2021 =
+- Fixes Zero-amount on payment issue
+- Fixes Rounding error issue on tax
+
 = 2.0.3 - Mar 17, 2021 =
 - Fixes checkout logo upload issue
 
