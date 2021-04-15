@@ -598,8 +598,8 @@ class SubmissionHandler
 
     private function getHash()
     {
-        $dateTime = current_datetime();
-        $localtime = $dateTime->getTimestamp() + $dateTime->getOffset();
+        $localtime = current_time('timestamp');
+
         $prefix = 'wpf_' . $localtime;
         $uid = uniqid($prefix);
         // now let's make a unique number from 1 to 999

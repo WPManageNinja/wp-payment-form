@@ -9,3 +9,4 @@ pro_build.php
 *.zip
 .DS_Store
 package-lock.json
+.vscode*
