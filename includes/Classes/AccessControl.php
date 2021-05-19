@@ -8,7 +8,7 @@ if (!defined('ABSPATH')) {
 
 /**
  * Managing Access Control
- * This is not complete on version 1.0.0 but we will definately add this feature.
+ * This is not complete on version 1.0.0 but we will definitely add this feature.
  * @since 1.0.0
  */
 class AccessControl
@@ -77,7 +77,7 @@ class AccessControl
 
     public static function getEndpointPermissionMaps($group = false)
     {
-        $permissionroups = array(
+        $permissionGroups = array(
             'forms'       => array(
                 'get_forms'                  => array(
                     'wpf_can_edit_all_forms',
@@ -192,15 +192,15 @@ class AccessControl
             )
         );
 
-        if (!$group || !isset($permissionroups[$group])) {
+        if (!$group || !isset($permissionGroups[$group])) {
             return array_merge(
-                $permissionroups['forms'],
-                $permissionroups['submissions'],
-                $permissionroups['global']
+                $permissionGroups['forms'],
+                $permissionGroups['submissions'],
+                $permissionGroups['global']
             );
         }
 
-        return $permissionroups[$group];
+        return $permissionGroups[$group];
     }
 
     public static function getPermissionLists()

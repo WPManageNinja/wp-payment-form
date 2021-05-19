@@ -174,7 +174,7 @@ if (!defined('WPPAYFORM_VERSION_LITE')) {
             add_action('wp_ajax_wpf_coupon_apply', array($CouponController, 'validateCoupon'));
             add_action('wp_ajax_nopriv_wpf_coupon_apply', array($CouponController, 'validateCoupon'));
 
-            // Stripe Paument Method Init Here
+            // Stripe Payment Method Init Here
             $stripe = new \WPPayForm\Classes\PaymentMethods\Stripe\Stripe();
             $stripe->registerHooks();
 
@@ -186,7 +186,7 @@ if (!defined('WPPAYFORM_VERSION_LITE')) {
             $stripeHostedHandler = new \WPPayForm\Classes\PaymentMethods\Stripe\StripeHostedHandler();
             $stripeHostedHandler->registerHooks();
 
-            // Handle Extorior Pages
+            // Handle Extrior Pages
             add_action('init', function () {
                 $demoPage = new \WPPayForm\Classes\Extorior\ProcessDemoPage();
                 $demoPage->handleExteriorPages();

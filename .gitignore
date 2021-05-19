@@ -10,3 +10,4 @@ pro_build.php
 .DS_Store
 package-lock.json
 .vscode*
+.idea/*
