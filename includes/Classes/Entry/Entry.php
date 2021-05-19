@@ -135,6 +135,16 @@ class Entry
         ));
     }
 
+    public function getSubscriptionId()
+    {
+        // Just check if submission order items added or not
+        $this->getSubscriptionItems();
+        return View::make('elements.subscription_id', array(
+            'submission'     => $this->submission,
+            'load_table_css' => true
+        ));
+    }
+
     public function getOrderItems()
     {
         if (!property_exists($this->submission, 'order_items')) {
@@ -223,6 +233,10 @@ class Entry
 
         if ($name == 'subscription_details_table_html') {
             return $this->getSubscriptionsHtml();
+        }
+
+        if ($name == 'subscription_id') {
+            return $this->getSubscriptionId();
         }
 
         if ($name == 'payment_total_in_cents') {

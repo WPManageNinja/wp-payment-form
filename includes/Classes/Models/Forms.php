@@ -338,10 +338,10 @@ class Forms
             $hasRecurringField = get_post_meta($formId, 'wpf_has_recurring_field', true) == 'yes';
             if ($hasRecurringField) {
                 $submissionItem['shortcodes']['{submission.subscription_details_table_html}'] = __('Subscription details table html ', 'wppayform');
+                $submissionItem['shortcodes']['{submission.subscription_id}'] = __('Subscription ID ', 'wppayform');
             }
 
             $submissionItem['shortcodes']['{submission.payment_receipt}'] = __('Payment Receipt', 'wppayform');
-
         }
 
 
