@@ -151,15 +151,15 @@ class Render
     }
 
     public function renderFormFooter($form)
-    {  
+    {
         $submitButton = Forms::getButtonSettings($form->ID);
         $processingText = $submitButton['processing_text'];
         if (!$processingText) {
-            $processingText = __('Please Wait…', 'wpfluentform');
+            $processingText = __('Please Wait…', 'wppayform');
         }
         $button_text = $submitButton['button_text'];
         if (!$button_text) {
-            $button_text = __('Submit', 'wpfluentform');
+            $button_text = __('Submit', 'wppayform');
         }
         $buttonClasses = array(
             'wpf_submit_button',
@@ -220,6 +220,9 @@ class Render
     private function addAssets($form, $instanceCssClass)
     {
         $currencySettings = Forms::getCurrencyAndLocale($form->ID);
+        $submitButton = Forms::getButtonSettings($form->ID);
+        $processingText = $submitButton['processing_text'];
+
         wp_enqueue_script('wppayform_public', WPPAYFORM_URL . 'assets/js/payforms-publicv2.js', array('jquery'), WPPAYFORM_VERSION, true);
         wp_enqueue_style('wppayform_public', WPPAYFORM_URL . 'assets/css/payforms-public.css', array(), WPPAYFORM_VERSION);
         wp_localize_script('wppayform_public', 'wp_payform_' . $instanceCssClass, apply_filters('wppayform/checkout_vars', array(
@@ -312,8 +315,7 @@ class Render
                 'submission_error' => __('Something is wrong when submitting the form', 'wppayform'),
                 'is_required' => __('is required', 'wppayform'),
                 'validation_failed' => __('Validation failed, please fill-up required fields', 'wppayform'),
-                'button_state' => __('Submitting Data...', 'wppayform'),
-
+                'button_state' => __($processingText, 'wppayform')
             )
         ));
     }
@@ -326,7 +328,6 @@ class Render
 
         wp_register_script('dropzone', WPPAYFORM_URL . 'assets/libs/dropzone/dropzone.min.js', array('jquery'), '5.5.0', true);
         wp_register_script('wppayform_file_upload', WPPAYFORM_URL . 'assets/js/fileupload.js', array('jquery', 'wppayform_public', 'dropzone'), WPPAYFORM_VERSION, true);
-
     }
 
     private function parseText($text, $formId)

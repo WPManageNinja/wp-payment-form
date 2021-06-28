@@ -304,6 +304,10 @@ class PayFormHandler {
                 }, 200);
             }
             jQuery('#wpf_form_id_' + this.formId)[0].reset();
+
+            this.form.find('button.wpf_submit_button .wpf_txt_loading').hide();
+            this.form.find('button.wpf_submit_button .wpf_txt_normal').show();
+
             this.form.trigger('stripe_clear');
         } else if (confirmation.redirectTo == 'customUrl') {
             if (confirmation.messageToShow) {
@@ -415,7 +419,7 @@ class PayFormHandler {
                     let response = grecaptcha.getResponse(recaptchInstance);
                     if (!response) {
                         that.showMessages('', 'error', that.$t('verify_recapthca'));
-                        reject('recaptca validation error');
+                        reject('recaptcha validation error');
                     } else {
                         resolve(response);
                     }
