@@ -4,16 +4,23 @@ namespace WPPayForm\Classes\Extorior;
 
 use WPPayForm\Classes\AccessControl;
 use WPPayForm\Classes\Models\Forms;
+use WPPayForm\Classes\View;
 
 class ProcessDemoPage
 {
     public function handleExteriorPages()
     {
+        if (defined('CT_VERSION')) {
+            // oxygen page compatibility
+            remove_action('wp_head', 'oxy_print_cached_css', 999999);
+        }
+
         if (isset($_GET['wp_paymentform_preview']) && $_GET['wp_paymentform_preview']) {
             $hasDemoAccess = AccessControl::hasTopLevelMenuPermission();
             $hasDemoAccess = apply_filters('wppayform/can_see_demo_form', $hasDemoAccess);
-            if($hasDemoAccess) {
+            if ($hasDemoAccess) {
                 $formId = intval($_GET['wp_paymentform_preview']);
+                wp_enqueue_style('dashicons');
                 $this->loadDefaultPageTemplate();
                 $this->renderPreview($formId);
             }
@@ -24,28 +31,11 @@ class ProcessDemoPage
     {
         $form = Forms::getForm($formId);
         if ($form) {
-            add_action('pre_get_posts', array($this, 'pre_get_posts'), 100, 1);
-            add_filter('post_thumbnail_html', '__return_empty_string');
-            add_filter('get_the_excerpt', function ($content) use ($form) {
-                if (in_the_loop()) {
-                    $content = '<div style="text-align: center" class="demo"><h4>WP PayForm Demo Preview ( From ID: ' . $form->ID . ' )</h4></div><hr />';
-                    $content .= do_shortcode('[wppayform id="' . $form->ID . '"]');
-                }
-                return $content;
-            },999, 1);
-            add_filter('the_title', function ($title) use ($form) {
-                if (in_the_loop()) {
-                    return $form->post_title;
-                }
-                return $title;
-            }, 100, 1);
-            add_filter('the_content', function ($content) use ($form) {
-                if (in_the_loop()) {
-                    $content = '<div style="text-align: center" class="demo"><h4>WP PayForm Demo Preview ( From ID: ' . $form->ID . ' )</h4></div><hr />';
-                    $content .= do_shortcode('[wppayform id="' . $form->ID . '"]');
-                }
-                return $content;
-            },999,1);
+            echo View::make('admin.show_review', [
+                'form_id' => $formId,
+                'form' => $form
+            ]);
+            exit();
         }
     }
 
