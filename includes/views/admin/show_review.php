@@ -35,11 +35,10 @@
             height: 30px;
         }
         .wpf_preview_body {
-            /* margin-top: 68px; */
             padding: 40px 0px 40px 0px;
             width: 100%;
             background-color: #dedede;
-            overflow: hidden;
+            /* overflow: hidden; */
             min-height: 85vh;
         }
 
