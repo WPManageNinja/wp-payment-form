@@ -124,7 +124,7 @@ class StripeHostedHandler extends StripeHandler
         ], 200);
     }
 
-    private function getLineItems($submission, $totalPayable)
+    public function getLineItems($submission, $totalPayable)
     {
         $orderItemsModel = new OrderItem();
         $items = $orderItemsModel->getOrderItems($submission->id);

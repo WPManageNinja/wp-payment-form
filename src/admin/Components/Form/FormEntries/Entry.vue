@@ -206,7 +206,7 @@
                             :discounts="submission.discounts"
                             />
 
-                        <div class="entry_info_box entry_discounts">
+                        <div class="entry_info_box entry_discounts" v-if="submission.discounts.total">
                             <div class="entry_info_header">
                                     <div class="info_box_header">Discounts Based on Coupon Code</div>
                                 </div>

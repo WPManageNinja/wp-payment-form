@@ -60,14 +60,25 @@ class StripeInlineHandler extends StripeHandler
         $transactionModel = new Transaction();
         $transaction = $transactionModel->getTransaction($transactionId);
 
+        $submissionModel = new Submission();
+        $submission = $submissionModel->getSubmission($submissionId);
+
+        $lineItems = (new StripeHostedHandler())->getLineItems($submission, $totalPayable);
+
         $hasTransaction = $transaction && $transaction->payment_total;
 
         if (!$hasTransaction && !$hasSubscriptions) {
             return;
         }
 
-        $submissionModel = new Submission();
-        $submission = $submissionModel->getSubmission($submissionId);
+        if (isset($lineItems)) {
+            $finalAmounts = 0;
+            foreach ($lineItems as $item) {
+                $finalAmounts += intval($item['amount']);
+            }
+            $finalAmounts && $transaction->payment_total = $finalAmounts;
+        }
+
 
         if ($hasSubscriptions) {
             $this->handleSetupIntent($submission, $form_data, $totalPayable);
