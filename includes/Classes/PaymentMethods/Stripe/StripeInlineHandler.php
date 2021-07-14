@@ -10,6 +10,7 @@ use WPPayForm\Classes\Models\SubmissionActivity;
 use WPPayForm\Classes\Models\Subscription;
 use WPPayForm\Classes\Models\Transaction;
 use WPPayForm\Classes\SubmissionHandler;
+use WPPayForm\Classes\Models\OrderItem;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -54,7 +55,7 @@ class StripeInlineHandler extends StripeHandler
      *        to handle the payment.
      *     3. We are not handling anything else here
      */
-    public function makePaymentIntent($transactionId, $submissionId, $form_data, $form, $hasSubscriptions)
+    public function makePaymentIntent($transactionId, $submissionId, $form_data, $form, $hasSubscriptions, $totalPayable = 0)
     {
         $transactionModel = new Transaction();
         $transaction = $transactionModel->getTransaction($transactionId);
@@ -68,9 +69,8 @@ class StripeInlineHandler extends StripeHandler
         $submissionModel = new Submission();
         $submission = $submissionModel->getSubmission($submissionId);
 
-
         if ($hasSubscriptions) {
-            $this->handleSetupIntent($submission, $form_data);
+            $this->handleSetupIntent($submission, $form_data, $totalPayable);
         }
 
         $paymentMethodId = ArrayHelper::get($form_data, '__stripe_payment_method_id');
@@ -96,7 +96,6 @@ class StripeInlineHandler extends StripeHandler
 
         $this->handlePaymentItentCharge($transaction, $submission, $intentArgs);
 
-
         $submissionModel = new Submission();
         $submission = $submissionModel->getSubmission($submission->id);
         $transactionModel = new Transaction();
@@ -106,7 +105,7 @@ class StripeInlineHandler extends StripeHandler
         return true;
     }
 
-    public function handleSetupIntent($submission, $formData)
+    public function handleSetupIntent($submission, $formData, $totalPayable)
     {
         $paymentMethodId = ArrayHelper::get($formData, '__stripe_payment_method_id');
 
@@ -132,7 +131,7 @@ class StripeInlineHandler extends StripeHandler
             ]);
         }
 
-        $subscriptionPlans = (new StripeHandler())->getSubmissionPlans($submission);
+        $subscriptionPlans = (new StripeHandler())->getSubmissionPlans($submission, $totalPayable);
 
         $items = [];
         foreach ($subscriptionPlans as $subscriptionPlan) {

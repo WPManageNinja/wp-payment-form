@@ -8,6 +8,7 @@ use WPPayForm\Classes\Models\SubmissionActivity;
 use WPPayForm\Classes\Models\Subscription;
 use WPPayForm\Classes\Models\SubscriptionTransaction;
 use WPPayForm\Classes\Models\Transaction;
+use WPPayForm\Classes\Models\OrderItem;
 
 if (!defined('ABSPATH')) {
     exit;
@@ -197,7 +198,7 @@ class StripeHandler
         ), 423);
     }
 
-    public function getSubmissionPlans($submission)
+    public function getSubmissionPlans($submission, $totalPayable)
     {
         $subscriptionModel = new Subscription();
         $subscriptions = $subscriptionModel->getSubscriptions($submission->id);
@@ -206,9 +207,26 @@ class StripeHandler
             return [];
         }
 
+        $orderItemsModel = new OrderItem();
+        $discountItems = $orderItemsModel->getDiscountItems($submission->id);
+
         $plans = [];
 
         foreach ($subscriptions as $subscription) {
+            if ($discountItems) {
+                $discountTotal = 0;
+                foreach ($discountItems as $discountItem) {
+                    $discountTotal += $discountItem->line_total;
+                }
+
+                if (GeneralSettings::isZeroDecimal($submission->currency)) {
+                    $discountTotal = intval($discountTotal / 100);
+                }
+
+                $baseAmount = intval($subscription->recurring_amount);
+                $subscription->recurring_amount = intval($baseAmount - ($discountTotal / $totalPayable) * $baseAmount);
+            }
+
             $plan = Plan::getOrCreatePlan($subscription, $submission);
             if ($plan && is_wp_error($plan)) {
                 wp_send_json_error([
