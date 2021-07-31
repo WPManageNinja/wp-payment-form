@@ -211,6 +211,7 @@ class SubmissionHandler
 
 
         $submission = $submissionModel->getSubmission($submissionId);
+        do_action('wppayform/after_form_submission_complete', $submission, $submission->form_id);
 
         if ($paymentItems || $subscriptionItems) {
             // Insert Payment Items
@@ -289,7 +290,6 @@ class SubmissionHandler
     public function sendSubmissionConfirmation($submission, $formId)
     {
         $confirmation = $this->getFormConfirmation($formId, $submission);
-        do_action('wppayform/after_form_submission_complete', $submission, $formId);
 
         wp_send_json_success(array(
             'message'       => __('Form is successfully submitted', 'wppayform'),

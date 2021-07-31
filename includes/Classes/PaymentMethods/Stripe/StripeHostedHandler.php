@@ -389,8 +389,6 @@ class StripeHostedHandler extends StripeHandler
                 do_action('wppayform/form_payment_success', $submission, false, $submission->form_id, $session);
             }
         }
-
-        do_action('wppayform/after_form_submission_complete', $submission, $submission->form_id);
     }
 
 
