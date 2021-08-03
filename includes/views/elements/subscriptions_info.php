@@ -19,7 +19,8 @@ $currencySetting['currency_sign'] = \WPPayForm\Classes\GeneralSettings::getCurre
             <td>
                 <?php echo $subscription->item_name . ' ('.$subscription->plan_name.')'; ?>
                 <p style="margin: 0; padding: 5px 0 0; font-size: 12px;">
-                    <?php echo wpPayFormFormattedMoney($subscription->recurring_amount, $currencySetting); ?> / <?php echo $subscription->billing_interval; ?>
+
+                    <?php echo wpPayFormFormattedMoney($subscription->recurring_amount * $subscription->quantity, $currencySetting); ?> / <?php echo $subscription->billing_interval; ?>
                 </p>
             </td>
             <td>

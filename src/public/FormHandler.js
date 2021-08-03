@@ -855,7 +855,7 @@ class PayFormHandler {
         form.find('.wpf_custom_subscription_input').on('change', function () {
             var $el = jQuery(this);
             var value = parseInt($el.val() * 100);
-            var $hiddenEl = $el.parent().find('.wpf_payment_item');
+            var $hiddenEl = $el.parent().parent().parent().find('.wpf_payment_item');
             $hiddenEl.attr('data-subscription_amount', value);
             var totalAmount = value + parseInt($el.data('initial_amount'));
             $hiddenEl.attr('data-price', totalAmount);
