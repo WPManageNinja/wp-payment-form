@@ -8,13 +8,13 @@ $currencySetting['currency_sign'] = \WPPayForm\Classes\GeneralSettings::getCurre
 <table class="table wpf_subscriptions_items_table wpf_table table_bordered">
     <thead>
         <th><?php _e('Subscription', 'wppayform'); ?></th>
-        <th><?php _e('Initial Amount', 'wppayform'); ?></th>
+        <th><?php _e('Signup Fee', 'wppayform'); ?></th>
         <th><?php _e('Times Billed', 'wppayform'); ?></th>
         <th><?php _e('Status', 'wppayform'); ?></th>
     </thead>
     <tbody>
     <?php $subTotal = 0; ?>
-    <?php foreach ($submission->subscriptions as $subscription): ?>
+    <?php foreach ($submission->subscriptions as $subscription) : ?>
         <tr>
             <td>
                 <?php echo $subscription->item_name . ' ('.$subscription->plan_name.')'; ?>
@@ -25,7 +25,13 @@ $currencySetting['currency_sign'] = \WPPayForm\Classes\GeneralSettings::getCurre
             <td>
                 <?php echo wpPayFormFormattedMoney($subscription->initial_amount, $currencySetting); ?>
             </td>
-            <td><?php echo $subscription->bill_count; ?> / <?php echo ($subscription->bill_times) ? $subscription->bill_times : __('Until cancelled', 'wppayform'); ?> </td>
+            <td>
+                <?php if ($subscription->status !== 'pending') {
+                    echo $subscription->bill_count . '/' . ($subscription->bill_times ? $subscription->bill_times : __('Until cancelled', 'wppayform'));
+                } else {
+                    echo 'pending';
+                }?>
+            </td>
             <td><?php echo $subscription->status; ?></td>
         </tr>
         <?php
@@ -33,7 +39,7 @@ $currencySetting['currency_sign'] = \WPPayForm\Classes\GeneralSettings::getCurre
     </tbody>
 </table>
 
-<?php if(!empty($load_table_css)): ?>
+<?php if (!empty($load_table_css)) : ?>
     <style type="text/css">
         .wpf_table {
             empty-cells: show;
