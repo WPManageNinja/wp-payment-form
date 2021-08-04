@@ -18,7 +18,7 @@
     ?>
     <div class="wpf_payment_info_item wpf_payment_info_item_total">
         <div class="wpf_item_heading"><?php _e('Total:', 'wppayform');?></div>
-        <div class="wpf_item_value"><?php echo wpPayFormFormattedMoney($submission->payment_total - $submission->discounts['total'], $currencySetting); ?></div>
+        <div class="wpf_item_value"><?php echo $submission->payment_total > 0 ? wpPayFormFormattedMoney($submission->payment_total - $submission->discounts['total'], $currencySetting) : 'pending'; ?></div>
     </div>
     <?php endif; ?>
     <?php if($submission->payment_method): ?>

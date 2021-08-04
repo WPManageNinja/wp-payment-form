@@ -7,7 +7,7 @@ $currencySetting = \WPPayForm\Classes\GeneralSettings::getGlobalCurrencySettings
 $currencySetting['currency_sign'] = \WPPayForm\Classes\GeneralSettings::getCurrencySymbol($submission->currency);
 ?>
 
-<?php if ($submission->payment_total) {?>
+<?php if ($submission->payment_total && $submission->payment_total > 0) {?>
     <table class="table wpf_order_items_table wpf_table table_bordered">
         <thead>
         <th><?php _e('Item', 'wppayform'); ?></th>
