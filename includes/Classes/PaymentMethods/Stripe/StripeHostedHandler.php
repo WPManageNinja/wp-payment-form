@@ -173,6 +173,7 @@ class StripeHostedHandler extends StripeHandler
 
             if (GeneralSettings::isZeroDecimal($submission->currency)) {
                 $discountTotal = intval($discountTotal / 100);
+                $totalPayable = intVal($totalPayable / 100);
             }
 
             $newDiscountItems = [];
