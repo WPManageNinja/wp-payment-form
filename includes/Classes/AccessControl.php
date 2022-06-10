@@ -49,7 +49,7 @@ class AccessControl
             return true;
         }
         wp_send_json_error(array(
-            'message' => ($message) ? $message : __('Sorry, You do not have permission to do this action: ', 'wppayform').$endpoint,
+            'message' => ($message) ? $message : __('Sorry, You do not have permission to do this action: ', 'wppayform') . $endpoint,
             'action' => $endpoint
         ), 423);
     }

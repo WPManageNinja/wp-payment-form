@@ -166,7 +166,7 @@ class Entry
     public function getTaxTotal()
     {
         $taxItems = $this->getTaxItems();
-        if(!$taxItems) {
+        if (!$taxItems) {
             return 0;
         }
         $total = 0;
@@ -192,10 +192,9 @@ class Entry
         foreach ($orderItems as $index => $orderItem) {
 
             $text .= $orderItem->item_name . ' (' . $orderItem->quantity . ') - ' . number_format($orderItem->line_total / 100, 2);
-            if($index != (count($orderItems) - 1) ) {
+            if ($index != (count($orderItems) - 1)) {
                 $text .= $separator;
             }
-
         }
         return $text;
     }
@@ -206,8 +205,8 @@ class Entry
         $subscriptionItems = $this->getSubscriptionItems();
         $text = '';
         foreach ($subscriptionItems as $index => $subscriptionItem) {
-            $text .= $subscriptionItem->item_name . ' - ' . $subscriptionItem->plan_name . ' ( ' . number_format($subscriptionItem->payment_total / 100, 2) .' ) - '.$subscriptionItem->status;
-            if($index != (count($subscriptionItems) - 1) ) {
+            $text .= $subscriptionItem->item_name . ' - ' . $subscriptionItem->plan_name . ' ( ' . number_format($subscriptionItem->payment_total / 100, 2) . ' ) - ' . $subscriptionItem->status;
+            if ($index != (count($subscriptionItems) - 1)) {
                 $text .= $separator;
             }
         }
@@ -290,7 +289,7 @@ class Entry
 
     public function getParsedItems()
     {
-        if($this->patsedItems) {
+        if ($this->patsedItems) {
             return $this->patsedItems;
         }
 

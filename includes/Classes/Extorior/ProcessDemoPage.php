@@ -60,5 +60,4 @@ class ProcessDemoPage
             $query->set('ignore_sticky_posts', true);
         }
     }
-
 }

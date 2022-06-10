@@ -1,4 +1,5 @@
 <?php
+
 namespace WPPayForm\Classes\Builder;
 
 class Helper

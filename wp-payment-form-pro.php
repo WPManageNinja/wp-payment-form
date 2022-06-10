@@ -222,7 +222,7 @@ if (!defined('WPPAYFORM_VERSION_LITE')) {
         $activator->migrateDatabases($newWorkWide);
     });
 
-    // Handle Newtwork new Site Activation
+    // Handle Network new Site Activation
     add_action('wp_insert_site', function ($blogId) {
         require_once(WPPAYFORM_DIR . 'includes/Classes/Activator.php');
         switch_to_blog($blogId->blog_id);

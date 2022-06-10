@@ -37,7 +37,7 @@ class Activator
 
     public function maybeUpgradeDB()
     {
-        if(get_option('WPF_DB_VERSION') < $this->wpfDbVersion) {
+        if (get_option('WPF_DB_VERSION') < $this->wpfDbVersion) {
             // We need to upgrade the database
             $this->forceUpgradeDB();
         }
@@ -62,7 +62,7 @@ class Activator
         $isSubscriptionsTable = $this->createSubscriptionTable(); // added in version 1.2.0
         $this->createPages();
 
-        if(!$isTransactionsTable || !$isMetaTable || !$isSubscriptionsTable) {
+        if (!$isTransactionsTable || !$isMetaTable || !$isSubscriptionsTable) {
             $this->maybeUpgradeDB();
         } else {
             // we are good. It's a new installation
@@ -151,7 +151,7 @@ class Activator
 				created_at timestamp NULL,
 				updated_at timestamp NULL
 			) $charset_collate;";
-        if($forced) {
+        if ($forced) {
             return $this->runForceSQL($sql, $table_name);
         }
         return $this->runSQL($sql, $table_name);
@@ -176,7 +176,7 @@ class Activator
 				updated_at timestamp NULL
 			) $charset_collate;";
 
-        if($forced) {
+        if ($forced) {
             return $this->runForceSQL($sql, $table_name);
         }
         return $this->runSQL($sql, $table_name);
@@ -197,7 +197,7 @@ class Activator
 				created_at timestamp NULL,
 				updated_at timestamp NULL
 			) $charset_collate;";
-        if($forced) {
+        if ($forced) {
             return $this->runForceSQL($sql, $table_name);
         }
         return $this->runSQL($sql, $table_name);
@@ -240,7 +240,7 @@ class Activator
 				created_at timestamp NULL,
 				updated_at timestamp NULL
 			) $charset_collate;";
-        if($forced) {
+        if ($forced) {
             return $this->runForceSQL($sql, $table_name);
         }
         return $this->runSQL($sql, $table_name);
@@ -267,9 +267,10 @@ class Activator
     /**
      * Create the pages for success and failure redirects
      */
-    public function createPages() {
-        $options = get_option( 'wppayform_confirmation_pages' );
-        if ( false === $options || ! array_key_exists( 'confirmation', $options ) ) {
+    public function createPages()
+    {
+        $options = get_option('wppayform_confirmation_pages');
+        if (false === $options || !array_key_exists('confirmation', $options)) {
             $charge_confirmation = wp_insert_post(array(
                 'post_title'     => __('Payment Confirmation', 'wppayform'),
                 'post_content'   => '[wppayform_reciept]',
@@ -280,7 +281,7 @@ class Activator
             ));
             $options['confirmation'] = $charge_confirmation;
         }
-        if ( false === $options || ! array_key_exists( 'failed', $options ) ) {
+        if (false === $options || !array_key_exists('failed', $options)) {
             $charge_failed = wp_insert_post(array(
                 'post_title'     => __('Payment Failed', 'wppayform'),
                 /* translators: %s: The [simpay_errors] shortcode */
@@ -292,6 +293,6 @@ class Activator
             ));
             $options['failed'] = $charge_failed;
         }
-        update_option( 'wppayform_confirmation_pages', $options );
+        update_option('wppayform_confirmation_pages', $options);
     }
 }

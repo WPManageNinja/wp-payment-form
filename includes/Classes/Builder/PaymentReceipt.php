@@ -88,11 +88,11 @@ class PaymentReceipt
             return $preRender;
         }
 
-        if(!$receiptSettings['receipt_footer']) {
+        if (!$receiptSettings['receipt_footer']) {
             return '';
         }
 
-        return '<div class="wpf_receipt_footer">'.$receiptSettings['receipt_footer'].'</div>';
+        return '<div class="wpf_receipt_footer">' . $receiptSettings['receipt_footer'] . '</div>';
     }
 
     private function paymentInfo($submission, $receiptSettings)
@@ -106,10 +106,10 @@ class PaymentReceipt
             return;
         }
 
-        if($submission->subscriptions) {
+        if ($submission->subscriptions) {
             foreach ($submission->subscriptions as $subscription) {
                 $submission->order_items[] = (object) [
-                    'item_name' => $subscription->item_name .' ('.$subscription->plan_name.')',
+                    'item_name' => $subscription->item_name . ' (' . $subscription->plan_name . ')',
                     'quantity' => $subscription->quantity,
                     'item_price' => $subscription->recurring_amount,
                     'line_total' => $subscription->payment_total - $subscription->initial_amount
@@ -118,7 +118,7 @@ class PaymentReceipt
         }
 
 
-        if(!$submission->order_items) {
+        if (!$submission->order_items) {
             return;
         }
 

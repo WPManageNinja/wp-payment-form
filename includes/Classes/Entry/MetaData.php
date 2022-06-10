@@ -94,7 +94,7 @@ class MetaData
     public function getPostMeta($key)
     {
         $meta = get_post_meta($this->postId, $key, true);
-        if(is_array($meta)) {
+        if (is_array($meta)) {
             return implode(', ', $meta);
         }
         return $meta;
@@ -103,7 +103,7 @@ class MetaData
     public function getuserMeta($key)
     {
         $meta = get_user_meta($this->userId, $key, true);
-        if(is_array($meta)) {
+        if (is_array($meta)) {
             return implode(', ', $meta);
         }
         return $meta;
@@ -111,7 +111,7 @@ class MetaData
 
     public function getFromUrlQuery($key)
     {
-        if($this->queryVars == null) {
+        if ($this->queryVars == null) {
             $submissionUrl = $this->entry->getRawInput('__wpf_current_url');
             $parts = parse_url($submissionUrl);
             if (isset($parts['query'])) {
@@ -120,7 +120,7 @@ class MetaData
             }
         }
 
-        if(isset($this->queryVars[$key])) {
+        if (isset($this->queryVars[$key])) {
             return esc_attr($this->queryVars[$key]);
         }
         return '';
@@ -128,16 +128,16 @@ class MetaData
 
     public function getOtherData($key)
     {
-        if($key == 'date') {
+        if ($key == 'date') {
             $dateFormat = get_option('date_format');
             return current_time($dateFormat);
         }
 
-        if($key == 'time') {
+        if ($key == 'time') {
             $dateFormat = get_option('time_format');
             return current_time($dateFormat);
         }
-        if($key == 'user_ip') {
+        if ($key == 'user_ip') {
             return $this->entry->ip_address;
         }
 

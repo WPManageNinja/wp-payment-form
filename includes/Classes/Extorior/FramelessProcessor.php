@@ -63,7 +63,7 @@ class FramelessProcessor
         $companyName = ArrayHelper::get($stripeSettings, 'company_name');
         $checkoutLogo = ArrayHelper::get($stripeSettings, 'checkout_logo');
 
-        if(!$companyName) {
+        if (!$companyName) {
             $companyName = get_bloginfo('name');
         }
 
@@ -78,7 +78,6 @@ class FramelessProcessor
             'site_logo' => $checkoutLogo,
             'company_name' => $companyName
         ]);
-
     }
 
     private function getFooter($action)
@@ -90,6 +89,5 @@ class FramelessProcessor
             'js_files' => $footerJsFiles,
             'action'   => $action
         ]);
-
     }
 }

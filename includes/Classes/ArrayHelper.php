@@ -1,4 +1,5 @@
 <?php
+
 namespace WPPayForm\Classes;
 
 if (!defined('ABSPATH')) {
@@ -77,10 +78,10 @@ class ArrayHelper
         }
 
         if (static::exists($array, $key)) {
-            if($array[$key]) {
-	            return $array[$key];
+            if ($array[$key]) {
+                return $array[$key];
             } else {
-            	return $default;
+                return $default;
             }
         }
 
@@ -252,9 +253,9 @@ class ArrayHelper
 
         foreach ($array as $key => $value) {
             if (is_array($value) && !empty($value)) {
-                $results = array_merge($results, static::dot($value, $prepend.$key.'.'));
+                $results = array_merge($results, static::dot($value, $prepend . $key . '.'));
             } else {
-                $results[$prepend.$key] = $value;
+                $results[$prepend . $key] = $value;
             }
         }
 
