@@ -736,22 +736,28 @@ class PayFormHandler {
         this.buttonState('normal', '', false);
     }
 
+    escapeHtml(str) {
+        const div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+    }
+
     showMessages(messages, type, heading) {
         this.resetMessages();
 
         let html = '';
         if (heading) {
-            html += '<p class="wpf_alert_heading">' + heading + '</p>';
+            html += '<p class="wpf_alert_heading">' + this.escapeHtml(heading) + '</p>';
         }
 
         if (typeof messages == 'string' && messages) {
-            html += messages;
+            html += this.escapeHtml(messages);
         }
 
         if (typeof messages == 'object' && messages) {
             html += '<ul class="wpf_alert_ietms">';
             jQuery.each(messages, (index, message) => {
-                html += '<li>' + message + '</li>';
+                html += '<li>' + this.escapeHtml(message) + '</li>';
             });
             html += '</ul>';
         }
