@@ -31,15 +31,22 @@ class SubmissionHandler
 
     public function handleSubmission()
     {
-        parse_str($_REQUEST['form_data'], $form_data);
+        $formDataPayload = isset($_REQUEST['form_data']) ? wp_unslash($_REQUEST['form_data']) : '';
+        parse_str($formDataPayload, $form_data);
 
         // Now Validate the form please
-        $formId = absint($_REQUEST['form_id']);
+        $formId = absint(ArrayHelper::get($_REQUEST, 'form_id'));
+        if (!$formId) {
+            wp_send_json_error(array(
+                'message' => __('Invalid request. Please try again', 'wppayform')
+            ), 423);
+        }
+
         $this->formID =  $formId;
         // Get Original Form Elements Now
         // Get Original Form Elements Now
-        $totalPayableAmount = intval($_REQUEST['main_total']);
-        $tax_total = intval($_REQUEST['tax_total']);
+        $totalPayableAmount = intval(ArrayHelper::get($_REQUEST, 'main_total', 0));
+        $tax_total = intval(ArrayHelper::get($_REQUEST, 'tax_total', 0));
 
 
         do_action('wppayform/form_submission_activity_start', $formId);
