@@ -23,6 +23,8 @@ class GlobalTools
 
     public function handleEndPoint()
     {
+        wpfValidateNonce('wpf_admin_nonce');
+
         $route = sanitize_text_field($_REQUEST['route']);
 
         $validRoutes = array(
