@@ -106,6 +106,12 @@ class SubmissionView
         $submissionModel = new Submission();
         $submission = $submissionModel->getSubmission($submissionId, array('transactions', 'order_items', 'tax_items', 'activities', 'refunds', 'discount'));
 
+        if (!$submission) {
+            wp_send_json_error(array(
+                'message' => __('Sorry, No Submission found', 'wppayform')
+            ), 423);
+        }
+
         $currencySetting = GeneralSettings::getGlobalCurrencySettings($formId);
         $currencySetting['currency_sign'] = GeneralSettings::getCurrencySymbol($submission->currency);
         $submission->currencySetting = $currencySetting;
