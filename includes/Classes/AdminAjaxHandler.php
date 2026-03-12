@@ -77,7 +77,6 @@ class AdminAjaxHandler
         $postTitle = sanitize_text_field($_REQUEST['post_title']);
         if (!$postTitle) {
             $postTitle = 'Blank Form';
-            return;
         }
         $template = sanitize_text_field($_REQUEST['template']);
 
