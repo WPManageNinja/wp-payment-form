@@ -216,9 +216,9 @@ class Stripe
         wpfValidateNonce('wpf_admin_nonce');
 
         AccessControl::checkAndPresponseError('set_payment_settings', 'global');
-        $settings = $_REQUEST['settings'];
+        $settings = isset($_REQUEST['settings']) && is_array($_REQUEST['settings']) ? wp_unslash($_REQUEST['settings']) : array();
         // Validate the data first
-        $mode = $settings['payment_mode'];
+        $mode = ArrayHelper::get($settings, 'payment_mode', 'test');
         if ($mode == 'test') {
             // We require test keys
             if (empty($settings['test_pub_key']) || empty($settings['test_secret_key'])) {
@@ -239,12 +239,12 @@ class Stripe
         // Validation Passed now let's make the data
         $data = array(
             'payment_mode'    => sanitize_text_field($mode),
-            'live_pub_key'    => sanitize_text_field($settings['live_pub_key']),
-            'live_secret_key' => sanitize_text_field($settings['live_secret_key']),
-            'test_pub_key'    => sanitize_text_field($settings['test_pub_key']),
-            'test_secret_key' => sanitize_text_field($settings['test_secret_key']),
-            'company_name'    => wp_unslash($settings['company_name']),
-            'checkout_logo'   => sanitize_text_field($settings['checkout_logo']),
+            'live_pub_key'    => sanitize_text_field(ArrayHelper::get($settings, 'live_pub_key')),
+            'live_secret_key' => sanitize_text_field(ArrayHelper::get($settings, 'live_secret_key')),
+            'test_pub_key'    => sanitize_text_field(ArrayHelper::get($settings, 'test_pub_key')),
+            'test_secret_key' => sanitize_text_field(ArrayHelper::get($settings, 'test_secret_key')),
+            'company_name'    => wp_unslash(ArrayHelper::get($settings, 'company_name', '')),
+            'checkout_logo'   => sanitize_text_field(ArrayHelper::get($settings, 'checkout_logo')),
         );
 
         if (isset($settings['send_meta_data'])) {
