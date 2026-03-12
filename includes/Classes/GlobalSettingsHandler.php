@@ -94,6 +94,12 @@ class GlobalSettingsHandler
         if (!function_exists('wp_handle_upload')) {
             require_once(ABSPATH . 'wp-admin/includes/file.php');
         }
+        if (empty($_FILES['file']) || empty($_FILES['file']['tmp_name'])) {
+            wp_send_json_error(array(
+                'message' => __('Please upload a valid image file', 'wppayform')
+            ), 423);
+        }
+
         $uploadedfile = $_FILES['file'];
 
         $acceptedFilles = array(
