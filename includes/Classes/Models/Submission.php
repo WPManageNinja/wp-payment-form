@@ -190,11 +190,11 @@ class Submission extends Model
         if ($formId) {
             $query = $query->where('form_id', $formId);
         }
-        if ($paymentStatus && $paymentStatus !== 'abandoned') {
-            $query = $query->where('payment_status', $paymentStatus);
-        } else {
+        if ($paymentStatus === 'abandoned') {
             $query = $query->where('payment_status', 'pending');
             $query = $this->makeQueryAbandoned($query, '<', true);
+        } elseif ($paymentStatus) {
+            $query = $query->where('payment_status', $paymentStatus);
         }
         return $query->count();
     }
@@ -223,11 +223,11 @@ class Submission extends Model
         if ($formId) {
             $query = $query->where('form_id', $formId);
         }
-        if ($paymentStatus !== 'abandoned') {
-            $query->where('payment_status', $paymentStatus);
-        } else {
+        if ($paymentStatus === 'abandoned') {
             $query->where('payment_status', 'pending');
             $query = $this->makeQueryAbandoned($query, '<', true);
+        } elseif ($paymentStatus) {
+            $query->where('payment_status', $paymentStatus);
         }
         $result = $query->first();
         if ($result && $result->payment_total) {
