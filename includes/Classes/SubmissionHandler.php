@@ -96,7 +96,9 @@ class SubmissionHandler
             $coupons = $couponModel->getCouponsByCodes($this->appliedCoupons);
             $validCouponItems = $couponModel->getValidCoupons($coupons, $this->formID, $amountToPay);
             $this->validCoupons = (new CouponController())->getTotalLine($validCouponItems, $amountToPay);
-            $discountPercent = ($this->validCoupons['totalDiscounts'] * 100)/$amountToPay;
+            if ($amountToPay > 0) {
+                $discountPercent = ($this->validCoupons['totalDiscounts'] * 100)/$amountToPay;
+            }
         }
 
         $paymentItems = apply_filters('wppayform/submitted_payment_items', $paymentItems, $formattedElements, $form_data, $discountPercent);
