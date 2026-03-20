@@ -157,7 +157,7 @@ class Menu
                 'wpf_admin_nonce' => wp_create_nonce('wpf_admin_nonce'),
                 'paymentStatuses' => GeneralSettings::getPaymentStatuses(),
                 'entryStatuses' => GeneralSettings::getEntryStatuses(),
-                'image_upload_url' => admin_url('admin-ajax.php?action=wpf_global_settings_handler&route=wpf_upload_image'),
+                'image_upload_url' => admin_url('admin-ajax.php?action=wpf_global_settings_handler&route=wpf_upload_image&wpf_admin_nonce=' . wp_create_nonce('wpf_admin_nonce')),
                 'forms_count' => Forms::getTotalCount(),
                 'assets_url' => WPPAYFORM_URL.'assets/',
                 'has_pro' => defined('WPPAYFORMHASPRO') && WPPAYFORMHASPRO,

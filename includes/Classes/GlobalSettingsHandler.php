@@ -21,9 +21,7 @@ class GlobalSettingsHandler
     {
         $route = sanitize_text_field($_REQUEST['route']);
 
-        if ($route !== 'wpf_upload_image') {
-            wpfValidateNonce('wpf_admin_nonce');
-        }
+        wpfValidateNonce('wpf_admin_nonce');
 
         $routes = array(
             'get_global_currency_settings'    => 'getGlobalCurrencySettings',
@@ -94,15 +92,16 @@ class GlobalSettingsHandler
         if (!function_exists('wp_handle_upload')) {
             require_once(ABSPATH . 'wp-admin/includes/file.php');
         }
+        if (empty($_FILES['file']) || empty($_FILES['file']['tmp_name'])) {
+            wp_send_json_error(__('Please upload a valid image file', 'wppayform'), 423);
+        }
+
         $uploadedfile = $_FILES['file'];
+        $fileType = wp_check_filetype_and_ext($uploadedfile['tmp_name'], $uploadedfile['name']);
+        $acceptedExtensions = array('jpg', 'jpeg', 'png');
 
-        $acceptedFilles = array(
-            'image/png',
-            'image/jpeg'
-        );
-
-        if (!in_array($uploadedfile['type'], $acceptedFilles)) {
-            wp_send_json(__('Please upload only jpg/png format files', 'wppayform'), 423);
+        if (empty($fileType['ext']) || !in_array($fileType['ext'], $acceptedExtensions, true)) {
+            wp_send_json_error(__('Please upload only jpg/png format files', 'wppayform'), 423);
         }
 
         $upload_overrides = array('test_form' => false);
