@@ -4,12 +4,12 @@
         <?php foreach ($items as $item) : ?>
             <?php if ($showEmpty || (isset($item['value']) && $item['value'] !== '' && isset($item['label']))) : ?>
                 <tr>
-                    <th><?php echo $item['label']; ?></th>
+                    <th><?php echo esc_html($item['label']); ?></th>
                         <td><?php
                         if (is_array($item['value'])) {
-                            echo implode(', ', $item['value']);
+                            echo esc_html(implode(', ', array_map('strval', $item['value'])));
                         } else {
-                            echo $item['value'];
+                            echo esc_html($item['value']);
                         }; ?>
                         </td>
                 </tr>
