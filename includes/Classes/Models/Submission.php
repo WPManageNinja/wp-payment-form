@@ -90,6 +90,10 @@ class Submission extends Model
             ->where('wpf_submissions.id', $submissionId)
             ->first();
 
+        if (!$result) {
+            return false;
+        }
+
         $result->form_data_raw = maybe_unserialize($result->form_data_raw);
         $result->form_data_formatted = maybe_unserialize($result->form_data_formatted);
         if ($result->user_id) {

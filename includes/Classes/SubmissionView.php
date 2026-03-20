@@ -106,6 +106,12 @@ class SubmissionView
         $submissionModel = new Submission();
         $submission = $submissionModel->getSubmission($submissionId, array('transactions', 'order_items', 'tax_items', 'activities', 'refunds', 'discount'));
 
+        if (!$submission) {
+            wp_send_json_error(array(
+                'message' => __('Sorry, No Submission found', 'wppayform')
+            ), 404);
+        }
+
         $currencySetting = GeneralSettings::getGlobalCurrencySettings($formId);
         $currencySetting['currency_sign'] = GeneralSettings::getCurrencySymbol($submission->currency);
         $submission->currencySetting = $currencySetting;
@@ -209,6 +215,12 @@ class SubmissionView
         $newStatus = sanitize_text_field($_REQUEST['new_payment_status']);
         $submissionModel = new Submission();
         $submission = $submissionModel->getSubmission($submissionId);
+        if (!$submission) {
+            wp_send_json_error(array(
+                'message' => __('Sorry, No Submission found', 'wppayform')
+            ), 404);
+        }
+
         if ($submission->payment_status == $newStatus) {
             wp_send_json_error(array(
                 'message' => __('The submission have the same status', 'wppayform')
