@@ -16,7 +16,7 @@ class DashboardWidgetModule
      */
     public function addWidget()
     {
-        if (!AccessControl::hasEndPointPermission('get_sumissions', 'submissions')) {
+        if (!AccessControl::hasEndPointPermission('get_submissions', 'submissions')) {
             return false;
         }
         wp_add_dashboard_widget('payform_stat_widget', __('WPPayForm Latest Submissions', 'wppayform'), array($this, 'showStat'), 10, 1);
