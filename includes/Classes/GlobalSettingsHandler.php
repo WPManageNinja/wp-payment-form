@@ -21,9 +21,7 @@ class GlobalSettingsHandler
     {
         $route = sanitize_text_field($_REQUEST['route']);
 
-        if ($route !== 'wpf_upload_image') {
-            wpfValidateNonce('wpf_admin_nonce');
-        }
+        wpfValidateNonce('wpf_admin_nonce');
 
         $routes = array(
             'get_global_currency_settings'    => 'getGlobalCurrencySettings',
@@ -91,28 +89,40 @@ class GlobalSettingsHandler
 
     protected function handleFileUpload()
     {
+        wpfValidateNonce('wpf_admin_nonce');
+
         if (!function_exists('wp_handle_upload')) {
             require_once(ABSPATH . 'wp-admin/includes/file.php');
         }
-        $uploadedfile = $_FILES['file'];
 
-        $acceptedFilles = array(
-            'image/png',
-            'image/jpeg'
-        );
-
-        if (!in_array($uploadedfile['type'], $acceptedFilles)) {
-            wp_send_json(__('Please upload only jpg/png format files', 'wppayform'), 423);
+        if (empty($_FILES['file'])) {
+            wp_send_json_error(array('message' => __('No file provided', 'wppayform')), 423);
         }
 
-        $upload_overrides = array('test_form' => false);
+        $uploadedfile = $_FILES['file'];
+
+        // Use wp_check_filetype_and_ext for server-side MIME detection instead of trusting
+        // the user-supplied $_FILES['type'] value which can be trivially spoofed.
+        if (!function_exists('wp_check_filetype_and_ext')) {
+            require_once(ABSPATH . 'wp-admin/includes/file.php');
+        }
+        $fileCheck = wp_check_filetype_and_ext($uploadedfile['tmp_name'], $uploadedfile['name']);
+        $allowedMimes = array('png' => 'image/png', 'jpg' => 'image/jpeg', 'jpeg' => 'image/jpeg');
+
+        if (empty($fileCheck['type']) || !in_array($fileCheck['ext'], array_keys($allowedMimes), true)) {
+            wp_send_json_error(array('message' => __('Please upload only jpg/png format files', 'wppayform')), 423);
+        }
+
+        $upload_overrides = array('test_form' => false, 'mimes' => $allowedMimes);
         $movefile = wp_handle_upload($uploadedfile, $upload_overrides);
         if ($movefile && !isset($movefile['error'])) {
             wp_send_json_success(array(
                 'file' => $movefile
             ), 200);
         } else {
-            wp_send_json(__('Something is wrong when uploading the file', 'wppayform'), 423);
+            wp_send_json_error(array(
+                'message' => isset($movefile['error']) ? $movefile['error'] : __('Something is wrong when uploading the file', 'wppayform')
+            ), 423);
         }
     }
 
