@@ -105,19 +105,19 @@ class DashboardWidgetModule
         <ul class="wpf_dashboard_stats">
             <?php foreach ($stats as $stat) : ?>
                 <li>
-                    <a title="Form: <?php echo $stat->post_title; ?>"
-                       href="<?php echo admin_url('admin.php?page=wppayform.php#/edit-form/' . $stat->form_id . '/entries/' . $stat->id . '/view'); ?>">
-                        #<?php echo $stat->id; ?> - <?php echo $stat->customer_name; ?>
+                    <a title="Form: <?php echo esc_attr($stat->post_title); ?>"
+                       href="<?php echo esc_url(admin_url('admin.php?page=wppayform.php#/edit-form/' . $stat->form_id . '/entries/' . $stat->id . '/view')); ?>">
+                        #<?php echo absint($stat->id); ?> - <?php echo esc_html($stat->customer_name); ?>
                             <?php if ($stat->recurring_amount) { ?>
-                                <span class="wpf_status wpf_status_<?php echo $stat->status; ?>">
-                                    <?php echo 'subscription'.' '.$stat->status; ?>
+                                <span class="wpf_status wpf_status_<?php echo esc_attr($stat->status); ?>">
+                                    <?php echo 'subscription ' . esc_html($stat->status); ?>
                                 </span>
                             <?php } else { ?>
-                                <span class="wpf_status wpf_status_<?php echo $stat->payment_status; ?>">
-                                    <?php echo 'payment'.' '.$stat->payment_status; ?>
+                                <span class="wpf_status wpf_status_<?php echo esc_attr($stat->payment_status); ?>">
+                                    <?php echo 'payment ' . esc_html($stat->payment_status); ?>
                                 </span>
                             <?php } ?>
-                            <span class="wpf_total"><?php echo $stat->formattedTotal; ?></span>
+                            <span class="wpf_total"><?php echo esc_html($stat->formattedTotal); ?></span>
                     </a>
                 </li>
             <?php endforeach; ?>
@@ -126,7 +126,7 @@ class DashboardWidgetModule
         <div class="wpf_payment_summary">
             <b><?php _e('Total Paid & Active Payment Received', 'wppayform'); ?></b>
             <?php foreach ($paidStats as $index => $stat) : ?>
-            <b>(<?php echo $stat->currency; ?>)</b>: <?php echo $stat->formattedTotal; ?> <?php if (count($paidStats) - 1 != $index): ?><br /><?php endif; ?>
+            <b>(<?php echo esc_html($stat->currency); ?>)</b>: <?php echo esc_html($stat->formattedTotal); ?> <?php if (count($paidStats) - 1 != $index): ?><br /><?php endif; ?>
             <?php endforeach; ?>
         </div>
 
