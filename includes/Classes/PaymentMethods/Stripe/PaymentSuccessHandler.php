@@ -65,8 +65,8 @@ class PaymentSuccessHandler
                 'currency'         => $invoice->currency,
                 'payment_mode'     => ($invoice->livemode) ? 'live' : 'test',
                 'payment_note'     => maybe_serialize($invoice),
-                'created_at'       => date('Y-m-d H:i:s', $invoice->created),
-                'updated_at'       => date('Y-m-d H:i:s', $invoice->created)
+                'created_at'       => gmdate('Y-m-d H:i:s', $invoice->created),
+                'updated_at'       => gmdate('Y-m-d H:i:s', $invoice->created)
             ];
             $subscriptionTransactionModel->maybeInsertCharge($transactionItem);
         }
