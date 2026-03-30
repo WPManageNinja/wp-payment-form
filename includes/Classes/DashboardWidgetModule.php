@@ -79,6 +79,8 @@ class DashboardWidgetModule
             ->whereIn('status', ['active'])
             ->get();
 
+        $recurringTotal = (!empty($subsTotal) && isset($subsTotal[0]->recurring_total)) ? intval($subsTotal[0]->recurring_total) : 0;
+
         foreach ($paidStats as $paidStat) {
             if (!isset($allCurrencySettings[$paidStat->form_id])) {
                 $currencySettings = Forms::getCurrencyAndLocale($paidStat->form_id);
@@ -86,7 +88,7 @@ class DashboardWidgetModule
             } else {
                 $currencySettings = $allCurrencySettings[$paidStat->form_id];
             }
-            $totalPaid = intval($paidStat->total_paid) + intval($subsTotal[0]->recurring_total);
+            $totalPaid = intval($paidStat->total_paid) + $recurringTotal;
             $paidStat->formattedTotal = wpPayFormFormattedMoney($totalPaid, $currencySettings);
         }
 
