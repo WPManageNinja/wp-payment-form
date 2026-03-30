@@ -77,7 +77,6 @@ class AdminAjaxHandler
         $postTitle = sanitize_text_field($_REQUEST['post_title']);
         if (!$postTitle) {
             $postTitle = 'Blank Form';
-            return;
         }
         $template = sanitize_text_field($_REQUEST['template']);
 
@@ -90,17 +89,17 @@ class AdminAjaxHandler
 
         $formId = Forms::create($data);
 
-        wp_update_post([
-            'ID'         => $formId,
-            'post_title' => $data['post_title'] . ' (#' . $formId . ')'
-        ]);
-
         if (is_wp_error($formId)) {
             wp_send_json_error(array(
                 'message' => __('Something is wrong when creating the form. Please try again', 'wppayform')
             ), 423);
             return;
         }
+
+        wp_update_post([
+            'ID'         => $formId,
+            'post_title' => $data['post_title'] . ' (#' . $formId . ')'
+        ]);
 
         do_action('wppayform/after_create_form', $formId, $data, $template);
 
