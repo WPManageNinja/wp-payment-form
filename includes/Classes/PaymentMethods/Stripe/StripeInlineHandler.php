@@ -420,7 +420,7 @@ class StripeInlineHandler extends StripeHandler
             # Tell the client to handle the action
             $transactionModel = new Transaction();
             $transactionModel->update($transaction->id, array(
-                'status' => 'intended',
+                'status' => 'intented',
                 'charge_id' => $intent->id,
                 'payment_mode' => $this->getMode()
             ));
