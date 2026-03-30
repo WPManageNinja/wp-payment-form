@@ -244,8 +244,10 @@ class SubmissionHandler
                     $item['form_id'] = $formId;
                     $itemModel->create($item);
                 }
-                //issue on bottom line- should minus discount based on percent
-                $paymentTotal = ($paymentTotal - ($paymentTotal * $discountPercent)/100) + $taxTotal;
+                // $paymentTotal already includes tax (tax line items are summed in the loop above).
+                // Apply the discount percentage to the full total — do NOT re-add $taxTotal
+                // here as that would double-count tax in the transaction record.
+                $paymentTotal = $paymentTotal - ($paymentTotal * $discountPercent / 100);
             }
 
             if ($paymentItems) {
